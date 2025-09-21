@@ -16,14 +16,14 @@ export default function HomeScreen() {
         {/* Today's Jobs section starts here */}
 
         <ServiceHeader title="Today's Jobs" />
-        <ServiceCards showAddress={true} />
+        <ServiceCards showPrice={true} showAddress={true} />
 
         {/* Today's  Jobs section ends here */}
 
         {/* Active Jobs section starts here */}
 
         <ServiceHeader title="Active Jobs" />
-        <ServiceCards showAddress={true} />
+        <ServiceCards showPrice={true} showAddress={true} />
         {/* Active Jobs section ends here */}
 
         {/* popular service  */}

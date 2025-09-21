@@ -5,7 +5,7 @@ import { downloadIcon } from "../../../../../assets/svg/icons";
 
 export default function InvoiceButton({ onPress }) {
   return (
-    <View className="bg-[#2563EB] py-[3%] mx-[6%] mt-[4%] border border-[#2563EB] rounded-lg ">
+    <View className="bg-[#2563EB] mb-[8%] py-[3%] mx-[6%] mt-[4%] border border-[#2563EB] rounded-lg ">
       <Pressable onPress={onPress}>
         <View className="flex-row justify-center items-center">
           <SvgXml xml={downloadIcon} width={16} height={24} />

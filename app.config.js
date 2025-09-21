@@ -26,6 +26,7 @@ export default {
       },
     },
     android: {
+      package: "com.fahim.razahomequoto",
       permissions: ["CAMERA", "RECORD_AUDIO"],
       config: {
         googleMaps: {

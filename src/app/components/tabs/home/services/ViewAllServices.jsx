@@ -9,7 +9,7 @@ const ServiceCard = ({ item }) => {
       onPress={() => {
         router.push({
           pathname: "/shared/serviceDetails",
-          params: { serviceId: item.id, showButtons: true },
+          params: { serviceId: item.id, showButtons: false, showPrice: true },
         });
       }}
       style={{ width: scale(330), height: verticalScale(288) }}

@@ -9,7 +9,8 @@ import CustomButton from "../components/shared/services/buttons/ServiceButton";
 import { router, useLocalSearchParams } from "expo-router";
 import servicesData from "../components/data/shared/ServicesData";
 export default function ServiceDetails() {
-  const { serviceId, showButtons } = useLocalSearchParams();
+  const { serviceId, showButtons, showPrice } = useLocalSearchParams();
+
   const service = servicesData.find((s) => s.id.toString() === serviceId);
   const renderButton =
     service.quoteOption === "Send a Personalized Quote" ? (
@@ -31,7 +32,8 @@ export default function ServiceDetails() {
         width={148}
       />
     );
-
+  const shouldShowButtons = showButtons === "true";
+  const shouldShowPrice = showPrice === "true";
   return (
     <View className="flex-1 bg-[#F9F9F9]">
       <View className="flex-1 mb-[2%]  px-[6%] bg-[#F9F9F9]">
@@ -41,7 +43,7 @@ export default function ServiceDetails() {
           showsVerticalScrollIndicator={false}
         >
           <View>
-            <ProviderInfo showPrice={showButtons} serviceData={service} />
+            <ProviderInfo showPrice={shouldShowPrice} serviceData={service} />
           </View>
           {/* {showCompleteJob && (
             <View className="mt-[8%] ">
@@ -50,15 +52,15 @@ export default function ServiceDetails() {
           )} */}
         </ScrollView>
       </View>
-      {showButtons && (
+      {shouldShowButtons && (
         <View
-          className="flex-col gap-[6%]   border border-[#D8DCE0]  "
+          className="flex-col gap-[1%]   border border-[#D8DCE0]  "
           style={[
             XStyle.shadowBox,
             {
               borderTopRightRadius: scale(20),
               borderTopLeftRadius: scale(20),
-              height: verticalScale(140),
+              // height: verticalScale(140),
             },
           ]}
         >

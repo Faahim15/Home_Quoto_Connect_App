@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Text } from "react-native";
-import {
-  PaymentMethodCard,
+import PaymentMethodCard, {
   AddNewCardButton,
 } from "../../components/provider/profile/PaymentOptions";
 import CustomTitle from "../../components/shared/services/CustomTitle";

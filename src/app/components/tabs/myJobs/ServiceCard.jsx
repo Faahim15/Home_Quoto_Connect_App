@@ -34,7 +34,7 @@ const ServiceCard = () => {
         {tabs.map((tab, index) => (
           <TouchableOpacity
             key={tab}
-            className={`flex-1 py-3 px-4 ${
+            className={`flex-1 py-[2%]  ${
               activeTab === tab ? "bg-white border-b border-[#175994]" : ""
             }`}
             onPress={() => handleTabPress(tab)}

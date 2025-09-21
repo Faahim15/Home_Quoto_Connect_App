@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import FilterModal from "../../components/provider/home/FilteringModal";
 import ViewAllServiceCards from "../../components/tabs/home/services/ViewAllServices";
+import ShowAllServiceCards from "../../components/tabs/home/services/provider/showAllServices";
 export default function ContractorHomeScreen() {
   const [showModal, setShowModal] = useState(false);
   function modalCloseHanlder() {
@@ -24,7 +25,7 @@ export default function ContractorHomeScreen() {
         </TouchableOpacity>
       </View>
       <View className="pb-[3%]">
-        <ViewAllServiceCards />
+        <ShowAllServiceCards />
       </View>
       <View>
         <FilterModal visible={showModal} onClose={modalCloseHanlder} />

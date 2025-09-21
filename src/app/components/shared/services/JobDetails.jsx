@@ -130,11 +130,11 @@ export default function ProviderInfo({ serviceData, showPrice = false }) {
       </View>
 
       <View>
-        {/* <Text className="font-poppins-semiBold text-base text-[#1F2937]">
+        <Text className="font-poppins-semiBold text-base text-[#1F2937]">
           Posted by
-        </Text> */}
+        </Text>
         <View>
-          {/* <View className="flex-row gap-[4%] pb-[2%] border-b border-[#CACACA] ">
+          <View className="flex-row gap-[4%] pb-[2%] border-b border-[#CACACA] ">
             <Image
               style={{
                 width: scale(40),
@@ -151,7 +151,7 @@ export default function ProviderInfo({ serviceData, showPrice = false }) {
                 {providerName}
               </Text>
             </View>
-          </View> */}
+          </View>
           {/* Price and Time */}
           {showPrice && (
             <View className="flex-row pt-[1%] justify-between">
