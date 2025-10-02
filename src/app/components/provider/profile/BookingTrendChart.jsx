@@ -5,7 +5,7 @@ import { LineChart } from "react-native-gifted-charts";
 import { LogBox } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { LinearGradient } from "expo-linear-gradient";
-
+import { chartData } from "../../data/profile/EarningsData";
 export default function BookingsTrendChart() {
   // Ignore specific warnings
   LogBox.ignoreLogs(["setLayoutAnimationEnabledExperimental"]);
@@ -15,16 +15,7 @@ export default function BookingsTrendChart() {
 
   const periods = ["This Week", "Last Week", "This Month", "Last Month"];
 
-  const data = [
-    { value: 12, label: "Mon", dataPointColor: "white" },
-    { value: 16, label: "Tue", dataPointColor: "white" },
-    { value: 18, label: "Wed", dataPointColor: "white" },
-    { value: 21, label: "Thu", dataPointColor: "white" },
-    { value: 28, label: "Fri", dataPointColor: "white" },
-    { value: 25, label: "Sat", dataPointColor: "white" },
-    { value: 22, label: "Sun", dataPointColor: "white" },
-  ];
-
+  const currentData = chartData[selectedPeriod];
   return (
     <ScrollView className="">
       <View className="mt-[3%]">
@@ -84,7 +75,7 @@ export default function BookingsTrendChart() {
           {/* Chart Container */}
           <View className=" pt-[2%]">
             <LineChart
-              data={data}
+              data={currentData}
               width={scale(250)} // Increase chart width
               height={verticalScale(180)}
               spacing={scale(45)}
@@ -113,7 +104,7 @@ export default function BookingsTrendChart() {
               endOpacity={0.05}
               areaChart={true}
               hideDataPoints={false}
-              initialSpacing={scale(10)}
+              initialSpacing={scale(20)}
               endSpacing={scale(10)}
               adjustToWidth={false}
             />
