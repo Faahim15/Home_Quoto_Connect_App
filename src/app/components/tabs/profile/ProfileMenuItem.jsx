@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import XStyle from "../../../util/styles";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
+import { SvgXml } from "react-native-svg";
 const ProfileMenuItem = ({ iconName, label, onPress, color = "#565656" }) => {
   return (
     <TouchableOpacity
@@ -13,19 +14,20 @@ const ProfileMenuItem = ({ iconName, label, onPress, color = "#565656" }) => {
           flexDirection: "row",
           alignItems: "center",
           //   paddingVertical: scale(16),
-          height: verticalScale(56),
+          height: verticalScale(60),
         },
       ]}
     >
-      <View className="flex-row items-center justify-center ">
-        <Ionicons
+      <View className="flex-row  items-center justify-center ">
+        {/* <Ionicons
           name={iconName}
           size={24}
           color="#333"
           style={{ marginRight: scale(16), width: scale(24) }}
-        />
+        /> */}
+        <SvgXml xml={iconName} height={verticalScale(30)} width={scale(34)} />
         <Text
-          style={{ color: color }}
+          style={{ color: color, marginLeft: scale(12) }}
           className="font-poppins-500medium text-sm  "
         >
           {label}

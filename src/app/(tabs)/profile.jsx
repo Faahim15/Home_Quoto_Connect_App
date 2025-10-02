@@ -5,6 +5,12 @@ import ConfirmationModal from "../components/tabs/profile/ConfirmationModal";
 import { useState } from "react";
 import LogoutItem from "../components/tabs/profile/LogoutItem";
 import { router } from "expo-router";
+import {
+  editProfile,
+  notification,
+  accountSettings,
+  support,
+} from "../../../assets/svg/profile";
 export default function UserProfileScreen() {
   function logoutHanlder() {
     setModalVisible(true);
@@ -41,22 +47,22 @@ export default function UserProfileScreen() {
       </View>
       <View className="mt-[3%]">
         <ProfileMenuItem
-          iconName="person-outline"
+          iconName={editProfile}
           label="Edit Profile"
           onPress={() => router.push("/profile/editProfile")}
         />
         <ProfileMenuItem
-          iconName="notifications-outline"
+          iconName={notification}
           label="Notification"
           onPress={() => router.push("/profile/notification")}
         />
         <ProfileMenuItem
-          iconName="settings-outline"
+          iconName={accountSettings}
           onPress={() => router.push("/profile/settings")}
           label="Account Settings"
         />
         <ProfileMenuItem
-          iconName="help-circle-outline"
+          iconName={support}
           onPress={() => router.push("/profile/support")}
           label="Help & support "
         />

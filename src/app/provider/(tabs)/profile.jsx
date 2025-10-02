@@ -5,6 +5,19 @@ import LogoutItem from "../../components/tabs/profile/LogoutItem";
 import { useState } from "react";
 import ConfirmationModal from "../../components/tabs/profile/ConfirmationModal";
 import { router } from "expo-router";
+import {
+  myEarnings,
+  editProfile,
+  services,
+  projectGallery,
+  verification,
+  payment,
+  subscription,
+  buyCredits,
+  notification,
+  accountSettings,
+  support,
+} from "../../../../assets/svg/profile";
 export default function ContractorProfileScreen() {
   function logoutHanlder() {
     setModalVisible(true);
@@ -34,22 +47,27 @@ export default function ContractorProfileScreen() {
             </Text>
             <View className="mt-[3%]">
               <ProfileMenuItem
-                iconName="person-outline"
+                iconName={myEarnings}
+                label="My Earnings"
+                onPress={() => router.push("provider/profile/myEarnings")}
+              />
+              <ProfileMenuItem
+                iconName={editProfile}
                 label="Edit Profile"
                 onPress={() => router.push("/profile/editProfile")}
               />
               <ProfileMenuItem
-                iconName="briefcase-outline"
+                iconName={services}
                 label="Services"
                 onPress={() => router.push("provider/profile/services")}
               />
               <ProfileMenuItem
-                iconName="images-outline"
+                iconName={projectGallery}
                 onPress={() => router.push("provider/profile/projectGallery")}
                 label="Project Gallery"
               />
               <ProfileMenuItem
-                iconName="shield-checkmark-outline"
+                iconName={verification}
                 onPress={() => router.push("provider/profile/verification")}
                 label="Verification"
               />
@@ -62,17 +80,17 @@ export default function ContractorProfileScreen() {
             </Text>
             <View className="mt-[3%]">
               <ProfileMenuItem
-                iconName="card-outline"
+                iconName={payment}
                 label="Payment method"
                 onPress={() => router.push("provider/profile/payment")}
               />
               <ProfileMenuItem
-                iconName="sync-circle-outline"
+                iconName={subscription}
                 label="Subscription"
                 onPress={() => router.push("provider/profile/subscription")}
               />
               <ProfileMenuItem
-                iconName="wallet-outline"
+                iconName={buyCredits}
                 label="Buy Credits"
                 onPress={() => router.push("provider/profile/credits")}
               />
@@ -85,17 +103,17 @@ export default function ContractorProfileScreen() {
             </Text>
             <View className="mt-[3%]">
               <ProfileMenuItem
-                iconName="notifications-outline"
+                iconName={notification}
                 label="Notification"
                 onPress={() => router.push("/profile/notification")}
               />
               <ProfileMenuItem
-                iconName="settings-outline"
+                iconName={accountSettings}
                 onPress={() => router.push("/profile/settings")}
                 label="Account Settings"
               />
               <ProfileMenuItem
-                iconName="help-circle-outline"
+                iconName={support}
                 onPress={() => router.push("/profile/support")}
                 label="Help & support "
               />
