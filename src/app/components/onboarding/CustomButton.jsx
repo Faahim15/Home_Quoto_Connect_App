@@ -15,7 +15,7 @@ export default function CustomButton({
         backgroundColor: backgroundColor,
       }}
       onPress={onPress}
-      className="mx-[6%]  border border-[#0054A5] rounded-md px-[3%] w-[90%] h-[6%] py-[3%]"
+      className="mx-[6%]  border border-[#0054A5] rounded-md px-[3%] w-[90%]  py-[3%]"
     >
       <Text
         style={{ color: color }}

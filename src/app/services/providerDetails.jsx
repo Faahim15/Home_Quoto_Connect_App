@@ -14,6 +14,7 @@ import ReviewButton from "../components/tabs/home/services/provider/details/Revi
 import Biography from "../components/tabs/home/services/provider/details/Biography";
 import { router, useLocalSearchParams } from "expo-router";
 import XStyle from "../util/styles";
+import Toast from "react-native-toast-message";
 export default function ProviderDetailsScreen() {
   const skills = ["Lighting", "Circuit", "Wiring", "Repair"];
   const { showButtons } = useLocalSearchParams();
@@ -128,7 +129,16 @@ export default function ProviderDetailsScreen() {
           ]}
         >
           <BotttomButtons
-            onPress={() => router.back()}
+            onPress={() => {
+              Toast.show({
+                type: "info",
+                text1: "Request Declined",
+                text2: "The provider has been notified of your decision",
+                position: "top",
+                visibilityTime: 3000,
+              });
+              router.back();
+            }}
             backgroundColor="#fff"
             color="#EF4444"
             borderColor="#EF4444"

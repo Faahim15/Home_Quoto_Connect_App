@@ -73,11 +73,11 @@ export default function ImageSelector() {
     <View className="flex-1   bg-[#f9f9f9]">
       <View className="w-full">
         {/* Upload Area Container */}
-        <View className="border border-[#DCDCDC]  rounded-lg bg-[#f9f9f9]">
+        <View className="  bg-[#f9f9f9]">
           {/* Upload Area */}
           <TouchableOpacity
             onPress={handleUpload}
-            className="  bg-[#f9f9f9] active:bg-blue-50/50"
+            className="  bg-[#f9f9f9] border border-[#DCDCDC] rounded-lg  active:bg-blue-50/50"
             activeOpacity={0.7}
           >
             {selectedFile ? (
@@ -99,7 +99,7 @@ export default function ImageSelector() {
                 </Text>
               </View>
             ) : (
-              <View className="flex-row px-[3%] gap-[5%] py-[5%]  w-full items-center ">
+              <View className="flex-row px-[3%] gap-[5%] py-[3%]  w-full items-center ">
                 <View className="w-[32px] h-[32px] bg-blue-100 rounded-full items-center justify-center ">
                   <Ionicons
                     name="cloud-upload-outline"

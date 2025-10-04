@@ -3,7 +3,7 @@ import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
 export default function HomeTopBar() {
   return (
-    <View className="flex-row  border-b border-gray-100 pb-[1%] mx-[6.4%] mt-[2%] gap-[2%]">
+    <View className="flex-row   pb-[1%] mx-[6.4%] mt-[2%] gap-[2%]">
       <View>
         <Image
           style={{

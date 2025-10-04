@@ -92,7 +92,7 @@ const QuoteReqData = [
     address: "Edmonton, AB",
     profileImage:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face",
-    status: "Cancelled",
+    status: "In Progress",
     quoteOption: "Accept",
   },
   {

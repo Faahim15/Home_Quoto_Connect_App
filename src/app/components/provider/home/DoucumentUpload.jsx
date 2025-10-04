@@ -90,7 +90,7 @@ const ServiceDocumentUpload = ({
         >
           <TouchableOpacity
             onPress={selectedFile ? null : pickDocument}
-            className="flex-row items-center justify-between px-[3%] py-[4%]"
+            className="flex-row items-center justify-between px-[3%] py-[3%]"
             activeOpacity={0.7}
           >
             <View
