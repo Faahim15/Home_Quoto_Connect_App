@@ -1,5 +1,4 @@
 import { View, Text, Modal, ScrollView, TouchableOpacity } from "react-native";
-import ServiceTypes from "../ServiceTypes";
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
 import Ratings from "../Ratings";
 import ExperienceLevel from "../ExperienceLevel";
@@ -8,10 +7,11 @@ import ApplyFilterButton from "../FilterButton";
 import PriceSlider from "../PriceInput";
 import Availability from "../Availability";
 import { Ionicons } from "@expo/vector-icons";
+import ServiceTypeDropdown from "./ServiceTypeDropdown";
 
 export default function UserFilterModal({ visible, onClose }) {
   return (
-    <View className="flex-1 bg-[#fff]">
+    <View className="flex-1 bg-black/50">
       <ScrollView contentContainerStyle={{ paddingBottom: verticalScale(40) }}>
         <Modal
           animationType="fade"
@@ -29,26 +29,23 @@ export default function UserFilterModal({ visible, onClose }) {
             </TouchableOpacity>
 
             <View className="px-[6%] mt-[3%]">
-              <ServiceTypes />
+              <ServiceTypeDropdown />
             </View>
-            <View className="px-[6%] mt-[3%]">
+            <View className="px-[6%] mt-[2%]">
               <Text className="font-poppins-semiBold text-base text-[#6B7280]">
                 Availability
               </Text>
               <Availability />
             </View>
-            <View className="px-[6%] mt-[3%]">
+            <View className="px-[6%] mt-[2%]">
               <Text className="font-poppins-semiBold text-base text-[#6B7280]">
                 Rating
               </Text>
               <Ratings defaultValue={2} />
             </View>
-            <View className="px-[6%] mt-[3%]">
-              {/* <Text className="font-poppins-semiBold text-base text-[#6B7280]">
-                Price
-              </Text> */}
+            <View className="px-[6%] mt-[2%]">
               <PriceSlider />
-              <View className="mt-[12%]">
+              <View className="mt-[2%]">
                 <ExperienceLevel />
               </View>
               <Specializations />

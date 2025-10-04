@@ -106,7 +106,7 @@ export default function ServiceSearch() {
       )}
 
       {/* Popular Services */}
-      <View className="mt-[6%]">
+      {/* <View className="mt-[6%]">
         <Text className="text-base font-poppins-500medium text-gray-700 mb-[3%]">
           Popular Services
         </Text>
@@ -125,7 +125,7 @@ export default function ServiceSearch() {
             )
           )}
         </View>
-      </View>
+      </View> */}
     </View>
   );
 }

@@ -98,7 +98,7 @@ export default function ProviderInfo({ serviceData, showPrice = false }) {
               ))}
             </View>
           </View>
-          {/* {(showCompleteJob || showButtons) && (
+          {showPrice && (
             <View className="flex-row overflow-hidden mt-[3%] w-full justify-between">
               <Text className="font-poppins-semiBold text-xs text-[#6B7280]">
                 Address
@@ -107,7 +107,7 @@ export default function ProviderInfo({ serviceData, showPrice = false }) {
                 {address.split(",").slice(-2).join(", ")}{" "}
               </Text>
             </View>
-          )} */}
+          )}
           {/* Booking Date */}
           <View className="flex-row mt-[3%] justify-between ">
             <Text className="font-poppins-semiBold text-xs text-[#6B7280]">

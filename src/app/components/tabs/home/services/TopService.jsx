@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
+  Pressable,
 } from "react-native";
 import categories from "../../../data/shared/Categories";
 const screenWidth = Dimensions.get("window").width;
@@ -14,7 +15,7 @@ const cardGap = scale(16); // total gap between cards (4% ~ 16px if scale = 4)
 const cardWidth = (screenWidth - horizontalMargin - cardGap * 2) / 3.1;
 
 const ServiceCard = ({ item }) => (
-  <TouchableOpacity
+  <Pressable
     style={[{ width: cardWidth, height: verticalScale(130) }]}
     className="bg-white mr-[2%] rounded-lg border border-[#D4E0EB] items-center justify-center "
   >
@@ -27,7 +28,7 @@ const ServiceCard = ({ item }) => (
     <Text className="text-center  font-poppins-semiBold text-sm text-gray-800">
       {item.name}
     </Text>
-  </TouchableOpacity>
+  </Pressable>
 );
 
 export default function TopServices() {

@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import "../../global.css";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "react-native";
+import Toast from "react-native-toast-message";
 import {
   Poppins_400Regular,
   Poppins_500Medium,
@@ -39,6 +40,7 @@ export default function RootLayout() {
     <SafeAreaView className="flex-1 bg-[#F9FAFB]">
       <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
       <Stack screenOptions={{ headerShown: false }} />
+      <Toast />
     </SafeAreaView>
   );
 }

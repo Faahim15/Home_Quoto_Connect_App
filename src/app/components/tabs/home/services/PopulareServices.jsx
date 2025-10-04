@@ -17,6 +17,12 @@ const cardWidth = (screenWidth - horizontalMargin - cardGap * 2) / 3.1;
 const ServiceItem = ({ item }) => {
   return (
     <TouchableOpacity
+      onPress={() =>
+        router.push({
+          pathname: "/services/specificServices",
+          params: { serviceId: item.id },
+        })
+      }
       style={[{ width: cardWidth, height: verticalScale(110) }]}
       className="bg-white  mr-[1%] border rounded-lg border-[#D4E0EB] items-center justify-center "
     >
