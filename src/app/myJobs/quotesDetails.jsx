@@ -6,6 +6,7 @@ import BotttomButtons from "../components/shared/services/buttons/BottomButtons"
 import { router, useLocalSearchParams } from "expo-router";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import QuoteReqDetails from "../components/tabs/myJobs/QuoteReqDetails";
+import Toast from "react-native-toast-message";
 export default function QuoteDetails() {
   const { serviceId, quoteReq } = useLocalSearchParams();
   const quoteReqst = quoteReq === "true";
@@ -28,7 +29,17 @@ export default function QuoteDetails() {
         ]}
       >
         <BotttomButtons
-          onPress={() => router.back()}
+          onPress={() => {
+            // Show success toast
+            Toast.show({
+              type: "info",
+              text1: "Request Declined",
+              text2: "The provider has been notified of your decision",
+              position: "top",
+              visibilityTime: 3000,
+            });
+            router.back();
+          }}
           backgroundColor="#fff"
           color="#EF4444"
           borderColor="#EF4444"

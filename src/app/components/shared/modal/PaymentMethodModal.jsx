@@ -11,7 +11,7 @@ const PaymentMethodModal = ({ visible, onClose }) => {
     if (showModal) {
       const timer = setTimeout(() => {
         router.replace("/shared/invoice");
-      }, 3000);
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [showModal]);
