@@ -102,7 +102,7 @@ const ServiceItem = ({ item }) => {
               onPress={() =>
                 router.push({
                   pathname: "myJobs/quotesDetails",
-                  params: { serviceId: item.id },
+                  params: { serviceId: item.id, quoteReq: true },
                 })
               }
               style={{ width: scale(120), height: verticalScale(30) }}

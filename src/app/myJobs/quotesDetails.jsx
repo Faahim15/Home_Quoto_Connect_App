@@ -7,7 +7,8 @@ import { router, useLocalSearchParams } from "expo-router";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import QuoteReqDetails from "../components/tabs/myJobs/QuoteReqDetails";
 export default function QuoteDetails() {
-  const { serviceId } = useLocalSearchParams();
+  const { serviceId, quoteReq } = useLocalSearchParams();
+  const quoteReqst = quoteReq === "true";
 
   const item = QuoteReqData.find((s) => s.id.toString() === serviceId);
 
@@ -17,7 +18,7 @@ export default function QuoteDetails() {
         <CustomTitle title="Quote Details" />
       </View>
       <ScrollView>
-        <QuoteReqDetails item={item} />
+        <QuoteReqDetails quoteReq={quoteReqst} item={item} />
       </ScrollView>
       <View
         className="flex-row gap-[6%] h-[14%]  border border-[#D8DCE0] justify-center items-center "

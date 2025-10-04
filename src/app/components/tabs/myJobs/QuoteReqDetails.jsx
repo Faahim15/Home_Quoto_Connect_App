@@ -10,7 +10,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 import UpdatedOffer from "./UpdatedOffer";
-export default function QuoteReqDetails({ item, showStatus = false }) {
+export default function QuoteReqDetails({ item, quoteReq }) {
   const serviceColors = {
     "TV repair and Installation": "bg-[#319FCA]",
     "AC Repair and Maintenance": "bg-[#FF6B6B]",
@@ -111,21 +111,24 @@ export default function QuoteReqDetails({ item, showStatus = false }) {
           <View>
             {/* Job Status */}
 
-            {!item.sentQuote && (
-              <View className=" mt-[5%]">
-                <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
-                  Job Status
+            <View className=" mt-[5%]">
+              <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
+                Job Status
+              </Text>
+              {quoteReq ? (
+                <Text className="font-poppins-400regular mt-[10%] text-center text-base text-[#F59E0B] ">
+                  Pending
                 </Text>
-
+              ) : (
                 <Text
                   className={`font-poppins-400regular mt-[10%] text-center text-base ${item.status === "In Progress" ? "text-[#1A73E8]" : item.status === "Completed" ? "text-[#00BFA5]" : "text-[#D32F2F]"} `}
                 >
                   {item.status}
                 </Text>
-              </View>
-            )}
+              )}
+            </View>
 
-            {item.sentQuote && <UpdatedOffer />}
+            {!quoteReq && item.sentQuote && <UpdatedOffer />}
 
             {/* Appointment */}
             <View className="mt-[5%]">
