@@ -38,7 +38,7 @@ export default function UpdateQuoteScreen() {
         {/* Info Text */}
         <View className="flex-row px-[4%] items-center mb-[2%]">
           <Ionicons name="bulb-outline" size={18} color="#f59e0b" />
-          <Text className="font-poppins-400regular  text-justify text-xs text-[#1F2937] ml-[2%]">
+          <Text className="font-poppins-400regular  text-justify w-[90%] text-xs text-[#1F2937] ml-[2%]">
             Submitting this quote will cost 5 credits. Your current balance is
             25 credits.
           </Text>
