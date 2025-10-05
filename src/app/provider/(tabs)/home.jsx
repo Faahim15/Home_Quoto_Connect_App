@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View, ScrollView } from "react-native";
+import { View, ScrollView } from "react-native";
 import HomeTopBar from "../../components/tabs/home/HomeTopBar";
 import { useState, useEffect } from "react";
 import FilterModal from "../../components/provider/home/FilteringModal";
@@ -6,7 +6,7 @@ import ShowAllServiceCards from "../../components/tabs/home/services/provider/sh
 import SearchBar from "../../components/tabs/home/SearchBar";
 import JobsHeader from "../../components/provider/home/JobsHeader";
 import { verticalScale } from "../../components/adaptive/Adaptiveness";
-import { ServiceQuoteModal } from "../../components/shared/modal/ServiceQuoteModal";
+import ServiceQuoteModal from "../../components/shared/modal/ServiceQuoteModal";
 export default function ContractorHomeScreen() {
   const [showModal, setShowModal] = useState(false);
   const [showQuoteModal, setShowQuoteModal] = useState(false);
