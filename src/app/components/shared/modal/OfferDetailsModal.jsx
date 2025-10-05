@@ -68,7 +68,7 @@ const OfferDetailsModal = ({
           </View>
 
           {/* Action Buttons */}
-          <UpdatedOffer />
+          <UpdatedOffer onApprove={onApprove} onDecline={onDecline} />
         </View>
       </View>
     </Modal>

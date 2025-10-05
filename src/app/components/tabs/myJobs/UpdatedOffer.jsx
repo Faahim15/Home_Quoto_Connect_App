@@ -1,7 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import { useState } from "react";
-
-export default function UpdatedOffer() {
+import Toast from "react-native-toast-message";
+export default function UpdatedOffer({ onApprove, onDecline }) {
   const [offerStatus, setOfferStatus] = useState(null); // null, 'approved', 'declined'
   const [isLoading, setIsLoading] = useState(false);
 
@@ -10,12 +10,22 @@ export default function UpdatedOffer() {
 
     setIsLoading(true);
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 500));
       setOfferStatus("approved");
+      onApprove();
+
+      Toast.show({
+        type: "success",
+        text1: "Offer Approved",
+        text2: "You've successfully approved the updated offer.",
+      });
     } catch (error) {
       console.error("Failed to approve offer:", error);
-      // Handle error state here
+      Toast.show({
+        type: "error",
+        text1: "Approval Failed",
+        text2: "Something went wrong while approving the offer.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -26,12 +36,22 @@ export default function UpdatedOffer() {
 
     setIsLoading(true);
     try {
-      // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 500));
       setOfferStatus("declined");
+      onDecline();
+
+      Toast.show({
+        type: "info",
+        text1: "Offer Declined",
+        text2: "You've declined the updated offer.",
+      });
     } catch (error) {
       console.error("Failed to decline offer:", error);
-      // Handle error state here
+      Toast.show({
+        type: "error",
+        text1: "Decline Failed",
+        text2: "Something went wrong while declining the offer.",
+      });
     } finally {
       setIsLoading(false);
     }
