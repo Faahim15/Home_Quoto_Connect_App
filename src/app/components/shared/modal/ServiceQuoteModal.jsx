@@ -12,7 +12,7 @@ import { useState, useEffect, useRef } from "react";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import MapButton from "../../provider/map/MapButton";
 import { router } from "expo-router";
-export function ServiceQuoteModal({ visible, onClose }) {
+export default function ServiceQuoteModal({ visible, onClose }) {
   const slideAnim = useRef(new Animated.Value(300)).current;
 
   useEffect(() => {

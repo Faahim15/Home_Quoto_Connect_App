@@ -52,11 +52,8 @@ export default function UpdatedOffer() {
   };
 
   return (
-    <View className="mt-[3%] justify-center items-center">
-      <Text className="font-poppins-400regular text-xs text-[#F59E0B]">
-        Sent an updated quote!
-      </Text>
-      <View className="mt-[3%] flex-row gap-[4%]">
+    <View className=" justify-center items-center">
+      <View className=" flex-row gap-[4%]">
         <Pressable
           onPress={handleDecline}
           disabled={isButtonDisabled("decline")}
@@ -64,7 +61,7 @@ export default function UpdatedOffer() {
             width: "35%",
             opacity: isButtonDisabled("decline") ? 0.5 : 1,
           }}
-          className="px-[3%] py-[2%] rounded-md border border-[#EF4444]"
+          className="px-[3%] py-[3%] rounded-md border border-[#EF4444]"
           accessibilityRole="button"
           accessibilityLabel="Decline the updated offer"
           accessibilityState={{
@@ -91,7 +88,7 @@ export default function UpdatedOffer() {
             backgroundColor:
               offerStatus === "approved" ? "#F59E0B" : "transparent",
           }}
-          className="px-[3%] py-[2%] rounded-md border border-[#F59E0B]"
+          className="px-[3%] py-[3%] rounded-md border border-[#F59E0B]"
           accessibilityRole="button"
           accessibilityLabel="Approve the updated offer"
           accessibilityState={{

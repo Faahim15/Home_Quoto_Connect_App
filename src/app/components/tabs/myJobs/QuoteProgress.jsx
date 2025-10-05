@@ -10,6 +10,8 @@ import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
 import QuoteReqData from "../../data/jobs/QuotesData";
 import { router } from "expo-router";
+import { useState } from "react";
+import OfferDetailsModal from "../../shared/modal/OfferDetailsModal";
 // Updated ServiceItem component with navigation
 const ServiceItem = ({ item }) => {
   const serviceColors = {
@@ -135,12 +137,12 @@ const ServiceItem = ({ item }) => {
                 </TouchableOpacity>
               )}
               <TouchableOpacity
-                onPress={() =>
+                onPress={() => {
                   router.push({
                     pathname: "/myJobs/progressQuote",
                     params: { serviceId: item.id },
-                  })
-                }
+                  });
+                }}
                 style={{ width: scale(120), height: verticalScale(30) }}
                 className={` justify-center items-center  mt-[3%] rounded-md py-[2%] px-[2%] ${serviceColors[item?.serviceType] || "bg-[#0054A5]"} `}
               >

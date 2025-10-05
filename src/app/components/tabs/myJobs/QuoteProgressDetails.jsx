@@ -111,21 +111,19 @@ export default function QuoteProgressDetails({ item }) {
           <View>
             {/* Job Status */}
 
-            {!item.sentQuote && (
-              <View className=" mt-[5%]">
-                <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
-                  Job Status
-                </Text>
+            <View className=" mt-[5%]">
+              <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
+                Job Status
+              </Text>
 
-                <Text
-                  className={`font-poppins-400regular mt-[10%] text-center text-base ${item.status === "In Progress" ? "text-[#1A73E8]" : item.status === "Completed" ? "text-[#00BFA5]" : "text-[#D32F2F]"} `}
-                >
-                  {item.status}
-                </Text>
-              </View>
-            )}
+              <Text
+                className={`font-poppins-400regular mt-[10%] text-center text-base ${item.status === "In Progress" ? "text-[#1A73E8]" : item.status === "Completed" ? "text-[#00BFA5]" : "text-[#D32F2F]"} `}
+              >
+                {item.status}
+              </Text>
+            </View>
 
-            {item.sentQuote && <UpdatedOffer />}
+            {/* {item.sentQuote && <UpdatedOffer />} */}
 
             {/* Appointment */}
             <View className="mt-[5%]">

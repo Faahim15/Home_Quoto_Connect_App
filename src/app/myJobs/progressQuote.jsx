@@ -10,14 +10,32 @@ import { useState } from "react";
 import Feedback from "../components/tabs/myJobs/Feedback";
 import BotttomButtons from "../components/shared/services/buttons/BottomButtons";
 import CancelModal from "../components/shared/modal/CancelModal";
+import OfferDetailsModal from "../components/shared/modal/OfferDetailsModal";
 export default function ProgressQuote() {
   const { serviceId } = useLocalSearchParams();
   const [showPayment, setShowPayment] = useState(false);
+  const [modalVisible, setModalVisible] = useState(true);
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const appointmentData = {
     service: "TV repair",
     provider: "Jackson",
     price: "320",
+  };
+  const offerData = {
+    previousPrice: 150.0,
+    offerPrice: 120.0,
+    totalPrice: 120.0,
+    discount: 30.0,
+  };
+  const handleDecline = () => {
+    setModalVisible(false);
+    // Add your decline logic here
+    console.log("Offer declined");
+  };
+  const handleApprove = () => {
+    setModalVisible(false);
+    // Add your approve logic here
+    console.log("Offer approved");
   };
   const handleCancelConfirm = (reason) => {
     console.log("Cancellation reason:", reason);
@@ -77,6 +95,15 @@ export default function ProgressQuote() {
         visible={showPayment}
         onClose={() => setShowPayment(false)}
       />
+      {item.sentQuote && (
+        <OfferDetailsModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          offerData={offerData}
+          onDecline={handleDecline}
+          onApprove={handleApprove}
+        />
+      )}
     </View>
   );
 }
