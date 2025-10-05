@@ -46,7 +46,7 @@ export default function ServiceTypeDropdown() {
         onPress={() => setIsOpen(true)}
       >
         <Text
-          className={`font-poppins-500medium text-xs  ${selectedService ? "text-gray-800" : "text-[#175994]"}`}
+          className={`font-poppins-500medium text-xs  ${selectedService ? "text-gray-800" : "text-gray-500"}`}
         >
           {selectedService ? selectedService.name : "Select a service"}
         </Text>

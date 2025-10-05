@@ -9,7 +9,7 @@ import BackgroundCheckScreen from "../../components/provider/auth/BackgroundChec
 export default function Validation() {
   return (
     <ScrollView>
-      <View className="flex-1 bg-[#F9F9F9]">
+      <View className="flex-1 bg-[#f9f9f9]">
         <View className="flex-1 px-[6%] ">
           <CustomTitle />
           <View className="flex-1 justify-center items-center">
@@ -21,13 +21,15 @@ export default function Validation() {
                 style={{ width: scale(200), height: verticalScale(150) }}
               />
             </View>
-            <Text className="font-poppins-bold  text-center text-2xl  text-[#111827] ">
-              Verification Successful
-            </Text>
-            <Text className="font-poppins-400regular text-center pt-[2%]  text-base text-[#4B5563] ">
-              Congratulations! Your profile has been verified and you are now
-              ready to accept jobs.
-            </Text>
+            <View>
+              <Text className="font-poppins-bold  text-center text-2xl  text-[#111827] ">
+                Verification Successful
+              </Text>
+              <Text className="font-poppins-400regular text-center pt-[2%]  text-base text-[#4B5563] ">
+                Congratulations! Your profile has been verified and you are now
+                ready to accept jobs.
+              </Text>
+            </View>
           </View>
         </View>
         {/* <View className="pb-[40%] mx-[6%]">

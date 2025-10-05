@@ -85,19 +85,25 @@ const ServiceCard = ({ item }) => {
   );
 };
 
-export default function ShowAllServiceCards() {
+export default function ShowAllServiceCards({ horizontal = true }) {
   return (
     <View className={`mx-[6%] mt-[2%] justify-center items-start`}>
       <FlatList
         data={servicesData}
         renderItem={({ item }) => <ServiceCard item={item} />}
         keyExtractor={(item) => item.id}
-        numColumns={1}
+        // numColumns={1}
+        // showsVerticalScrollIndicator={false}
+        horizontal={horizontal}
+        showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: verticalScale(100),
-          rowGap: verticalScale(12),
-        }}
+        contentContainerStyle={
+          horizontal
+            ? {
+                paddingRight: verticalScale(100),
+              }
+            : { rowGap: verticalScale(12), paddingBottom: verticalScale(80) }
+        }
         // Ensures proper snapping alignment
       />
     </View>

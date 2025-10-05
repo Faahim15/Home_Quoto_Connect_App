@@ -1,35 +1,57 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View, ScrollView } from "react-native";
 import HomeTopBar from "../../components/tabs/home/HomeTopBar";
-import ServiceCards from "../../components/shared/services/ServiceCards";
-import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FilterModal from "../../components/provider/home/FilteringModal";
-import ViewAllServiceCards from "../../components/tabs/home/services/ViewAllServices";
 import ShowAllServiceCards from "../../components/tabs/home/services/provider/showAllServices";
+import SearchBar from "../../components/tabs/home/SearchBar";
+import JobsHeader from "../../components/provider/home/JobsHeader";
+import { verticalScale } from "../../components/adaptive/Adaptiveness";
+import { ServiceQuoteModal } from "../../components/shared/modal/ServiceQuoteModal";
 export default function ContractorHomeScreen() {
   const [showModal, setShowModal] = useState(false);
+  const [showQuoteModal, setShowQuoteModal] = useState(false);
   function modalCloseHanlder() {
     setShowModal(false);
   }
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowQuoteModal(true);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
   return (
-    <View className="flex-1 bg-white">
-      <View>
-        <HomeTopBar />
-      </View>
-      <View className="flex-row border-b border-[#f9f9f9]  justify-between px-[7%] mt-[3%] ">
-        <Text className="font-poppins-semiBold text-base text-[#6B7280] ">
-          Active Jobs
-        </Text>
-        <TouchableOpacity onPress={() => setShowModal(true)}>
-          <Ionicons name="options-outline" size={24} color="#6B7280" />
-        </TouchableOpacity>
-      </View>
-      <View className="pb-[3%]">
-        <ShowAllServiceCards />
-      </View>
-      <View>
+    <ScrollView
+      contentContainerStyle={{
+        paddingBottom: verticalScale(40),
+        backgroundColor: "#f9f9f9",
+      }}
+      showsVerticalScrollIndicator={false}
+    >
+      <View className="flex-1 bg-[#f9f9f9]">
+        <View>
+          <HomeTopBar />
+        </View>
+        <SearchBar onPress={() => setShowModal(true)} />
+
+        <JobsHeader title="Todays Jobs" />
+        <View className="pb-[0%]">
+          <ShowAllServiceCards />
+        </View>
+
+        {/* Active jobs */}
+
+        <JobsHeader title="Active Jobs" />
+        <View className="pb-[0%]">
+          <ShowAllServiceCards />
+        </View>
+
         <FilterModal visible={showModal} onClose={modalCloseHanlder} />
+        <ServiceQuoteModal
+          visible={showQuoteModal}
+          onClose={() => setShowQuoteModal(false)}
+        />
       </View>
-    </View>
+    </ScrollView>
   );
 }

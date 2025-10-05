@@ -18,7 +18,7 @@ export default function UserProfileScreen() {
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleYes = () => {
-    router.replace("/signIn");
+    router.replace("/onboarding/loginChoice");
     setModalVisible(false);
   };
 

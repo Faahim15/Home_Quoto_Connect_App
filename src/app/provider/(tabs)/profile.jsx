@@ -21,12 +21,12 @@ import {
 export default function ContractorProfileScreen() {
   function logoutHanlder() {
     setModalVisible(true);
-    router.replace("/onboarding/loginChoice");
   }
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleYes = () => {
     setModalVisible(false);
+    router.replace("/onboarding/loginChoice");
     // navigation.navigate("SignInScreen", { clientScreen: false });
   };
 

@@ -16,6 +16,7 @@ import ApplyFilterButton from "../../tabs/home/FilterButton";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import CanadianLocationDropdown from "./CanLocationDrop";
+import ServiceTypeDropdown from "../../tabs/home/modal/ServiceTypeDropdown";
 
 export default function FilterModal({ visible, onClose }) {
   const [location, setLocation] = useState(null);
@@ -48,7 +49,8 @@ export default function FilterModal({ visible, onClose }) {
                   bounces={false}
                 >
                   <View className="px-[6%] mt-[3%]">
-                    <ServiceTypes />
+                    {/* <ServiceTypes /> */}
+                    <ServiceTypeDropdown />
                     {/* Close Icon */}
                     <TouchableOpacity
                       onPress={onClose}
