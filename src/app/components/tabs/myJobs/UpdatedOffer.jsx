@@ -41,7 +41,7 @@ export default function UpdatedOffer({ onApprove, onDecline }) {
       onDecline();
 
       Toast.show({
-        type: "info",
+        type: "error",
         text1: "Offer Declined",
         text2: "You've declined the updated offer.",
       });

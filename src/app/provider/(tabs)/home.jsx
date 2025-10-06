@@ -42,7 +42,7 @@ export default function ContractorHomeScreen() {
         {/* Active jobs */}
 
         <JobsHeader title="Active Jobs" />
-        <View className="pb-[0%]">
+        <View className="">
           <ShowAllServiceCards />
         </View>
 

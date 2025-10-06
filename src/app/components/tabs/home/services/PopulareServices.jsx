@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   Dimensions,
+  Pressable,
 } from "react-native";
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
 import popularSeviceData from "../../../data/shared/PopularServiceData";
@@ -16,12 +17,13 @@ const cardWidth = (screenWidth - horizontalMargin - cardGap * 2) / 3.1;
 
 const ServiceItem = ({ item }) => {
   return (
-    <TouchableOpacity
-      onPress={() =>
-        router.push({
-          pathname: "/services/specificServices",
-          params: { serviceId: item.id },
-        })
+    <Pressable
+      onPress={
+        () => {}
+        // router.push({
+        //   pathname: "/services/specificServices",
+        //   params: { serviceId: item.id },
+        // })
       }
       style={[{ width: cardWidth, height: verticalScale(110) }]}
       className="bg-white  mr-[1%] border rounded-lg border-[#D4E0EB] items-center justify-center "
@@ -35,7 +37,7 @@ const ServiceItem = ({ item }) => {
       <Text className="text-center mt-[2%] font-poppins-semiBold text-sm text-gray-800">
         {item.title}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

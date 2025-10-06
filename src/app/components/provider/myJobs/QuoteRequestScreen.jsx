@@ -8,7 +8,9 @@ import BotttomButtons from "../../shared/services/buttons/BottomButtons";
 import CustomButton from "../../shared/services/buttons/ServiceButton";
 import serviceData from "../../data/provider/MyJobsData";
 import { router } from "expo-router";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
+import CancelModal from "../../../components/shared/modal/CancelModal";
+import Toast from "react-native-toast-message";
 const ServiceCard = ({ item }) => {
   const handlePress = useCallback(() => {
     router.push({
@@ -16,6 +18,15 @@ const ServiceCard = ({ item }) => {
       params: { serviceId: item.id },
     });
   }, [item]);
+  const [cancelModalVisible, setCancelModalVisible] = useState(false);
+  const handleCancelConfirm = (reason) => {
+    console.log("Cancellation reason:", reason);
+  };
+  const appointmentData = {
+    service: "TV repair",
+    provider: "Jackson",
+    price: "320",
+  };
 
   return (
     <TouchableOpacity
@@ -91,16 +102,28 @@ const ServiceCard = ({ item }) => {
 
       <View className="flex-row  gap-[2%] mt-[5%] ">
         <BotttomButtons
-          onPress={() => router.replace("/provider/myJobs")}
+          onPress={() => {
+            setCancelModalVisible(true);
+          }}
           width={145}
           backgroundColor="#fff"
           color="#EF4444"
           borderColor="#EF4444"
-          title="Decline"
+          title="Cancel"
         />
         {!item.requiresPersonalizedQuote ? (
           <BotttomButtons
-            onPress={() => router.replace("/provider/myJobs")}
+            onPress={() => {
+              Toast.show({
+                type: "success",
+                text1: "Offer Accepted",
+                text2: "You've successfully accepted the offer.",
+                position: "top",
+                topOffset: 60,
+                visibilityTime: 3000,
+              });
+              router.replace("/provider/home");
+            }}
             width={145}
             backgroundColor="#fff"
             color="#175994"
@@ -126,6 +149,12 @@ const ServiceCard = ({ item }) => {
           />
         </View>
       )}
+      <CancelModal
+        visible={cancelModalVisible}
+        onClose={() => setCancelModalVisible(false)}
+        onConfirm={handleCancelConfirm}
+        appointmentDetails={appointmentData}
+      />
     </TouchableOpacity>
   );
 };

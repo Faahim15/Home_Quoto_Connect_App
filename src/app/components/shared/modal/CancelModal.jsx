@@ -48,7 +48,7 @@ export default function CancelModal({
     setSelectedReason(null);
     setOtherReason("");
     onClose();
-    router.replace("/myJobs");
+    router.back();
   };
 
   const handleClose = () => {

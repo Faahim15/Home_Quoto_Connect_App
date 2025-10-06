@@ -10,6 +10,7 @@ const OfferDetailsModal = ({
   onDecline,
   onApprove,
 }) => {
+  const numericPrice = parseFloat(offerData.price.replace("$", ""));
   return (
     <Modal
       animationType="fade"
@@ -36,8 +37,8 @@ const OfferDetailsModal = ({
               <Text className="font-poppins-semiBold text-sm text-gray-600">
                 Previous Price:
               </Text>
-              <Text className="text-xl text-gray-700 font-poppins-semiBold">
-                ${offerData?.previousPrice?.toFixed(2) || "0.00"}
+              <Text className="text-lg text-gray-700 font-poppins-semiBold">
+                ${numericPrice.toFixed(2)}
               </Text>
             </View>
 
@@ -46,8 +47,9 @@ const OfferDetailsModal = ({
               <Text className="font-poppins-semiBold text-base text-[#F59E0B]">
                 Offer Price:
               </Text>
-              <Text className="text-xl text-[#F59E0B] font-poppins-bold">
-                ${offerData?.offerPrice?.toFixed(2) || "0.00"}
+              <Text className="text-lg text-[#F59E0B] font-poppins-bold">
+                {/* ${offerData?.offerPrice?.toFixed(2) || "120.00"} */}
+                $120.00
               </Text>
             </View>
 
@@ -60,8 +62,8 @@ const OfferDetailsModal = ({
                 Total Price:
               </Text>
               <View className="bg-green-100 px-[4%] py-[1.5%] rounded-full">
-                <Text className="text-base font-poppins-bold text-green-600">
-                  $420.00
+                <Text className="text-lg font-poppins-bold text-green-600">
+                  ${(numericPrice + 120).toFixed(2)}
                 </Text>
               </View>
             </View>

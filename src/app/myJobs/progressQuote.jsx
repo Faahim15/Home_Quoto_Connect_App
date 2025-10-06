@@ -1,4 +1,4 @@
-import { Text, View, ScrollView } from "react-native";
+import { View, ScrollView } from "react-native";
 import { scale } from "../components/adaptive/Adaptiveness";
 import QuoteReqData from "../components/data/jobs/QuotesData";
 import XStyle from "../util/styles";
@@ -29,13 +29,9 @@ export default function ProgressQuote() {
   };
   const handleDecline = () => {
     setModalVisible(false);
-    // Add your decline logic here
-    console.log("Offer declined");
   };
   const handleApprove = () => {
     setModalVisible(false);
-    // Add your approve logic here
-    console.log("Offer approved");
   };
   const handleCancelConfirm = (reason) => {
     console.log("Cancellation reason:", reason);
@@ -99,7 +95,7 @@ export default function ProgressQuote() {
         <OfferDetailsModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
-          offerData={offerData}
+          offerData={item}
           onDecline={handleDecline}
           onApprove={handleApprove}
         />

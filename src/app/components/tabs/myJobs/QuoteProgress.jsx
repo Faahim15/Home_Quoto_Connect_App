@@ -57,16 +57,11 @@ const ServiceItem = ({ item }) => {
         <View className="flex-row items-center gap-[4%]">
           {/* Profile Image */}
           <TouchableOpacity
-            onPress={
-              () =>
-                router.push({
-                  pathname: "/myJobs/serviceProfile",
-                  params: { showButtons: false, serviceId: item.id },
-                })
-              //   navigation.navigate("SelectedProviderDetailsScreen", {
-              //     provider: item,
-              //     showButtons: false,
-              //   })
+            onPress={() =>
+              router.push({
+                pathname: "/myJobs/serviceProfile",
+                params: { showButtons: false, serviceId: item.id },
+              })
             }
             className="w-16 h-16 mb-[20%] rounded-full bg-blue-500 items-center justify-center"
           >
