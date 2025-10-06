@@ -1,7 +1,7 @@
 import { View, Image, Text, TouchableOpacity, FlatList } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
-import servicesData from "../../data/shared/ServicesData";
+import { PaidData } from "../../data/jobs/QuotesData";
 import serviceColors from "../../../util/colors";
 import PaymentMethodModal from "../../shared/modal/PaymentMethodModal";
 import { useState } from "react";
@@ -126,7 +126,7 @@ export default function UnpaidQuote() {
   return (
     <View className="mb-[18%]">
       <FlatList
-        data={servicesData}
+        data={PaidData}
         renderItem={renderServiceItem}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}

@@ -18,14 +18,6 @@ const ServiceItem = ({ item }) => {
     "Electrical Repair": "bg-[#8B5CF6]",
   };
 
-  const handleServicePress = () => {
-    // Navigate to details screen with service data
-    // navigation.navigate("JobProviderInfoScreen", {
-    //   serviceData: item,
-    //   completeJob: true,
-    // });
-  };
-
   return (
     <View className="mx-[4%] mb-[4%]">
       {/* Service Type Banner - Made clickable */}

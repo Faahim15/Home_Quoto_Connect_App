@@ -4,7 +4,8 @@ import Services from "./Jobs";
 import QuoteProgressScreen from "./screens/QuoteProgressScreen";
 import QuoteUnpaidScreen from "./screens/QuoteUnpaidScreen";
 import AllQuoteScreen from "./screens/AllQuoteScreen";
-import { verticalScale } from "../../adaptive/Adaptiveness";
+import CompletedQuote from "./screens/CompletedQuote";
+import CancelledQuote from "./screens/CancelledQuote";
 
 const ServiceCard = () => {
   const [activeTab, setActiveTab] = useState("My Jobs");
@@ -12,7 +13,7 @@ const ServiceCard = () => {
   const tabs = [
     "My Jobs",
     "Quotes",
-    "Progress",
+    "In Progress",
     "Unpaid",
     "Completed",
     "Cancelled",
@@ -26,10 +27,14 @@ const ServiceCard = () => {
     switch (activeTab) {
       case "My Jobs":
         return <AllQuoteScreen />;
-      case "Progress":
+      case "In Progress":
         return <QuoteProgressScreen />;
       case "Unpaid":
         return <QuoteUnpaidScreen />;
+      case "Completed":
+        return <CompletedQuote />;
+      case "Cancelled":
+        return <CancelledQuote />;
       default:
         return <Services />;
     }

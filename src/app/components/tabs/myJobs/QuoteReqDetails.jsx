@@ -54,13 +54,7 @@ export default function QuoteReqDetails({ item, quoteReq }) {
           <View className="flex-row items-center gap-[4%]">
             {/* Profile Image */}
             <TouchableOpacity
-              onPress={
-                () => {}
-                //   navigation.navigate("SelectedProviderDetailsScreen", {
-                //     showButtons: false,
-                //     provider: item,
-                //   })
-              }
+              onPress={() => {}}
               className="w-16 h-16 mb-[4%] rounded-full bg-blue-500 items-center justify-center"
             >
               <Image

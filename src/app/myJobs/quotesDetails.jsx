@@ -30,9 +30,8 @@ export default function QuoteDetails() {
       >
         <BotttomButtons
           onPress={() => {
-            // Show success toast
             Toast.show({
-              type: "info",
+              type: "error",
               text1: "Request Declined",
               text2: "The provider has been notified of your decision",
               position: "top",
@@ -46,7 +45,14 @@ export default function QuoteDetails() {
           title="Decline"
         />
         <BotttomButtons
-          onPress={() => router.back()}
+          onPress={() => {
+            Toast.show({
+              type: "success",
+              text1: "Job Accepted",
+              text2: "You've successfully accepted the job.",
+            });
+            router.back();
+          }}
           backgroundColor="#18649F"
           color="#fff"
           borderColor="#18649F"

@@ -99,12 +99,6 @@ export default function QuoteProgressDetails({ item }) {
                     : "Request a personalized quote"}
                 </Text>
               </View>
-
-              {/* Buttons */}
-              {/* <View className="flex-row mt-[3%] gap-[3%] justify-evenly ">
-              <ContactButton name="call-outline" title="Call" />
-              <ContactButton name="chatbubble-outline" title="Message" />
-            </View> */}
             </View>
           </View>
 
