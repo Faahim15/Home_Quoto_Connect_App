@@ -35,7 +35,7 @@ export default function LicenceUpload() {
         </View>
       </View>
       <CustomButton
-        onPress={() => router.push("/provider/auth/validation")}
+        onPress={() => router.push("/provider/auth/criminalCheck")}
         title="Continue"
       />
     </View>

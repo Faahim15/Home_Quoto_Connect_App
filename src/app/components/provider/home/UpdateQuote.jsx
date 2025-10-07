@@ -13,12 +13,7 @@ export default function QuoteDetails({ item }) {
     "Electrical Repair": "bg-[#8B5CF6]",
   };
 
-  function handleJobDetails() {
-    // navigation.navigate("JobProviderInfoScreen", {
-    //   serviceData: item,
-    //   showButtons: false,
-    // });
-  }
+  function handleJobDetails() {}
 
   return (
     <View className="mx-[4%] mb-[4%]">
@@ -67,22 +62,6 @@ export default function QuoteDetails({ item }) {
             <Text className="font-poppins-500medium text-xl text-gray-800 mb-1">
               {item.providerName}
             </Text>
-
-            {/* Rating */}
-            {/* <View className="flex-row items-center mb-[2%]">
-              <Text className="text-[#F59E0B] font-poppins-400regular text-xs mr-1">
-                ★ {item.rating}
-              </Text>
-              <Text className="font-poppins-400regular text-[#18649F] text-xs">
-                ({item.reviews} Reviews)
-              </Text>
-            </View> */}
-
-            {/* Buttons */}
-            {/* <View className="flex-row mt-[3%] gap-[3%] justify-evenly ">
-              <ContactButton name="call-outline" title="Call" />
-              <ContactButton name="chatbubble-outline" title="Message" />
-            </View> */}
           </View>
         </View>
         <View>

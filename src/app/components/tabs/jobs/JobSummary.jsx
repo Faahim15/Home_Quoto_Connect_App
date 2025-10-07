@@ -113,11 +113,13 @@ export default function JobSummary({
             Price
           </Text>
           <Text
-            className={`font-poppins-semiBold text-sm ${quoteInfo.requiresPersonalizedQuote ? "text-[#F59E0B]" : "text-[#175994]"} `}
+            className={`font-poppins-semiBold text-sm ${quoteInfo?.requiresPersonalizedQuote ? "text-[#F59E0B]" : "text-[#175994]"} `}
           >
-            {quoteInfo.requiresPersonalizedQuote
-              ? "Request a personlized quote"
-              : quoteInfo.price}
+            {quoteInfo
+              ? quoteInfo.requiresPersonalizedQuote
+                ? "Request a personlized quote"
+                : quoteInfo.price
+              : "$320"}
           </Text>
         </View>
         {showPaymentCheckList && quoteInfo.status === "In Progress" && (

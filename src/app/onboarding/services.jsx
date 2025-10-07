@@ -28,7 +28,7 @@ export default function FindServiceScreen() {
         subtitle="From plumbing and electrical to repairs and renovations - everything you need, in one place."
       />
       <CustomButton
-        onPress={() => router.push("/onboarding/home")}
+        onPress={() => router.push("/onboarding/loginChoice")}
         title="Next"
       />
       <CustomButton

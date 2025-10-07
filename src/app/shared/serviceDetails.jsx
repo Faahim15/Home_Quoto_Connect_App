@@ -1,7 +1,6 @@
 import { ScrollView, Text, View } from "react-native";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import ProviderInfo from "../components/shared/services/JobDetails";
-import ActionButton from "../components/shared/services/buttons/ActionButton";
 import XStyle from "../util/styles";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import BotttomButtons from "../components/shared/services/buttons/BottomButtons";

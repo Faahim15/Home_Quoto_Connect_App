@@ -28,7 +28,7 @@ export default function WelcomeToQuotoScreen() {
       />
       <CustomButton
         title="Provider"
-        onPress={() => router.push("/provider/auth/signIn")}
+        onPress={() => router.push("/provider/auth/signUp")}
         backgroundColor="#fff"
         color="#175994"
         marginTop={16}

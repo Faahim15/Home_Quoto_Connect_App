@@ -28,7 +28,7 @@ export default function BackgroundCheckScreen() {
 
         {/* Return to Dashboard Button */}
         <Pressable
-          className="bg-[#175994] items-center justify-center rounded-lg mb-[8%]"
+          className="bg-[#175994] items-center mx-[2%] justify-center rounded-lg mb-[8%]"
           activeOpacity={0.8}
           style={{ width: scale(311), height: verticalScale(52) }}
           onPress={() => router.replace("provider/home")}

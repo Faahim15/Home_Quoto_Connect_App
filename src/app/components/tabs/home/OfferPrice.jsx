@@ -1,10 +1,4 @@
-import {
-  Text,
-  View,
-  TextInput,
-  TouchableOpacity,
-  Pressable,
-} from "react-native";
+import { Text, View, TextInput, TouchableOpacity } from "react-native";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { verticalScale } from "../../adaptive/Adaptiveness";

@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import BotttomButtons from "../../components/shared/services/buttons/BottomButtons";
 import XStyle from "../../util/styles";
 import { scale } from "../../components/adaptive/Adaptiveness";
+import Toast from "react-native-toast-message";
 import { router } from "expo-router";
 
 export default function UpdateQuoteScreen() {
@@ -45,7 +46,7 @@ export default function UpdateQuoteScreen() {
         </View>
       </ScrollView>
       <View
-        className="flex-row gap-[6%] h-[14%]  border border-[#D8DCE0] justify-center items-center "
+        className="flex-row gap-[6%] h-[14%]   border border-[#D8DCE0] justify-center items-center "
         style={[
           XStyle.shadowBox,
           { borderTopRightRadius: scale(20), borderTopLeftRadius: scale(20) },
@@ -59,7 +60,16 @@ export default function UpdateQuoteScreen() {
           title="Cancel"
         />
         <BotttomButtons
-          onPress={() => router.replace("/provider/home")}
+          onPress={() => {
+            Toast.show({
+              type: "success",
+              text1: "Quote Updated Successfully ✅",
+              text2: "Your updated quote has been sent to the customer.",
+              position: "bottom",
+              visibilityTime: 2500,
+            });
+            router.replace("/provider/home");
+          }}
           backgroundColor="#2583B6"
           color="#fff"
           borderColor="#2583B6"
