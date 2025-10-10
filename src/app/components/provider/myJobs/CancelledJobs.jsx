@@ -105,9 +105,7 @@ const ServiceCard = ({ item }) => {
 
 export default function CancelledJobs() {
   return (
-    <View
-      className={`px-[2%]  justify-center items-start  bg-[#f9f9f9] mt-[2%]`}
-    >
+    <View className={` justify-center items-center  bg-[#f9f9f9] mt-[2%]`}>
       <FlatList
         data={cancelledJobData}
         renderItem={({ item }) => <ServiceCard item={item} />}

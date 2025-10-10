@@ -15,7 +15,7 @@ export default function CancelModal({
   visible,
   onClose,
   onConfirm,
-  appointmentDetails,
+  bookingDetails,
 }) {
   const [selectedReason, setSelectedReason] = useState(null);
   const [otherReason, setOtherReason] = useState("");
@@ -37,8 +37,8 @@ export default function CancelModal({
     // Show success toast
     Toast.show({
       type: "success",
-      text1: "Appointment Cancelled",
-      text2: "Your appointment has been successfully cancelled",
+      text1: "Booking Cancelled",
+      text2: "Your booking has been successfully cancelled",
       position: "top",
       topOffset: 60,
       visibilityTime: 3000,
@@ -70,7 +70,7 @@ export default function CancelModal({
           {/* Header */}
           <View className="flex-row justify-between items-center px-[6%] py-[5%] border-b border-gray-200">
             <Text className="text-xl font-poppins-bold text-gray-800">
-              Cancel Appointment
+              Cancel Booking
             </Text>
             <TouchableOpacity onPress={handleClose}>
               <Ionicons name="close" size={28} color="#666" />
@@ -85,25 +85,25 @@ export default function CancelModal({
             <View className="bg-red-50 border border-red-200 rounded-lg p-[4%] mb-[5%] flex-row">
               <Ionicons name="warning" size={22} color="#EF4444" />
               <Text className="text-red-600 font-poppins-400regular ml-[3%] flex-1 text-xs">
-                Are you sure you want to cancel this appointment? This action
-                cannot be undone.
+                Are you sure you want to cancel this booking? This action cannot
+                be undone.
               </Text>
             </View>
 
-            {/* Appointment Info (if provided) */}
-            {appointmentDetails && (
+            {/* booking Info (if provided) */}
+            {bookingDetails && (
               <View className="bg-gray-50 border border-gray-200 rounded-lg p-[4%] mb-[5%]">
                 <Text className="text-sm font-poppins-semiBold text-gray-800 mb-[2%]">
-                  Appointment Details:
+                  booking Details:
                 </Text>
                 <Text className="text-xs font-poppins-400regular text-gray-600">
-                  Service: {appointmentDetails.service || "N/A"}
+                  Service: {bookingDetails.service || "N/A"}
                 </Text>
                 <Text className="text-xs mt-[0.5%] font-poppins-400regular text-gray-600">
-                  Provider: {appointmentDetails.provider || "N/A"}
+                  Provider: {bookingDetails.provider || "N/A"}
                 </Text>
                 <Text className="text-xs mt-[0.5%] font-poppins-400regular text-gray-600">
-                  Price: ${appointmentDetails.price || "0"}
+                  Price: ${bookingDetails.price || "0"}
                 </Text>
               </View>
             )}
@@ -176,7 +176,7 @@ export default function CancelModal({
                 </Text>
               </View>
               <Text className="text-blue-600 font-poppins-400regular text-xs">
-                Cancellations made more than 24 hours before the appointment are
+                Cancellations made more than 24 hours before the booking are
                 eligible for a full refund. Late cancellations may incur a fee.
               </Text>
             </View>
@@ -207,7 +207,7 @@ export default function CancelModal({
               className="bg-white border border-gray-300 rounded-lg py-[4%]"
             >
               <Text className="text-gray-700 text-center font-poppins-semiBold text-base">
-                Keep Appointment
+                Keep Booking
               </Text>
             </TouchableOpacity>
           </View>

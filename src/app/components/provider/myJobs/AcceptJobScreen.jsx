@@ -9,7 +9,7 @@ const ServiceCard = ({ item }) => {
   const handlePress = useCallback(() => {
     router.push({
       pathname: "/provider/myJobs/acceptJobs",
-      params: { serviceId: item.id },
+      params: { serviceId: item.id, showButtons: "yes" },
     });
   }, [item]);
 
@@ -95,7 +95,7 @@ const ServiceCard = ({ item }) => {
 
       {/* Job and payment confirmation section */}
 
-      {item.status === "In Progress" && (
+      {item.status === "Completed" && (
         <View className="py-[2%]  bg-[#F5F5F5] rounded-lg ">
           <PaymentChecklist />
         </View>
@@ -106,9 +106,7 @@ const ServiceCard = ({ item }) => {
 
 export default function AcceptJobsScreen() {
   return (
-    <View
-      className={`px-[2%]  justify-center items-start  bg-[#f9f9f9] mt-[2%]`}
-    >
+    <View className={`  justify-center items-center  bg-[#f9f9f9] mt-[4%]`}>
       <FlatList
         data={acceptJobData}
         renderItem={({ item }) => <ServiceCard item={item} />}

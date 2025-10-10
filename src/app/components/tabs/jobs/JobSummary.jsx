@@ -122,7 +122,7 @@ export default function JobSummary({
               : "$320"}
           </Text>
         </View>
-        {showPaymentCheckList && quoteInfo.status === "In Progress" && (
+        {showPaymentCheckList && quoteInfo.status === "Completed" && (
           <View className="py-[4%] mt-[3%] bg-[#F5F5F5] rounded-lg ">
             <PaymentChecklist />
           </View>
