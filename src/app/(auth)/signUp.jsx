@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -16,26 +16,131 @@ import PasswordField from "../components/auth/PasswordField";
 import ArrowBack from "../components/auth/ArrowBack";
 import LocationPicker from "../components/auth/LocationPicker";
 import { router } from "expo-router";
+import * as Yup from "yup";
+import Toast from "react-native-toast-message";
+import { useRegisterUserMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
+
 export default function SignUpScreen() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    location: "",
+    phoneNumber: "",
+    dateOfBirth: "",
     password: "",
     confirmPassword: "",
+    location: null,
   });
 
+  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  function clientProviderHandler() {}
+  const validationSchema = Yup.object({
+    fullName: Yup.string().required("Full Name is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+    phoneNumber: Yup.string()
+      .required("Phone number is required")
+      .matches(/^\+?[1-9]\d{1,14}$/, "Invalid phone number format"),
+    dateOfBirth: Yup.string()
+      .required("Date of birth is required")
+      .test("is-valid-date", "Invalid date format (YYYY-MM-DD)", (value) => {
+        if (!value) return false;
+        return /^\d{4}-\d{2}-\d{2}$/.test(value);
+      }),
+    password: Yup.string()
+      .required("Password is required")
+      .min(8, "Password must be at least 8 characters"),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref("password"), null], "Passwords must match")
+      .required("Confirm Password is required"),
+    location: Yup.object()
+      .nullable()
+      .required("Location is required")
+      .test("has-coordinates", "Location coordinates are required", (value) => {
+        return value?.coordinates && value.coordinates.length === 2;
+      }),
+  });
+
+  const handleSubmit = async () => {
+    try {
+      // Step 1: Validate user input
+      await validationSchema.validate(formData, { abortEarly: false });
+      setErrors({});
+
+      // Step 2: Prepare payload
+      const data = {
+        fullName: formData.fullName,
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+        phoneNumber: formData.phoneNumber,
+        dateOfBirth: formData.dateOfBirth,
+        role: "client",
+        location: {
+          type: "Point",
+          coordinates: formData.location?.coordinates || [],
+          address: formData.location?.address || "",
+          city: formData.location?.city || "",
+          state: formData.location?.state || "",
+          country: formData.location?.country || "",
+          zipCode: formData.location?.zipCode || "",
+        },
+      };
+
+      // Step 3: Call API
+      const res = await registerUser(data).unwrap();
+      console.log("API Response:", res);
+
+      // Step 4: Handle success
+      if (res?.success) {
+        Toast.show({
+          type: "success",
+          text1: "Success",
+          text2: res?.message || "Registration successful!",
+          visibilityTime: 2000,
+        });
+        router.push("/signIn");
+      } else {
+        //  5: Handle logical failure (just in case)
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: res?.message || "Registration failed",
+          visibilityTime: 2000,
+        });
+        Step;
+      }
+    } catch (err) {
+      // Step 6: Handle validation or network errors
+      if (err.name === "ValidationError") {
+        const validationErrors = {};
+        err.inner.forEach((e) => {
+          validationErrors[e.path] = e.message;
+        });
+        setErrors(validationErrors);
+      } else {
+        console.log("API Error:", err);
+        const errorMessage =
+          err?.data?.message ||
+          err?.data?.email?.[0] ||
+          err?.error ||
+          "Network or server error. Please try again.";
+
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: errorMessage,
+          visibilityTime: 2000,
+        });
+      }
+    }
+  };
 
   return (
     <View className="flex-1 bg-white">
@@ -46,7 +151,6 @@ export default function SignUpScreen() {
       >
         <ScrollView
           showsVerticalScrollIndicator={false}
-          className="h-auto"
           keyboardShouldPersistTaps="handled"
           contentContainerStyle={{ paddingBottom: verticalScale(20) }}
         >
@@ -72,19 +176,56 @@ export default function SignUpScreen() {
               label="Full Name"
               placeholder="Full name"
               IconName="person-outline"
+              value={formData.fullName}
+              onChangeText={(text) => handleInputChange("fullName", text)}
+              error={errors.fullName}
             />
-            <EmailField label="Email" />
 
-            <LocationPicker />
+            <EmailField
+              label="Email"
+              value={formData.email}
+              onChangeText={(text) => handleInputChange("email", text)}
+              error={errors.email}
+            />
 
-            <PasswordField />
+            <TextField
+              label="Phone Number"
+              placeholder="+8801XXXXXXXXX"
+              IconName="call-outline"
+              value={formData.phoneNumber}
+              onChangeText={(text) => handleInputChange("phoneNumber", text)}
+              error={errors.phoneNumber}
+            />
+
+            <TextField
+              label="Date of Birth"
+              placeholder="YYYY-MM-DD"
+              IconName="calendar-outline"
+              value={formData.dateOfBirth}
+              onChangeText={(text) => handleInputChange("dateOfBirth", text)}
+              error={errors.dateOfBirth}
+            />
+
+            <LocationPicker
+              onLocationSelect={(loc) => handleInputChange("location", loc)}
+              error={errors.location}
+            />
+
+            <PasswordField
+              label="Password"
+              value={formData.password}
+              onChangeText={(text) => handleInputChange("password", text)}
+              showPassword={showPassword}
+              toggleShow={() => setShowPassword(!showPassword)}
+              error={errors.password}
+            />
 
             {/* Confirm Password */}
             <View>
               <Text className="font-poppins-400regular text-base text-[#000] mb-[2%]">
                 Confirm Password
               </Text>
-              <View className="flex-row  bg-[#F9F9F9] border border-[#DCDCDC] rounded-md px-[4%] py-[3%]">
+              <View className="flex-row bg-[#F9F9F9] border border-[#DCDCDC] rounded-md px-[4%] py-[3%]">
                 <Ionicons
                   style={{ marginTop: verticalScale(10) }}
                   name="lock-closed-outline"
@@ -116,15 +257,24 @@ export default function SignUpScreen() {
                   />
                 </TouchableOpacity>
               </View>
+              {errors.confirmPassword && (
+                <Text className="text-red-700 font-poppins text-center mt-1">
+                  {errors.confirmPassword}
+                </Text>
+              )}
             </View>
           </View>
         </ScrollView>
+
+        {/* Bottom Section */}
         <View className="border-t border-[#dcdcdc]">
-          {/* Terms and Conditions */}
-          <View className="flex-row pl-[5.5%] mt-[1%]  items-center">
+          <View className="flex-row pl-[5.5%] mt-[1%] items-center">
             <TouchableOpacity
               onPress={() => setAgreeToTerms(!agreeToTerms)}
               className="mr-[3%]"
+              accessibilityLabel={
+                agreeToTerms ? "Unagree to terms" : "Agree to terms"
+              }
             >
               <Ionicons
                 name={agreeToTerms ? "checkbox" : "square-outline"}
@@ -137,16 +287,16 @@ export default function SignUpScreen() {
               <Text className="text-[#909090]"> Terms and Conditions</Text>
             </Text>
           </View>
-          {/* Bottom Section */}
-          <View className="mb-[4%] px-[6%] mt-[2%]  justify-center">
+
+          <View className="mb-[4%] px-[6%] mt-[2%] justify-center">
             <TouchableOpacity
-              className="bg-[#0054A5]  rounded-lg justify-center items-center py-[4%]"
+              className="bg-[#0054A5] rounded-lg justify-center items-center py-[4%]"
               disabled={!agreeToTerms}
               style={{ opacity: agreeToTerms ? 1 : 0.6 }}
-              onPress={() => router.push("/signIn")}
+              onPress={handleSubmit}
             >
               <Text className="text-white text-center text-base font-poppins-semiBold">
-                Sign up
+                {isLoading ? "Signing In..." : "Sign Up"}
               </Text>
             </TouchableOpacity>
 
@@ -154,11 +304,7 @@ export default function SignUpScreen() {
               <Text className="font-poppins-400regular text-sm text-black">
                 Already have an account?
               </Text>
-              <TouchableOpacity
-                onPress={() => {
-                  router.push("/signIn");
-                }}
-              >
+              <TouchableOpacity onPress={() => router.push("/signIn")}>
                 <Text className="font-poppins-semiBold underline text-sm text-[#0054A5]">
                   Sign In
                 </Text>

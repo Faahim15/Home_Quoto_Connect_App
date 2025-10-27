@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import ArrowBack from "../components/auth/ArrowBack";
 import EmailField from "../components/auth/EmailField";
@@ -13,12 +14,82 @@ import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ShortMessage from "../components/auth/ShortMessage";
 import { router } from "expo-router";
+import { useLoginUserMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
+import Toast from "react-native-toast-message";
+import * as Yup from "yup";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { scale } from "../components/adaptive/Adaptiveness";
 export default function SignInScreen() {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [login, { isLoading }] = useLoginUserMutation();
+  const [errors, setErrors] = useState({});
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+  const validationSchema = Yup.object({
+    email: Yup.string().email("Invalid email").required("Email is required"),
 
-  function clientProviderHandler() {
-    router.replace("/home");
-  }
+    password: Yup.string()
+      .required("Password is required")
+      .min(8, "Password must be at least 8 characters"),
+  });
+
+  const handleSubmit = async () => {
+    try {
+      // ✅ Validate form data
+      await validationSchema.validate(formData, { abortEarly: false });
+      setErrors({});
+
+      // ✅ Prepare login payload
+      const data = {
+        email: formData.email,
+        password: formData.password,
+      };
+
+      // ✅ Send login request
+      const res = await login(data).unwrap();
+
+      // ✅ Store the token
+      // await AsyncStorage.setItem("token", res?.data?.token);
+      // check if saved
+      const rsult = await AsyncStorage.getItem("token");
+      console.log("kdlsfs", rsult);
+      // ✅ Show success toast
+      Toast.show({
+        type: "success",
+        text1: "Login Successful",
+        text2: `Welcome back, ${res?.user?.fullName || "User"}!`,
+      });
+
+      console.log("Login response:", res);
+
+      // ✅ Navigate to /home
+      router.push("/home");
+    } catch (error) {
+      // ❌ Show error toast
+      Toast.show({
+        type: "error",
+        text1: "Login Failed",
+        text2:
+          error?.data?.message || "Something went wrong. Please try again.",
+      });
+
+      console.error("Login error:", error);
+
+      // ✅ Optional: handle validation errors
+      if (error.name === "ValidationError") {
+        const fieldErrors = {};
+        error.inner.forEach((err) => {
+          fieldErrors[err.path] = err.message;
+        });
+        setErrors(fieldErrors);
+      }
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -43,8 +114,15 @@ export default function SignInScreen() {
           </View>
 
           <View className="mx-[6%] mt-[10%]">
-            <EmailField label="Email" />
-            <PasswordField />
+            <EmailField
+              onChangeText={(text) => handleInputChange("email", text)}
+              error={errors.email}
+              label="Email"
+            />
+            <PasswordField
+              onChangeText={(text) => handleInputChange("password", text)}
+              error={errors.password}
+            />
           </View>
 
           <View className="flex-row pl-[5.5%] pb-[6%] items-center">
@@ -72,11 +150,21 @@ export default function SignInScreen() {
 
           <TouchableOpacity
             className="bg-[#0054A5] mx-[6%] rounded-lg py-[4%]"
-            onPress={clientProviderHandler}
+            onPress={handleSubmit}
+            disabled={isLoading} // Disable button while loading
           >
-            <Text className="text-white text-center text-base font-poppins-semiBold">
-              Sign In
-            </Text>
+            <View className="flex-row items-center justify-center">
+              {isLoading && (
+                <ActivityIndicator
+                  size="small"
+                  color="#ffffff"
+                  style={{ marginRight: scale(8) }}
+                />
+              )}
+              <Text className="text-white text-center text-base font-poppins-semiBold">
+                {isLoading ? "Processing..." : "Sign In"}
+              </Text>
+            </View>
           </TouchableOpacity>
 
           <ShortMessage

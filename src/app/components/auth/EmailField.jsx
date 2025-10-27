@@ -1,7 +1,12 @@
 import { View, Text, TextInput, KeyboardAvoidingView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { verticalScale } from "../adaptive/Adaptiveness";
-export default function EmailField({ label, backgroundColor = "#f9f9f9" }) {
+export default function EmailField({
+  label,
+  backgroundColor = "#f9f9f9",
+  onChangeText,
+  error,
+}) {
   return (
     <View className="mb-[4%]">
       <Text className="font-poppins-400regular text-base text-[#000] mb-[2%]">
@@ -17,10 +22,9 @@ export default function EmailField({ label, backgroundColor = "#f9f9f9" }) {
             className="flex-1 font-poppins-400regular ml-[3%] text-sm   text-black "
             placeholder="Email"
             placeholderTextColor="#898989"
-            //   value={formData.email}
             keyboardType="email-address"
             autoCapitalize="none"
-            //   onChangeText={(text) => handleInputChange("email", text)}
+            onChangeText={onChangeText}
             style={{
               color: "#000",
               paddingTop: verticalScale(16),
@@ -29,6 +33,11 @@ export default function EmailField({ label, backgroundColor = "#f9f9f9" }) {
           />
         </View>
       </KeyboardAvoidingView>
+      {error && (
+        <Text className="text-red-700 font-poppins text-center mt-1">
+          {error}
+        </Text>
+      )}
     </View>
   );
 }

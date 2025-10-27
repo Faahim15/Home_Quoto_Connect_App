@@ -7,6 +7,8 @@ export default function TextField({
   placeholder,
   IconName,
   color = "#fff",
+  error,
+  onChangeText,
 }) {
   return (
     <View className="mb-[4%]">
@@ -23,8 +25,14 @@ export default function TextField({
           className="flex-1 font-poppins-400regular ml-[3%] text-sm   text-black "
           placeholder={placeholder}
           placeholderTextColor="#6B7280"
+          onChangeText={onChangeText}
         />
       </View>
+      {error && (
+        <Text className="text-red-700 font-poppins text-center mt-1">
+          {error}
+        </Text>
+      )}
     </View>
   );
 }

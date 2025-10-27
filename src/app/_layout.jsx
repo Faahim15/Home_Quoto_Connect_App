@@ -12,6 +12,8 @@ import {
 } from "@expo-google-fonts/poppins";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { Provider } from "react-redux";
+import store from "../redux/store/store";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete
 SplashScreen.preventAutoHideAsync();
@@ -37,10 +39,12 @@ export default function RootLayout() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F9FAFB]">
-      <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
-      <Stack screenOptions={{ headerShown: false }} />
-      <Toast />
-    </SafeAreaView>
+    <Provider store={store}>
+      <SafeAreaView className="flex-1 bg-[#F9FAFB]">
+        <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
+        <Stack screenOptions={{ headerShown: false }} />
+        <Toast />
+      </SafeAreaView>
+    </Provider>
   );
 }
