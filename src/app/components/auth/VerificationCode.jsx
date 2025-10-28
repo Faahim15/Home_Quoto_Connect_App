@@ -22,7 +22,7 @@ export default function VerificationCodeField({ error, otp, handleOtpChange }) {
 
   return (
     <View className="mx-[6%] mt-[3%]">
-      <View className="flex-row items-center justify-between w-full max-w-sm">
+      <View className="flex-row items-center gap-x-1 w-full max-w-sm">
         {otp.map((value, index) => (
           <TextInput
             key={index}

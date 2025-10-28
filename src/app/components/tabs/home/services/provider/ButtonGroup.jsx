@@ -2,7 +2,7 @@ import { View } from "react-native";
 import SingleButton from "./SingleButton";
 import { useState } from "react";
 
-export default function ButtonGroup() {
+export default function ButtonGroup({ handleInputChange }) {
   const [activeIndex, setActiveIndex] = useState(null);
   const titles = ["Urgent (today)", "Asap (within a week)", "Next Week"];
   return (
@@ -13,6 +13,7 @@ export default function ButtonGroup() {
           key={index}
           title={title}
           selected={activeIndex === index}
+          handleInputChange={handleInputChange}
           onPress={() => setActiveIndex(index)}
         />
       ))}

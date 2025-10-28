@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { useState } from "react";
 
-export default function Specializations() {
+export default function Specializations({ onChange }) {
   const titles = [
     "Residential",
     "Commercial",
@@ -13,12 +13,19 @@ export default function Specializations() {
   ];
   const [selectedIndexes, setSelectedIndexes] = useState([]);
   const toggleSelection = (index) => {
+    let updatedIndexes;
     if (selectedIndexes.includes(index)) {
-      setSelectedIndexes((prev) => prev.filter((i) => i !== index));
+      updatedIndexes = selectedIndexes.filter((i) => i !== index);
     } else {
-      setSelectedIndexes((prev) => [...prev, index]);
+      updatedIndexes = [...selectedIndexes, index];
     }
+
+    setSelectedIndexes(updatedIndexes);
+
+    const selectedTitles = updatedIndexes.map((i) => titles[i]);
+    onChange("specializations", selectedTitles);
   };
+
   return (
     <View className="mt-[3%]">
       <Text className="font-poppins-semiBold text-base text-[#6B7280] ">

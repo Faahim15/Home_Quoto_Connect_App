@@ -8,6 +8,7 @@ export default function PasswordField({
   placeholder = "password",
   error,
   onChangeText,
+  value,
 }) {
   const [showPassword, setShowPassword] = useState(false);
   return (
@@ -28,6 +29,7 @@ export default function PasswordField({
           placeholderTextColor="#898989"
           secureTextEntry={!showPassword}
           onChangeText={onChangeText}
+          value={value}
           style={{ color: "#000", paddingTop: verticalScale(16) }}
         />
         <TouchableOpacity

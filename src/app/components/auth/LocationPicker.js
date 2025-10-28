@@ -136,6 +136,7 @@ const LocationPicker = ({ onLocationSelect, error }) => {
         <TextInput
           className="flex-1 font-poppins-400regular text-sm bg-[#f9f9f9] text-black"
           placeholder="Tap the location icon to select"
+          placeholderTextColor="#6B7280"
           value={locationText}
           editable={false}
           multiline

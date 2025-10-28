@@ -44,7 +44,10 @@ export default function ForgetPasswordScreen() {
       });
 
       // ✅ Navigate to /verification page
-      router.push("/verfication");
+      router.push({
+        pathname: "/verfication",
+        params: { email: data.email },
+      });
     } catch (error) {
       // ❌ Show error toast
       Toast.show({
@@ -70,7 +73,7 @@ export default function ForgetPasswordScreen() {
   return (
     <View className="flex-1  bg-[#F9FAFB]  ">
       <CustomHeader
-        title="Forget your"
+        title="Forgot your"
         nestedTitle="Password?"
         subtitle="Enter your email address to reset your password."
       />

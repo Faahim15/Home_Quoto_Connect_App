@@ -56,8 +56,8 @@ export default function SignInScreen() {
       // ✅ Store the token
       // await AsyncStorage.setItem("token", res?.data?.token);
       // check if saved
-      const rsult = await AsyncStorage.getItem("token");
-      console.log("kdlsfs", rsult);
+      // const rsult = await AsyncStorage.getItem("token");
+      // console.log("kdlsfs", rsult);
       // ✅ Show success toast
       Toast.show({
         type: "success",
@@ -74,8 +74,7 @@ export default function SignInScreen() {
       Toast.show({
         type: "error",
         text1: "Login Failed",
-        text2:
-          error?.data?.message || "Something went wrong. Please try again.",
+        text2: error?.message || "Something went wrong. Please try again.",
       });
 
       console.error("Login error:", error);

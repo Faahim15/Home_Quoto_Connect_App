@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import {
   View,
   Text,
@@ -13,27 +12,26 @@ import * as ImagePicker from "expo-image-picker";
 import CustomButton from "../components/tabs/home/services/provider/details/CustomButton";
 import CustomTitle from "../components/shared/CustomTitle";
 import { router } from "expo-router";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addPhoto,
+  removePhoto as removePhotoFromStore,
+} from "../../redux/features/jobPost/jobPostSlice";
 
 export default function PostJobScreen() {
-  const [photos, setPhotos] = useState([]);
-
+  const dispatch = useDispatch();
+  const photos = useSelector((state) => state.jobPost.photos);
+  // console.log("photos", photos);
+  // 📸 Show camera or gallery options
   const showImageOptions = () => {
     Alert.alert("Select Photo", "Choose how you want to add a photo", [
-      {
-        text: "Camera",
-        onPress: () => takePhoto(),
-      },
-      {
-        text: "Gallery",
-        onPress: () => pickFromGallery(),
-      },
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
+      { text: "Camera", onPress: takePhoto },
+      { text: "Gallery", onPress: pickFromGallery },
+      { text: "Cancel", style: "cancel" },
     ]);
   };
 
+  // 📷 Take photo using camera
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
@@ -52,18 +50,16 @@ export default function PostJobScreen() {
     });
 
     if (!result.canceled) {
-      const newPhoto = {
-        id: Date.now().toString(),
-        uri: result.assets[0].uri,
-      };
-
-      setPhotos([...photos, newPhoto]);
+      dispatch(
+        addPhoto({ id: Date.now().toString(), uri: result.assets[0].uri })
+      );
     }
   };
 
+  // 🖼️ Pick photo from gallery
   const pickFromGallery = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images", "videos"],
+      mediaTypes: ["images"],
       allowsEditing: false,
       allowsMultipleSelection: true,
       aspect: [4, 3],
@@ -71,25 +67,24 @@ export default function PostJobScreen() {
     });
 
     if (!result.canceled) {
-      const newPhoto = {
-        id: Date.now().toString(),
-        uri: result.assets[0].uri,
-      };
-
-      setPhotos([...photos, newPhoto]);
+      result.assets.forEach((asset) => {
+        dispatch(addPhoto({ id: Date.now().toString(), uri: asset.uri }));
+      });
     }
   };
 
-  const removePhoto = (photoId) => {
-    setPhotos(photos.filter((photo) => photo.id !== photoId));
+  // 🗑️ Remove photo from Redux store
+  const handleRemovePhoto = (photoId) => {
+    dispatch(removePhotoFromStore(photoId));
   };
 
+  // ➡️ Continue button
   const handleContinue = () => {
     if (photos.length === 0) {
       Alert.alert("Please add at least one photo to continue");
       return;
     }
-    Alert.alert("Continue", "Proceeding to next step...");
+    router.push("/jobs/jobForm");
   };
 
   return (
@@ -105,7 +100,7 @@ export default function PostJobScreen() {
           Add Some Photos of the Job
         </Text>
 
-        {/* Main Photo Upload Area */}
+        {/* Upload Area */}
         <TouchableOpacity
           onPress={showImageOptions}
           className="w-full h-[40%] bg-gray-100 rounded-lg flex items-center justify-center mb-[5%] border-2 border-dashed border-gray-300"
@@ -116,7 +111,7 @@ export default function PostJobScreen() {
           <Text className="text-gray-600 text-center">Tap to add photos</Text>
         </TouchableOpacity>
 
-        {/* Additional Photos Grid */}
+        {/* Photo Grid */}
         <View className="flex-row flex-wrap justify-between mb-[5%]">
           {photos.map((photo) => (
             <View key={photo.id} className="relative w-[30%] mb-[3%]">
@@ -126,7 +121,7 @@ export default function PostJobScreen() {
                 style={{ aspectRatio: 1 }}
               />
               <TouchableOpacity
-                onPress={() => removePhoto(photo.id)}
+                onPress={() => handleRemovePhoto(photo.id)}
                 className="absolute top-[5%] right-[5%] bg-white rounded-full p-1 shadow-md"
               >
                 <Ionicons name="close" size={16} color="#666" />
@@ -135,7 +130,7 @@ export default function PostJobScreen() {
           ))}
         </View>
 
-        {/* Info Text */}
+        {/* Info */}
         <View className="flex-row items-center mb-[8%]">
           <Ionicons name="bulb-outline" size={16} color="#f59e0b" />
           <Text className="font-poppins-400regular text-sm text-[#1F2937] ml-[2%]">
@@ -145,11 +140,8 @@ export default function PostJobScreen() {
       </ScrollView>
 
       {/* Continue Button */}
-      <View className="px-[5%] pb-[5%] pt-[3%] ">
-        <CustomButton
-          onPress={() => router.push("/jobs/jobForm")}
-          title="Continue"
-        />
+      <View className="px-[5%] pb-[5%] pt-[3%]">
+        <CustomButton onPress={handleContinue} title="Continue" />
       </View>
     </SafeAreaView>
   );

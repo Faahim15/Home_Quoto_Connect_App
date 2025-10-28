@@ -1,14 +1,15 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import CustomHeader from "../components/auth/CustomHeader";
 import VerificationCodeField from "../components/auth/VerificationCode";
 import ShortMessage from "../components/auth/ShortMessage";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useVerifyOtpMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
 import { useState } from "react";
 import * as Yup from "yup";
 import Toast from "react-native-toast-message";
 export default function VerificationScreen() {
   const [otpVerification, { isLoading }] = useVerifyOtpMutation();
+  const { email } = useLocalSearchParams();
 
   // In VerificationScreen
   const [otp, setOtp] = useState(["", "", "", "", "", ""]); // for 6 digits
@@ -28,10 +29,10 @@ export default function VerificationScreen() {
   });
   const handleSubmit = async () => {
     try {
-      const fullOtp = otp.join(""); // Combine 4 digits into one string
+      const fullOtp = otp.join("");
 
       const data = {
-        email: "goni@gmail.com", // later replace with actual email
+        email: email,
         otp: fullOtp,
         purpose: "forgot-password",
       };
@@ -51,7 +52,10 @@ export default function VerificationScreen() {
         visibilityTime: 2500,
       });
 
-      router.push("/resetPassword");
+      router.push({
+        pathname: "/resetPassword",
+        params: { email: data.email, otp: data.otp },
+      });
     } catch (error) {
       if (error.name === "ValidationError") {
         // ⚠️ Local form validation error
@@ -71,7 +75,7 @@ export default function VerificationScreen() {
         console.log("error", error);
         // ⚠️ API (backend) errors — e.g., wrong OTP or expired OTP
         const message =
-          error?.data?.message === "Invalid OTP"
+          error?.message === "Invalid OTP"
             ? "The OTP you entered is incorrect. Please try again."
             : error?.data?.message ||
               "Something went wrong. Please try again later.";
@@ -84,7 +88,7 @@ export default function VerificationScreen() {
         });
 
         // ❌ Optional: Clear OTP inputs when wrong
-        setOtp(["", "", "", ""]);
+        setOtp(["", "", "", "", "", ""]);
       }
     }
   };
@@ -112,7 +116,7 @@ export default function VerificationScreen() {
           className=" bg-[#0054A5] mx-[6%] rounded-lg py-[4%]"
         >
           <Text className="text-white text-center text-base font-poppins-semiBold ">
-            Verify
+            {isLoading ? <ActivityIndicator color="#fff" /> : "Verify"}
           </Text>
         </TouchableOpacity>
       </View>

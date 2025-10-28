@@ -1,22 +1,22 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
-  Alert,
-} from "react-native";
+import { useState } from "react";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import CustomTitle from "../components/shared/CustomTitle";
 import { router } from "expo-router";
-
+import { setJobField } from "../../redux/features/jobPost/jobPostSlice";
+import { useDispatch, useSelector } from "react-redux";
 const BookingCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const dispatch = useDispatch();
+  const jobData = useSelector((state) => state.jobPost);
 
+  console.log("time", jobData);
+  const handleInputChange = (field, value) => {
+    dispatch(setJobField({ field, value }));
+  };
   const [selectedTime, setSelectedTime] = useState("");
 
   // Simple time slots
@@ -44,6 +44,9 @@ const BookingCalendar = () => {
       Alert.alert("Error", "Please select both date and time");
       return;
     }
+
+    handleInputChange("preferredDate", selectedDate);
+    handleInputChange("preferredTime", selectedTime);
 
     router.back();
   };

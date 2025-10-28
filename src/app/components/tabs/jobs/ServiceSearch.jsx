@@ -5,11 +5,10 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
-  SafeAreaView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function ServiceSearch() {
+export default function ServiceSearch({ selectedService, onSelectService }) {
   const [searchText, setSearchText] = useState("Electri");
   const [suggestions, setSuggestions] = useState([
     "Electrician",
@@ -34,6 +33,7 @@ export default function ServiceSearch() {
 
   const handleSearch = (text) => {
     setSearchText(text);
+    onSelectService("serviceCategory", text);
     if (text.trim()) {
       const filtered = services.filter((service) =>
         service.toLowerCase().includes(text.toLowerCase())
@@ -52,6 +52,7 @@ export default function ServiceSearch() {
   const selectService = (service) => {
     setSearchText(service);
     setSuggestions([]);
+    onSelectService("serviceCategory", service);
   };
 
   const renderSuggestion = ({ item }) => (
