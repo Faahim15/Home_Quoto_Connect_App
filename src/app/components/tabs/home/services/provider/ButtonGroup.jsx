@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export default function ButtonGroup({ handleInputChange }) {
   const [activeIndex, setActiveIndex] = useState(null);
-  const titles = ["Urgent (today)", "Asap (within a week)", "Next Week"];
+  const titles = ["urgent", "asap", "next_week"];
   return (
     <View>
       {/* Button Selection */}

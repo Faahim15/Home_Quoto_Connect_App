@@ -16,83 +16,111 @@ import Specializations from "../components/tabs/home/Specializations";
 import LocationPicker from "../components/auth/LocationPicker";
 import CustomButton from "../components/tabs/home/services/provider/details/CustomButton";
 import { verticalScale } from "../components/adaptive/Adaptiveness";
-import { useCreateJobMutation } from "../../redux/features/apiSlices/user/createJobSlices";
+import * as Yup from "yup";
 // Redux
 import { setJobField } from "../../redux/features/jobPost/jobPostSlice";
+import Error from "../components/shared/error/Error";
 
 export default function JobFormScreen() {
   const dispatch = useDispatch();
   const jobData = useSelector((state) => state.jobPost);
-  const [createJob, { isLoading }] = useCreateJobMutation();
-  // const photos = useSelector((state) => state.jobPost.photos);
-  console.log("JobForm", jobData);
-  // 🔄 Common handler for all input changes
+  const [errors, setErrors] = React.useState({});
   const handleInputChange = (field, value) => {
     dispatch(setJobField({ field, value }));
-  };
 
-  // ✅ Continue to next screen
-  const handleContinue = async () => {
-    if (!jobData.title || !jobData.location) {
-      alert("Please fill in all required fields");
-      return;
+    // ✅ Clear errors when user interacts
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
+
+    // ✅ Special handling for urgent/price relationship
+    if (field === "isUrgent" && value === true) {
+      // If user selects urgent, clear price range
+      dispatch(
+        setJobField({
+          field: "priceRange",
+          value: { from: 0, to: 0, isPersonalized: true },
+        })
+      );
+      setErrors((prev) => ({
+        ...prev,
+        "priceRange.from": undefined,
+        "priceRange.to": undefined,
+      }));
+    }
+
+    if (field === "priceRange" && value.from > 0) {
+      // If user sets price, uncheck urgent
+      dispatch(setJobField({ field: "isUrgent", value: false }));
+      setErrors((prev) => ({ ...prev, isUrgent: undefined }));
+    }
+  };
+  const validateCurrentPage = () => {
+    const currentPageSchema = Yup.object({
+      title: Yup.string().required("Job title is required"),
+      serviceCategory: Yup.string().required("Service category is required"),
+      location: Yup.object()
+        .nullable()
+        .required("Location is required")
+        .test(
+          "has-coordinates",
+          "Location coordinates are required",
+          (value) => {
+            return value?.coordinates && value.coordinates.length === 2;
+          }
+        ),
+      preferredDate: Yup.string()
+        .required("Preferred date is required")
+        .matches(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format")
+        .test("future-date", "Date must be in the future", (value) => {
+          return new Date(value) > new Date();
+        }),
+      urgency: Yup.string().required("Please select urgency"),
+      // ✅ VALIDATION: Either fixed price OR personalized (negotiable)
+      priceRange: Yup.object().test(
+        "valid-price-config",
+        "Either set a fixed price range or mark as negotiable",
+        function (value) {
+          const { from, to, isPersonalized } = value || {};
+
+          const hasFixedPrice = from > 0 && to > from;
+          const isNegotiable = isPersonalized === true;
+
+          // Must have either fixed price OR be negotiable
+          return hasFixedPrice || isNegotiable;
+        }
+      ),
+      specializations: Yup.array().min(1, "Select at least one specialization"),
+    });
 
     try {
-      const formData = new FormData();
-
-      // 🧾 Append all simple fields
-      formData.append("title", jobData.title);
-      formData.append("description", jobData.specificInstructions);
-      formData.append("serviceCategory", jobData.serviceCategory);
-      formData.append(
-        "specializations",
-        JSON.stringify(jobData.specializations)
-      );
-      formData.append(
-        "location",
-        JSON.stringify({
-          type: "Point",
-          coordinates: jobData.location.coordinates,
-          address: jobData.location.address,
-        })
-      );
-      formData.append("urgency", jobData.urgency);
-      formData.append("preferredDate", jobData.preferredDate);
-      formData.append("preferredTime", jobData.preferredTime);
-      formData.append(
-        "priceRange",
-        JSON.stringify({
-          from: jobData.priceRange.from,
-          to: jobData.priceRange.to,
-          isPersonalized: jobData.priceRange.isPersonalized,
-        })
-      );
-      formData.append("specificInstructions", jobData.specificInstructions);
-      // 🖼️ Append photos (if any)
-      if (jobData.photos && jobData.photos.length > 0) {
-        jobData.photos.forEach((photo, index) => {
-          formData.append("photos", {
-            uri: photo.uri,
-            type: photo.type || "image/jpeg",
-            name: photo.name || `photo_${index}.jpg`,
-          });
-        });
-      }
-
-      // 🚀 Send to backend
-      const response = await createJob(formData).unwrap();
-
-      console.log("✅ Job posted successfully:", response);
-
-      alert("Job created successfully!");
-      router.push("/jobs/jobSummary");
+      currentPageSchema.validateSync(jobData, { abortEarly: false });
+      setErrors({});
+      return true;
     } catch (error) {
-      console.error("❌ Job creation failed:", error);
-      alert("Something went wrong. Please try again.");
+      const newErrors = {};
+      error.inner.forEach((err) => {
+        newErrors[err.path] = err.message;
+      });
+      setErrors(newErrors);
+      return false;
     }
   };
 
+  const handleContinue = () => {
+    if (validateCurrentPage()) {
+      router.push("/jobs/jobLocation");
+    } else
+      console.log(
+        "errors",
+        errors["priceRange.from"] ?? errors["priceRange.to"]
+      );
+  };
+  // Check conditions
+  const hasFixedPrice =
+    jobData.priceRange?.from > 0 &&
+    jobData.priceRange?.to > jobData.priceRange?.from;
+  const isNegotiable = jobData.priceRange?.isPersonalized === true;
   return (
     <View className="bg-[#f9f9f9] flex-1">
       {/* Header */}
@@ -118,19 +146,23 @@ export default function JobFormScreen() {
             </View>
 
             {/* 🧰 Service Search */}
-            <ServiceSearch onSelectService={handleInputChange} />
+            <ServiceSearch
+              error={errors.serviceCategory}
+              onSelectService={handleInputChange}
+            />
 
             {/* 📍 Location */}
             <View className="px-[6%]">
               <LocationPicker
                 onLocationSelect={(loc) => handleInputChange("location", loc)}
-                // error={errors.location}
+                error={errors.location}
               />
             </View>
 
             {/* 🕒 Time Picker */}
             <View className="px-[6%]">
               <TimePicker />
+              <Error error={errors.preferredDate} />
             </View>
 
             {/* ⚙️ Job Type / Options */}
@@ -139,6 +171,7 @@ export default function JobFormScreen() {
                 selectedOption={jobData.jobType}
                 handleInputChange={handleInputChange}
               />
+              <Error error={errors.urgency} />
             </View>
 
             {/* 💰 Price and Request */}
@@ -146,10 +179,20 @@ export default function JobFormScreen() {
               <PriceSlider
                 value={jobData.price}
                 onChange={(value) => handleInputChange("price", value)}
+                disabled={isNegotiable}
+              />
+              <Error
+                error={errors['"priceRange.from"'] ?? errors["priceRange.to"]}
               />
               <RequestButton
-                urgent={jobData.isUrgent}
-                onToggleUrgent={(value) => handleInputChange("isUrgent", value)}
+                urgent={isNegotiable}
+                onToggleUrgent={(value) => {
+                  handleInputChange("priceRange", {
+                    ...jobData.priceRange,
+                    isPersonalized: value,
+                  });
+                }}
+                disabled={hasFixedPrice} // Disable when fixed price set
               />
             </View>
 

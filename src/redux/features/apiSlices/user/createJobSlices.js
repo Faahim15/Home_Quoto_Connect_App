@@ -5,12 +5,15 @@ export const jobSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     createJob: builder.mutation({
       query: (formData) => {
-        console.log("📦 jobs api sending:", formData);
+        console.log("📦 job api before sending:", formData);
         return {
           url: "/jobs",
           method: "POST",
+           headers:{
+                    "Content-Type" : "multipart/form-data"
+            },
           body: formData,
-          formData: true,
+          // formData: true,
           // ✅ DO NOT manually set Content-Type for FormData
           // headers: { "Content-Type": "multipart/form-data" } ❌ remove this line
         };

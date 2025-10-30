@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -29,6 +29,19 @@ const LocationPicker = ({ onLocationSelect, error }) => {
 
   const mapRef = useRef(null);
 
+  // Request permission on mount
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission Required",
+          "Please enable location access in your settings to use this feature."
+        );
+      }
+    })();
+  }, []);
+
   const requestLocationPermission = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== "granted") {
@@ -38,16 +51,34 @@ const LocationPicker = ({ onLocationSelect, error }) => {
     return true;
   };
 
+  const ensureLocationEnabled = async () => {
+    const isEnabled = await Location.hasServicesEnabledAsync();
+    if (!isEnabled) {
+      Alert.alert(
+        "Location Services Disabled",
+        "Please enable GPS/location services to continue."
+      );
+      return false;
+    }
+    return true;
+  };
+
   const getCurrentLocation = async () => {
     try {
       setIsLoading(true);
+
       const hasPermission = await requestLocationPermission();
       if (!hasPermission) return;
 
+      const isEnabled = await ensureLocationEnabled();
+      if (!isEnabled) return;
+
       const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
+        accuracy: Location.Accuracy.Highest,
       });
+
       const { latitude, longitude } = location.coords;
+
       const newRegion = {
         latitude,
         longitude,
@@ -58,7 +89,8 @@ const LocationPicker = ({ onLocationSelect, error }) => {
       setSelectedCoordinate({ latitude, longitude });
       await reverseGeocode(latitude, longitude);
     } catch (error) {
-      Alert.alert("Error", "Failed to get location");
+      console.log("Location error:", error);
+      Alert.alert("Error", "Failed to get your location.");
     } finally {
       setIsLoading(false);
     }
@@ -66,12 +98,20 @@ const LocationPicker = ({ onLocationSelect, error }) => {
 
   const reverseGeocode = async (latitude, longitude) => {
     try {
+      const { status } = await Location.getForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Reverse geocode skipped: permission not granted");
+        return;
+      }
+
       const addressResponse = await Location.reverseGeocodeAsync({
         latitude,
         longitude,
       });
+
       if (addressResponse.length > 0) {
         const address = addressResponse[0];
+        // console.log('show address',address);
         const formattedAddress = [
           address.name,
           address.street,
@@ -85,7 +125,6 @@ const LocationPicker = ({ onLocationSelect, error }) => {
 
         setLocationText(formattedAddress);
 
-        // 🔥 Send data to parent signup form
         onLocationSelect({
           type: "Point",
           coordinates: [longitude, latitude],

@@ -3,15 +3,18 @@ import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { useState } from "react";
 
 export default function Specializations({ onChange }) {
-  const titles = [
-    "Residential",
-    "Commercial",
-    "HVAC",
-    "Lighting",
-    "Repair",
-    "Home Installations",
+  // Change this to include IDs
+  const specializations = [
+    { id: "68fc5b1a31d8e408017d8258", title: "Residential" },
+    { id: "68fc58a131d8e408017d8250", title: "Commercial" },
+    { id: "68fc5b1a31d8e408017d8259", title: "HVAC" },
+    { id: "68fc5b1a31d8e408017d8260", title: "Lighting" },
+    { id: "68fc5b1a31d8e408017d8261", title: "Repair" },
+    { id: "68fc5b1a31d8e408017d8262", title: "Home Installations" },
   ];
+  
   const [selectedIndexes, setSelectedIndexes] = useState([]);
+  
   const toggleSelection = (index) => {
     let updatedIndexes;
     if (selectedIndexes.includes(index)) {
@@ -22,8 +25,9 @@ export default function Specializations({ onChange }) {
 
     setSelectedIndexes(updatedIndexes);
 
-    const selectedTitles = updatedIndexes.map((i) => titles[i]);
-    onChange("specializations", selectedTitles);
+    // Send IDs instead of titles
+    const selectedIds = updatedIndexes.map((i) => specializations[i].id);
+    onChange("specializations", selectedIds);
   };
 
   return (
@@ -32,7 +36,7 @@ export default function Specializations({ onChange }) {
         Specializations
       </Text>
       <View className="flex-row flex-wrap gap-[3%] mt-[3%] ">
-        {titles.map((title, idx) => {
+        {specializations.map((spec, idx) => {
           const isSelected = selectedIndexes.includes(idx);
           return (
             <TouchableOpacity
@@ -47,7 +51,7 @@ export default function Specializations({ onChange }) {
               <Text
                 className={`font-poppins-500medium text-xs  ${isSelected ? "text-white" : "text-[#175994]"} `}
               >
-                {title}
+                {spec.title}
               </Text>
             </TouchableOpacity>
           );

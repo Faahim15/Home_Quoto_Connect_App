@@ -17,7 +17,6 @@ import {
   addPhoto,
   removePhoto as removePhotoFromStore,
 } from "../../redux/features/jobPost/jobPostSlice";
-
 export default function PostJobScreen() {
   const dispatch = useDispatch();
   const photos = useSelector((state) => state.jobPost.photos);

@@ -54,10 +54,10 @@ export default function SignInScreen() {
       const res = await login(data).unwrap();
 
       // ✅ Store the token
-      // await AsyncStorage.setItem("token", res?.data?.token);
+      await AsyncStorage.setItem("token", res?.data?.token);
       // check if saved
-      // const rsult = await AsyncStorage.getItem("token");
-      // console.log("kdlsfs", rsult);
+      const token = await AsyncStorage.getItem("token");
+      console.log("see token", token);
       // ✅ Show success toast
       Toast.show({
         type: "success",
