@@ -3,11 +3,7 @@ import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Error from "../../shared/error/Error";
 
-export default function ServiceSearch({
-  error,
-  selectedService,
-  onSelectService,
-}) {
+export default function ServiceSearch({ error, onSelectService }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedServiceName, setSelectedServiceName] = useState("");
 
@@ -35,7 +31,7 @@ export default function ServiceSearch({
   );
 
   return (
-    <View className="px-[6%] bg-[#f9f9f9] py-[4%]">
+    <View className="px-[6%] bg-[#f9f9f9]">
       <Text className="text-base font-poppins-400regular text-[#1F2937] mb-[4%]">
         What Service do you need?
       </Text>
@@ -43,9 +39,9 @@ export default function ServiceSearch({
       <View className="relative">
         <TouchableOpacity
           onPress={() => setIsOpen(!isOpen)}
-          className="flex-row items-center bg-[#f9f9f9] rounded-lg px-[4%] py-[3%] border border-[#D4E0EB]"
+          className="flex-row  items-center bg-[#f9f9f9] rounded-lg px-[4%] py-[5%] border border-[#D4E0EB]" //border-[#D4E0EB]
         >
-          <Ionicons name="search" size={20} color="#6B7280" />
+          {/* <Ionicons name="search" size={20} color="#6B7280" /> */}
           <Text
             className={`flex-1 ml-[3%] text-sm ${selectedServiceName ? "text-black" : "text-[#6B7280]"}`}
           >

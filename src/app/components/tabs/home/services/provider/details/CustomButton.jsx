@@ -1,5 +1,11 @@
 import { View, Text, TouchableOpacity } from "react-native";
-export default function CustomButton({ title, onPress, agreeToTerms = true }) {
+import { ActivityIndicator } from "react-native";
+export default function CustomButton({
+  isLoading,
+  title,
+  onPress,
+  agreeToTerms = true,
+}) {
   return (
     <View className=" mt-[3%] bg-[#175994] border rounded-md border-[#0054A5] px-[3%] py-[3%] ">
       <TouchableOpacity
@@ -8,8 +14,7 @@ export default function CustomButton({ title, onPress, agreeToTerms = true }) {
         onPress={onPress}
       >
         <Text className="text-white font-poppins-bold text-center">
-          {" "}
-          {title}
+          {isLoading ? <ActivityIndicator color="#ffffff" /> : title}
         </Text>
       </TouchableOpacity>
     </View>

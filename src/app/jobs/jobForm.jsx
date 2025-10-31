@@ -25,6 +25,9 @@ export default function JobFormScreen() {
   const dispatch = useDispatch();
   const jobData = useSelector((state) => state.jobPost);
   const [errors, setErrors] = React.useState({});
+
+  console.log("JobData", jobData);
+
   const handleInputChange = (field, value) => {
     dispatch(setJobField({ field, value }));
 
@@ -33,27 +36,31 @@ export default function JobFormScreen() {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
 
-    // ✅ Special handling for urgent/price relationship
-    if (field === "isUrgent" && value === true) {
-      // If user selects urgent, clear price range
-      dispatch(
-        setJobField({
-          field: "priceRange",
-          value: { from: 0, to: 0, isPersonalized: true },
-        })
-      );
-      setErrors((prev) => ({
-        ...prev,
-        "priceRange.from": undefined,
-        "priceRange.to": undefined,
-      }));
-    }
+    // ✅ Special handling for priceRange changes
+    // if (field === "priceRange") {
+    //   if (value.from > 0 || value.to > 0 || value.isPersonalized) {
+    //     setErrors((prev) => ({
+    //       ...prev,
+    //       priceRange: undefined,
+    //       "priceRange.from": undefined,
+    //       "priceRange.to": undefined,
+    //     }));
+    //   }
 
-    if (field === "priceRange" && value.from > 0) {
-      // If user sets price, uncheck urgent
-      dispatch(setJobField({ field: "isUrgent", value: false }));
-      setErrors((prev) => ({ ...prev, isUrgent: undefined }));
-    }
+    //   if (value.from > 0 && value.to > 0) {
+    //     if (value.from > value.to) {
+    //       setErrors((prev) => ({
+    //         ...prev,
+    //         priceRange: "Minimum price cannot be greater than maximum price",
+    //       }));
+    //     } else if (value.from === value.to) {
+    //       setErrors((prev) => ({
+    //         ...prev,
+    //         priceRange: "Minimum and maximum price cannot be the same",
+    //       }));
+    //     }
+    //   }
+    // }
   };
   const validateCurrentPage = () => {
     const currentPageSchema = Yup.object({
@@ -72,24 +79,67 @@ export default function JobFormScreen() {
       preferredDate: Yup.string()
         .required("Preferred date is required")
         .matches(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format")
-        .test("future-date", "Date must be in the future", (value) => {
-          return new Date(value) > new Date();
+        .test("future-date", "Date must be today or in the future", (value) => {
+          const inputDate = new Date(value);
+          const today = new Date();
+
+          // ✅ Set both dates to start of day for accurate comparison
+          inputDate.setHours(0, 0, 0, 0);
+          today.setHours(0, 0, 0, 0);
+
+          return inputDate >= today;
         }),
       urgency: Yup.string().required("Please select urgency"),
-      // ✅ VALIDATION: Either fixed price OR personalized (negotiable)
+      // ✅ UPDATED VALIDATION: Added min/max value checks
       priceRange: Yup.object().test(
         "valid-price-config",
         "Either set a fixed price range or mark as negotiable",
         function (value) {
           const { from, to, isPersonalized } = value || {};
 
-          const hasFixedPrice = from > 0 && to > from;
+          const hasAnyPriceValue = from > 0 || to > 0;
           const isNegotiable = isPersonalized === true;
 
-          // Must have either fixed price OR be negotiable
-          return hasFixedPrice || isNegotiable;
+          // Must have either any price value OR be negotiable
+          if (!hasAnyPriceValue && !isNegotiable) {
+            return this.createError({
+              path: this.path,
+              message: "Either set a fixed price range or mark as negotiable",
+            });
+          }
+
+          // ✅ Check if both from and to have values
+          if (from > 0 && to > 0) {
+            if (from > to) {
+              return this.createError({
+                path: this.path,
+                message: "Minimum price cannot be greater than maximum price",
+              });
+            }
+
+            if (from === to) {
+              return this.createError({
+                path: this.path,
+                message: "Minimum and maximum price cannot be the same",
+              });
+            }
+          }
+
+          return true;
         }
       ),
+      // ✅ ADDED VALIDATION for specificInstructions
+      specificInstructions: Yup.string()
+        .required("Specific instructions are required")
+        .min(10, "Instructions must be at least 10 characters")
+        .max(500, "Instructions cannot exceed 500 characters")
+        .test(
+          "not-just-whitespace",
+          "Instructions cannot be only whitespace",
+          (value) => {
+            return value && value.trim().length > 0;
+          }
+        ),
       specializations: Yup.array().min(1, "Select at least one specialization"),
     });
 
@@ -110,16 +160,12 @@ export default function JobFormScreen() {
   const handleContinue = () => {
     if (validateCurrentPage()) {
       router.push("/jobs/jobLocation");
-    } else
-      console.log(
-        "errors",
-        errors["priceRange.from"] ?? errors["priceRange.to"]
-      );
+    } else console.log("errors", errors);
   };
-  // Check conditions
-  const hasFixedPrice =
-    jobData.priceRange?.from > 0 &&
-    jobData.priceRange?.to > jobData.priceRange?.from;
+  // ✅ UPDATED Conditions - from OR to-তে যেকোনো value থাকলেই disable হবে
+  const hasAnyPriceValue =
+    jobData.priceRange?.from > 0 || jobData.priceRange?.to > 0;
+
   const isNegotiable = jobData.priceRange?.isPersonalized === true;
   return (
     <View className="bg-[#f9f9f9] flex-1">
@@ -139,6 +185,7 @@ export default function JobFormScreen() {
             {/* 🧾 Job Title */}
             <View className="px-[6%] mt-[3%]">
               <TextField
+                error={errors.title}
                 label="Job Title"
                 value={jobData.title}
                 onChangeText={(value) => handleInputChange("title", value)}
@@ -176,14 +223,8 @@ export default function JobFormScreen() {
 
             {/* 💰 Price and Request */}
             <View className="px-[6%] mt-[3%]">
-              <PriceSlider
-                value={jobData.price}
-                onChange={(value) => handleInputChange("price", value)}
-                disabled={isNegotiable}
-              />
-              <Error
-                error={errors['"priceRange.from"'] ?? errors["priceRange.to"]}
-              />
+              <PriceSlider />
+              <Error error={errors.priceRange} />
               <RequestButton
                 urgent={isNegotiable}
                 onToggleUrgent={(value) => {
@@ -192,7 +233,7 @@ export default function JobFormScreen() {
                     isPersonalized: value,
                   });
                 }}
-                disabled={hasFixedPrice} // Disable when fixed price set
+                disabled={hasAnyPriceValue} // Disable when fixed price set
               />
             </View>
 
@@ -204,6 +245,7 @@ export default function JobFormScreen() {
                   handleInputChange("specificInstructions", value)
                 }
               />
+              <Error error={errors.specificInstructions} />
             </View>
 
             {/* 🧠 Specializations */}
@@ -212,6 +254,7 @@ export default function JobFormScreen() {
                 // selected={jobData.specializations}
                 onChange={handleInputChange}
               />
+              <Error error={errors.specializations} />
             </View>
 
             {/* 🚀 Continue Button */}

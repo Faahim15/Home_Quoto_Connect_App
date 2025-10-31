@@ -2,8 +2,6 @@ import { View, Text, TouchableOpacity } from "react-native";
 import SingleButton from "./SingleButton";
 import { useState } from "react";
 export default function RequestButton({ urgent, onToggleUrgent, disabled }) {
-  console.log("urgent", urgent, "disable", disabled);
-  const [selected, setSelected] = useState(false);
   const handlePress = () => {
     if (!disabled) {
       onToggleUrgent(!urgent);

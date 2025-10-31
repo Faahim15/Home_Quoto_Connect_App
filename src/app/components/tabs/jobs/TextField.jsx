@@ -1,6 +1,7 @@
 import { Text, TextInput, View } from "react-native";
+import Error from "../../shared/error/Error";
 
-export default function TextField({ value, onChangeText }) {
+export default function TextField({ value, onChangeText, error }) {
   return (
     <View className="bg-[#f9f9f9]">
       <Text className="font-poppins-400regular text-base text-[#1F2937] ">
@@ -16,6 +17,7 @@ export default function TextField({ value, onChangeText }) {
           className="font-poppins-400regular items-center justify-center bg-[#f9f9f9]  text-sm text-black"
         />
       </View>
+      <Error error={error} />
     </View>
   );
 }

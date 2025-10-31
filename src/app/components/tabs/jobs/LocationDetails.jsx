@@ -20,28 +20,28 @@ export default function LocationDetails({ validationErrors }) {
       </Text>
       <View>
         <LocationField
-          value={jobData.houseNumber}
+          // value={jobData.houseNumber}
           onChangeText={(value) => handleInputChange("houseNumber", value)}
           placeholder="Enter house number"
           keyboardType="numeric"
           label="House number"
-          validationErrors={validationErrors}
+          validationErrors={validationErrors.houseNumber}
         />
         <LocationField
-          value={jobData.streetNumber}
+          // value={jobData.streetNumber}
           onChangeText={(value) => handleInputChange("streetNumber", value)}
           placeholder="Enter street number"
-          keyboardType="numeric"
+          keyboardType="default"
           label="Street number"
-          validationErrors={validationErrors}
+          validationErrors={validationErrors.streetNumber}
         />
         <LocationField
-          value={jobData.completeAddress}
+          // value={jobData.completeAddress}
           onChangeText={(value) => handleInputChange("completeAddress", value)}
           placeholder="House no, street name, city, postal code"
           keyboardType="default"
           label="Complete Address"
-          validationErrors={validationErrors}
+          validationErrors={validationErrors.completeAddress}
         />
       </View>
     </View>

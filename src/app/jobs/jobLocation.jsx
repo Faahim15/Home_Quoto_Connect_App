@@ -13,98 +13,24 @@ export default function LocationDetailsScreen() {
   const [validationErrors, setValidationErrors] = useState({});
   const [longitude, latitude] = jobData.location.coordinates;
 
-  console.log("Data:", jobData);
+  console.log("Job Data:", jobData);
 
   const jobValidationSchema = Yup.object({
-    title: Yup.string()
-      .required("Job title is required")
-      .min(5, "Title must be at least 5 characters")
-      .max(100, "Title must be less than 100 characters"),
+    houseNumber: Yup.string()
+      .required("House number is required")
+      .min(1, "House number must be at least 1 character")
+      .max(20, "House number must be less than 20 characters"),
 
-    description: Yup.string()
-      .required("Description is required")
-      .min(10, "Description must be at least 10 characters")
-      .max(1000, "Description must be less than 1000 characters"),
+    streetNumber: Yup.string()
+      .required("Street number is required")
+      .min(1, "Street number must be at least 1 character")
+      .max(20, "Street number must be less than 20 characters"),
 
-    serviceCategory: Yup.string()
-      .required("Service category is required")
-      .matches(/^[0-9a-fA-F]{24}$/, "Invalid service category ID"),
-
-    specializations: Yup.array()
-      .of(
-        Yup.string().matches(/^[0-9a-fA-F]{24}$/, "Invalid specialization ID")
-      )
-      .min(1, "At least one specialization is required")
-      .required("Specializations are required"),
-
-    location: Yup.object({
-      type: Yup.string().oneOf(["Point"], "Location type must be Point"),
-      coordinates: Yup.array()
-        .of(Yup.number().required())
-        .length(2, "Coordinates must have exactly 2 values")
-        .test("valid-coordinates", "Invalid coordinates", (value) => {
-          if (!value) return false;
-          const [lng, lat] = value;
-          return lng >= -180 && lng <= 180 && lat >= -90 && lat <= 90;
-        }),
-      address: Yup.string().required("Address is required"),
-      city: Yup.string().required("City is required"),
-      state: Yup.string().required("State is required"),
-      country: Yup.string().required("Country is required"),
-      zipCode: Yup.string().required("Zip code is required"),
-    }).required("Location is required"),
-
-    houseNumber: Yup.string().required("House number is required"),
-    streetNumber: Yup.string().required("Street number is required"),
-    completeAddress: Yup.string().required("Complete address is required"),
-
-    urgency: Yup.string()
-      .oneOf(["urgent", "asap", "next_week"], "Invalid urgency value")
-      .required("Urgency is required"),
-
-    preferredDate: Yup.string()
-      .required("Preferred date is required")
-      .matches(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format")
-      .test("future-date", "Date must be in the future", (value) => {
-        return new Date(value) > new Date();
-      }),
-
-    preferredTime: Yup.string()
-      .required("Preferred time is required")
-      .matches(
-        /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/,
-        "Time must be in HH:MM format"
-      ),
-
-    specificInstructions: Yup.string().max(
-      500,
-      "Instructions must be less than 500 characters"
-    ),
-
-    photos: Yup.array()
-      .of(
-        Yup.object({
-          uri: Yup.string().required(),
-          type: Yup.string(),
-          name: Yup.string(),
-        })
-      )
-      .min(1, "At least one photo is required")
-      .max(10, "Maximum 10 photos allowed"),
-
-    priceRange: Yup.object({
-      from: Yup.number()
-        .required("Price from is required")
-        .min(0, "Price cannot be negative")
-        .max(1000000, "Price is too high"),
-      to: Yup.number()
-        .required("Price to is required")
-        .min(Yup.ref("from"), "To price must be greater than from price")
-        .max(1000000, "Price is too high"),
-      isPersonalized: Yup.boolean().required(),
-    }).required("Price range is required"),
+    completeAddress: Yup.string()
+      .required("Complete address is required")
+      .min(10, "Please provide a more detailed address")
+      .max(200, "Address is too long"),
   });
-
   const [createJob, { isLoading }] = useCreateJobMutation();
 
   const handleContinue = async () => {
@@ -121,12 +47,6 @@ export default function LocationDetailsScreen() {
       formData.append("serviceCategory", jobData.serviceCategory);
 
       // specializations
-      // ✅ FIXED: Specializations as JSON string array (like Postman)
-      // formData.append("specializations", JSON.stringify(jobData.specializations));
-      // formData.append("specializations", jobData.specializations);
-      // jobData.specializations.forEach((id, index) => {
-      //   formData.append(`specializations[${index}]`, id);
-      // });
       formData.append(
         "specializations",
         `["${jobData.specializations.join('","')}"]`
@@ -187,7 +107,7 @@ export default function LocationDetailsScreen() {
         type: "success",
         text1: "Success!",
         text2: "Job created successfully!",
-        position: "bottom",
+        position: "top",
       });
 
       router.push("/jobs/jobSummary");
@@ -199,7 +119,7 @@ export default function LocationDetailsScreen() {
           errors[error.path] = error.message;
         });
         setValidationErrors(errors);
-
+        console.log("Validation Errors:", errors);
         // Show first error in toast
         const firstError = validationError.inner[0].message;
         Toast.show({
@@ -236,7 +156,11 @@ export default function LocationDetailsScreen() {
             <LocationDetails validationErrors={validationErrors} />
           </View>
           <View className="flex-1 mt-[90%] ">
-            <CustomButton title="Continue" onPress={handleContinue} />
+            <CustomButton
+              isLoading={isLoading}
+              title="Continue"
+              onPress={handleContinue}
+            />
           </View>
         </View>
       </KeyboardAvoidingView>
