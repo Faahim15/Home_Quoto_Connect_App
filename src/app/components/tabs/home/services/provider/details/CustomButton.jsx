@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { ActivityIndicator } from "react-native";
 export default function CustomButton({
-  isLoading,
+  isLoading = false,
   title,
   onPress,
   agreeToTerms = true,
