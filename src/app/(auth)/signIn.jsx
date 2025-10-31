@@ -55,17 +55,14 @@ export default function SignInScreen() {
 
       // ✅ Store the token
       await AsyncStorage.setItem("token", res?.data?.token);
-      // check if saved
-      const token = await AsyncStorage.getItem("token");
-      console.log("see token", token);
       // ✅ Show success toast
       Toast.show({
         type: "success",
         text1: "Login Successful",
-        text2: `Welcome back, ${res?.user?.fullName || "User"}!`,
+        text2: `Welcome back, ${res?.data?.user?.fullName || "User"}!`,
       });
 
-      console.log("Login response:", res);
+      console.log("Login response:", res.data.user);
 
       // ✅ Navigate to /home
       router.push("/home");
@@ -76,8 +73,6 @@ export default function SignInScreen() {
         text1: "Login Failed",
         text2: error?.message || "Something went wrong. Please try again.",
       });
-
-      console.error("Login error:", error);
 
       // ✅ Optional: handle validation errors
       if (error.name === "ValidationError") {

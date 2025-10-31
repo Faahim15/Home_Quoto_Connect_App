@@ -3,7 +3,6 @@ import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import XStyle from "../../../util/styles";
 import PaymentChecklist from "./PaymentCheckList";
 import imageData from "../../data/shared/Images";
-
 function showImages({ item }) {
   return (
     <View>

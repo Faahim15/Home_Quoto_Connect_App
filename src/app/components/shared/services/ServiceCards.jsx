@@ -4,6 +4,7 @@ import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import servicesData from "../../data/shared/ServicesData";
 import { router } from "expo-router";
 const ServiceCard = ({ item, showAddress, showPrice }) => {
+  console.log("item:", item.location);
   return (
     <TouchableOpacity
       onPress={() => {
@@ -91,11 +92,13 @@ const ServiceCard = ({ item, showAddress, showPrice }) => {
   );
 };
 
-export default function ServiceCards({ showPrice = false, showAddress }) {
+export default function ServiceCards({ jobs, showPrice = false, showAddress }) {
+  // console.log("todays job:", jobs);
+  const jobData = jobs || servicesData;
   return (
     <View className="mt-[2%] justify-center mx-[6%]  items-start   ">
       <FlatList
-        data={servicesData}
+        data={jobData}
         renderItem={({ item }) => (
           <ServiceCard
             showPrice={showPrice}

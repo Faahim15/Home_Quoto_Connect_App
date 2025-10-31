@@ -5,9 +5,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const baseQueryWithRath = async (args, api, extraOptions) => {
   try {
     const token = await AsyncStorage.getItem("token");
-    // 🔥 Debug log
-    console.log("AsyncStorage token:", token);
-    console.log("Request args before sending:", args);
     const result = await axios({
       baseURL: "http://10.10.20.30:5000/api",
       ...args,
@@ -57,18 +54,5 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRath,
   endpoints: () => ({}),
-  tagTypes: [
-    "user",
-    //   "home",
-    //   "singleVideo",
-    //   "catagoryDetails",
-    //   "blogs",
-    //   "promotion",
-    //   "account",
-    //   "video",
-    //   "dashboard",
-    //   "report",
-    //   "uploadVideo",
-    //   "payment",
-  ],
+  tagTypes: ["user", "Jobs"],
 });

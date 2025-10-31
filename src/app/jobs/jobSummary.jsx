@@ -7,9 +7,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { useCreateJobMutation } from "../../redux/features/apiSlices/user/createJobSlices";
 import Toast from "react-native-toast-message";
 import { resetJobPost } from "../../redux/features/jobPost/jobPostSlice";
+import ReviewPost from "../components/tabs/jobs/ReviewPost";
 
 export default function JobSummaryScreen() {
   const jobData = useSelector((state) => state.jobPost);
+  console.log("job data", jobData.completeAddress);
   const [createJob, { isLoading }] = useCreateJobMutation();
   const [longitude, latitude] = jobData.location.coordinates;
   const dispatch = useDispatch();
@@ -107,7 +109,7 @@ export default function JobSummaryScreen() {
         <Text className="font-poppins-500medium text-base ">
           Review Summary
         </Text>
-        <JobSummary />
+        <ReviewPost isLoading={isLoading} jobData={jobData} />
       </View>
       <View>
         <CustomButton

@@ -1,20 +1,10 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import { scale, verticalScale } from "../../adaptive/Adaptiveness";
+import { verticalScale } from "../../adaptive/Adaptiveness";
 import { useState } from "react";
-
+import { specializations } from "../../data/jobs/CategoryIds";
 export default function Specializations({ onChange }) {
-  // Change this to include IDs
-  const specializations = [
-    { id: "68fc5b1a31d8e408017d8258", title: "Residential" },
-    { id: "68fc58a131d8e408017d8250", title: "Commercial" },
-    { id: "68fc5b1a31d8e408017d8259", title: "HVAC" },
-    { id: "68fc5b1a31d8e408017d8260", title: "Lighting" },
-    { id: "68fc5b1a31d8e408017d8261", title: "Repair" },
-    { id: "68fc5b1a31d8e408017d8262", title: "Home Installations" },
-  ];
-  
   const [selectedIndexes, setSelectedIndexes] = useState([]);
-  
+
   const toggleSelection = (index) => {
     let updatedIndexes;
     if (selectedIndexes.includes(index)) {

@@ -9,18 +9,37 @@ export const jobSlice = api.injectEndpoints({
         return {
           url: "/jobs",
           method: "POST",
-           headers:{
-                    "Content-Type" : "multipart/form-data"
-            },
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
           body: formData,
-          // formData: true,
-          // ✅ DO NOT manually set Content-Type for FormData
-          // headers: { "Content-Type": "multipart/form-data" } ❌ remove this line
         };
       },
       invalidatesTags: ["user"],
     }),
+
+    // ✅ Today's Jobs endpoint
+    getTodaysJobs: builder.query({
+      query: () => ({
+        url: "/jobs/today",
+        method: "GET",
+      }),
+      providesTags: ["Jobs"],
+    }),
+
+    // ✅ Active Jobs endpoint
+    getActiveJobs: builder.query({
+      query: () => ({
+        url: "/jobs/active",
+        method: "GET",
+      }),
+      providesTags: ["Jobs"],
+    }),
   }),
 });
 
-export const { useCreateJobMutation } = jobSlice;
+export const {
+  useCreateJobMutation,
+  useGetTodaysJobsQuery,
+  useGetActiveJobsQuery,
+} = jobSlice;

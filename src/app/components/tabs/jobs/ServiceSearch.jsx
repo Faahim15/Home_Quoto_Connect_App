@@ -2,18 +2,10 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Error from "../../shared/error/Error";
-
+import services from "../../data/jobs/CategoryIds";
 export default function ServiceSearch({ error, onSelectService }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedServiceName, setSelectedServiceName] = useState("");
-
-  const services = [
-    { id: "69019313b85c6ae3cd3c53d5", name: "Electrician" },
-    { id: "69019313b85c6ae3cd3c53d6", name: "Plumber" },
-    { id: "69019313b85c6ae3cd3c53d7", name: "Carpenter" },
-    { id: "69019313b85c6ae3cd3c53d8", name: "Electrical Repair" },
-    { id: "69019313b85c6ae3cd3c53d9", name: "Electrical Installation" },
-  ];
 
   const selectService = (service) => {
     setSelectedServiceName(service.name);

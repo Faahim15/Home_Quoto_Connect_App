@@ -1,12 +1,11 @@
 import { View, Text } from "react-native";
 import LocationField from "./LocationField";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setJobField } from "../../../../redux/features/jobPost/jobPostSlice";
 
 export default function LocationDetails({ validationErrors }) {
   const dispatch = useDispatch();
-  const jobData = useSelector((state) => state.jobPost);
-  console.log("see error:", validationErrors);
+
   // 🔄 Common handler for all input changes
   const handleInputChange = (field, value) => {
     dispatch(setJobField({ field, value }));
