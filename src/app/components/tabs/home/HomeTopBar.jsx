@@ -22,12 +22,12 @@ export default function HomeTopBar({ userData }) {
         <View>
           <Text className="font-poppins-bold text-base">Welcome to Quoto!</Text>
           <Text className="font-poppins-400regular text-xs text-[#4D4D4D]">
-            {fullName}
+            {fullName || "N/A"}
           </Text>
           <View className="flex-row gap-[1%] mt-[2%]">
             <Ionicons name="location-outline" size={14} color="#8891AA" />
             <Text className="font-poppins-400regular text-xs text-[#8891AA] ">
-              {location.city},{location.state}
+              {location.city || "Dhaka"},{location.state || "Dhaka"}
             </Text>
           </View>
         </View>

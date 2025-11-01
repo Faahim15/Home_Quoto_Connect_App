@@ -77,7 +77,7 @@ export default function ReviewPost({ jobData, isLoading }) {
   const mainImageSource =
     photos && photos.length > 0 && photos[0].uri
       ? { uri: photos[0].uri }
-      : null; //require("../../../../../assets/images/home/jobs/summary1.png")
+      : null;
 
   return (
     <View

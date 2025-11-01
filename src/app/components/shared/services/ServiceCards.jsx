@@ -4,7 +4,9 @@ import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import servicesData from "../../data/shared/ServicesData";
 import { router } from "expo-router";
 const ServiceCard = ({ item, showAddress, showPrice }) => {
-  console.log("item:", item.location);
+  const { url } = item.serviceCategory?.image;
+  const { fullName } = item.client;
+  const { city, state } = item?.location?.details;
   return (
     <TouchableOpacity
       onPress={() => {
@@ -20,7 +22,7 @@ const ServiceCard = ({ item, showAddress, showPrice }) => {
       <View className="w-full">
         <Image
           source={{
-            uri: item.image || "https://via.placeholder.com/300",
+            uri: url || "https://via.placeholder.com/300",
           }}
           className="rounded-xl"
           style={{ height: verticalScale(170) }}
@@ -35,14 +37,16 @@ const ServiceCard = ({ item, showAddress, showPrice }) => {
           className="text-gray-900 font-poppins-500medium text-base mb-[2%]"
           numberOfLines={2}
         >
-          {item.title}
+          {item?.title || "N/A"}
         </Text>
 
         {/* Author */}
         <View className="flex-row items-center mb-[2%]">
           <Image
             source={{
-              uri: item.profileImage || "https://via.placeholder.com/300",
+              uri:
+                item?.client?.profilePhoto?.url ||
+                "https://via.placeholder.com/300",
             }}
             style={{ width: scale(16), height: verticalScale(16) }}
             className=" bg-gray-300 rounded-full mr-[2%]"
@@ -50,7 +54,7 @@ const ServiceCard = ({ item, showAddress, showPrice }) => {
           <Text className="font-poppins-400regular text-sm">
             by{" "}
             <Text className="font-poppins-400regular text-[#319FCA] text-sm ">
-              {item.providerName}
+              {fullName || "N/A"}
             </Text>
           </Text>
         </View>
@@ -60,7 +64,8 @@ const ServiceCard = ({ item, showAddress, showPrice }) => {
           <View className="flex-row gap-[2%] items-center">
             <Ionicons name="construct-outline" size={16} color="#6B7280" />
             <Text className="font-poppins-400regular text-sm text-[#6B7280] ">
-              {item.serviceType}
+              {" "}
+              {item?.serviceCategory?.title || "N/A"}
             </Text>
           </View>
           {showAddress && (
@@ -69,9 +74,9 @@ const ServiceCard = ({ item, showAddress, showPrice }) => {
               numberOfLines={1}
               ellipsizeMode="tail"
             >
-              {item.quoteOption === "Accept"
-                ? item.price
-                : "Requested a personalized..."}
+              {item?.priceRange?.isPersonalized
+                ? "Request a personalized..."
+                : `$${item?.priceRange?.from || null}-${item?.priceRange?.to || null}`}
             </Text>
           )}
         </View>
@@ -82,8 +87,11 @@ const ServiceCard = ({ item, showAddress, showPrice }) => {
             <Ionicons name="location-outline" size={16} color="#319FCA" />
 
             <Text className="font-poppins-400regular text-sm text-[#319FCA]">
-              {item.address}
-              <Text className="text-[#6B7280]"> | {item.timeAgo}</Text>
+              {city && state ? `${city}, ${state}` : "N/A"}
+              <Text className="text-[#6B7280]">
+                {" "}
+                | {item?.timeAgo || "N/A"}
+              </Text>
             </Text>
           </View>
         )}

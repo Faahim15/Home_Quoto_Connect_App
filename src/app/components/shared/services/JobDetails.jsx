@@ -2,7 +2,7 @@ import { View, Text, Image, FlatList } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import XStyle from "../../../util/styles";
 import { imagesData } from "../../data/shared/ServicesData";
-
+import { formatDateForCanada } from "../../../util/helper-function";
 function showImages({ item }) {
   return (
     <View>
@@ -17,24 +17,14 @@ function showImages({ item }) {
     </View>
   );
 }
-export default function ProviderInfo({ serviceData, showPrice = false }) {
-  const {
-    price,
-    profileImage,
-    providerName,
-    rating,
-    reviews,
-    serviceType,
-    timeAgo,
-    designation,
-    bookingDate,
-    bookingHours,
-    specializations,
-    description,
-    address,
-    quoteOption,
-  } = serviceData;
-
+export default function ProviderInfo({ item, showPrice = false }) {
+  const { city, state } = item?.location?.details;
+  // ✅ Fix main image logic
+  const mainImageSource =
+    item.photos && item.photos.length > 0 && item.photos[0].uri
+      ? { uri: item.photos[0].uri }
+      : null;
+  console.log("see", item?.specializations[0]);
   return (
     <View
       style={XStyle.shadowBox}
@@ -42,27 +32,33 @@ export default function ProviderInfo({ serviceData, showPrice = false }) {
     >
       <View>
         <Text className="font-poppins-500medium text-base text-[#565656] ">
-          {serviceType}
+          {item?.serviceCategory?.title || "N/A"}
         </Text>
         <View className="border-b border-[#CACACA] mb-[2%] mt-[3%] ">
           <Image
             style={{ width: scale(310), height: verticalScale(177) }}
             className="rounded-md  mb-[2%] "
-            source={require("../../../../../assets/images/home/jobs/summary1.png")}
+            source={{ uri: mainImageSource }}
           />
         </View>
-        <View className="mt-[1%]">
-          <FlatList
-            data={imagesData}
-            renderItem={showImages}
-            keyExtractor={(item) => item.id}
-            horizontal
-            ItemSeparatorComponent={() => (
-              <View style={{ paddingRight: scale(10) }} />
-            )}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
+
+        {/* ✅ Fix FlatList - check if photoData has items */}
+        {item.photos && item.photos.length > 0 && (
+          <View className="mt-[1%]">
+            <FlatList
+              data={item.photos}
+              renderItem={showImages}
+              keyExtractor={(item) =>
+                item.id || item.uri || Math.random().toString()
+              }
+              horizontal
+              ItemSeparatorComponent={() => (
+                <View style={{ paddingRight: scale(10) }} />
+              )}
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
+        )}
 
         <View className="flex-col border-b border-[#CACACA] mb-[2%] w-full overflow-hidden">
           <View className="flex-col gap-[6%] mt-[3%]">
@@ -70,7 +66,7 @@ export default function ProviderInfo({ serviceData, showPrice = false }) {
               Job Details
             </Text>
             <Text className="font-poppins-400regular text-justify text-xs text-[#5C5F62] ">
-              {description}
+              {item?.description || "N/A"}
             </Text>
           </View>
           {/* Service */}
@@ -79,7 +75,7 @@ export default function ProviderInfo({ serviceData, showPrice = false }) {
               Service
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              {designation}
+              {item?.serviceCategory?.title || "N/A"}
             </Text>
           </View>
           {/* Specializations */}
@@ -88,14 +84,21 @@ export default function ProviderInfo({ serviceData, showPrice = false }) {
               Specializations
             </Text>
             <View className="flex-row overflow-hidden flex-wrap">
-              {specializations.slice(0, 2).map((item, idx, arr) => (
+              {item?.specializations?.slice(0, 2).map((spec, idx) => (
                 <Text
                   className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]"
                   key={idx}
                 >
-                  {item + (idx !== arr.length - 1 ? ", " : "")}
+                  {spec.title}
+                  {idx < 1 && item.specializations.length > 1 ? ", " : ""}
                 </Text>
               ))}
+
+              {item?.specializations?.length > 2 && (
+                <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
+                  +{item.specializations.length - 2}
+                </Text>
+              )}
             </View>
           </View>
           {showPrice && (
@@ -104,7 +107,7 @@ export default function ProviderInfo({ serviceData, showPrice = false }) {
                 Address
               </Text>
               <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-                {address.split(",").slice(-2).join(", ")}{" "}
+                {city && state ? `${city}, ${state}` : "N/A"}
               </Text>
             </View>
           )}
@@ -114,7 +117,7 @@ export default function ProviderInfo({ serviceData, showPrice = false }) {
               Booking date
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              {bookingDate}
+              {formatDateForCanada(item?.preferredDate) || "N/A"}
             </Text>
           </View>
           {/* Booking hours */}
@@ -123,7 +126,7 @@ export default function ProviderInfo({ serviceData, showPrice = false }) {
               Booking Hours
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              {bookingHours}
+              {item?.preferredTime || "N/A"}
             </Text>
           </View>
         </View>
@@ -142,13 +145,15 @@ export default function ProviderInfo({ serviceData, showPrice = false }) {
                 borderRadius: scale(20),
               }}
               source={{
-                uri: profileImage || "https://via.placeholder.com/300",
+                uri:
+                  item?.client?.profilePhoto?.url ||
+                  "https://via.placeholder.com/300",
               }}
               className="mt-[2%]"
             />
             <View className="mt-[2%]">
               <Text className="font-poppins-500medium text-xl text-[#1F2937]">
-                {providerName}
+                {item?.client?.fullName}
               </Text>
             </View>
           </View>
@@ -159,9 +164,9 @@ export default function ProviderInfo({ serviceData, showPrice = false }) {
                 Price
               </Text>
               <Text className="text-[#F59E0B] text-base font-poppins-semiBold">
-                {quoteOption === "Accept"
-                  ? price
-                  : "Request a personalized quote"}
+                {item?.priceRange?.isPersonalized
+                  ? "Request a personalized..."
+                  : `$${item?.priceRange?.from || null}-${item?.priceRange?.to || null}`}
               </Text>
             </View>
           )}

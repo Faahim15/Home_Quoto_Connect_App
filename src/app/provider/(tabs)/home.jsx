@@ -29,9 +29,9 @@ export default function ContractorHomeScreen() {
       showsVerticalScrollIndicator={false}
     >
       <View className="flex-1 bg-[#f9f9f9]">
-        <View>
+        {/* <View>
           <HomeTopBar />
-        </View>
+        </View> */}
         <SearchBar onPress={() => setShowModal(true)} />
 
         <JobsHeader title="Todays Jobs" />

@@ -57,10 +57,10 @@ export default function HomeScreen() {
   }
 
   const userData = profile?.data?.user;
-  // console.log("todays job:", todaysJobs.data.jobs);
+  console.log("todays job:", userData);
   return (
     <View className="flex-1 bg-[#F9FAFB]">
-      <HomeTopBar userData={userData} />
+      {/* <HomeTopBar userData={userData} /> */}
 
       <ScrollView className="flex-1 h-full">
         <PromoCard />
@@ -75,11 +75,11 @@ export default function HomeScreen() {
 
         {/* Active Jobs section */}
         <ServiceHeader title="Active Jobs" />
-        <ServiceCards
+        {/* <ServiceCards
           jobs={activeJobs?.data}
           showPrice={true}
           showAddress={true}
-        />
+        /> */}
 
         {/* popular service */}
         <PopularServices />

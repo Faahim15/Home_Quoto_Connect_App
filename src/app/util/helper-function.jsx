@@ -17,5 +17,17 @@ const getSpecializationTitles = (specIds) => {
     })
     .join(", ");
 };
+export function formatDateForCanada(isoString) {
+  if (!isoString) return "Invalid date";
 
+  const date = new Date(isoString);
+
+  return new Intl.DateTimeFormat("en-CA", {
+    weekday: "long", // e.g., Friday
+    year: "numeric", // e.g., 2025
+    month: "long", // e.g., October
+    day: "numeric", // e.g., 31
+    timeZone: "America/Toronto", // 🇨🇦 Eastern Time
+  }).format(date);
+}
 export default getSpecializationTitles;

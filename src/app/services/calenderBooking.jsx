@@ -8,8 +8,9 @@ import { setJobField } from "../../redux/features/jobPost/jobPostSlice";
 import { useDispatch, useSelector } from "react-redux";
 const BookingCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
+    new Date("2025-10-31T18:00:00Z").toISOString()
   );
+
   const dispatch = useDispatch();
   const jobData = useSelector((state) => state.jobPost);
 

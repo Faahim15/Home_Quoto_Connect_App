@@ -26,7 +26,7 @@ export default function JobFormScreen() {
   const jobData = useSelector((state) => state.jobPost);
   const [errors, setErrors] = React.useState({});
 
-  console.log("JobData", jobData);
+  // console.log("JobData", jobData.preferredDate);
 
   const handleInputChange = (field, value) => {
     dispatch(setJobField({ field, value }));

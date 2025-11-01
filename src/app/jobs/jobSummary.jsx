@@ -11,7 +11,7 @@ import ReviewPost from "../components/tabs/jobs/ReviewPost";
 
 export default function JobSummaryScreen() {
   const jobData = useSelector((state) => state.jobPost);
-  console.log("job data", jobData.completeAddress);
+  console.log("preferredDate", jobData.preferredDate);
   const [createJob, { isLoading }] = useCreateJobMutation();
   const [longitude, latitude] = jobData.location.coordinates;
   const dispatch = useDispatch();

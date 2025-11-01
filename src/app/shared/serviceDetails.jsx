@@ -1,4 +1,4 @@
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import ProviderInfo from "../components/shared/services/JobDetails";
 import XStyle from "../util/styles";
@@ -7,42 +7,49 @@ import BotttomButtons from "../components/shared/services/buttons/BottomButtons"
 import CustomButton from "../components/shared/services/buttons/ServiceButton";
 import { router, useLocalSearchParams } from "expo-router";
 import servicesData from "../components/data/shared/ServicesData";
+import { useGetTodaysJobsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 export default function ServiceDetails() {
+  const { data: todaysJobs, isLoading: todaysJobsLoading } =
+    useGetTodaysJobsQuery();
   const { serviceId, showButtons, showPrice } = useLocalSearchParams();
 
-  const service = servicesData.find((s) => s.id.toString() === serviceId);
-  const renderButton =
-    service.quoteOption === "Send a Personalized Quote" ? (
-      <BotttomButtons
-        onPress={() => router.push("/provider/quote/updateQuote")}
-        backgroundColor="#fff"
-        color="#175994"
-        borderColor="#175994"
-        title="  Send an updated offer"
-        width="full"
-      />
-    ) : (
-      <BotttomButtons
-        onPress={() => router.push("/provider/home")}
-        backgroundColor="#fff"
-        color="#175994"
-        borderColor="#175994"
-        title="Accept"
-        width={148}
-      />
-    );
+  const service = todaysJobs?.data?.jobs.find(
+    (s) => s.id.toString() === serviceId
+  );
+  console.log("service", service);
+  const renderButton = service?.priceRange?.isPersonalized ? (
+    <BotttomButtons
+      onPress={() => router.push("/provider/quote/updateQuote")}
+      backgroundColor="#fff"
+      color="#175994"
+      borderColor="#175994"
+      title="  Send an updated offer"
+      width="full"
+    />
+  ) : (
+    <BotttomButtons
+      onPress={() => router.push("/provider/home")}
+      backgroundColor="#fff"
+      color="#175994"
+      borderColor="#175994"
+      title="Accept"
+      width={148}
+    />
+  );
   const shouldShowButtons = showButtons === "true";
   const shouldShowPrice = showPrice === "true";
   return (
     <View className="flex-1 bg-[#F9F9F9]">
       <View className="flex-1 mb-[2%]  px-[6%] bg-[#F9F9F9]">
-        <CustomTitle title={service.serviceType} />
+        <CustomTitle
+          title={service?.serviceCategory?.title || "Service Details"}
+        />
         <ScrollView
           contentContainerStyle={{ paddingBottom: verticalScale(40) }}
           showsVerticalScrollIndicator={false}
         >
           <View>
-            <ProviderInfo showPrice={shouldShowPrice} serviceData={service} />
+            <ProviderInfo showPrice={shouldShowPrice} item={service} />
           </View>
           {/* {showCompleteJob && (
             <View className="mt-[8%] ">
@@ -59,7 +66,6 @@ export default function ServiceDetails() {
             {
               borderTopRightRadius: scale(20),
               borderTopLeftRadius: scale(20),
-              // height: verticalScale(140),
             },
           ]}
         >
@@ -72,16 +78,12 @@ export default function ServiceDetails() {
               color="#EF4444"
               borderColor="#EF4444"
               title="Cancel"
-              width={
-                service.quoteOption === "Send a Personalized Quote"
-                  ? "full"
-                  : 148
-              }
+              width={service?.priceRange?.isPersonalized ? "full" : 148}
             />
 
             {renderButton}
           </View>
-          {service.quoteOption !== "Send a Personalized Quote" && (
+          {service?.priceRange?.isPersonalized && (
             <View className="px-[3%]">
               <CustomButton
                 onPress={() => router.push("/provider/quote/updateQuote")}
