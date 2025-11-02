@@ -26,8 +26,6 @@ export default function JobFormScreen() {
   const jobData = useSelector((state) => state.jobPost);
   const [errors, setErrors] = React.useState({});
 
-  // console.log("JobData", jobData.preferredDate);
-
   const handleInputChange = (field, value) => {
     dispatch(setJobField({ field, value }));
 
@@ -62,6 +60,100 @@ export default function JobFormScreen() {
     //   }
     // }
   };
+  // const validateCurrentPage = () => {
+  //   const currentPageSchema = Yup.object({
+  //     title: Yup.string().required("Job title is required"),
+  //     serviceCategory: Yup.string().required("Service category is required"),
+  //     location: Yup.object()
+  //       .nullable()
+  //       .required("Location is required")
+  //       .test(
+  //         "has-coordinates",
+  //         "Location coordinates are required",
+  //         (value) => {
+  //           return value?.coordinates && value.coordinates.length === 2;
+  //         }
+  //       ),
+  //     preferredDate: Yup.string()
+  //       .required("Preferred date is required")
+  //       .matches(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format")
+  //       .test("future-date", "Date must be today or in the future", (value) => {
+  //         const inputDate = new Date(value);
+  //         const today = new Date();
+
+  //         // ✅ Set both dates to start of day for accurate comparison
+  //         inputDate.setHours(0, 0, 0, 0);
+  //         today.setHours(0, 0, 0, 0);
+
+  //         return inputDate >= today;
+  //       }),
+  //     urgency: Yup.string().required("Please select urgency"),
+  //     // ✅ UPDATED VALIDATION: Added min/max value checks
+  //     priceRange: Yup.object().test(
+  //       "valid-price-config",
+  //       "Either set a fixed price range or mark as negotiable",
+  //       function (value) {
+  //         const { from, to, isPersonalized } = value || {};
+
+  //         const hasAnyPriceValue = from > 0 || to > 0;
+  //         const isNegotiable = isPersonalized === true;
+
+  //         // Must have either any price value OR be negotiable
+  //         if (!hasAnyPriceValue && !isNegotiable) {
+  //           return this.createError({
+  //             path: this.path,
+  //             message: "Either set a fixed price range or mark as negotiable",
+  //           });
+  //         }
+
+  //         // ✅ Check if both from and to have values
+  //         if (from > 0 && to > 0) {
+  //           if (from > to) {
+  //             return this.createError({
+  //               path: this.path,
+  //               message: "Minimum price cannot be greater than maximum price",
+  //             });
+  //           }
+
+  //           if (from === to) {
+  //             return this.createError({
+  //               path: this.path,
+  //               message: "Minimum and maximum price cannot be the same",
+  //             });
+  //           }
+  //         }
+
+  //         return true;
+  //       }
+  //     ),
+  //     // ✅ ADDED VALIDATION for specificInstructions
+  //     specificInstructions: Yup.string()
+  //       .required("Specific instructions are required")
+  //       .min(10, "Instructions must be at least 10 characters")
+  //       .max(500, "Instructions cannot exceed 500 characters")
+  //       .test(
+  //         "not-just-whitespace",
+  //         "Instructions cannot be only whitespace",
+  //         (value) => {
+  //           return value && value.trim().length > 0;
+  //         }
+  //       ),
+  //     specializations: Yup.array().min(1, "Select at least one specialization"),
+  //   });
+
+  //   try {
+  //     currentPageSchema.validateSync(jobData, { abortEarly: false });
+  //     setErrors({});
+  //     return true;
+  //   } catch (error) {
+  //     const newErrors = {};
+  //     error.inner.forEach((err) => {
+  //       newErrors[err.path] = err.message;
+  //     });
+  //     setErrors(newErrors);
+  //     return false;
+  //   }
+  // };
   const validateCurrentPage = () => {
     const currentPageSchema = Yup.object({
       title: Yup.string().required("Job title is required"),
@@ -82,33 +174,24 @@ export default function JobFormScreen() {
         .test("future-date", "Date must be today or in the future", (value) => {
           const inputDate = new Date(value);
           const today = new Date();
-
-          // ✅ Set both dates to start of day for accurate comparison
           inputDate.setHours(0, 0, 0, 0);
           today.setHours(0, 0, 0, 0);
-
           return inputDate >= today;
         }),
       urgency: Yup.string().required("Please select urgency"),
-      // ✅ UPDATED VALIDATION: Added min/max value checks
       priceRange: Yup.object().test(
         "valid-price-config",
         "Either set a fixed price range or mark as negotiable",
         function (value) {
           const { from, to, isPersonalized } = value || {};
-
           const hasAnyPriceValue = from > 0 || to > 0;
           const isNegotiable = isPersonalized === true;
-
-          // Must have either any price value OR be negotiable
           if (!hasAnyPriceValue && !isNegotiable) {
             return this.createError({
               path: this.path,
               message: "Either set a fixed price range or mark as negotiable",
             });
           }
-
-          // ✅ Check if both from and to have values
           if (from > 0 && to > 0) {
             if (from > to) {
               return this.createError({
@@ -116,7 +199,6 @@ export default function JobFormScreen() {
                 message: "Minimum price cannot be greater than maximum price",
               });
             }
-
             if (from === to) {
               return this.createError({
                 path: this.path,
@@ -124,11 +206,9 @@ export default function JobFormScreen() {
               });
             }
           }
-
           return true;
         }
       ),
-      // ✅ ADDED VALIDATION for specificInstructions
       specificInstructions: Yup.string()
         .required("Specific instructions are required")
         .min(10, "Instructions must be at least 10 characters")
@@ -143,8 +223,14 @@ export default function JobFormScreen() {
       specializations: Yup.array().min(1, "Select at least one specialization"),
     });
 
+    // ✅ Transform jobData before validation
+    const transformedData = {
+      ...jobData,
+      serviceCategory: jobData?.serviceCategory?.id || "",
+    };
+
     try {
-      currentPageSchema.validateSync(jobData, { abortEarly: false });
+      currentPageSchema.validateSync(transformedData, { abortEarly: false });
       setErrors({});
       return true;
     } catch (error) {
@@ -156,7 +242,6 @@ export default function JobFormScreen() {
       return false;
     }
   };
-
   const handleContinue = () => {
     if (validateCurrentPage()) {
       router.push("/jobs/jobLocation");

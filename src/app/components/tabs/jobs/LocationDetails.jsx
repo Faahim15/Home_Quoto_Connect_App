@@ -22,7 +22,8 @@ export default function LocationDetails({ validationErrors }) {
           // value={jobData.houseNumber}
           onChangeText={(value) => handleInputChange("houseNumber", value)}
           placeholder="Enter house number"
-          keyboardType="numeric"
+          // keyboardType="numeric"
+          keyboardType="default"
           label="House number"
           validationErrors={validationErrors.houseNumber}
         />

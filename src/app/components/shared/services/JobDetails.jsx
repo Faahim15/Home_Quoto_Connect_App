@@ -1,13 +1,12 @@
 import { View, Text, Image, FlatList } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import XStyle from "../../../util/styles";
-import { imagesData } from "../../data/shared/ServicesData";
 import { formatDateForCanada } from "../../../util/helper-function";
 function showImages({ item }) {
   return (
     <View>
       <Image
-        source={item.image}
+        source={{ uri: item.url }}
         style={{
           width: scale(90),
           height: verticalScale(80),
@@ -18,13 +17,15 @@ function showImages({ item }) {
   );
 }
 export default function ProviderInfo({ item, showPrice = false }) {
-  const { city, state } = item?.location?.details;
+  const { city, state } = item?.location?.details || {};
   // ✅ Fix main image logic
   const mainImageSource =
-    item.photos && item.photos.length > 0 && item.photos[0].uri
-      ? { uri: item.photos[0].uri }
+    item?.photos && item?.photos?.length > 0 && item.photos[0].url
+      ? { uri: item.photos[0].url }
       : null;
-  console.log("see", item?.specializations[0]);
+
+  // console.log("mainImage", item?.photos);
+
   return (
     <View
       style={XStyle.shadowBox}
@@ -38,7 +39,7 @@ export default function ProviderInfo({ item, showPrice = false }) {
           <Image
             style={{ width: scale(310), height: verticalScale(177) }}
             className="rounded-md  mb-[2%] "
-            source={{ uri: mainImageSource }}
+            source={{ uri: mainImageSource.uri }}
           />
         </View>
 
@@ -46,7 +47,7 @@ export default function ProviderInfo({ item, showPrice = false }) {
         {item.photos && item.photos.length > 0 && (
           <View className="mt-[1%]">
             <FlatList
-              data={item.photos}
+              data={item?.photos}
               renderItem={showImages}
               keyExtractor={(item) =>
                 item.id || item.uri || Math.random().toString()

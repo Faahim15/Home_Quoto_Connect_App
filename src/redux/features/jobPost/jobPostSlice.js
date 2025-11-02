@@ -2,7 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   title: "",
-  serviceCategory: "",
+  serviceCategory: {
+    id: "",
+    title: "",
+  },
+
   // location: "",
   location: {
     type: "Point",

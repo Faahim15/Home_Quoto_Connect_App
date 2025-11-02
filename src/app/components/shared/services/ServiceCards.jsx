@@ -3,16 +3,21 @@ import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import servicesData from "../../data/shared/ServicesData";
 import { router } from "expo-router";
-const ServiceCard = ({ item, showAddress, showPrice }) => {
-  const { url } = item.serviceCategory?.image;
-  const { fullName } = item.client;
+const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
+  // const { url } = item.serviceCategory?.image;
+  const { fullName } = item?.client;
   const { city, state } = item?.location?.details;
+  // console.log(item?.photos[0]?.url);
   return (
     <TouchableOpacity
       onPress={() => {
         router.push({
           pathname: "/shared/serviceDetails",
-          params: { serviceId: item.id, showPrice: showPrice },
+          params: {
+            serviceId: item.id,
+            showPrice: showPrice,
+            whichJob: whichJob,
+          },
         });
       }}
       style={{ width: scale(330), height: verticalScale(288) }}
@@ -22,7 +27,7 @@ const ServiceCard = ({ item, showAddress, showPrice }) => {
       <View className="w-full">
         <Image
           source={{
-            uri: url || "https://via.placeholder.com/300",
+            uri: item?.photos[0]?.url || "https://via.placeholder.com/300",
           }}
           className="rounded-xl"
           style={{ height: verticalScale(170) }}
@@ -63,9 +68,11 @@ const ServiceCard = ({ item, showAddress, showPrice }) => {
         <View className="flex-row w-full justify-between items-center mb-[2%]">
           <View className="flex-row gap-[2%] items-center">
             <Ionicons name="construct-outline" size={16} color="#6B7280" />
-            <Text className="font-poppins-400regular text-sm text-[#6B7280] ">
-              {" "}
-              {item?.serviceCategory?.title || "N/A"}
+            <Text className="font-poppins-400regular text-sm text-[#6B7280]">
+              {(item?.serviceCategory?.title || "N/A")
+                .split(" ")
+                .slice(0, 2)
+                .join(" ")}
             </Text>
           </View>
           {showAddress && (
@@ -100,27 +107,41 @@ const ServiceCard = ({ item, showAddress, showPrice }) => {
   );
 };
 
-export default function ServiceCards({ jobs, showPrice = false, showAddress }) {
+export default function ServiceCards({
+  whichJob,
+  jobs,
+  showPrice = false,
+  showAddress,
+}) {
   // console.log("todays job:", jobs);
   const jobData = jobs || servicesData;
+  const isEmpty = !jobData || jobData.length === 0;
+
   return (
-    <View className="mt-[2%] justify-center mx-[6%]  items-start   ">
-      <FlatList
-        data={jobData}
-        renderItem={({ item }) => (
-          <ServiceCard
-            showPrice={showPrice}
-            showAddress={showAddress}
-            item={item}
-          />
-        )}
-        keyExtractor={(item) => item.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingRight: scale(80),
-        }}
-      />
+    <View className="mt-[2%] justify-center mx-[6%] items-start">
+      {isEmpty ? (
+        <Text className="text-gray-500 font-poppins-400regular text-base">
+          No services available at the moment.
+        </Text>
+      ) : (
+        <FlatList
+          data={jobData}
+          renderItem={({ item }) => (
+            <ServiceCard
+              showPrice={showPrice}
+              showAddress={showAddress}
+              item={item}
+              whichJob={whichJob}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingRight: scale(80),
+          }}
+        />
+      )}
     </View>
   );
 }

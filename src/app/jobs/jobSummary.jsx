@@ -11,9 +11,12 @@ import ReviewPost from "../components/tabs/jobs/ReviewPost";
 
 export default function JobSummaryScreen() {
   const jobData = useSelector((state) => state.jobPost);
-  console.log("preferredDate", jobData.preferredDate);
+  // console.log("preferredDate", jobData.preferredDate);
+  console.log("serviceCategory", jobData?.serviceCategory?.id);
   const [createJob, { isLoading }] = useCreateJobMutation();
   const [longitude, latitude] = jobData.location.coordinates;
+  const specializationIds = jobData?.specializations.map((spec) => spec.id);
+
   const dispatch = useDispatch();
   const handlePostJob = async () => {
     try {
@@ -22,13 +25,10 @@ export default function JobSummaryScreen() {
       // 🧾 Append all simple fields
       formData.append("title", jobData.title);
       formData.append("description", jobData.specificInstructions);
-      formData.append("serviceCategory", jobData.serviceCategory);
+      formData.append("serviceCategory", jobData?.serviceCategory?.id);
 
       // specializations
-      formData.append(
-        "specializations",
-        `["${jobData.specializations.join('","')}"]`
-      );
+      formData.append("specializations", JSON.stringify(specializationIds));
 
       // post location
       formData.append("location[type]", "Point");

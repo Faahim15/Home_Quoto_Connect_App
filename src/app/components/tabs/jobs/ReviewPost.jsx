@@ -66,16 +66,15 @@ export default function ReviewPost({ jobData, isLoading }) {
     title,
     photos,
   } = jobData;
-
-  const { address } = jobData.location;
-  const { isPersonalized, from, to } = jobData.priceRange;
+  const { address } = jobData?.location;
+  const { isPersonalized, from, to } = jobData?.priceRange;
 
   // ✅ Fix photoData logic
-  const photoData = photos && photos.length > 0 ? photos : null;
+  const photoData = photos && photos?.length > 0 ? photos : null;
 
   // ✅ Fix main image logic
   const mainImageSource =
-    photos && photos.length > 0 && photos[0].uri
+    photos && photos?.length > 0 && photos[0].uri
       ? { uri: photos[0].uri }
       : null;
 
@@ -132,44 +131,17 @@ export default function ReviewPost({ jobData, isLoading }) {
               Service
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              {(() => {
-                const foundService = services.find(
-                  (service) => service.id === serviceCategory
-                );
-                return foundService ? foundService.name : "N/A";
-              })()}
+              {jobData?.serviceCategory?.title}
             </Text>
           </View>
 
           {/* Specializations */}
-          <View className="flex-row mt-[3%] justify-between ">
+          <View className="flex-row mt-[3%] justify-between">
             <Text className="font-poppins-semiBold text-xs text-[#6B7280]">
               Specializations
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              {(() => {
-                if (
-                  !Array.isArray(specializations) ||
-                  specializations.length === 0
-                ) {
-                  return "N/A";
-                }
-
-                // প্রথম ২টা specialization
-                const firstTwo = specializations
-                  .slice(0, 2)
-                  .map((id) => {
-                    const foundSpec = S.find((spec) => spec.id === id);
-                    return foundSpec ? foundSpec.title : id;
-                  })
-                  .join(", ");
-
-                // বাকি থাকলে count যোগ করুন
-                const remainingCount = specializations.length - 2;
-                return remainingCount > 0
-                  ? `${firstTwo} +${remainingCount}`
-                  : firstTwo;
-              })()}
+              {specializations[0]?.title} {`+${specializations?.length - 1}`}
             </Text>
           </View>
 
