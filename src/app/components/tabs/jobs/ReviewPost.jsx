@@ -141,7 +141,10 @@ export default function ReviewPost({ jobData, isLoading }) {
               Specializations
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              {specializations[0]?.title} {`+${specializations?.length - 1}`}
+              {specializations[0]?.title}{" "}
+              {specializations?.length > 1
+                ? `+${specializations.length - 1}`
+                : ""}
             </Text>
           </View>
 

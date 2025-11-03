@@ -87,21 +87,12 @@ export default function JobInfo({ item }) {
               Specializations
             </Text>
             <View className="flex-row overflow-hidden flex-wrap">
-              {item?.specializations?.slice(0, 2).map((spec, idx) => (
-                <Text
-                  className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]"
-                  key={idx}
-                >
-                  {spec.title}
-                  {idx < 1 && item.specializations.length > 1 ? ", " : ""}
-                </Text>
-              ))}
-
-              {item?.specializations?.length > 2 && (
-                <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-                  +{item.specializations.length - 2}
-                </Text>
-              )}
+              <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
+                {item?.specializations[0]?.title}{" "}
+                {item?.specializations?.length > 1
+                  ? `+${item.specializations.length - 1}`
+                  : ""}
+              </Text>
             </View>
           </View>
 
