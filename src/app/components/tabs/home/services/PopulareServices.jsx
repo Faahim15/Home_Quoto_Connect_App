@@ -58,7 +58,7 @@ export default function PopularServices({ categories }) {
         <FlatList
           data={categories || popularSeviceData}
           renderItem={({ item }) => <ServiceItem item={item} />}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => item.id || index.toString()}
           horizontal
           showsHorizontalScrollIndicator={false}
           decelerationRate="fast"

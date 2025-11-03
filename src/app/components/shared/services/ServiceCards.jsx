@@ -7,7 +7,7 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
   // const { url } = item.serviceCategory?.image;
   const { fullName } = item?.client;
   const { city, state } = item?.location?.details;
-  console.log("h", item?.id);
+
   return (
     <TouchableOpacity
       onPress={() => {

@@ -4,7 +4,6 @@ export const jobSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     createJob: builder.mutation({
       query: (formData) => {
-        console.log("📦 job api before sending:", formData);
         return {
           url: "/jobs",
           method: "POST",
@@ -17,6 +16,13 @@ export const jobSlice = api.injectEndpoints({
       invalidatesTags: ["user"],
     }),
 
+    getAllJobs: builder.query({
+      query: () => ({
+        url: "/jobs/my-jobs",
+        method: "GET",
+      }),
+      providesTags: ["Jobs"],
+    }),
     getTodaysJobs: builder.query({
       query: () => ({
         url: "/jobs/today",
@@ -59,13 +65,22 @@ export const jobSlice = api.injectEndpoints({
       }),
       providesTags: ["Jobs"],
     }),
+    getPopularProviders: builder.query({
+      query: () => ({
+        url: "/popular/providers?sortBy=popularity",
+        method: "GET",
+      }),
+      providesTags: ["Jobs"],
+    }),
   }),
 });
 export const {
   useCreateJobMutation,
+  useGetAllJobsQuery,
   useGetTodaysJobsQuery,
   useGetActiveJobsQuery,
   useGetSingleJobQuery,
   useGetSpecializationsQuery,
   useGetServiceCategoriesQuery,
+  useGetPopularProvidersQuery,
 } = jobSlice;

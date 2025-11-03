@@ -12,7 +12,7 @@ import servicesData from "../../../data/shared/ServicesData";
 import { router } from "expo-router";
 
 const ServiceCard = ({ item }) => {
-  console.log("items:", item?.photos[0]?.url);
+  // console.log("items:", item?.photos[0]?.url);
   const { city, state } = item?.location?.details;
   return (
     <TouchableOpacity
@@ -139,9 +139,7 @@ export default function ViewAllServiceCards({
         <FlatList
           data={displayData}
           renderItem={({ item }) => <ServiceCard item={item} />}
-          keyExtractor={(item, index) =>
-            item?.id?.toString() || index.toString()
-          }
+          keyExtractor={(item, index) => item?.id || index.toString()}
           numColumns={1}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{

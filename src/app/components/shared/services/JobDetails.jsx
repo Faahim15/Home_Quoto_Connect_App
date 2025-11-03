@@ -6,7 +6,7 @@ function showImages({ item }) {
   return (
     <View>
       <Image
-        source={{ uri: item.url }}
+        source={{ uri: item?.url }}
         style={{
           width: scale(90),
           height: verticalScale(80),
@@ -19,7 +19,7 @@ function showImages({ item }) {
 export default function ProviderInfo({ item, showPrice = false }) {
   const { city, state } = item?.location?.details || {};
 
-  console.log("sevice", item);
+  // console.log("sevice", item);
   // ✅ Fix main image logic
   const mainImageSource =
     item?.photos && item?.photos?.length > 0 && item.photos[0].url
