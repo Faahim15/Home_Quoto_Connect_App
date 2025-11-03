@@ -10,6 +10,7 @@ import {
   useGetTodaysJobsQuery,
   useGetActiveJobsQuery,
   useGetServiceCategoriesQuery,
+  useGetPopularProvidersQuery,
 } from "../../redux/features/apiSlices/user/createJobSlices";
 import { Text } from "react-native";
 
@@ -25,6 +26,11 @@ export default function HomeScreen() {
     useGetActiveJobsQuery();
 
   const { data, isLoading, error } = useGetServiceCategoriesQuery();
+  const {
+    data: popularProvidersData,
+    isLoading: providerLoading,
+    error: providersError,
+  } = useGetPopularProvidersQuery();
 
   // ✅ Combined loading state
   if (profileLoading || todaysJobsLoading || activeJobsLoading || isLoading) {
@@ -59,7 +65,9 @@ export default function HomeScreen() {
     );
   }
 
-  const userData = profile?.data?.user;
+  const userData = profile?.data?.user || null;
+
+  const providerData = popularProvidersData?.data?.providers || null;
 
   return (
     <View className="flex-1 bg-[#F9FAFB]">
@@ -93,7 +101,7 @@ export default function HomeScreen() {
         <PopularServices categories={data?.data?.categories} />
 
         {/* Popular Service Provider section */}
-        <ServiceProvider />
+        <ServiceProvider providerData={providerData} />
       </ScrollView>
     </View>
   );
