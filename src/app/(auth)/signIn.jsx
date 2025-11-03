@@ -62,7 +62,7 @@ export default function SignInScreen() {
         text2: `Welcome back, ${res?.data?.user?.fullName || "User"}!`,
       });
 
-      console.log("Login response:", res.data.user);
+      // console.log("Login response:", res.data.user);
 
       // ✅ Navigate to /home
       router.push("/home");
@@ -122,7 +122,7 @@ export default function SignInScreen() {
           <View className="flex-row pl-[5.5%] pb-[6%] items-center">
             <TouchableOpacity
               onPress={() => setAgreeToTerms(!agreeToTerms)}
-              className="mr-[3%]"
+              className="mr-[1%]"
             >
               <Ionicons
                 name={agreeToTerms ? "checkbox" : "square-outline"}
@@ -130,12 +130,12 @@ export default function SignInScreen() {
                 color={agreeToTerms ? "#909090" : "#9CA3AF"}
               />
             </TouchableOpacity>
-            <View className="w-[85%] flex-row justify-between">
-              <Text className="text-sm pt-[1%] font-poppins-400regular text-[#000000]">
+            <View className="w-[88%] items-center flex-row justify-between">
+              <Text className="text-sm  font-poppins-400regular text-[#000000]">
                 Remember me
               </Text>
               <TouchableOpacity onPress={() => router.push("/forgetPassword")}>
-                <Text className="text-base font-poppins-bold text-[#175994] underline">
+                <Text className="text-base  font-poppins-bold text-[#175994] underline">
                   Forget Password?
                 </Text>
               </TouchableOpacity>

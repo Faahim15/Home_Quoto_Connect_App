@@ -7,7 +7,7 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
   // const { url } = item.serviceCategory?.image;
   const { fullName } = item?.client;
   const { city, state } = item?.location?.details;
-  // console.log(item?.photos[0]?.url);
+  console.log("h", item?.id);
   return (
     <TouchableOpacity
       onPress={() => {
@@ -27,7 +27,7 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
       <View className="w-full">
         <Image
           source={{
-            uri: item?.photos[0]?.url || "https://via.placeholder.com/300",
+            uri: item?.photos[0]?.url || null,
           }}
           className="rounded-xl"
           style={{ height: verticalScale(170) }}
@@ -83,7 +83,7 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
             >
               {item?.priceRange?.isPersonalized
                 ? "Request a personalized..."
-                : `$${item?.priceRange?.from || null}-${item?.priceRange?.to || null}`}
+                : `$${item?.priceRange?.from || null}-$${item?.priceRange?.to || null}`}
             </Text>
           )}
         </View>

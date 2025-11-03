@@ -12,7 +12,7 @@ import ReviewPost from "../components/tabs/jobs/ReviewPost";
 export default function JobSummaryScreen() {
   const jobData = useSelector((state) => state.jobPost);
   // console.log("preferredDate", jobData.preferredDate);
-  console.log("serviceCategory", jobData?.serviceCategory?.id);
+  // console.log("serviceCategory", jobData?.serviceCategory?.id);
   const [createJob, { isLoading }] = useCreateJobMutation();
   const [longitude, latitude] = jobData.location.coordinates;
   const specializationIds = jobData?.specializations.map((spec) => spec.id);

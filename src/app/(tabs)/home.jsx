@@ -9,6 +9,7 @@ import { useUserProfileQuery } from "../../redux/features/apiSlices/user/userApi
 import {
   useGetTodaysJobsQuery,
   useGetActiveJobsQuery,
+  useGetServiceCategoriesQuery,
 } from "../../redux/features/apiSlices/user/createJobSlices";
 import { Text } from "react-native";
 
@@ -23,8 +24,10 @@ export default function HomeScreen() {
   const { data: activeJobs, isLoading: activeJobsLoading } =
     useGetActiveJobsQuery();
 
+  const { data, isLoading, error } = useGetServiceCategoriesQuery();
+
   // ✅ Combined loading state
-  if (profileLoading || todaysJobsLoading || activeJobsLoading) {
+  if (profileLoading || todaysJobsLoading || activeJobsLoading || isLoading) {
     return (
       <View className="flex-1 bg-[#F9FAFB] justify-center items-center">
         <View className="flex-col items-center justify-center">
@@ -87,7 +90,7 @@ export default function HomeScreen() {
         />
 
         {/* popular service */}
-        <PopularServices />
+        <PopularServices categories={data?.data?.categories} />
 
         {/* Popular Service Provider section */}
         <ServiceProvider />

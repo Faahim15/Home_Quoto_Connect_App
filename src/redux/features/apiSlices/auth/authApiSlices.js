@@ -4,12 +4,15 @@ import { api } from "../../api/baseApi";
 export const authSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     registerUser: builder.mutation({
-      query: (data) => {
-        console.log("register api", data);
+      query: (formData) => {
+        // console.log("register api", formData);
         return {
           url: `/auth/register`,
           method: "POST",
-          body: data,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
         };
       },
       invalidatesTags: ["user"],
@@ -39,6 +42,14 @@ export const authSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["user"],
     }),
+    resendOtp: builder.mutation({
+      query: (data) => ({
+        url: `/auth/send-otp`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["user"],
+    }),
     resetPassword: builder.mutation({
       query: (data) => ({
         url: `/auth/reset-password`,
@@ -57,5 +68,6 @@ export const {
   useVerifyOtpMutation,
   useLoginUserMutation,
   useForgotPasswordMutation,
+  useResendOtpMutation,
   useResetPasswordMutation,
 } = authSlice;

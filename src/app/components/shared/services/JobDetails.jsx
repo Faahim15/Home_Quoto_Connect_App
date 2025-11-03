@@ -18,6 +18,8 @@ function showImages({ item }) {
 }
 export default function ProviderInfo({ item, showPrice = false }) {
   const { city, state } = item?.location?.details || {};
+
+  console.log("sevice", item);
   // ✅ Fix main image logic
   const mainImageSource =
     item?.photos && item?.photos?.length > 0 && item.photos[0].url
@@ -167,7 +169,7 @@ export default function ProviderInfo({ item, showPrice = false }) {
               <Text className="text-[#F59E0B] text-base font-poppins-semiBold">
                 {item?.priceRange?.isPersonalized
                   ? "Request a personalized..."
-                  : `$${item?.priceRange?.from || null}-${item?.priceRange?.to || null}`}
+                  : `$${item?.priceRange?.from || null}-$${item?.priceRange?.to || null}`}
               </Text>
             </View>
           )}

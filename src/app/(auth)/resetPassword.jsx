@@ -7,9 +7,9 @@ import { useEffect, useState } from "react";
 import { useResetPasswordMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Yup from "yup";
+import Toast from "react-native-toast-message";
 
 export default function ResetPasswordScreen() {
-  // const [showModal, setShowModal] = useState(false);
   const { email, otp } = useLocalSearchParams();
   const [passwordReset, { isLoading }] = useResetPasswordMutation();
   const [errors, setErrors] = useState({});
@@ -32,7 +32,6 @@ export default function ResetPasswordScreen() {
 
   const handleSubmit = async () => {
     try {
-      console.log("formData", formData);
       // Step 1: Validate user input
       await validationSchema.validate(formData, { abortEarly: false });
       setErrors({});
@@ -44,6 +43,7 @@ export default function ResetPasswordScreen() {
         newPassword: formData.password,
         confirmPassword: formData.confirmPassword,
       };
+
       // Step 3: Call API
       const res = await passwordReset(data).unwrap();
       console.log("Reset password:", res);
@@ -56,9 +56,8 @@ export default function ResetPasswordScreen() {
           text2: res?.message || "Your password has been updated successfully.",
           visibilityTime: 2500,
         });
-        setTimeout(() => {
-          router.push("/signIn");
-        }, 2000);
+
+        router.replace("/signIn");
       }
     } catch (err) {
       console.log("err", err);
@@ -70,7 +69,7 @@ export default function ResetPasswordScreen() {
         });
         setErrors(validationErrors);
       } else {
-        console.log("API Error:", err);
+        // console.log("API Error:", err);
         const errorMessage =
           err?.message || "Unable to reset password. Please try again.";
 
@@ -120,7 +119,11 @@ export default function ResetPasswordScreen() {
           label="Confirm New Password"
         />
       </View>
-      <FormButton title="Save Password" onPress={handleSubmit} />
+      <FormButton
+        isLoading={isLoading}
+        title="Save Password"
+        onPress={handleSubmit}
+      />
       {/* <SuccessModal visible={showModal} /> */}
     </View>
   );

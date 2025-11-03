@@ -24,13 +24,21 @@ export default function SignUpScreen() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    phoneNumber: "",
-    dateOfBirth: "",
+    // phoneNumber: "",
+    // dateOfBirth: "",
     password: "",
     confirmPassword: "",
     location: null,
   });
-
+  const location = {
+    type: "Point",
+    coordinates: formData.location?.coordinates || [],
+    address: formData.location?.address || "",
+    city: formData.location?.city || "",
+    state: formData.location?.state || "",
+    country: formData.location?.country || "",
+    zipCode: formData.location?.zipCode || "",
+  };
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -44,15 +52,15 @@ export default function SignUpScreen() {
   const validationSchema = Yup.object({
     fullName: Yup.string().required("Full Name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
-    phoneNumber: Yup.string()
-      .required("Phone number is required")
-      .matches(/^\+?[1-9]\d{1,14}$/, "Invalid phone number format"),
-    dateOfBirth: Yup.string()
-      .required("Date of birth is required")
-      .test("is-valid-date", "Invalid date format (YYYY-MM-DD)", (value) => {
-        if (!value) return false;
-        return /^\d{4}-\d{2}-\d{2}$/.test(value);
-      }),
+    // phoneNumber: Yup.string()
+    //   .required("Phone number is required")
+    //   .matches(/^\+?[1-9]\d{1,14}$/, "Invalid phone number format"),
+    // // dateOfBirth: Yup.string()
+    //   .required("Date of birth is required")
+    //   .test("is-valid-date", "Invalid date format (YYYY-MM-DD)", (value) => {
+    //     if (!value) return false;
+    //     return /^\d{4}-\d{2}-\d{2}$/.test(value);
+    //   }),
     password: Yup.string()
       .required("Password is required")
       .min(8, "Password must be at least 8 characters"),
@@ -74,28 +82,16 @@ export default function SignUpScreen() {
       setErrors({});
 
       // Step 2: Prepare payload
-      const data = {
-        fullName: formData.fullName,
-        email: formData.email,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
-        phoneNumber: formData.phoneNumber,
-        dateOfBirth: formData.dateOfBirth,
-        role: "client",
-        location: {
-          type: "Point",
-          coordinates: formData.location?.coordinates || [],
-          address: formData.location?.address || "",
-          city: formData.location?.city || "",
-          state: formData.location?.state || "",
-          country: formData.location?.country || "",
-          zipCode: formData.location?.zipCode || "",
-        },
-      };
-
+      const formsData = new FormData();
+      formsData.append("role", "client");
+      formsData.append("fullName", formData.fullName);
+      formsData.append("email", formData.email);
+      formsData.append("password", formData.password);
+      formsData.append("confirmPassword", formData.confirmPassword);
+      formsData.append("location", JSON.stringify(location));
       // Step 3: Call API
-      const res = await registerUser(data).unwrap();
-      console.log("API Response:", res);
+      const res = await registerUser(formsData).unwrap();
+      console.log("register from data:", res);
 
       // Step 4: Handle success
       if (res?.success) {
@@ -187,7 +183,7 @@ export default function SignUpScreen() {
               onChangeText={(text) => handleInputChange("email", text)}
               error={errors.email}
             />
-
+            {/* 
             <TextField
               label="Phone Number"
               placeholder="+8801XXXXXXXXX"
@@ -195,16 +191,16 @@ export default function SignUpScreen() {
               value={formData.phoneNumber}
               onChangeText={(text) => handleInputChange("phoneNumber", text)}
               error={errors.phoneNumber}
-            />
+            /> */}
 
-            <TextField
+            {/* <TextField
               label="Date of Birth"
               placeholder="YYYY-MM-DD"
               IconName="calendar-outline"
               value={formData.dateOfBirth}
               onChangeText={(text) => handleInputChange("dateOfBirth", text)}
               error={errors.dateOfBirth}
-            />
+            /> */}
 
             <LocationPicker
               onLocationSelect={(loc) => handleInputChange("location", loc)}
@@ -271,10 +267,10 @@ export default function SignUpScreen() {
           <View className="flex-row pl-[5.5%] mt-[1%] items-center">
             <TouchableOpacity
               onPress={() => setAgreeToTerms(!agreeToTerms)}
-              className="mr-[3%]"
-              accessibilityLabel={
-                agreeToTerms ? "Unagree to terms" : "Agree to terms"
-              }
+              className="mr-[1%]"
+              // accessibilityLabel={
+              //   agreeToTerms ? "Unagree to terms" : "Agree to terms"
+              // }
             >
               <Ionicons
                 name={agreeToTerms ? "checkbox" : "square-outline"}
@@ -284,7 +280,7 @@ export default function SignUpScreen() {
             </TouchableOpacity>
             <Text className="text-sm font-poppins-400regular text-black">
               Agree with
-              <Text className="text-[#909090]"> Terms and Conditions</Text>
+              <Text className="text-[#909090]">Terms and Conditions</Text>
             </Text>
           </View>
 

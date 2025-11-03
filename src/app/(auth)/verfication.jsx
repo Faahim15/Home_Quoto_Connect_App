@@ -3,12 +3,17 @@ import CustomHeader from "../components/auth/CustomHeader";
 import VerificationCodeField from "../components/auth/VerificationCode";
 import ShortMessage from "../components/auth/ShortMessage";
 import { router, useLocalSearchParams } from "expo-router";
-import { useVerifyOtpMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
+import {
+  useResendOtpMutation,
+  useVerifyOtpMutation,
+} from "../../redux/features/apiSlices/auth/authApiSlices";
 import { useState } from "react";
 import * as Yup from "yup";
 import Toast from "react-native-toast-message";
 export default function VerificationScreen() {
-  const [otpVerification, { isLoading }] = useVerifyOtpMutation();
+  const [otpVerification, { isLoading: verifyOtpLoading }] =
+    useVerifyOtpMutation();
+  const [resendOtp, { isLoading }] = useResendOtpMutation();
   const { email } = useLocalSearchParams();
 
   // In VerificationScreen
@@ -21,6 +26,32 @@ export default function VerificationScreen() {
   };
 
   const [errors, setErrors] = useState({});
+
+  const handleResendPassword = async () => {
+    try {
+      const data = {
+        email,
+        purpose: "forgot-password",
+      };
+
+      const res = await resendOtp(data).unwrap();
+      console.log("resend", res, data);
+      Toast.show({
+        type: "success",
+        text1: "OTP Resent",
+        text2: "A new OTP has been sent to your email.",
+        visibilityTime: 2500,
+      });
+    } catch (error) {
+      console.log("Resend OTP Error:", error);
+      Toast.show({
+        type: "error",
+        text1: "Failed to Resend OTP",
+        text2: error?.data?.message || "Please try again later.",
+        visibilityTime: 3000,
+      });
+    }
+  };
 
   const validationSchema = Yup.object({
     otp: Yup.string()
@@ -68,7 +99,7 @@ export default function VerificationScreen() {
         Toast.show({
           type: "error",
           text1: "Invalid OTP Format",
-          text2: "Please enter a valid 4-digit OTP.",
+          text2: "Please enter a valid 6-digit OTP.",
           visibilityTime: 2500,
         });
       } else {
@@ -109,6 +140,7 @@ export default function VerificationScreen() {
         route="ResetPasswordScreen"
         title="Didn't receive the code?"
         btnText="Resend"
+        onPress={handleResendPassword}
       />
       <View className=" flex-1 justify-end pb-[20%]">
         <TouchableOpacity
@@ -116,7 +148,11 @@ export default function VerificationScreen() {
           className=" bg-[#0054A5] mx-[6%] rounded-lg py-[4%]"
         >
           <Text className="text-white text-center text-base font-poppins-semiBold ">
-            {isLoading ? <ActivityIndicator color="#fff" /> : "Verify"}
+            {verifyOtpLoading || isLoading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              "Verify"
+            )}
           </Text>
         </TouchableOpacity>
       </View>
