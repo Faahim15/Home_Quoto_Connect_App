@@ -233,7 +233,7 @@ export default function SignUpScreen() {
                   placeholder="Confirm password"
                   placeholderTextColor="#9CA3AF"
                   secureTextEntry={!showConfirmPassword}
-                  value={formData.confirmPassword}
+                  value={formData.location.address}
                   onChangeText={(text) =>
                     handleInputChange("confirmPassword", text)
                   }

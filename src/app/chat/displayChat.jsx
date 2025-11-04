@@ -15,11 +15,14 @@ import * as ImagePicker from "expo-image-picker";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import ChatHeader from "../components/tabs/chat/ChatHeader";
 import MessageInput from "../components/tabs/chat/MessageInput";
-
+import { io } from "socket.io-client";
 const { width: screenWidth } = Dimensions.get("window");
 
 const ChatScreen = ({ route, navigation }) => {
   // Sample data for demonstration - moved to initial state
+
+  const socket = io("http://localhost:3000");
+
   const sampleMessages = [
     {
       id: "1",
@@ -61,12 +64,9 @@ const ChatScreen = ({ route, navigation }) => {
 
   const [messages, setMessages] = useState(sampleMessages);
   const [newMessage, setNewMessage] = useState("");
-  const [isConnected, setIsConnected] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState("Disconnected");
   const [isTyping, setIsTyping] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [showMediaModal, setShowMediaModal] = useState(false);
-  const socketRef = useRef(null);
   const flatListRef = useRef(null);
 
   // Get user data from navigation params or set default

@@ -134,11 +134,11 @@ export default function ServiceCards({
               whichJob={whichJob}
             />
           )}
-          keyExtractor={(item, index) => item.id || index.toString()}
+          keyExtractor={(item, index) => item._id || index.toString()}
           horizontal
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={{
-            paddingRight: scale(80),
+            paddingRight: scale(10),
           }}
         />
       )}

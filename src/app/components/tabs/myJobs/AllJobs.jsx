@@ -112,7 +112,7 @@ export default function AllJobs({ showAddress = true }) {
   const displayData = jobsData.length > 0 ? jobsData : null;
 
   return (
-    <View className="mt-[2%] justify-center px-[2%] items-start">
+    <View className=" mt-[2%] justify-center px-[2%] items-start">
       {isLoading ? (
         <View
           className="w-full items-center justify-center"
@@ -153,8 +153,12 @@ export default function AllJobs({ showAddress = true }) {
           }}
           ListEmptyComponent={
             <View
-              className="w-full items-center justify-center"
-              style={{ marginTop: verticalScale(100) }}
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                paddingVertical: verticalScale(100),
+              }}
             >
               <Ionicons name="briefcase-outline" size={48} color="#9CA3AF" />
               <Text className="mt-4 font-poppins-400regular text-gray-600">

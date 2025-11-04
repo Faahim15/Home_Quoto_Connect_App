@@ -9,6 +9,7 @@ export default function TextField({
   color = "#fff",
   error,
   onChangeText,
+  value,
 }) {
   return (
     <View className="mb-[4%]">
@@ -26,6 +27,7 @@ export default function TextField({
           placeholder={placeholder}
           placeholderTextColor="#6B7280"
           onChangeText={onChangeText}
+          value={value || ""}
         />
       </View>
       {error && (

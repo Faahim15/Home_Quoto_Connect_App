@@ -96,4 +96,25 @@ const nearbyUsers = [
     },
   },
 ];
+
+// beginner', 'intermediate', 'advanced', 'expert'
+export const experienceOptions = [
+  "Beginner (0-1 years)",
+  "Intermediate (2-3 years)",
+  "Advanced (4-5 years)",
+  "Expert (6+ years)",
+];
+
+export const serviceAreaOptions = [
+  "New York",
+  "Los Angeles",
+  "Chicago",
+  "Houston",
+  "Phoenix",
+  "Philadelphia",
+  "San Antonio",
+  "San Diego",
+  "Dallas",
+  "San Jose",
+];
 export default nearbyUsers;

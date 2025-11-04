@@ -33,7 +33,13 @@ export default function HomeScreen() {
   } = useGetPopularProvidersQuery();
 
   // ✅ Combined loading state
-  if (profileLoading || todaysJobsLoading || activeJobsLoading || isLoading) {
+  if (
+    profileLoading ||
+    todaysJobsLoading ||
+    activeJobsLoading ||
+    isLoading ||
+    providerLoading
+  ) {
     return (
       <View className="flex-1 bg-[#F9FAFB] justify-center items-center">
         <View className="flex-col items-center justify-center">

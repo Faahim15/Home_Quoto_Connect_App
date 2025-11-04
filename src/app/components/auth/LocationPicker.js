@@ -15,7 +15,7 @@ import * as Location from "expo-location";
 
 const { width, height } = Dimensions.get("window");
 
-const LocationPicker = ({ onLocationSelect, error }) => {
+const LocationPicker = ({ onLocationSelect, error, value }) => {
   const [locationText, setLocationText] = useState("");
   const [isMapVisible, setIsMapVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -176,7 +176,7 @@ const LocationPicker = ({ onLocationSelect, error }) => {
           className="flex-1 font-poppins-400regular text-sm bg-[#f9f9f9] text-black"
           placeholder="Tap the location icon to select"
           placeholderTextColor="#6B7280"
-          value={locationText}
+          value={value}
           editable={false}
           multiline
         />

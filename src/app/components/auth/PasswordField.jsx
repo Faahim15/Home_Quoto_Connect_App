@@ -29,7 +29,7 @@ export default function PasswordField({
           placeholderTextColor="#898989"
           secureTextEntry={!showPassword}
           onChangeText={onChangeText}
-          value={value}
+          value={value || ""}
           style={{ color: "#000", paddingTop: verticalScale(16) }}
         />
         <TouchableOpacity

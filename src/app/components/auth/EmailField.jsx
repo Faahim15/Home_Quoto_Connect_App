@@ -6,6 +6,7 @@ export default function EmailField({
   backgroundColor = "#f9f9f9",
   onChangeText,
   error,
+  value,
 }) {
   return (
     <View className="mb-[4%]">
@@ -25,6 +26,7 @@ export default function EmailField({
             keyboardType="email-address"
             autoCapitalize="none"
             onChangeText={onChangeText}
+            value={value || ""}
             style={{
               color: "#000",
               paddingTop: verticalScale(16),

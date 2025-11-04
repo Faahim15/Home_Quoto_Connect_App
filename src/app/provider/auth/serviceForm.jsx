@@ -5,77 +5,104 @@ import DropdownMenu from "../../components/provider/profile/DropdownMenu";
 import Specializations from "../../components/tabs/home/Specializations";
 import FormButton from "../../components/auth/FormButton";
 import { router } from "expo-router";
-
+import { useDispatch, useSelector } from "react-redux";
+import { useGetServiceCategoriesQuery } from "../../../redux/features/apiSlices/user/createJobSlices";
+import { setProviderRegister } from "../../../redux/features/provider/providerSlice";
+import * as Yup from "yup";
+import {
+  experienceOptions,
+  serviceAreaOptions,
+} from "../../components/data/provider/MapData";
+import Error from "../../components/shared/error/Error";
 const ServicesOfferScreen = () => {
-  const [selectedService, setSelectedService] = useState("");
-  const [selectedExperience, setSelectedExperience] = useState("");
-  const [selectedServiceArea, setSelectedServiceArea] = useState("");
+  const [errors, setErrors] = useState({});
+  const dispatch = useDispatch();
+  const { data, isLoading } = useGetServiceCategoriesQuery();
+  const registrationData = useSelector((state) => state.providerRegister);
 
-  const serviceOptions = [
-    "Cleaner",
-    "Plumber",
-    "Air conditional repair",
-    "Home installtions",
-    "HVAC",
-    "Residential",
-  ];
+  const handleInputChange = (field, value) => {
+    dispatch(setProviderRegister({ field, value }));
 
-  const experienceOptions = [
-    "Beginner (0-1 years)",
-    "Intermediate (2-3 years)",
-    "Advanced (4-5 years)",
-    "Expert (6+ years)",
-  ];
+    // ✅ Clear errors when user interacts
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
 
-  const serviceAreaOptions = [
-    "New York",
-    "Los Angeles",
-    "Chicago",
-    "Houston",
-    "Phoenix",
-    "Philadelphia",
-    "San Antonio",
-    "San Diego",
-    "Dallas",
-    "San Jose",
-  ];
+  // console.log("select", selectedServiceArea);
 
+  const validateCurrentPage = () => {
+    const currentPageSchema = Yup.object({
+      category: Yup.string().required("Service category is required"),
+      experience: Yup.string().required("experience is required"),
+      serviceArea: Yup.string().required("serviceArea is required"),
+      specializations: Yup.array().min(1, "Select at least one specialization"),
+    });
+
+    // ✅ Transform jobData before validation
+    const transformedData = {
+      ...registrationData,
+    };
+
+    try {
+      currentPageSchema.validateSync(transformedData, { abortEarly: false });
+      setErrors({});
+      return true;
+    } catch (error) {
+      const newErrors = {};
+      error.inner.forEach((err) => {
+        newErrors[err.path] = err.message;
+      });
+      setErrors(newErrors);
+      return false;
+    }
+  };
+  const handleNext = () => {
+    if (validateCurrentPage()) {
+      router.push("/provider/auth/timePicker");
+    } else console.log("errors", errors);
+  };
   return (
     <View className="flex-1 bg-white">
       <CustomHeader title="Services you" nestedTitle="Offer" />
       <View className="flex-1 px-[4%] mx-[3%] pt-[8%]">
         <View className="w-full">
           <DropdownMenu
+            isLoading={isLoading}
             placeholder="Select Your service"
-            options={serviceOptions}
-            selectedValue={selectedService}
-            onSelect={setSelectedService}
+            options={data?.data?.categories}
+            selectedValue={registrationData?.category}
+            onSelect={handleInputChange}
+            field="category"
+            error={errors?.category}
           />
 
           <DropdownMenu
             placeholder="Select Your Experience"
             options={experienceOptions}
-            selectedValue={selectedExperience}
-            onSelect={setSelectedExperience}
+            selectedValue={registrationData?.experience}
+            onSelect={handleInputChange}
+            field="experience"
+            error={errors?.experience}
           />
 
           <DropdownMenu
             placeholder="Select Service Area"
             options={serviceAreaOptions}
-            selectedValue={selectedServiceArea}
-            onSelect={setSelectedServiceArea}
+            selectedValue={registrationData?.serviceArea}
+            onSelect={handleInputChange}
+            field="serviceArea"
+            error={errors?.serviceArea}
           />
         </View>
 
         <View className="px-[1%]">
-          <Specializations />
+          <Specializations onChange={handleInputChange} />
+          <Error error={errors.specializations} />
         </View>
       </View>
       <View className="flex-1 px-[2%]">
-        <FormButton
-          onPress={() => router.replace("/provider/auth/timePicker")}
-          title="Next"
-        />
+        <FormButton onPress={handleNext} title="Next" />
       </View>
     </View>
   );

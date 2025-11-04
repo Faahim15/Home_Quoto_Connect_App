@@ -55,6 +55,13 @@ export const jobSlice = api.injectEndpoints({
       }),
       providesTags: ["Jobs"],
     }),
+    getProviderDetails: builder.query({
+      query: (id) => ({
+        url: `/popular/providers/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Jobs"],
+    }),
 
     //Specializations
 
@@ -80,6 +87,7 @@ export const {
   useGetTodaysJobsQuery,
   useGetActiveJobsQuery,
   useGetSingleJobQuery,
+  useGetProviderDetailsQuery,
   useGetSpecializationsQuery,
   useGetServiceCategoriesQuery,
   useGetPopularProvidersQuery,

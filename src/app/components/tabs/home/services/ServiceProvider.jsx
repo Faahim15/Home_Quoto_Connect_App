@@ -10,12 +10,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 
-const { width } = Dimensions.get("window");
-
 export default function ServiceProvider({ providerData }) {
   const renderItem = ({ item }) => {
-    // console.log("Provider Item:", item?.fullName); // ✅ Properly logs each item
-
     return (
       <View
         className="bg-white border border-[#D4E0EB] flex-1 justify-center items-center rounded-lg mr-3"
@@ -23,7 +19,7 @@ export default function ServiceProvider({ providerData }) {
       >
         <Image
           source={{ uri: item?.profilePhoto?.url || null }}
-          resizeMode="contain"
+          resizeMode="cover"
           style={{
             width: scale(72),
             height: verticalScale(110),
@@ -46,7 +42,12 @@ export default function ServiceProvider({ providerData }) {
           </View>
 
           <TouchableOpacity
-            onPress={() => router.push("/services/providerDetails")}
+            onPress={() =>
+              router.push({
+                pathname: "/services/providerDetails",
+                params: { profileId: item?._id },
+              })
+            }
             style={{ width: scale(124), height: verticalScale(25) }}
             className="bg-[#0054A5] border border-[#0054A5] mt-[3%] rounded-md py-[3%] px-[3%]"
           >
@@ -77,9 +78,7 @@ export default function ServiceProvider({ providerData }) {
         <FlatList
           horizontal
           data={providerData}
-          keyExtractor={(item, index) =>
-            item.id?.toString() || index.toString()
-          }
+          keyExtractor={(item, index) => item._id || index.toString()}
           showsHorizontalScrollIndicator={false}
           renderItem={renderItem}
         />

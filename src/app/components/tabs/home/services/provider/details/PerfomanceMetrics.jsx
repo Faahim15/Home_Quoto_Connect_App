@@ -2,7 +2,7 @@ import { View, Text, Image } from "react-native";
 import XStyle from "../../../../../../util/styles";
 import { scale, verticalScale } from "../../../../../adaptive/Adaptiveness";
 
-export default function PerfomanceMetrics() {
+export default function PerfomanceMetrics({ performanceData }) {
   return (
     <View
       style={[
@@ -16,7 +16,7 @@ export default function PerfomanceMetrics() {
           source={require("../../../../../../../../assets/images/home/booked/completed.png")}
         />
         <Text className="font-poppins-500medium text-base text-[#565656]">
-          4.8
+          {Number(performanceData?.avgRating) / 10 || "N/A"}
         </Text>
         <Text className="font-poppins-500medium text-[10px] text-[#565656]">
           Rating
@@ -27,7 +27,7 @@ export default function PerfomanceMetrics() {
           source={require("../../../../../../../../assets/images/home/booked/expericence.png")} //../../../../../assets/images/home/booked/expericence.png
         />
         <Text className="font-poppins-500medium text-base text-[#565656]">
-          56 Orders
+          {performanceData?.totalJobs || "N/A"} Orders
         </Text>
         <Text className="font-poppins-500medium text-[10px] text-[#565656]">
           completed
@@ -38,10 +38,10 @@ export default function PerfomanceMetrics() {
           source={require("../../../../../../../../assets/images/home/booked/expericence.png")}
         />
         <Text className="font-poppins-500medium text-base text-[#565656]">
-          4 Years
+          Experience
         </Text>
         <Text className="font-poppins-500medium text-[10px] text-[#565656]">
-          Experience
+          {performanceData?.experienceLevel || "N/A"}
         </Text>
       </View>
     </View>

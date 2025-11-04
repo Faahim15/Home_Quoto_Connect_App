@@ -2,18 +2,16 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import { scale, verticalScale } from "../../../../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function Banner() {
-  //   const route = useRoute();
-  //   const provider = route.params.provider;
+export default function Banner({ data }) {
   return (
     <View>
       <View className="flex-row mt-[3%] mx-[6%] justify-between">
         <View>
           <Text className="font-poppins-semiBold text-2xl text-[#565656]">
-            {"Jackson"}
+            {data?.name || "N/A"}
           </Text>
           <Text className="font-poppins-500medium text-base text-[#565656]">
-            {"TV Technician"}
+            {data?.designation || "N/A"}
           </Text>
         </View>
         <View className="flex-row w-[50%] justify-between ">

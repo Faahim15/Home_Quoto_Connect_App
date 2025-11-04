@@ -1,4 +1,11 @@
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import ArrowBack from "../components/auth/ArrowBack";
@@ -15,14 +22,63 @@ import Biography from "../components/tabs/home/services/provider/details/Biograp
 import { router, useLocalSearchParams } from "expo-router";
 import XStyle from "../util/styles";
 import Toast from "react-native-toast-message";
+import { useGetProviderDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 export default function ProviderDetailsScreen() {
   const skills = ["Lighting", "Circuit", "Wiring", "Repair"];
-  const { showButtons } = useLocalSearchParams();
+  const { showButtons, profileId } = useLocalSearchParams();
+
+  const { data, isLoading, error } = useGetProviderDetailsQuery(profileId);
+
   const shouldShowButtons = showButtons === "true";
 
+  // Add loading state check
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-white justify-center items-center">
+        <ActivityIndicator size="large" color="#18649F" />
+        <Text className="font-poppins-500medium text-sm text-[#565656] mt-4">
+          Loading provider details...
+        </Text>
+      </View>
+    );
+  }
+  console.log("datas", data?.data?.provider);
+
+  const {
+    profilePhoto,
+    location,
+    workingHours,
+    fullName,
+    businessName,
+    bio,
+    experienceLevel,
+    reviews,
+    averageRating,
+    totalReviews,
+    totalCompletedJobs,
+    specializations,
+  } = data?.data?.provider || {};
+  console.log("This is from providerDetails Page:", specializations);
+  // Add error state check (optional)
+  if (error) {
+    return (
+      <View className="flex-1 bg-white justify-center items-center px-[6%]">
+        <Text className="font-poppins-semiBold text-base text-[#EF4444] text-center">
+          Failed to load provider details
+        </Text>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="mt-4 bg-[#18649F] px-6 py-3 rounded-lg"
+        >
+          <Text className="font-poppins-500medium text-white">Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
   return (
     <View className="flex-1 bg-white">
       <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: verticalScale(40) }}
         className="flex-1 "
       >
@@ -42,28 +98,35 @@ export default function ProviderDetailsScreen() {
           <View className="w-10 h-10 mx-[6%] mt-[6%] rounded-[20px] bg-white ">
             <ArrowBack />
           </View>
-          <View className="flex-1 ">
+          <View className="flex-1 justify-center items-center ">
             <Image
-              source={require("../../../assets/images/home/electrician/electrician3.png")} //../../../../../assets/images/home/electrician/electrician3.png
+              source={{ uri: profilePhoto?.url }}
               style={{
                 width: scale(264),
                 height: verticalScale(290),
                 marginTop: verticalScale(0),
                 marginLeft: scale(30),
               }}
+              resizeMode="cover"
             />
           </View>
         </LinearGradient>
 
-        <Banner />
+        <Banner data={{ name: fullName, designation: businessName }} />
 
         {/* PerfomanceMetrics */}
 
-        <PerfomanceMetrics />
+        <PerfomanceMetrics
+          performanceData={{
+            avgRating: averageRating,
+            totalJobs: totalCompletedJobs,
+            experienceLevel,
+          }}
+        />
 
         {/* Skills */}
 
-        <Skills data={skills} />
+        <Skills specializations={specializations} />
 
         {/* Book button */}
 
@@ -83,17 +146,17 @@ export default function ProviderDetailsScreen() {
           </Text>
         </View>
         <View className="flex-row justify-start gap-[3%] mx-[6%] mt-[3%] ">
-          <TimeSlot title="7:00 AM" />
+          <TimeSlot time={workingHours?.from} />
           <View>
             <Text className="font-poppins-semiBold pt-[2%] text-base text-[#919191] ">
               To
             </Text>
           </View>
-          <TimeSlot title="10:00 PM" />
+          <TimeSlot time={workingHours?.to} />
         </View>
 
         {/* Bio  */}
-        <Biography />
+        <Biography bio={bio} />
 
         {/* Gallery Section */}
         <View>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -16,24 +16,74 @@ import PasswordField from "../../components/auth/PasswordField";
 import ArrowBack from "../../components/auth/ArrowBack";
 import LocationPicker from "../../components/auth/LocationPicker";
 import { router } from "expo-router";
+import * as Yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import { setProviderRegister } from "../../../redux/features/provider/providerSlice";
 export default function SignUp() {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    location: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [errors, setErrors] = useState({});
+  const dispatch = useDispatch();
+  const registrationData = useSelector((state) => state.providerRegister);
+  const handleInputChange = (field, value) => {
+    dispatch(setProviderRegister({ field, value }));
+
+    // ✅ Clear errors when user interacts
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const validateCurrentPage = () => {
+    const currentPageSchema = Yup.object({
+      fullName: Yup.string().required("Full Name is required"),
+      email: Yup.string().email("Invalid email").required("Email is required"),
+      location: Yup.object()
+        .nullable()
+        .required("Location is required")
+        .test(
+          "has-coordinates",
+          "Location coordinates are required",
+          (value) => {
+            return value?.coordinates && value.coordinates.length === 2;
+          }
+        ),
+      password: Yup.string()
+        .required("Password is required")
+        .min(8, "Password must be at least 8 characters"),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref("password"), null], "Passwords must match")
+        .required("Confirm Password is required"),
+      // category: Yup.string().required("Service category is required"),
+      // specializations: Yup.array().min(1, "Select at least one specialization"),
+    });
+
+    // ✅ Transform jobData before validation
+    const transformedData = {
+      ...registrationData,
+    };
+
+    try {
+      console.log("show", registrationData);
+      currentPageSchema.validateSync(transformedData, { abortEarly: false });
+      setErrors({});
+      return true;
+    } catch (error) {
+      const newErrors = {};
+      error.inner.forEach((err) => {
+        newErrors[err.path] = err.message;
+      });
+      setErrors(newErrors);
+      return false;
+    }
+  };
+
+  const handleContinue = () => {
+    if (validateCurrentPage()) {
+      router.push("provider/auth/serviceForm");
+    } else console.log("errors", errors);
+  };
 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
-
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
 
   return (
     <View className="flex-1 bg-white">
@@ -70,12 +120,28 @@ export default function SignUp() {
               label="Full Name"
               placeholder="Full name"
               IconName="person-outline"
+              onChangeText={(text) => handleInputChange("fullName", text)}
+              error={errors.fullName}
+              value={registrationData.fullName}
             />
-            <EmailField label="Email" />
+            <EmailField
+              onChangeText={(text) => handleInputChange("email", text)}
+              error={errors.email}
+              label="Email"
+              value={registrationData.email}
+            />
 
-            <LocationPicker />
+            <LocationPicker
+              onLocationSelect={(loc) => handleInputChange("location", loc)}
+              error={errors.location}
+              value={registrationData.location.address}
+            />
 
-            <PasswordField />
+            <PasswordField
+              onChangeText={(text) => handleInputChange("password", text)}
+              error={errors.password}
+              value={registrationData.password}
+            />
 
             {/* Confirm Password */}
             <View>
@@ -94,7 +160,7 @@ export default function SignUp() {
                   placeholder="Confirm password"
                   placeholderTextColor="#9CA3AF"
                   secureTextEntry={!showConfirmPassword}
-                  value={formData.confirmPassword}
+                  value={registrationData.confirmPassword}
                   onChangeText={(text) =>
                     handleInputChange("confirmPassword", text)
                   }
@@ -114,6 +180,11 @@ export default function SignUp() {
                   />
                 </TouchableOpacity>
               </View>
+              {errors.confirmPassword && (
+                <Text className="text-red-700 font-poppins text-center mt-1">
+                  {errors.confirmPassword}
+                </Text>
+              )}
             </View>
           </View>
         </ScrollView>
@@ -141,7 +212,7 @@ export default function SignUp() {
               className="bg-[#0054A5]  rounded-lg justify-center items-center py-[4%]"
               disabled={!agreeToTerms}
               style={{ opacity: agreeToTerms ? 1 : 0.6 }}
-              onPress={() => router.push("provider/auth/serviceForm")}
+              onPress={handleContinue}
             >
               <Text className="text-white text-center text-base font-poppins-semiBold">
                 Sign up
