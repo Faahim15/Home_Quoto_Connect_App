@@ -6,7 +6,7 @@ export default function TimeRangePicker() {
   const [fromTime, setFromTime] = useState(null);
   const [toTime, setToTime] = useState(null);
   const [showPicker, setShowPicker] = useState({ type: null, show: false });
-  console.log("show", fromTime, toTime);
+  // console.log("show", fromTime, toTime);
   const handleTimeChange = (event, selectedDate) => {
     if (selectedDate) {
       const updatedTime = selectedDate;
