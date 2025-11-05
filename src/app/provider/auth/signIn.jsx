@@ -13,12 +13,13 @@ import PasswordField from "../../components/auth/PasswordField";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ShortMessage from "../../components/auth/ShortMessage";
-import { scale, verticalScale } from "../../components/adaptive/Adaptiveness";
+import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 import * as Yup from "yup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
+import { scale } from "../../components/adaptive/Adaptiveness";
 import { useLoginUserMutation } from "../../../redux/features/apiSlices/auth/authApiSlices";
-export default function SignIn() {
+export default function SignInScreen() {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [login, { isLoading }] = useLoginUserMutation();
   const [errors, setErrors] = useState({});
@@ -26,11 +27,9 @@ export default function SignIn() {
     email: "",
     password: "",
   });
-
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
-
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email").required("Email is required"),
 
@@ -39,7 +38,6 @@ export default function SignIn() {
       .min(8, "Password must be at least 8 characters"),
   });
 
-  console.log(formData);
   const handleSubmit = async () => {
     try {
       // ✅ Validate form data
@@ -65,9 +63,16 @@ export default function SignIn() {
       });
 
       // console.log("Login response:", res.data.user);
-
+      console.log("show user", res?.data?.user?.role);
       // ✅ Navigate to /home
-      router.replace("/provider/home");
+      if (res?.data?.user?.role === "provider") router.push("/provider/home");
+      else {
+        Toast.show({
+          type: "info",
+          text1: "Provider Account Required",
+          text2: "Please log in using your provider credentials to continue.",
+        });
+      }
     } catch (error) {
       // ❌ Show error toast
       Toast.show({
@@ -86,7 +91,7 @@ export default function SignIn() {
       }
     }
   };
-  console.log(errors);
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -126,7 +131,7 @@ export default function SignIn() {
           <View className="flex-row pl-[5.5%] pb-[6%] items-center">
             <TouchableOpacity
               onPress={() => setAgreeToTerms(!agreeToTerms)}
-              className="mr-[3%]"
+              className="mr-[1%]"
             >
               <Ionicons
                 name={agreeToTerms ? "checkbox" : "square-outline"}
@@ -134,26 +139,18 @@ export default function SignIn() {
                 color={agreeToTerms ? "#909090" : "#9CA3AF"}
               />
             </TouchableOpacity>
-            <View className="w-[85%] flex-row justify-between">
-              <Text className="text-sm pt-[1%] font-poppins-400regular text-[#000000]">
+            <View className="w-[88%] items-center flex-row justify-between">
+              <Text className="text-sm  font-poppins-400regular text-[#000000]">
                 Remember me
               </Text>
               <TouchableOpacity onPress={() => router.push("/forgetPassword")}>
-                <Text className="text-base font-poppins-bold text-[#175994] underline">
+                <Text className="text-base  font-poppins-bold text-[#175994] underline">
                   Forget Password?
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
 
-          {/* <TouchableOpacity
-            className="bg-[#0054A5] mx-[6%] rounded-lg py-[4%]"
-            onPress={handleSubmit}
-          >
-            <Text className="text-white text-center text-base font-poppins-semiBold">
-              Sign In
-            </Text>
-          </TouchableOpacity> */}
           <TouchableOpacity
             className="bg-[#0054A5] mx-[6%] rounded-lg py-[4%]"
             onPress={handleSubmit}
@@ -176,7 +173,7 @@ export default function SignIn() {
           <ShortMessage
             title="Don't you have an account?"
             btnText="Sign Up"
-            onPress={() => router.push("/provider/auth/signUp")}
+            onPress={() => router.push("provider/auth/signUp")}
           />
         </View>
       </ScrollView>

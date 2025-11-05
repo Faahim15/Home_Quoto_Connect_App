@@ -65,7 +65,14 @@ export default function SignInScreen() {
       // console.log("Login response:", res.data.user);
 
       // ✅ Navigate to /home
-      router.push("/home");
+      if (res?.data?.user?.role !== "provider") router.push("/home");
+      else {
+        Toast.show({
+          type: "info",
+          text1: "User Account Required",
+          text2: "Please log in using your user credentials to continue.",
+        });
+      }
     } catch (error) {
       // ❌ Show error toast
       Toast.show({

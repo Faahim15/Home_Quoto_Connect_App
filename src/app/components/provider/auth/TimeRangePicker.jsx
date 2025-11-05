@@ -23,12 +23,15 @@ export default function TimeRangePicker() {
   const specializationIds = registrationData?.specializations.map(
     (spec) => spec.id
   );
-
+  // ✅ Working hours object তৈরি করুন
   const workingHours = {
     from: registrationData?.from,
     to: registrationData?.to,
   };
-  console.log(workingHours.from, workingHours.to);
+
+  // 🔍 Debug: দেখুন কি data যাচ্ছে
+  console.log("📅 Working Hours:", workingHours);
+  console.log("📅 Stringified:", JSON.stringify(workingHours));
   const handleTimeChange = (event, selectedDate) => {
     if (selectedDate) {
       const updatedTime = selectedDate;
@@ -79,7 +82,7 @@ export default function TimeRangePicker() {
           const fromMinutes = timeToMinutes(from);
           const toMinutes = timeToMinutes(value);
 
-          console.log("From minutes:", fromMinutes, "To minutes:", toMinutes);
+          // console.log("From minutes:", fromMinutes, "To minutes:", toMinutes);
 
           return toMinutes > fromMinutes;
         }
@@ -141,6 +144,7 @@ export default function TimeRangePicker() {
         "serviceAreas",
         JSON.stringify(registrationData?.serviceArea?.split())
       );
+      // ✅ Working hours আলাদাভাবে append করুন
       formsData.append("workingHours", JSON.stringify(workingHours));
 
       // 🚀 Send to backend
@@ -179,7 +183,7 @@ export default function TimeRangePicker() {
       } else {
         console.log("API Error:", err);
         const errorMessage =
-          err?.data?.message ||
+          err?.message ||
           err?.data?.email?.[0] ||
           err?.error ||
           "Network or server error. Please try again.";
