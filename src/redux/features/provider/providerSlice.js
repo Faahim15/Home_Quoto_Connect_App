@@ -20,6 +20,7 @@ const initialState = {
   specializations: [],
   from: "",
   to: "",
+  bio: "",
 };
 
 const providerRegSlice = createSlice({
@@ -36,6 +37,7 @@ const providerRegSlice = createSlice({
   },
 });
 
-export const { setProviderRegister } = providerRegSlice.actions;
+export const { setProviderRegister, resetProviderForm } =
+  providerRegSlice.actions;
 
 export default providerRegSlice.reducer;

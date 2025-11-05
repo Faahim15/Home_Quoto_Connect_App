@@ -1,6 +1,7 @@
 import { View, Text, TextInput, KeyboardAvoidingView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { verticalScale } from "../adaptive/Adaptiveness";
+import { useState } from "react";
 export default function EmailField({
   label,
   backgroundColor = "#f9f9f9",

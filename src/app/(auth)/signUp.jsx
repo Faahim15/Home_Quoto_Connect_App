@@ -110,7 +110,6 @@ export default function SignUpScreen() {
           text2: res?.message || "Registration failed",
           visibilityTime: 2000,
         });
-        Step;
       }
     } catch (err) {
       // Step 6: Handle validation or network errors

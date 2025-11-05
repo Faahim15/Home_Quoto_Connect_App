@@ -17,6 +17,17 @@ const getSpecializationTitles = (specIds) => {
     })
     .join(", ");
 };
+
+export const formatTime = (date) => {
+  if (!date) return "HH:MM";
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const h = hours % 12 || 12;
+  const m = minutes < 10 ? `0${minutes}` : minutes;
+  return `${h}:${m} ${ampm}`;
+};
+
 export function formatDateForCanada(isoString) {
   if (!isoString) return "Invalid date";
 

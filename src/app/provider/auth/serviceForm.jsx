@@ -14,6 +14,7 @@ import {
   serviceAreaOptions,
 } from "../../components/data/provider/MapData";
 import Error from "../../components/shared/error/Error";
+import InstructionField from "../../components/tabs/home/services/provider/InstructionField";
 const ServicesOfferScreen = () => {
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
@@ -37,6 +38,17 @@ const ServicesOfferScreen = () => {
       experience: Yup.string().required("experience is required"),
       serviceArea: Yup.string().required("serviceArea is required"),
       specializations: Yup.array().min(1, "Select at least one specialization"),
+      bio: Yup.string()
+        .required("Specific instructions are required")
+        .min(10, "Instructions must be at least 10 characters")
+        .max(500, "Instructions cannot exceed 500 characters")
+        .test(
+          "not-just-whitespace",
+          "Instructions cannot be only whitespace",
+          (value) => {
+            return value && value.trim().length > 0;
+          }
+        ),
     });
 
     // ✅ Transform jobData before validation
@@ -62,6 +74,8 @@ const ServicesOfferScreen = () => {
       router.push("/provider/auth/timePicker");
     } else console.log("errors", errors);
   };
+
+  console.log(data?.data?.categories);
   return (
     <View className="flex-1 bg-white">
       <CustomHeader title="Services you" nestedTitle="Offer" />
@@ -98,7 +112,16 @@ const ServicesOfferScreen = () => {
 
         <View className="px-[1%]">
           <Specializations onChange={handleInputChange} />
-          <Error error={errors.specializations} />
+          <Error error={errors?.specializations} />
+        </View>
+        {/* 📝 Instructions */}
+        <View className="mt-[3%]">
+          <InstructionField
+            value={registrationData?.bio}
+            mode="bio"
+            onChangeText={(value) => handleInputChange("bio", value)}
+          />
+          <Error error={errors?.bio} />
         </View>
       </View>
       <View className="flex-1 px-[2%]">

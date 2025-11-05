@@ -10,7 +10,6 @@ import React from "react";
 import { useLocalSearchParams } from "expo-router";
 import CustomTitle from "../components/shared/CustomTitle";
 import popularSeviceData from "../components/data/shared/PopularServiceData";
-import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import { LinearGradient } from "expo-linear-gradient";
 
 export default function SpecificServices() {

@@ -112,10 +112,12 @@ export default function SignInScreen() {
               onChangeText={(text) => handleInputChange("email", text)}
               error={errors.email}
               label="Email"
+              value={formData.email}
             />
             <PasswordField
               onChangeText={(text) => handleInputChange("password", text)}
               error={errors.password}
+              value={formData.password}
             />
           </View>
 

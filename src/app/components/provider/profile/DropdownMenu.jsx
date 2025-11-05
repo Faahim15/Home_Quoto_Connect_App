@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { scale, verticalScale } from "../../adaptive/Adaptiveness";
+import { verticalScale } from "../../adaptive/Adaptiveness";
 import { useState } from "react";
 import Error from "../../shared/error/Error";
 

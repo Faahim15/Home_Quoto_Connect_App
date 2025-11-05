@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { verticalScale } from "../../../../adaptive/Adaptiveness";
 
-export default function InstructionField({ onChangeText }) {
+export default function InstructionField({ onChangeText, mode }) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -15,7 +15,9 @@ export default function InstructionField({ onChangeText }) {
     >
       <View className="bg-[#f9f9f9] mt-[6%]">
         <Text className="font-poppins-500medium text-base text-[#5C5F62]">
-          Provide Specific Instructions or Details
+          {mode === "bio"
+            ? "Describe the services you offerr"
+            : "Provide Specific Instructions or Details"}
         </Text>
 
         <TextInput
