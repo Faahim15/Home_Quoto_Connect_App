@@ -23,15 +23,7 @@ export default function TimeRangePicker() {
   const specializationIds = registrationData?.specializations.map(
     (spec) => spec.id
   );
-  // ✅ Working hours object তৈরি করুন
-  const workingHours = {
-    from: registrationData?.from,
-    to: registrationData?.to,
-  };
 
-  // 🔍 Debug: দেখুন কি data যাচ্ছে
-  console.log("📅 Working Hours:", workingHours);
-  console.log("📅 Stringified:", JSON.stringify(workingHours));
   const handleTimeChange = (event, selectedDate) => {
     if (selectedDate) {
       const updatedTime = selectedDate;
@@ -115,43 +107,170 @@ export default function TimeRangePicker() {
       ),
   });
 
+  // const handleNext = async () => {
+  //   try {
+  //     // Step 1: Validate user input
+  //     await currentPageSchema.validate(registrationData, { abortEarly: false });
+  //     setErrors({});
+
+  //     // ✅ 12-hour কে 24-hour format এ convert করার function
+  //     const convertTo24Hour = (time12h) => {
+  //       if (!time12h) return "";
+
+  //       const [time, period] = time12h.trim().split(" ");
+  //       let [hours, minutes] = time.split(":");
+
+  //       hours = parseInt(hours);
+
+  //       // PM conversion
+  //       if (period === "PM" && hours !== 12) {
+  //         hours = hours + 12;
+  //       }
+  //       // AM conversion (12 AM = 00:00)
+  //       if (period === "AM" && hours === 12) {
+  //         hours = 0;
+  //       }
+
+  //       return `${hours.toString().padStart(2, "0")}:${minutes}`;
+  //     };
+
+  //     // ✅ Working hours 24-hour format এ convert করুন
+  //     const workingHours = {
+  //       from: convertTo24Hour(registrationData?.from),
+  //       to: convertTo24Hour(registrationData?.to),
+  //     };
+
+  //     console.log("📅 Working Hours Object:", workingHours);
+
+  //     // Step 2: Prepare payload
+  //     const formsData = new FormData();
+  //     formsData.append("role", "provider");
+  //     formsData.append("fullName", registrationData?.fullName);
+  //     formsData.append("email", registrationData?.email);
+  //     formsData.append("password", registrationData?.password);
+  //     formsData.append("confirmPassword", registrationData?.confirmPassword);
+  //     formsData.append("location", JSON.stringify(registrationData?.location));
+  //     formsData.append("businessName", registrationData?.category);
+  //     formsData.append("bio", registrationData?.bio);
+  //     formsData.append(
+  //       "experienceLevel",
+  //       registrationData?.experience
+  //         ?.split(" ")
+  //         .slice(0, 1)
+  //         .join("")
+  //         .toLowerCase()
+  //     );
+  //     formsData.append("specializations", JSON.stringify(specializationIds));
+  //     formsData.append(
+  //       "serviceAreas",
+  //       JSON.stringify(registrationData?.serviceArea?.split())
+  //     );
+  //     formsData.append("workingHours", JSON.stringify(workingHours));
+
+  //     // 🚀 Send to backend
+  //     const res = await registerUser(formsData).unwrap();
+  //     dispatch(resetProviderForm());
+  //     console.log("✅ provider Registration successfull:", res);
+
+  //     // Step 4: Handle success
+  //     if (res?.success) {
+  //       Toast.show({
+  //         type: "success",
+  //         text1: "Success",
+  //         text2: res?.message || "Registration successful!",
+  //         visibilityTime: 2000,
+  //       });
+  //       router.push("provider/auth/signIn");
+  //     } else {
+  //       Toast.show({
+  //         type: "error",
+  //         text1: "Error",
+  //         text2: res?.message || "Registration failed",
+  //         visibilityTime: 2000,
+  //       });
+  //     }
+  //   } catch (err) {
+  //     // Step 6: Handle validation or network errors
+  //     if (err.name === "ValidationError") {
+  //       const validationErrors = {};
+  //       err.inner.forEach((e) => {
+  //         validationErrors[e.path] = e.message;
+  //       });
+  //       setErrors(validationErrors);
+  //       console.log("🔴 Validation Errors:", validationErrors);
+  //       console.log("📋 Full Error Details:", err.inner);
+  //     } else {
+  //       console.log("API Error:", err);
+  //       const errorMessage =
+  //         err?.message ||
+  //         err?.data?.email?.[0] ||
+  //         err?.data ||
+  //         "Network or server error. Please try again.";
+
+  //       Toast.show({
+  //         type: "error",
+  //         text1: "Error",
+  //         text2: errorMessage,
+  //         visibilityTime: 2000,
+  //       });
+  //     }
+  //   }
+  // };
   const handleNext = async () => {
     try {
-      // Step 1: Validate user input
       await currentPageSchema.validate(registrationData, { abortEarly: false });
       setErrors({});
 
-      // Step 2: Prepare payload
-      const formsData = new FormData();
-      formsData.append("role", "provider");
-      formsData.append("fullName", registrationData?.fullName);
-      formsData.append("email", registrationData?.email);
-      formsData.append("password", registrationData?.password);
-      formsData.append("confirmPassword", registrationData?.confirmPassword);
-      formsData.append("location", JSON.stringify(registrationData?.location));
-      formsData.append("businessName", registrationData?.category);
-      formsData.append("bio", registrationData?.bio);
-      formsData.append(
-        "experienceLevel",
-        registrationData?.experience
+      const convertTo24Hour = (time12h) => {
+        if (!time12h) return "";
+
+        const [time, period] = time12h.trim().split(" ");
+        let [hours, minutes] = time.split(":");
+
+        hours = parseInt(hours);
+
+        if (period === "PM" && hours !== 12) {
+          hours = hours + 12;
+        }
+        if (period === "AM" && hours === 12) {
+          hours = 0;
+        }
+
+        return `${hours.toString().padStart(2, "0")}:${minutes}`;
+      };
+
+      const workingHours = {
+        from: convertTo24Hour(registrationData?.from),
+        to: convertTo24Hour(registrationData?.to),
+      };
+
+      // ✅ FormData এর বদলে সরাসরি JSON object পাঠান
+      const payload = {
+        role: "provider",
+        fullName: registrationData?.fullName,
+        email: registrationData?.email,
+        password: registrationData?.password,
+        confirmPassword: registrationData?.confirmPassword,
+        location: registrationData?.location, // ✅ Already object, no need to stringify
+        businessName: registrationData?.category,
+        bio: registrationData?.bio,
+        experienceLevel: registrationData?.experience
           ?.split(" ")
           .slice(0, 1)
           .join("")
-          .toLowerCase()
-      );
-      formsData.append("specializations", JSON.stringify(specializationIds));
-      formsData.append(
-        "serviceAreas",
-        JSON.stringify(registrationData?.serviceArea?.split())
-      );
-      // ✅ Working hours আলাদাভাবে append করুন
-      formsData.append("workingHours", JSON.stringify(workingHours));
+          .toLowerCase(),
+        specializations: specializationIds, // ✅ Already array
+        serviceAreas: registrationData?.serviceArea?.split(), // ✅ Already array
+        workingHours: workingHours, // ✅ Object হিসেবে পাঠান
+      };
 
-      // 🚀 Send to backend
-      const res = await registerUser(formsData).unwrap();
+      console.log("📤 Sending Payload:", JSON.stringify(payload, null, 2));
+
+      // 🚀 Send JSON instead of FormData
+      const res = await registerUser(payload).unwrap();
       dispatch(resetProviderForm());
-      console.log("✅ provider Registration successfull:", res);
-      // Step 4: Handle success
+      console.log("✅ provider Registration successful:", res);
+
       if (res?.success) {
         Toast.show({
           type: "success",
@@ -161,7 +280,6 @@ export default function TimeRangePicker() {
         });
         router.push("provider/auth/signIn");
       } else {
-        //  5: Handle logical failure (just in case)
         Toast.show({
           type: "error",
           text1: "Error",
@@ -170,22 +288,19 @@ export default function TimeRangePicker() {
         });
       }
     } catch (err) {
-      // Step 6: Handle validation or network errors
       if (err.name === "ValidationError") {
         const validationErrors = {};
         err.inner.forEach((e) => {
           validationErrors[e.path] = e.message;
         });
         setErrors(validationErrors);
-        // ✅ এখানে validation errors console এ print করুন
         console.log("🔴 Validation Errors:", validationErrors);
-        console.log("📋 Full Error Details:", err.inner);
       } else {
         console.log("API Error:", err);
         const errorMessage =
           err?.message ||
           err?.data?.email?.[0] ||
-          err?.error ||
+          err?.data ||
           "Network or server error. Please try again.";
 
         Toast.show({
@@ -197,7 +312,6 @@ export default function TimeRangePicker() {
       }
     }
   };
-
   return (
     <>
       <View className="items-center justify-center bg-white px-[2%]">
