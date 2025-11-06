@@ -24,7 +24,7 @@ import XStyle from "../util/styles";
 import Toast from "react-native-toast-message";
 import { useGetProviderDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 export default function ProviderDetailsScreen() {
-  const skills = ["Lighting", "Circuit", "Wiring", "Repair"];
+  // const skills = ["Lighting", "Circuit", "Wiring", "Repair"];
   const { showButtons, profileId } = useLocalSearchParams();
 
   const { data, isLoading, error } = useGetProviderDetailsQuery(profileId);
@@ -42,7 +42,6 @@ export default function ProviderDetailsScreen() {
       </View>
     );
   }
-  console.log("datas", data?.data?.provider);
 
   const {
     profilePhoto,
@@ -58,7 +57,7 @@ export default function ProviderDetailsScreen() {
     totalCompletedJobs,
     specializations,
   } = data?.data?.provider || {};
-  console.log("This is from providerDetails Page:", specializations);
+  console.log("This is from providerDetails Page:", data?.data);
   // Add error state check (optional)
   if (error) {
     return (
@@ -165,7 +164,12 @@ export default function ProviderDetailsScreen() {
               Gallery
             </Text>
             <TouchableOpacity
-              onPress={() => router.push("/services/showGallery")}
+              onPress={() =>
+                router.push({
+                  pathname: "/services/showGallery",
+                  params: { id: profileId },
+                })
+              }
             >
               <Text className="font-poppins-500medium text-base text-[#175994]">
                 View all
@@ -175,13 +179,16 @@ export default function ProviderDetailsScreen() {
         </View>
 
         {/* Images section */}
-        <Gallery />
+        <Gallery portfolioImages={data?.data?.portfolio} />
 
         {/* Reviews */}
-        <Testimonials />
+        <Testimonials testimonialData={data?.data} />
 
         {/* Review Button */}
-        <ReviewButton />
+        <ReviewButton
+          id={profileId}
+          totalReviews={data?.data?.reviews.length}
+        />
       </ScrollView>
       {shouldShowButtons && (
         <View

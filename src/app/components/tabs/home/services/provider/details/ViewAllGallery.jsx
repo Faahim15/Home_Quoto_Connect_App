@@ -4,26 +4,26 @@ import { scale, verticalScale } from "../../../../../adaptive/Adaptiveness";
 
 function showGallery({ item }) {
   return (
-    <View>
+    <View className="border border-[#cacaca]">
       <Image
         style={{
           width: scale(160),
           height: verticalScale(195),
           borderRadius: scale(6),
         }}
-        source={item.image}
+        source={{ uri: item?.url || null }}
       />
     </View>
   );
 }
 
-export default function ViewAllGallery() {
+export default function ViewAllGallery({ allImages }) {
   return (
     <View>
       <FlatList
-        data={imageData}
+        data={allImages || []}
         renderItem={showGallery}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item, index) => item._id || index.toString()}
         numColumns={2}
         columnWrapperStyle={{ justifyContent: "space-between" }}
         ItemSeparatorComponent={() => (

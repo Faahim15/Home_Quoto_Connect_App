@@ -11,9 +11,12 @@ import imageData from "../../../../../data/shared/Images";
 import { scale, verticalScale } from "../../../../../adaptive/Adaptiveness";
 import { useState } from "react";
 
-export default function Gallery() {
+export default function Gallery({ portfolioImages }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const allImages = portfolioImages.flatMap((item) => item.images);
+
+  // console.log("this from gallery:", allImages[0].url);
 
   const handlePress = (image) => {
     setSelectedImage(image);
@@ -22,22 +25,25 @@ export default function Gallery() {
   return (
     <View className="flex-row  mt-[3%] mx-[6%]">
       <FlatList
-        data={imageData}
+        data={allImages || []}
         horizontal
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() => handlePress(item.image)}
-            className="mr-[2%]"
+            onPress={() => handlePress(item?.url)}
+            className="mr-[2%] border border-[#cacaca]"
           >
             <Image
-              source={item.image}
+              source={{
+                uri: item?.url,
+              }}
               style={{
                 width: scale(100),
                 height: verticalScale(121),
                 borderRadius: scale(4),
               }}
+              resizeMode="cover"
             />
           </TouchableOpacity>
         )}
@@ -55,7 +61,7 @@ export default function Gallery() {
           onPress={() => setModalVisible(false)}
         >
           <Image
-            source={selectedImage}
+            source={{ uri: selectedImage }}
             className="w-[90%] h-[50%] rounded-xl"
             resizeMode="contain"
           />

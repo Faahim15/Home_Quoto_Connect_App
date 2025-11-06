@@ -2,12 +2,7 @@ import { View, Text, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale } from "../../../../../adaptive/Adaptiveness";
 import Reviews from "./Reviews";
-import reviewData from "../../../../../data/shared/ReviewData";
-export default function Testimonials() {
-  const ratings = [3.5, 5, 2];
-  const averageRating =
-    reviewData.reduce((sum, review) => sum + review.rating, 0) /
-    reviewData.length;
+export default function Testimonials({ testimonialData }) {
   return (
     <View className="mx-[6%] mt-[3%] ">
       <View className="flex-row justify-between ">
@@ -15,18 +10,19 @@ export default function Testimonials() {
           <Ionicons name="star" size={18} color="#F59E0B" />
           <Text className="font-poppins-semiBold text-base text-[#565656]">
             {" "}
-            {averageRating.toFixed(2)}
+            {Number(testimonialData?.provider?.averageRating) / 10}
           </Text>
         </View>
         <Text className="font-poppins-semiBold text-base text-[#565656]">
-          {reviewData.length} Reviews
+          {testimonialData?.reviews.length}{" "}
+          {testimonialData?.reviews.length > 1 ? "Reviews" : "Review"}
         </Text>
       </View>
       <View className="mt-[2%] ">
         <FlatList
-          data={reviewData}
+          data={testimonialData?.reviews}
           horizontal
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item, index) => item?._id || index.toString()}
           renderItem={({ item }) => {
             return <Reviews data={item} />;
           }}

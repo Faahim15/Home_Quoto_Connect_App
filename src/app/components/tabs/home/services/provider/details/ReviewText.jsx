@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 
 export default function ReviewText({ text }) {
