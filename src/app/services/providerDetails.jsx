@@ -24,7 +24,6 @@ import XStyle from "../util/styles";
 import Toast from "react-native-toast-message";
 import { useGetProviderDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 export default function ProviderDetailsScreen() {
-  // const skills = ["Lighting", "Circuit", "Wiring", "Repair"];
   const { showButtons, profileId } = useLocalSearchParams();
 
   const { data, isLoading, error } = useGetProviderDetailsQuery(profileId);
@@ -45,19 +44,16 @@ export default function ProviderDetailsScreen() {
 
   const {
     profilePhoto,
-    location,
     workingHours,
     fullName,
     businessName,
     bio,
     experienceLevel,
-    reviews,
     averageRating,
-    totalReviews,
     totalCompletedJobs,
     specializations,
   } = data?.data?.provider || {};
-  console.log("This is from providerDetails Page:", data?.data);
+
   // Add error state check (optional)
   if (error) {
     return (
@@ -111,7 +107,10 @@ export default function ProviderDetailsScreen() {
           </View>
         </LinearGradient>
 
-        <Banner data={{ name: fullName, designation: businessName }} />
+        <Banner
+          providerId={data?.data?.provider._id}
+          data={{ name: fullName, designation: businessName }}
+        />
 
         {/* PerfomanceMetrics */}
 

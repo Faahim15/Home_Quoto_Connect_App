@@ -1,7 +1,12 @@
-import { View, Text, Image } from "react-native";
+import { View, Text } from "react-native";
 import XStyle from "../../../../../../util/styles";
 import { scale, verticalScale } from "../../../../../adaptive/Adaptiveness";
-
+import {
+  thumbsUpIcon,
+  experienceIcon,
+  ordersIcon,
+} from "../../../../../../../../assets/svg/profile";
+import { SvgXml } from "react-native-svg";
 export default function PerfomanceMetrics({ performanceData }) {
   return (
     <View
@@ -12,8 +17,10 @@ export default function PerfomanceMetrics({ performanceData }) {
       className="flex-row justify-center items-center border rounded-lg border-[#D4E0EB] gap-[20%] bg-[#FFFFFF] mt-[3%] mx-[6%] "
     >
       <View>
-        <Image
-          source={require("../../../../../../../../assets/images/home/booked/completed.png")}
+        <SvgXml
+          xml={thumbsUpIcon}
+          height={verticalScale(30)}
+          width={scale(25)}
         />
         <Text className="font-poppins-500medium text-base text-[#565656]">
           {Number(performanceData?.avgRating) / 10 || "N/A"}
@@ -23,9 +30,8 @@ export default function PerfomanceMetrics({ performanceData }) {
         </Text>
       </View>
       <View>
-        <Image
-          source={require("../../../../../../../../assets/images/home/booked/expericence.png")} //../../../../../assets/images/home/booked/expericence.png
-        />
+        <SvgXml xml={ordersIcon} height={verticalScale(30)} width={scale(25)} />
+
         <Text className="font-poppins-500medium text-base text-[#565656]">
           {performanceData?.totalJobs || "N/A"} Orders
         </Text>
@@ -34,8 +40,10 @@ export default function PerfomanceMetrics({ performanceData }) {
         </Text>
       </View>
       <View>
-        <Image
-          source={require("../../../../../../../../assets/images/home/booked/expericence.png")}
+        <SvgXml
+          xml={experienceIcon}
+          height={verticalScale(30)}
+          width={scale(25)}
         />
         <Text className="font-poppins-500medium text-base text-[#565656]">
           Experience

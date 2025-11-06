@@ -1,5 +1,6 @@
 import services from "../components/data/jobs/CategoryIds";
 import { specializations } from "../components/data/jobs/CategoryIds";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // Helper functions
 
 export const getServiceName = (serviceId) => {
@@ -64,6 +65,22 @@ export function formatDateRelative(isoString) {
   if (hours > 0) return `${hours}h ago`;
   if (minutes > 0) return `${minutes}m ago`;
   return `${seconds}s ago`;
+}
+
+export async function getToken() {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    if (token !== null) {
+      console.log("Token:", token);
+      return token;
+    } else {
+      console.log("No token found");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error reading token from AsyncStorage", error);
+    return null;
+  }
 }
 
 export default getSpecializationTitles;

@@ -1,8 +1,11 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { scale, verticalScale } from "../../../../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 
-export default function Banner({ data }) {
+export default function Banner({ providerId, data }) {
+  // console.log("this is from banner components:", providerId);
+
   return (
     <View>
       <View className="flex-row mt-[3%] mx-[6%] justify-between">
@@ -27,6 +30,12 @@ export default function Banner({ data }) {
 
           {/* Time/Clock Button */}
           <TouchableOpacity
+            onPress={() =>
+              router.push({
+                pathname: "/chat/displayChat",
+                params: { providerId: providerId },
+              })
+            }
             style={{ width: scale(44), height: verticalScale(44) }}
             className="rounded-full items-center justify-center bg-[#319FCA] "
           >

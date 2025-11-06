@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -6,9 +6,9 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
-  Alert,
   Dimensions,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -16,60 +16,23 @@ import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import ChatHeader from "../components/tabs/chat/ChatHeader";
 import MessageInput from "../components/tabs/chat/MessageInput";
 import { io } from "socket.io-client";
-const { width: screenWidth } = Dimensions.get("window");
-
-const ChatScreen = ({ route, navigation }) => {
-  // Sample data for demonstration - moved to initial state
-
-  const socket = io("http://localhost:3000");
-
-  const sampleMessages = [
-    {
-      id: "1",
-      text: "Cras eget placerat diam. Aliquam mauris libero, tempor vel nisl non, suscipit.",
-      timestamp: "09:55 am",
-      isOwn: false,
-      isRead: true,
-      avatar:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=faces",
-    },
-    {
-      id: "2",
-      text: "Sed ac ante dolor. Mauris nec arcu vitae felis pharetra molestie vitae a nibh.",
-      timestamp: "09:57 am",
-      isOwn: true,
-      isRead: true,
-      avatar:
-        "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=40&h=40&fit=crop&crop=faces",
-    },
-    {
-      id: "3",
-      text: "Duis elementum quam eu tristique sagittis. Justo justo vulputate?",
-      timestamp: "09:58 am",
-      isOwn: false,
-      isRead: true,
-      avatar:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=40&h=40&fit=crop&crop=faces",
-    },
-    {
-      id: "4",
-      text: "Integer mauris nibh, tristique fringilla?",
-      timestamp: "10:00 am",
-      isOwn: true,
-      isRead: false,
-      avatar:
-        "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=40&h=40&fit=crop&crop=faces",
-    },
-  ];
-
-  const [messages, setMessages] = useState(sampleMessages);
+import { useLocalSearchParams } from "expo-router";
+import { useGetProviderDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+const ChatScreen = ({ route }) => {
+  const { providerId } = useLocalSearchParams();
+  const { data, isLoading } = useGetProviderDetailsQuery(providerId);
+  const { width: screenWidth } = Dimensions.get("window");
+  console.log(providerId);
+  const [socket, setSocket] = useState(null); // Correct socket instance
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [showMediaModal, setShowMediaModal] = useState(false);
+
   const flatListRef = useRef(null);
 
-  // Get user data from navigation params or set default
   const userData = route?.params?.userData || {
     name: "Jhonson",
     avatar:
@@ -80,14 +43,12 @@ const ChatScreen = ({ route, navigation }) => {
 
   const requestPermissions = async () => {
     try {
-      // Request camera permissions
       const cameraPermission =
         await ImagePicker.requestCameraPermissionsAsync();
       if (cameraPermission.status !== "granted") {
         console.log("Camera permission not granted");
       }
 
-      // Request media library permissions
       const mediaPermission =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (mediaPermission.status !== "granted") {
@@ -98,326 +59,254 @@ const ChatScreen = ({ route, navigation }) => {
     }
   };
 
-  // Media selection functions
   const selectFromLibrary = async () => {
-    try {
-      // ✅ Step 1: Request permission only when needed
-      setShowMediaModal(false);
-      const mediaPermission =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (mediaPermission.status !== "granted") {
-        Alert.alert(
-          "Permission Required",
-          "Please allow access to your media library."
-        );
-        return; // Stop if not granted
-      }
+    setShowMediaModal(false);
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      allowsMultipleSelection: true,
+      selectionLimit: 4,
+    });
 
-      // ✅ Step 2: Correct usage of mediaTypes (use ImagePicker constant)
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images", "videos"],
-        allowsEditing: false,
-        aspect: [4, 3],
-        quality: 0.8,
-        allowsMultipleSelection: true,
-        selectionLimit: 4,
-        videoMaxDuration: 30,
-      });
-
-      // ✅ Step 3: Handle the selected media
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const mediaArray = result.assets.map((media) => ({
-          uri: media.uri,
-          type: media.type,
-          width: media.width,
-          height: media.height,
-          fileName:
-            media.fileName ||
-            `media_${Date.now()}.${media.type === "video" ? "mp4" : "jpg"}`,
-          fileSize: media.fileSize,
-        }));
-        setSelectedMedia(mediaArray); // Set array of media
-      }
-    } catch (error) {
-      console.error("Error selecting from library:", error);
-      Alert.alert("Error", "Failed to select media from library");
+    if (!result.canceled && result.assets?.length > 0) {
+      const mediaArray = result.assets.map((media) => ({
+        uri: media.uri,
+        type: media.type,
+        width: media.width,
+        height: media.height,
+        fileName:
+          media.fileName ||
+          `media_${Date.now()}.${media.type === "video" ? "mp4" : "jpg"}`,
+        fileSize: media.fileSize,
+      }));
+      setSelectedMedia(mediaArray);
     }
   };
 
   const takePhoto = async () => {
-    try {
-      setShowMediaModal(false);
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ["images", "videos", "livePhotos"],
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.8,
-      });
-
-      if (!result.canceled && result.assets && result.assets[0]) {
-        const photo = result.assets[0];
-        setSelectedMedia([
-          {
-            uri: photo.uri,
-            type: "image",
-            width: photo.width,
-            height: photo.height,
-            fileName: `photo_${Date.now()}.jpg`,
-            fileSize: photo.fileSize,
-          },
-        ]);
-      }
-    } catch (error) {
-      console.error("Error taking photo:", error);
-      Alert.alert("Error", "Failed to take photo");
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+    });
+    if (!result.canceled && result.assets?.[0]) {
+      const photo = result.assets[0];
+      setSelectedMedia([
+        {
+          uri: photo.uri,
+          type: "image",
+          width: photo.width,
+          height: photo.height,
+          fileName: `photo_${Date.now()}.jpg`,
+          fileSize: photo.fileSize,
+        },
+      ]);
     }
   };
 
   const recordVideo = async () => {
-    try {
-      const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ["images", "videos", "livePhotos"],
-        allowsEditing: true,
-        quality: ImagePicker.UIImagePickerControllerQualityType.Medium,
-        videoMaxDuration: 120, // 30 seconds max
-      });
-      setShowMediaModal(false);
-      if (!result.canceled && result.assets && result.assets[0]) {
-        const video = result.assets[0];
-        setSelectedMedia([
-          {
-            uri: video.uri,
-            type: "video",
-            width: video.width,
-            height: video.height,
-            fileName: `video_${Date.now()}.mp4`,
-            fileSize: video.fileSize,
-            duration: video.duration,
-          },
-        ]);
-      }
-    } catch (error) {
-      console.error("Error recording video:", error);
-      Alert.alert("Error", "Failed to record video");
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ["videos"],
+      allowsEditing: true,
+      videoMaxDuration: 120,
+    });
+
+    if (!result.canceled && result.assets?.[0]) {
+      const video = result.assets[0];
+      setSelectedMedia([
+        {
+          uri: video.uri,
+          type: "video",
+          width: video.width,
+          height: video.height,
+          fileName: `video_${Date.now()}.mp4`,
+          fileSize: video.fileSize,
+          duration: video.duration,
+        },
+      ]);
     }
   };
 
   const removeSelectedMedia = (index = null) => {
     if (index !== null) {
-      // Remove specific item
       setSelectedMedia((prev) => prev.filter((_, i) => i !== index));
     } else {
-      // Clear all
       setSelectedMedia([]);
     }
   };
-
-  // Send message function
-  const sendMessage = () => {
-    // Check if there's media or text to send
-    if (!newMessage.trim() && selectedMedia.length === 0) return;
-
-    const messageData = {
-      id: Date.now().toString(),
-      text: newMessage.trim(),
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      isOwn: true,
-      isRead: false,
-      media: selectedMedia.length > 0 ? selectedMedia : null,
-    };
-
-    // Add message to local state immediately for better UX
-    setMessages((prevMessages) => [...prevMessages, messageData]);
-    setNewMessage("");
-    setSelectedMedia([]);
-    scrollToBottom();
-  };
-
   const scrollToBottom = () => {
     setTimeout(() => {
       flatListRef.current?.scrollToEnd({ animated: true });
     }, 100);
   };
+  useEffect(() => {
+    const connectSocket = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        if (!token) return;
 
-  // Handle typing indicator
-  const handleTypingStart = () => {
-    // if (isConnected) {
-    //   socketRef.current.emit('typing', {
-    //     recipientId: userData.userId,
-    //     userId: 'current_user_id',
-    //   });
-    // }
+        const newSocket = io("http://10.10.20.30:5000", {
+          transports: ["websocket"],
+          auth: { token },
+        });
+
+        newSocket.on("connect", () =>
+          console.log("Socket connected:", newSocket.id)
+        );
+        newSocket.on("disconnect", (reason) =>
+          console.log("Socket disconnected:", reason)
+        );
+        newSocket.on("connect_error", (err) =>
+          console.log("Socket error:", err.message)
+        );
+
+        newSocket.on("receive-message", (msg) => {
+          setMessages((prev) => [...prev, msg]);
+        });
+
+        setSocket(newSocket);
+
+        return () => newSocket.disconnect();
+      } catch (error) {
+        console.log("Socket init error:", error);
+      }
+    };
+
+    connectSocket();
+  }, []);
+
+  const sendMessage = () => {
+    if (!socket) return console.log("Socket not connected");
+
+    if (newMessage.trim() || selectedMedia.length > 0) {
+      const message = {
+        providerId: providerId,
+        content: "Test direct message",
+        messageType: "text",
+      };
+
+      socket.emit("send-message", message);
+
+      setMessages((prev) => [...prev, message]);
+      setNewMessage("");
+      setSelectedMedia([]);
+      scrollToBottom();
+    }
   };
-
-  const handleTypingStop = () => {
-    // if (isConnected) {
-    //   socketRef.current.emit('stopTyping', {
-    //     recipientId: userData.userId,
-    //     userId: 'current_user_id',
-    //   });
-    // }
-  };
-
-  const displayMessages = messages.length > 0 ? messages : sampleMessages;
-
   const renderMessageItem = ({ item }) => (
     <View className={`mb-[4%] ${item.isOwn ? "items-end" : "items-start"}`}>
       <View
-        className={`max-w-[75%] rounded-2xl overflow-hidden ${
-          item.isOwn
-            ? "bg-[#319FCA] rounded-br-md"
-            : "bg-white rounded-bl-md shadow-sm"
-        }`}
+        className={`max-w-[75%] rounded-2xl overflow-hidden ${item.isOwn ? "bg-[#319FCA] rounded-br-md" : "bg-white rounded-bl-md shadow-sm"}`}
       >
-        {/* Render media if exists */}
-        {item.media && Array.isArray(item.media) && (
-          <View className="flex-wrap bg-[#fff] flex-row">
-            {item.media.map((mediaItem, index) => (
+        {item.media?.map((media, index) => (
+          <View key={index} className="relative" style={{ margin: scale(4) }}>
+            {media.type === "image" ? (
+              <Image
+                source={{ uri: media.uri }}
+                style={{
+                  width: screenWidth * (item.media.length === 1 ? 0.6 : 0.28),
+                  height:
+                    screenWidth *
+                    (item.media.length === 1
+                      ? 0.6 * (media.height / media.width)
+                      : 0.28),
+                  borderRadius: 8,
+                }}
+              />
+            ) : (
               <View
                 style={{
-                  marginVertical: verticalScale(8),
-                  marginHorizontal: scale(8),
+                  width: screenWidth * (item.media.length === 1 ? 0.6 : 0.28),
+                  height: screenWidth * 0.28,
+                  backgroundColor: "#ccc",
+                  justifyContent: "center",
+                  alignItems: "center",
                 }}
-                key={index}
-                className="relative "
               >
-                {mediaItem.type === "image" ? (
-                  <Image
-                    className="border border-[#fff] rounded-md "
-                    source={{ uri: mediaItem.uri }}
-                    style={{
-                      width:
-                        item.media.length === 1
-                          ? screenWidth * 0.6
-                          : screenWidth * 0.28,
-                      height:
-                        item.media.length === 1
-                          ? screenWidth *
-                            0.6 *
-                            (mediaItem.height / mediaItem.width)
-                          : screenWidth * 0.28,
-                    }}
-                    resizeMode="cover"
-                  />
-                ) : (
-                  <View
-                    style={{
-                      width:
-                        item.media.length === 1
-                          ? screenWidth * 0.6
-                          : screenWidth * 0.28,
-                      height:
-                        item.media.length === 1
-                          ? verticalScale(150)
-                          : screenWidth * 0.28,
-                    }}
-                    className="bg-gray-200 items-center justify-center"
-                  >
-                    <Ionicons name="play-circle" size={32} color="#319FCA" />
-                  </View>
-                )}
+                <Ionicons name="play-circle" size={32} color="#319FCA" />
               </View>
-            ))}
+            )}
           </View>
-        )}
-
-        {/* Render text if exists */}
-        {item.text ? (
+        ))}
+        {item.text && (
           <View className="px-4 py-3">
             <Text
-              className={`font-poppins-400regular text-base leading-5 ${
-                item.isOwn ? "text-white" : "text-gray-800"
-              }`}
+              className={`text-base ${item.isOwn ? "text-white" : "text-gray-800"}`}
             >
               {item.text}
             </Text>
           </View>
-        ) : null}
+        )}
       </View>
-      <Text className="font-poppins-400regular text-xs text-gray-500 mt-[1%] mx-[1%]">
-        {item.timestamp}
-      </Text>
+      <Text className="text-xs text-gray-500 mt-1 mx-1">{item.timestamp}</Text>
     </View>
   );
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-white justify-center items-center">
+        <ActivityIndicator size="large" color="#18649F" />
+        <Text className="mt-4 text-gray-500">Loading provider details...</Text>
+      </View>
+    );
+  }
 
-  // Force KeyboardAvoidingView update when media changes
-  useEffect(() => {
-    if (Platform.OS === "ios") {
-      // This forces KeyboardAvoidingView to recalculate
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: false });
-      }, 100);
-    }
-  }, [selectedMedia.length]);
+  const { profilePhoto, fullName, isOnline, lastActive } =
+    data?.data?.provider || {};
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {/* <StatusBar barStyle="dark-content" backgroundColor="#ffffff" /> */}
-
       <KeyboardAvoidingView
-        key={selectedMedia.length} // Forces re-render when media changes
+        key={selectedMedia.length}
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={
-          Platform.OS === "ios"
-            ? selectedMedia.length > 0
-              ? -30
-              : 0 // Adjust offset when media is present
-            : 20
+          Platform.OS === "ios" ? (selectedMedia.length ? -30 : 0) : 20
         }
-        enabled={true}
       >
-        {/* Header */}
-        <ChatHeader userData={userData} />
+        <ChatHeader
+          userData={{
+            name: fullName,
+            isOnline,
+            profilePhoto: profilePhoto?.url,
+            lastActive,
+          }}
+        />
 
-        {/* Messages List */}
-        <View className="flex-1">
-          <FlatList
-            ref={flatListRef}
-            data={messages}
-            renderItem={renderMessageItem}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={{
-              padding: scale(16),
-              paddingBottom: verticalScale(20), // Reduced padding
-            }}
-            showsVerticalScrollIndicator={false}
-            onContentSizeChange={scrollToBottom}
-            keyboardShouldPersistTaps="handled"
-          />
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          renderItem={renderMessageItem}
+          keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={{
+            padding: scale(16),
+            paddingBottom: verticalScale(20),
+          }}
+          onContentSizeChange={scrollToBottom}
+          keyboardShouldPersistTaps="handled"
+        />
 
-          {/* Typing Indicator */}
-          {isTyping && (
-            <View className="px-[4%] pb-2">
-              <View className="bg-white rounded-2xl rounded-bl-md px-4 py-3 max-w-[75%] shadow-sm">
-                <Text className="text-gray-500 text-sm">
-                  {userData.name} is typing...
-                </Text>
-              </View>
+        {isTyping && (
+          <View className="px-4 pb-2">
+            <View className="bg-white rounded-2xl rounded-bl-md px-4 py-3 max-w-[75%] shadow-sm">
+              <Text className="text-gray-500 text-sm">
+                {userData.name} is typing...
+              </Text>
             </View>
-          )}
-        </View>
+          </View>
+        )}
 
-        {/* Message Input - Now properly positioned */}
-        <View>
-          <MessageInput
-            newMessage={newMessage}
-            setNewMessage={setNewMessage}
-            selectedMedia={selectedMedia}
-            removeSelectedMedia={removeSelectedMedia}
-            showMediaModal={showMediaModal}
-            setShowMediaModal={setShowMediaModal}
-            selectFromLibrary={selectFromLibrary}
-            takePhoto={takePhoto}
-            recordVideo={recordVideo}
-            sendMessage={sendMessage}
-            handleTypingStart={handleTypingStart}
-            handleTypingStop={handleTypingStop}
-          />
-        </View>
+        <MessageInput
+          newMessage={newMessage}
+          setNewMessage={setNewMessage}
+          selectedMedia={selectedMedia}
+          removeSelectedMedia={removeSelectedMedia}
+          showMediaModal={showMediaModal}
+          setShowMediaModal={setShowMediaModal}
+          selectFromLibrary={selectFromLibrary}
+          takePhoto={takePhoto}
+          recordVideo={recordVideo}
+          sendMessage={sendMessage}
+          handleTypingStart={() => {}}
+          handleTypingStop={() => {}}
+        />
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

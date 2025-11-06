@@ -4,8 +4,10 @@ import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import ReportModal from "./ReportModal";
 import { useState } from "react";
 import { router } from "expo-router";
+import { formatDateRelative } from "../../../util/helper-function";
 const ChatHeader = ({ userData }) => {
   const [modalVisible, setModalVisible] = useState(false);
+
   const handleSelectProvider = (providerId) => {
     console.log("Selected provider:", providerId);
   };
@@ -16,18 +18,20 @@ const ChatHeader = ({ userData }) => {
       </TouchableOpacity>
 
       <Image
-        source={{ uri: userData.avatar }}
+        source={{ uri: userData.profilePhoto || null }}
         style={{ width: scale(38), height: verticalScale(38) }}
         className="rounded-full mr-[3%]"
-        defaultSource={{ uri: "https://via.placeholder.com/40" }}
+        // defaultSource={{ uri: "https://via.placeholder.com/40" }}
       />
 
       <View className="flex-1">
         <Text className="text-gray-800 text-base font-poppins-500medium ">
-          {userData.name}
+          {userData?.name.split(" ").slice(0, 2).join(" ")}
         </Text>
         <Text className="text-gray-500 font-poppins-400regular text-sm">
-          {userData.status}
+          {userData?.isOnline
+            ? "Active now"
+            : formatDateRelative(userData?.lastActive)}
         </Text>
       </View>
 
