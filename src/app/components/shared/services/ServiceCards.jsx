@@ -14,7 +14,7 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
         router.push({
           pathname: "/shared/serviceDetails",
           params: {
-            serviceId: item.id,
+            serviceId: item._id,
             showPrice: showPrice,
             whichJob: whichJob,
           },

@@ -1,15 +1,19 @@
 import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../../../adaptive/Adaptiveness";
-import servicesData from "../../../../data/shared/ServicesData";
 import { router } from "expo-router";
 const ServiceCard = ({ item }) => {
+  const { fullName } = item?.client;
+  const { city, state } = item?.location?.details;
+
+  console.log("fullName", fullName, "id", item?.id);
+
   return (
     <TouchableOpacity
       onPress={() => {
         router.push({
           pathname: "/shared/serviceDetails",
-          params: { serviceId: item.id, showButtons: true, showPrice: true },
+          params: { serviceId: item._id, showButtons: true, showPrice: true },
         });
       }}
       style={{ width: scale(330), height: verticalScale(288) }}
@@ -18,8 +22,10 @@ const ServiceCard = ({ item }) => {
       {/* Card Image */}
       <View className="w-full">
         <Image
-          source={{ uri: item.image }}
-          className="rounded-lg "
+          source={{
+            uri: item?.photos[0]?.url || null,
+          }}
+          className="rounded-xl"
           style={{ height: verticalScale(170) }}
           resizeMode="cover"
         />
@@ -32,20 +38,24 @@ const ServiceCard = ({ item }) => {
           className="text-gray-900 font-poppins-500medium text-base mb-[2%]"
           numberOfLines={2}
         >
-          {item.title}
+          {item?.title || "N/A"}
         </Text>
 
         {/* Author */}
         <View className="flex-row items-center mb-[2%]">
           <Image
-            source={{ uri: item.profileImage }}
+            source={{
+              uri:
+                item?.client?.profilePhoto?.url ||
+                "https://via.placeholder.com/300",
+            }}
             style={{ width: scale(16), height: verticalScale(16) }}
             className=" bg-gray-300 rounded-full mr-[2%]"
           />
           <Text className="font-poppins-400regular text-sm">
             by{" "}
             <Text className="font-poppins-400regular text-[#319FCA] text-sm ">
-              {item.providerName}
+              {fullName || "N/A"}
             </Text>
           </Text>
         </View>
@@ -55,7 +65,10 @@ const ServiceCard = ({ item }) => {
           <View className="flex-row gap-[2%] items-center">
             <Ionicons name="construct-outline" size={16} color="#6B7280" />
             <Text className="font-poppins-400regular text-sm text-[#6B7280] ">
-              {item.serviceType}
+              {(item?.serviceCategory?.title || "N/A")
+                .split(" ")
+                .slice(0, 2)
+                .join(" ")}
             </Text>
           </View>
 
@@ -64,9 +77,9 @@ const ServiceCard = ({ item }) => {
             numberOfLines={1}
             ellipsizeMode="tail"
           >
-            {item.quoteOption === "Accept"
-              ? item.price
-              : "Requested a personalized..."}
+            {item?.priceRange?.isPersonalized
+              ? "Request a personalized..."
+              : `$${item?.priceRange?.from || null}-$${item?.priceRange?.to || null}`}
           </Text>
         </View>
 
@@ -76,8 +89,8 @@ const ServiceCard = ({ item }) => {
           <Text className="text-gray-500 text-sm ml-[1%]"></Text>
 
           <Text className="font-poppins-400regular text-sm text-[#319FCA] ">
-            {item.address}{" "}
-            <Text className="text-[#6B7280]">| {item.timeAgo}</Text>
+            {city && state ? `${city}, ${state}` : "N/A"}
+            <Text className="text-[#6B7280]"> | {item?.timeAgo || "N/A"}</Text>
           </Text>
         </View>
       </View>
@@ -85,27 +98,33 @@ const ServiceCard = ({ item }) => {
   );
 };
 
-export default function ShowAllServiceCards({ horizontal = true }) {
+export default function ShowAllServiceCards({ jobs, horizontal }) {
+  const isEmpty = !jobs || jobs.length === 0;
+
   return (
-    <View className={`mx-[6%] mt-[2%] justify-center items-start`}>
-      <FlatList
-        data={servicesData}
-        renderItem={({ item }) => <ServiceCard item={item} />}
-        keyExtractor={(item) => item.id}
-        // numColumns={1}
-        // showsVerticalScrollIndicator={false}
-        horizontal={horizontal}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={
-          horizontal
-            ? {
-                paddingRight: verticalScale(100),
-              }
-            : { rowGap: verticalScale(12), paddingBottom: verticalScale(80) }
-        }
-        // Ensures proper snapping alignment
-      />
+    <View className="mx-[6%] mt-[2%] justify-center items-start">
+      {isEmpty ? (
+        <Text className="text-gray-500 font-poppins-400regular text-base">
+          No services available at the moment.
+        </Text>
+      ) : (
+        <FlatList
+          data={jobs}
+          renderItem={({ item }) => <ServiceCard item={item} />}
+          keyExtractor={(item, index) => item._id || index.toString()}
+          horizontal={horizontal}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={
+            horizontal
+              ? {
+                  paddingRight: verticalScale(100),
+                }
+              : { rowGap: verticalScale(12), paddingBottom: verticalScale(80) }
+          }
+          // Ensures proper snapping alignment
+        />
+      )}
     </View>
   );
 }
