@@ -23,20 +23,19 @@ const MessagesScreen = () => {
   };
 
   const renderMessageItem = ({ item }) => {
-    console.log(
-      "this is from renderMessageItem",
-      item?.lastMessage?.content?.text
-    );
+    // console.log(
+    //   "this is from renderMessageItem",
+    //   item?.lastMessage?.content?.text
+    // );
     const clientParticipant = item?.participants?.find(
       (p) => p?.role === "client"
     );
 
+    console.log(item?._id);
+
     const lastMessage = item?.lastMessage?.content?.text;
     const isRead = item?.lastMessage?.isRead;
     const isActive = clientParticipant?.user?.isOnline;
-
-    console.log(isRead);
-    // console.log(clientParticipant?.user, "show");
     const profilePhotoUrl = clientParticipant?.user?.profilePhoto?.url ?? null;
 
     return (

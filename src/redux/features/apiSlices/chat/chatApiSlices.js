@@ -23,6 +23,14 @@ export const chatSlice = api.injectEndpoints(
         }),
         providesTags: ["chat"],
       }),
+
+      getSingleChatHistory: builder.query({
+        query: (id) => ({
+          url: `/chats/${id}/messages?page=1&limit=50`,
+          method: "GET",
+        }),
+        providesTags: ["chat"],
+      }),
     }),
   },
   {
@@ -31,4 +39,8 @@ export const chatSlice = api.injectEndpoints(
 );
 
 // Export hooks for usage in React components
-export const { useDirectChatMutation, useGetChatsQuery } = chatSlice;
+export const {
+  useDirectChatMutation,
+  useGetChatsQuery,
+  useGetSingleChatHistoryQuery,
+} = chatSlice;

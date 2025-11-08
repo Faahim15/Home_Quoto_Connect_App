@@ -1,5 +1,3 @@
-// ConfirmationModal.js
-import React from "react";
 import {
   View,
   Text,
@@ -42,10 +40,7 @@ export default function ConfirmationModal({
               >
                 {isLoading ? (
                   <View className="flex-row items-center justify-center">
-                    <ActivityIndicator size="small" color="#FFFFFF" />
-                    <Text className="text-white font-poppins-500medium ml-2">
-                      Logging out...
-                    </Text>
+                    <ActivityIndicator size="small" color="#EF4444" />
                   </View>
                 ) : (
                   <Text className="text-[#EF4444] text-sm font-poppins-semiBold">

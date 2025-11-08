@@ -66,7 +66,88 @@ export function formatDateRelative(isoString) {
   if (minutes > 0) return `${minutes}m ago`;
   return `${seconds}s ago`;
 }
+/**
+ * Formats a timestamp into a human-readable relative time
+ * @param {string} timestamp - ISO 8601 timestamp
+ * @returns {string} Formatted time string
+ */
+export const formatedDate = (timestamp) => {
+  if (!timestamp) return "N/A";
 
+  const now = new Date();
+  const date = new Date(timestamp);
+  const diffInMs = now - date;
+  const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+  const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+  // Helper to format time (12-hour format)
+  const formatTime = (date) => {
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12; // 0 should be 12
+    const minutesStr = minutes < 10 ? "0" + minutes : minutes;
+    return `${hours}:${minutesStr} ${ampm}`;
+  };
+
+  // Helper to get day name
+  const getDayName = (date) => {
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    return days[date.getDay()];
+  };
+
+  // Less than 1 minute
+  if (diffInMinutes < 1) {
+    return "Just now";
+  }
+
+  // Less than 1 hour
+  if (diffInMinutes < 60) {
+    return `${diffInMinutes} ${diffInMinutes === 1 ? "minute" : "minutes"} ago`;
+  }
+
+  // Less than 24 hours
+  if (diffInHours < 24) {
+    return `${diffInHours} ${diffInHours === 1 ? "hour" : "hours"} ago`;
+  }
+
+  // Today (after midnight)
+  const isToday = date.toDateString() === now.toDateString();
+  if (isToday) {
+    return formatTime(date);
+  }
+
+  // Yesterday
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const isYesterday = date.toDateString() === yesterday.toDateString();
+  if (isYesterday) {
+    return `Yesterday at ${formatTime(date)}`;
+  }
+
+  // Within last 7 days
+  if (diffInDays < 7) {
+    return `${getDayName(date)} at ${formatTime(date)}`;
+  }
+
+  // Older than 7 days
+  const month = date.toLocaleString("en-US", { month: "short" });
+  const day = date.getDate();
+  return `${month} ${day} at ${formatTime(date)}`;
+};
+
+// Example usage:
+// formatDateRelative('2025-11-06T07:25:28.991Z')
+// Output examples:
+// - "Just now"
+// - "5 minutes ago"
+// - "20 hours ago"
+// - "4:26 PM"
+// - "Yesterday at 8:12 PM"
+// - "Fri at 8:12 PM"
+// - "Nov 1 at 3:45 PM"
 export async function getToken() {
   try {
     const token = await AsyncStorage.getItem("token");
