@@ -34,6 +34,17 @@ export const authSlice = api.injectEndpoints({
         };
       },
     }),
+    logoutUser: builder.mutation({
+      query: (data) => {
+        console.log("loginUser api", data);
+        return {
+          url: `/auth/logout`,
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: ["user"],
+    }),
     forgotPassword: builder.mutation({
       query: (data) => ({
         url: `/auth/forgot-password`,
@@ -67,6 +78,7 @@ export const {
   useRegisterUserMutation,
   useVerifyOtpMutation,
   useLoginUserMutation,
+  useLogoutUserMutation,
   useForgotPasswordMutation,
   useResendOtpMutation,
   useResetPasswordMutation,

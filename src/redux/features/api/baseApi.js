@@ -54,5 +54,5 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRath,
   endpoints: () => ({}),
-  tagTypes: ["user", "Jobs"],
+  tagTypes: ["user", "Jobs", "chat"],
 });

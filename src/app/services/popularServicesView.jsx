@@ -86,9 +86,7 @@ export default function PopularServicesView() {
                 : popularSeviceData
             }
             renderItem={({ item }) => <ServiceItem item={item} />}
-            keyExtractor={(item, index) =>
-              item?.id?.toString() || index.toString()
-            }
+            keyExtractor={(item, index) => item?._id || index.toString()}
             numColumns={3}
             showsVerticalScrollIndicator={false}
             columnWrapperStyle={{

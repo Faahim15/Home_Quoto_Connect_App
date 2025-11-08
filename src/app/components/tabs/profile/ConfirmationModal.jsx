@@ -1,6 +1,13 @@
 // ConfirmationModal.js
 import React from "react";
-import { View, Text, TouchableOpacity, Modal } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  ActivityIndicator,
+} from "react-native";
+import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 
 export default function ConfirmationModal({
   visible,
@@ -10,6 +17,7 @@ export default function ConfirmationModal({
   noText = "No",
   onYes,
   onNo,
+  isLoading,
 }) {
   return (
     <Modal
@@ -28,18 +36,29 @@ export default function ConfirmationModal({
             <View className="flex-row justify-between">
               <TouchableOpacity
                 onPress={onYes}
-                className="flex-1 mr-[3%] py-[4%] border border-red-500 rounded-lg"
+                disabled={isLoading}
+                style={{ width: scale(120), height: verticalScale(36) }}
+                className={`bg-white border justify-center items-center  border-[#EF4444] py-3 px-6 rounded-lg ${isLoading ? "opacity-50" : ""}`}
               >
-                <Text className="text-red-500 font-poppins-500medium text-center">
-                  {yesText}
-                </Text>
+                {isLoading ? (
+                  <View className="flex-row items-center justify-center">
+                    <ActivityIndicator size="small" color="#FFFFFF" />
+                    <Text className="text-white font-poppins-500medium ml-2">
+                      Logging out...
+                    </Text>
+                  </View>
+                ) : (
+                  <Text className="text-[#EF4444] text-sm font-poppins-semiBold">
+                    {yesText}
+                  </Text>
+                )}
               </TouchableOpacity>
-
               <TouchableOpacity
                 onPress={onNo}
-                className="flex-1 ml-[3%] py-[4%] bg-blue-500 rounded-lg"
+                style={{ width: scale(120), height: verticalScale(36) }}
+                className="flex-1 ml-[3%] justify-center items-center  bg-[#0065FF] rounded-lg"
               >
-                <Text className="text-white font-poppins-500medium text-center">
+                <Text className="text-white text-sm font-poppins-semiBold text-center">
                   {noText}
                 </Text>
               </TouchableOpacity>

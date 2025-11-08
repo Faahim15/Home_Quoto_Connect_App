@@ -73,7 +73,7 @@ export default function HomeScreen() {
 
   const userData = profile?.data?.user || null;
 
-  const providerData = popularProvidersData?.data?.providers || null;
+  const providerData = popularProvidersData?.data?.providers || [];
 
   return (
     <View className="flex-1 bg-[#F9FAFB]">

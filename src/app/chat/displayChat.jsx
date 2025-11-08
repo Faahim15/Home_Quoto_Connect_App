@@ -19,11 +19,11 @@ import { io } from "socket.io-client";
 import { useLocalSearchParams } from "expo-router";
 import { useGetProviderDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDirectChatMutation } from "../../redux/features/apiSlices/chat/chatApiSlices";
 const ChatScreen = ({ route }) => {
   const { providerId } = useLocalSearchParams();
   const { data, isLoading } = useGetProviderDetailsQuery(providerId);
   const { width: screenWidth } = Dimensions.get("window");
-  console.log(providerId);
   const [socket, setSocket] = useState(null); // Correct socket instance
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -32,6 +32,9 @@ const ChatScreen = ({ route }) => {
   const [showMediaModal, setShowMediaModal] = useState(false);
 
   const flatListRef = useRef(null);
+
+  const [sendMessageToProvder, { isLoading: chatLoading }] =
+    useDirectChatMutation();
 
   const userData = route?.params?.userData || {
     name: "Jhonson",
@@ -173,24 +176,78 @@ const ChatScreen = ({ route }) => {
     connectSocket();
   }, []);
 
-  const sendMessage = () => {
-    if (!socket) return console.log("Socket not connected");
+  // const sendMessage = async () => {
+  //   try {
+  //     if (!socket) return console.log("Socket not connected");
+  //     const chatData = new FormData();
+  //     if (newMessage.trim() || selectedMedia.length > 0) {
+  //       const message = {
+  //         providerId: providerId,
+  //         content: "Test direct message",
+  //         messageType: "text",
+  //       };
 
-    if (newMessage.trim() || selectedMedia.length > 0) {
+  //       chatData.append("providerId", providerId);
+  //       chatData.append("content", "Test direct message");
+  //       chatData.append("messageType", "text");
+  //       console.log("p", providerId);
+  //       const res = await sendMessageToProvder(chatData).unwrap();
+  //       console.log("Direct messages to provider has sent:", res);
+  //       // socket.emit("send-message", message);
+  //       // console.log("is message send", message);
+  //       setMessages((prev) => [...prev, message]);
+  //       setNewMessage("");
+  //       setSelectedMedia([]);
+  //       scrollToBottom();
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //     console.log("providerId", providerId);
+  //   }
+  // };
+
+  const sendMessage = async () => {
+    try {
+      if (!socket) return console.log("Socket not connected");
+      if (!providerId) return console.log("❌ providerId missing");
+      if (!newMessage.trim() && selectedMedia.length === 0) return;
+
       const message = {
-        providerId: providerId,
-        content: "Test direct message",
+        providerId: providerId, // must be valid
+        content: newMessage.trim(),
         messageType: "text",
       };
 
-      socket.emit("send-message", message);
+      console.log("📤 Sending message to backend:", message);
 
-      setMessages((prev) => [...prev, message]);
-      setNewMessage("");
-      setSelectedMedia([]);
-      scrollToBottom();
+      // Send via socket (if backend supports it)
+      // socket.emit("send-message", message);
+      const token = await AsyncStorage.getItem("token");
+      // (Optional) Send via HTTP if needed
+      const response = await fetch(`http://10.10.20.30:5000/api/chats/direct`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // if your API requires token
+        },
+        body: JSON.stringify(message),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        console.log("✅ Message sent successfully:", data);
+        setMessages((prev) => [...prev, data.data.message]);
+        setNewMessage("");
+      } else {
+        console.error("❌ Error sending message:", data);
+        Alert.alert("Error", data.message || "Failed to send message");
+      }
+    } catch (error) {
+      console.error("🚨 Exception while sending message:", error);
+      Alert.alert("Error", "Something went wrong while sending message.");
     }
   };
+
   const renderMessageItem = ({ item }) => (
     <View className={`mb-[4%] ${item.isOwn ? "items-end" : "items-start"}`}>
       <View

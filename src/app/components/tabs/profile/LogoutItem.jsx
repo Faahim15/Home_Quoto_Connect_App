@@ -20,12 +20,6 @@ export default function LogoutItem({ onPress }) {
       ]}
     >
       <View className="flex-row items-center justify-center ">
-        {/* <Ionicons
-          name="log-out-outline"
-          size={24}
-          color="#333"
-          style={{ marginRight: scale(16), width: scale(24) }}
-        /> */}
         <SvgXml xml={logout} height={verticalScale(30)} width={scale(34)} />
         <Text
           style={{ color: "#EF4444", marginLeft: scale(12) }}
