@@ -6,7 +6,6 @@ import ShowAllServiceCards from "../../components/tabs/home/services/provider/sh
 import SearchBar from "../../components/tabs/home/SearchBar";
 import JobsHeader from "../../components/provider/home/JobsHeader";
 import { verticalScale } from "../../components/adaptive/Adaptiveness";
-import ServiceQuoteModal from "../../components/shared/modal/ServiceQuoteModal";
 import { useUserProfileQuery } from "../../../redux/features/apiSlices/user/userApiSlices";
 import {
   useGetActiveJobsQuery,
@@ -14,7 +13,6 @@ import {
 } from "../../../redux/features/apiSlices/user/createJobSlices";
 export default function ContractorHomeScreen() {
   const [showModal, setShowModal] = useState(false);
-  const [showQuoteModal, setShowQuoteModal] = useState(false);
 
   const {
     data: profile,

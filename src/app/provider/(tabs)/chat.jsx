@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,27 +11,85 @@ import { verticalScale } from "../../components/adaptive/Adaptiveness";
 import { router } from "expo-router";
 import { useGetChatsQuery } from "../../../redux/features/apiSlices/chat/chatApiSlices";
 import { formatDateRelative } from "../../util/helper-function";
-const MessagesScreen = () => {
-  const { data, isLoading, error } = useGetChatsQuery();
+import { useSocket } from "../../../hooks/useSokect";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+const MessagesScreen = () => {
+  const { data, isLoading } = useGetChatsQuery();
+  const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
   const [messages, setMessages] = useState([]);
 
-  // Mark message as read
-  const markMessageAsRead = (messageId) => {
-    // navigation.navigate("ChatScreen");
+  // Load initial chats
+  useEffect(() => {
+    if (!isLoading && data?.data?.chats) {
+      setMessages(data.data.chats);
+    }
+  }, [isLoading, data]);
+
+  // Join personal, notification rooms and chat rooms
+  useEffect(() => {
+    const joinRooms = async () => {
+      if (!socket || !isConnected || messages.length === 0) return;
+
+      const userId = await AsyncStorage.getItem("userId");
+
+      if (!userId) return;
+
+      console.log("💡 Joining personal & notification rooms for user:", userId);
+      socket.emit("user-join", userId);
+      socket.emit("join-notifications", userId);
+      // socket.emit("join-chat", "690c4d68b8c0cb0f39efeaf3");
+      messages.forEach((chat) => {
+        // console.log("🎯 Joining chat room:", );
+        socket.emit("join-chat", chat._id);
+      });
+    };
+
+    joinRooms();
+  }, [socket, isConnected, messages]);
+
+  const handleNewMessage = (message) => {
+    console.log("📨 New message received:", message);
+
+    setMessages((prev) => {
+      const chatExists = prev.find((chat) => chat._id === message.chat);
+      if (chatExists) {
+        return prev.map((chat) =>
+          chat._id === message.chat ? { ...chat, lastMessage: message } : chat
+        );
+      } else {
+        return [
+          {
+            _id: message.chat,
+            lastMessage: message,
+            participants: [message.sender, message.receiver],
+          },
+          ...prev,
+        ];
+      }
+    });
+  };
+
+  // Listen for new messages
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+
+    socket.on("new-message", handleNewMessage);
+
+    return () => {
+      socket.off("new-message", handleNewMessage);
+    };
+  }, [messages]);
+
+  // Navigate to chat screen
+  const markMessageAsRead = (chatId) => {
     router.push("/chat/displayChat");
   };
 
   const renderMessageItem = ({ item }) => {
-    // console.log(
-    //   "this is from renderMessageItem",
-    //   item?.lastMessage?.content?.text
-    // );
     const clientParticipant = item?.participants?.find(
       (p) => p?.role === "client"
     );
-
-    console.log(item?._id);
 
     const lastMessage = item?.lastMessage?.content?.text;
     const isRead = item?.lastMessage?.isRead;
@@ -41,20 +99,20 @@ const MessagesScreen = () => {
     return (
       <TouchableOpacity
         className="w-full mb-[4%] px-[4%]"
-        // onPress={() => markMessageAsRead(item.id)}
         activeOpacity={0.7}
+        onPress={() => markMessageAsRead(item._id)}
       >
         <View
-          className={` border  py-[3%] rounded-lg px-[3%] flex-row items-center ${item.isRead ? "bg-[#D1E8F1] border-[#D1E8F1] " : "bg-white"} border-[#d5d5d5] `}
+          className={`border py-[3%] rounded-lg px-[3%] flex-row items-center ${
+            isRead ? "bg-[#D1E8F1] border-[#D1E8F1]" : "bg-white"
+          } border-[#d5d5d5]`}
         >
           {/* Avatar */}
           <View className="mr-3">
             <Image
-              source={{ uri: profilePhotoUrl || null }}
+              source={{ uri: profilePhotoUrl || undefined }}
               className="w-10 h-10 rounded-full"
-              defaultSource={{ uri: "https://via.placeholder.com/40" }}
             />
-            {/* Active Status Indicator */}
             {isActive && (
               <View className="absolute bottom-0 right-0 w-3 h-3 bg-[#44B700] rounded-full border-2 border-white" />
             )}
@@ -71,7 +129,9 @@ const MessagesScreen = () => {
               </Text>
             </View>
             <Text
-              className={` font-poppins-400regular text-xs ${isRead ? "text-[#767676]" : "text-[#111]"} `}
+              className={`font-poppins-400regular text-xs ${
+                isRead ? "text-[#767676]" : "text-[#111]"
+              }`}
             >
               {lastMessage || "N/A"}
             </Text>
@@ -95,15 +155,13 @@ const MessagesScreen = () => {
   return (
     <View className="flex-1 bg-[#F9FAFB]">
       {/* Header */}
-      <View className="bg-[#f9fafb] justify-center items-center py-[3%] ">
-        <View className="flex-row justify-between items-center">
-          <Text className="text-[#333333] text-center text-xl font-poppins-500medium ">
-            Messages
-          </Text>
-        </View>
+      <View className="bg-[#f9fafb] justify-center items-center py-[3%]">
+        <Text className="text-[#333333] text-center text-xl font-poppins-500medium">
+          Messages
+        </Text>
       </View>
 
-      {/* Loading State */}
+      {/* Loading / Empty / List */}
       {isLoading ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#0066CC" />
@@ -112,7 +170,6 @@ const MessagesScreen = () => {
           </Text>
         </View>
       ) : data?.data?.chats?.length === 0 ? (
-        /* Empty State */
         <View className="flex-1 justify-center items-center px-[10%]">
           <Text className="text-6xl mb-4">💬</Text>
           <Text className="text-[#333333] font-poppins-500medium text-lg text-center mb-2">
@@ -123,19 +180,12 @@ const MessagesScreen = () => {
           </Text>
         </View>
       ) : (
-        /* Messages List */
         <FlatList
-          data={data?.data?.chats}
+          data={messages.length > 0 ? messages : data?.data?.chats || []}
           renderItem={renderMessageItem}
           keyExtractor={(item, index) => item?._id || index.toString()}
-          contentContainerStyle={{
-            paddingVertical: verticalScale(16),
-          }}
+          contentContainerStyle={{ paddingVertical: verticalScale(16) }}
           showsVerticalScrollIndicator={false}
-          refreshing={false}
-          onRefresh={() => {
-            // Implement refresh logic here
-          }}
         />
       )}
     </View>

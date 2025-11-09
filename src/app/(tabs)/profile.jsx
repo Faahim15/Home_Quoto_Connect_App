@@ -11,15 +11,52 @@ import {
   accountSettings,
   support,
 } from "../../../assets/svg/profile";
+import { useLogoutUserMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
+import Toast from "react-native-toast-message";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function UserProfileScreen() {
   function logoutHanlder() {
     setModalVisible(true);
   }
   const [modalVisible, setModalVisible] = useState(false);
+  const [logout, { isLoading }] = useLogoutUserMutation();
+  const handleYes = async () => {
+    try {
+      // Call logout API
+      await logout().unwrap();
 
-  const handleYes = () => {
-    router.replace("/onboarding/loginChoice");
-    setModalVisible(false);
+      // Remove token from AsyncStorage
+      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("userId");
+
+      setModalVisible(false);
+
+      // Show success toast
+      Toast.show({
+        type: "success",
+        text1: "Logged Out Successfully",
+        text2: "See you soon! 👋",
+        position: "top",
+        visibilityTime: 2000,
+      });
+
+      // Navigate after a short delay to show toast
+      setTimeout(() => {
+        router.replace("/onboarding/loginChoice");
+      }, 500);
+    } catch (error) {
+      console.error("Logout error:", error);
+      setModalVisible(false);
+
+      // Show error toast
+      Toast.show({
+        type: "error",
+        text1: "Logout Failed",
+        text2: "Something went wrong. Please try again.",
+        position: "top",
+        visibilityTime: 3000,
+      });
+    }
   };
 
   const handleNo = () => {
@@ -73,10 +110,11 @@ export default function UserProfileScreen() {
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           title="Do you want to log out?"
-          yesText="Yes"
+          yesText={isLoading ? "Logging out..." : "Yes"}
           noText="No"
           onYes={handleYes}
           onNo={handleNo}
+          isLoading={isLoading}
         />
       </View>
     </View>

@@ -6,8 +6,6 @@ const ServiceCard = ({ item }) => {
   const { fullName } = item?.client;
   const { city, state } = item?.location?.details;
 
-  console.log("fullName", fullName, "id", item?.id);
-
   return (
     <TouchableOpacity
       onPress={() => {

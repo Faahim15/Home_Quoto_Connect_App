@@ -37,6 +37,7 @@ export default function ContractorProfileScreen() {
 
       // Remove token from AsyncStorage
       await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("userId");
 
       setModalVisible(false);
 

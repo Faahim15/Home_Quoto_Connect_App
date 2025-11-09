@@ -16,7 +16,6 @@ import * as ImagePicker from "expo-image-picker";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import ChatHeader from "../components/tabs/chat/ChatHeader";
 import MessageInput from "../components/tabs/chat/MessageInput";
-import { io } from "socket.io-client";
 import { useLocalSearchParams } from "expo-router";
 import { useGetProviderDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -25,117 +24,54 @@ import {
   useGetSingleChatHistoryQuery,
 } from "../../redux/features/apiSlices/chat/chatApiSlices";
 import { formatedDate } from "../util/helper-function";
+import { useSocket } from "../../hooks/useSokect";
 
-const ChatScreen = ({ route }) => {
+const ChatScreen = () => {
   const { providerId } = useLocalSearchParams();
   const { data, isLoading } = useGetProviderDetailsQuery(providerId);
-
   const { width: screenWidth } = Dimensions.get("window");
-  const [socket, setSocket] = useState(null);
+  const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [showMediaModal, setShowMediaModal] = useState(false);
   const [chatId, setChatId] = useState("");
-  const [isConnected, setIsConnected] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null);
+  // const [isConnected, setIsConnected] = useState(false);
   const flatListRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
   const [sendMessageToProvider, { isLoading: chatLoading }] =
     useDirectChatMutation();
-
-  const userData = route?.params?.userData || {
-    name: "Jhonson",
-    avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=faces",
-    status: "Active Now",
-    userId: "user_123",
-  };
-
-  // Socket connection and event handlers
+  // Fetch userId from AsyncStorage
   useEffect(() => {
-    const initializeSocket = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        if (!token) {
-          console.log("❌ Token missing for socket connection");
-          return;
-        }
-
-        const newSocket = io("http://10.10.20.30:5000", {
-          transports: ["websocket"],
-          auth: { token },
-        });
-
-        newSocket.on("connect", () => {
-          console.log("✅ Socket connected:", newSocket.id);
-          setIsConnected(true);
-        });
-
-        newSocket.on("disconnect", (reason) => {
-          console.log("❌ Socket disconnected:", reason);
-          setIsConnected(false);
-        });
-
-        newSocket.on("connect_error", (err) => {
-          console.log("🚨 Socket connection error:", err.message);
-          setIsConnected(false);
-        });
-
-        // Real-time message receive
-        newSocket.on("receive-message", (message) => {
-          console.log("📩 New message received via socket:", message);
-          setMessages((prev) => {
-            // Avoid duplicates
-            if (!prev.some((msg) => msg._id === message._id)) {
-              return [...prev, message];
-            }
-            return prev;
-          });
-        });
-
-        // Typing indicators
-        newSocket.on("user-typing", (data) => {
-          if (data.chatId === chatId && data.userId !== userData.userId) {
-            setIsTyping(true);
-          }
-        });
-
-        newSocket.on("user-stop-typing", (data) => {
-          if (data.chatId === chatId && data.userId !== userData.userId) {
-            setIsTyping(false);
-          }
-        });
-
-        // Join chat room when chatId is available
-        newSocket.on("joined-chat", (data) => {
-          console.log("✅ Joined chat room:", data.chatId);
-        });
-
-        setSocket(newSocket);
-
-        return () => {
-          if (newSocket) {
-            newSocket.disconnect();
-            newSocket.removeAllListeners();
-          }
-        };
-      } catch (error) {
-        console.log("🚨 Socket initialization error:", error);
-      }
+    const fetchUserId = async () => {
+      const userId = await AsyncStorage.getItem("userId");
+      if (userId) setCurrentUserId(userId);
     };
-
-    initializeSocket();
+    fetchUserId();
   }, []);
 
-  // Join chat room when chatId and socket are available
   useEffect(() => {
-    if (socket && isConnected && chatId) {
+    const joinRooms = async () => {
+      if (!socket || !isConnected || !currentUserId || !chatId) return;
+      console.log("sender User Id:", currentUserId);
+      // 1️⃣ Personal room
+      // console.log("💡 Joining personal socket room for user:", currentUserId);
+      socket.emit("user-join", currentUserId);
+
+      // 2️⃣ Notifications room
+      // console.log("🔔 Joining notification room for user:", currentUserId);
+      socket.emit("join-notifications", currentUserId);
+
+      // 3️⃣ Chat room
       console.log("🎯 Joining chat room:", chatId);
-      socket.emit("join-chat", { chatId });
-    }
-  }, [socket, isConnected, chatId]);
+      socket.emit("join-chat", chatId);
+    };
+
+    joinRooms();
+  }, [socket, isConnected, currentUserId, chatId]);
 
   // Fetch initial chat history
   const fetchInitialChat = useCallback(async () => {
@@ -201,11 +137,6 @@ const ChatScreen = ({ route }) => {
   // Update messages when chat history is fetched
   useEffect(() => {
     if (singleChatHistory?.success && singleChatHistory?.data?.messages) {
-      console.log(
-        "📚 Chat history loaded:",
-        singleChatHistory.data.messages.length,
-        "messages"
-      );
       setMessages(singleChatHistory.data.messages);
     }
   }, [singleChatHistory]);
@@ -332,7 +263,7 @@ const ChatScreen = ({ route }) => {
   // Typing handlers
   const handleTypingStart = useCallback(() => {
     if (socket && isConnected && chatId) {
-      socket.emit("typing", { chatId });
+      socket.emit("typing-start", { chatId });
 
       // Clear existing timeout
       if (typingTimeoutRef.current) {
@@ -344,79 +275,64 @@ const ChatScreen = ({ route }) => {
   const handleTypingStop = useCallback(() => {
     if (socket && isConnected && chatId) {
       typingTimeoutRef.current = setTimeout(() => {
-        socket.emit("stop-typing", { chatId });
+        socket.emit("typing-stop", { chatId });
       }, 1000);
     }
   }, [socket, isConnected, chatId]);
 
+  // Listen for new messages
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+    socket.on("new-message", (data) => {
+      // console.log("chatting id", chatId);
+    });
+
+    return () => {
+      socket.off("new-message", () => {
+        console.log("socke off implemented");
+      });
+    };
+  }, [socket, isConnected]);
+
   // Send message function
   const sendMessage = async () => {
-    try {
-      if (!newMessage.trim() && selectedMedia.length === 0) {
-        return;
+    if (!newMessage.trim() && selectedMedia.length === 0) return;
+
+    const token = await AsyncStorage.getItem("token");
+
+    const messagePayload = {
+      providerId,
+      content: newMessage.trim() || " ",
+      // media: selectedMedia.length > 0 ? selectedMedia : [],
+      messageType: "text",
+    };
+    // console.log("content", typeof messagePayload.content);
+    const response = await fetch(`http://10.10.20.30:5000/api/chats/direct`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(messagePayload),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      setMessages((prev) => [...prev, data.data.message]);
+      setNewMessage("");
+      setSelectedMedia([]);
+      console.log("message has successfully sent");
+      // Socket emit
+      if (socket && isConnected) {
+        socket.emit("send-message", {
+          ...data.data.message,
+          chatId,
+        });
+        console.log("messaged emitted", chatId);
       }
-
-      if (!providerId) {
-        Alert.alert("Error", "Provider ID is missing");
-        return;
-      }
-
-      const token = await AsyncStorage.getItem("token");
-      if (!token) {
-        Alert.alert("Error", "Authentication token missing");
-        return;
-      }
-
-      // Create message payload
-      const messagePayload = {
-        providerId: providerId,
-        content: newMessage.trim(),
-        messageType: "text",
-        // Add media if available
-        ...(selectedMedia.length > 0 && { media: selectedMedia }),
-      };
-
-      console.log("📤 Sending message:", messagePayload);
-
-      // Send via REST API first
-      const response = await fetch(`http://10.10.20.30:5000/api/chats/direct`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(messagePayload),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        console.log("✅ Message sent successfully:", data.data.message);
-
-        // Update local state immediately for better UX
-        setMessages((prev) => [...prev, data.data.message]);
-        setNewMessage("");
-        setSelectedMedia([]);
-
-        // Emit via socket for real-time
-        if (socket && isConnected) {
-          socket.emit("send-message", {
-            ...data.data.message,
-            chatId: chatId,
-          });
-        }
-
-        // Refetch chat history to ensure consistency
-        await refetchChatHistory();
-
-        scrollToBottom();
-      } else {
-        console.error("❌ Error sending message:", data);
-        Alert.alert("Error", data.message || "Failed to send message");
-      }
-    } catch (error) {
-      console.error("🚨 Exception while sending message:", error);
-      Alert.alert("Error", "Something went wrong while sending message.");
+    } else {
+      Alert.alert("Error", data.message || "Failed to send message");
     }
   };
 
@@ -523,7 +439,7 @@ const ChatScreen = ({ route }) => {
             paddingBottom: verticalScale(20),
           }}
           onContentSizeChange={scrollToBottom}
-          onLayout={scrollToBottom}
+          // onLayout={scrollToBottom}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         />

@@ -55,6 +55,7 @@ export default function SignInScreen() {
 
       // ✅ Store the token
       await AsyncStorage.setItem("token", res?.data?.token);
+      await AsyncStorage.setItem("userId", res?.data?.user?._id);
       // ✅ Show success toast
       Toast.show({
         type: "success",

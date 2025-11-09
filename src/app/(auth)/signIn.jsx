@@ -53,8 +53,10 @@ export default function SignInScreen() {
       // ✅ Send login request
       const res = await login(data).unwrap();
 
+      // console.log("login", res?.data?.user?._id);
       // ✅ Store the token
       await AsyncStorage.setItem("token", res?.data?.token);
+      await AsyncStorage.setItem("userId", res?.data?.user?._id);
       // ✅ Show success toast
       Toast.show({
         type: "success",
