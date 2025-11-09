@@ -262,21 +262,32 @@ const ChatScreen = () => {
 
   // Typing handlers
   const handleTypingStart = useCallback(() => {
-    if (socket && isConnected && chatId) {
-      socket.emit("typing-start", { chatId });
+    if (!socket || !isConnected || !chatId) return;
 
-      // Clear existing timeout
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
+    console.log("✍️ Typing started...");
+    socket.emit("typing-start", { chatId });
+
+    // Clear the previous timeout
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
     }
+
+    // Set a timeout to automatically stop typing after 3 seconds of inactivity
+    typingTimeoutRef.current = setTimeout(() => {
+      console.log("⌛ Typing stopped (auto)");
+      socket.emit("typing-stop", { chatId });
+    }, 3000);
   }, [socket, isConnected, chatId]);
 
   const handleTypingStop = useCallback(() => {
-    if (socket && isConnected && chatId) {
-      typingTimeoutRef.current = setTimeout(() => {
-        socket.emit("typing-stop", { chatId });
-      }, 1000);
+    if (!socket || !isConnected || !chatId) return;
+
+    console.log("🛑 Typing stopped manually");
+    socket.emit("typing-stop", { chatId });
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = null;
     }
   }, [socket, isConnected, chatId]);
 

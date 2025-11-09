@@ -179,7 +179,10 @@ const MessageInput = ({
         <View className="flex-1 border bg-white border-[#C3DBFF] rounded-3xl flex-row items-center px-[4%] py-[2.5%]">
           <TextInput
             value={newMessage}
-            onChangeText={setNewMessage}
+            onChangeText={(text) => {
+              setNewMessage(text);
+              handleTypingStart(); // triggers each time user types
+            }}
             placeholder="Type something..."
             placeholderTextColor="#898989"
             className="flex-1 items-center justify-center font-poppins-400regular px-[3%] py-[2%] text-black text-sm"

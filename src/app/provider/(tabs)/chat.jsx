@@ -18,7 +18,7 @@ const MessagesScreen = () => {
   const { data, isLoading } = useGetChatsQuery();
   const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
   const [messages, setMessages] = useState([]);
-
+  const [userStatus, setUserStatus] = useState({});
   // Load initial chats
   useEffect(() => {
     if (!isLoading && data?.data?.chats) {
@@ -70,16 +70,34 @@ const MessagesScreen = () => {
     });
   };
 
-  // Listen for new messages
+  // 🟢 Handle user online/offline status
+  const handleUserStatusChanged = ({ userId, isOnline, lastActive }) => {
+    console.log(
+      `⚡ ${userId} is ${isOnline ? "online" : "offline"} (lastActive: ${lastActive})`
+    );
+
+    // Update local state
+    setUserStatus((prev) => ({
+      ...prev,
+      [userId]: { isOnline, lastActive },
+    }));
+  };
+
+  // Socket listeners
   useEffect(() => {
     if (!socket || !isConnected) return;
 
     socket.on("new-message", handleNewMessage);
-
+    socket.on("user-status-changed", handleUserStatusChanged);
+    socket.on("user-typing", ({ userId, isTyping }) =>
+      console.log(`${userId}
+ is ${isTyping ? "typing..." : "not typing"}`)
+    );
     return () => {
       socket.off("new-message", handleNewMessage);
+      socket.off("user-status-changed", handleUserStatusChanged);
     };
-  }, [messages]);
+  }, [messages, isConnected]);
 
   // Navigate to chat screen
   const markMessageAsRead = (chatId) => {
