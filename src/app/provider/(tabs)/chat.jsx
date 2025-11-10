@@ -15,9 +15,9 @@ import { useSocket } from "../../../hooks/useSokect";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MessagesScreen = () => {
+  const [messages, setMessages] = useState([]);
   const { data, isLoading } = useGetChatsQuery();
   const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
-  const [messages, setMessages] = useState([]);
   const [userStatus, setUserStatus] = useState({});
   // Load initial chats
   useEffect(() => {
