@@ -26,9 +26,10 @@ import {
 import { formatedDate } from "../util/helper-function";
 import { useSocket } from "../../hooks/useSokect";
 
-const ChatScreen = () => {
+const ProviderChatScreen = () => {
   const { chatId, providerId } = useLocalSearchParams();
-  const { data, isLoading } = useGetProviderDetailsQuery(providerId);
+
+  //   const { data, isLoading } = useGetProviderDetailsQuery(providerId);
   const { width: screenWidth } = Dimensions.get("window");
   const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
   const [messages, setMessages] = useState([]);
@@ -36,6 +37,9 @@ const ChatScreen = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [showMediaModal, setShowMediaModal] = useState(false);
+  //   const [chatId, setChatId] = useState("");
+  const [currentUserId, setCurrentUserId] = useState(null);
+  // const [isConnected, setIsConnected] = useState(false);
   const flatListRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
@@ -43,6 +47,7 @@ const ChatScreen = () => {
   const {
     data: singleChatHistory,
     isLoading: chatLoader,
+    error: chatError,
     refetch: refetchChatHistory,
   } = useGetSingleChatHistoryQuery(chatId, {
     skip: !chatId, // Skip if no chatId
@@ -64,7 +69,7 @@ const ChatScreen = () => {
 
       if (!userId) return;
 
-      console.log("💡 Joining room for user chat screens:", userId);
+      console.log("💡 Joining  room for provider chat screens:", userId);
       socket.emit("user-join", userId);
       socket.emit("join-notifications", userId);
       socket.emit("join-chat", chatId);
@@ -225,16 +230,11 @@ const ChatScreen = () => {
 
   // Listen for new messages
   const handleNewMessage = (data) => {
-    console.log("📩 New message received via wihting user room:", data);
-
-    // Option 1: Just refetch from backend for full sync
-    refetchChatHistory();
     // console.log("show all", messages);
-
-    // Option 2 (optional): Also append instantly for faster UI response
+    console.log("📩 New message received from provider chath socket.io:");
+    refetchChatHistory();
     setMessages((prev) => [...prev, data]);
 
-    // Optionally scroll to bottom
     scrollToBottom();
   };
   // Listen for new messages
@@ -255,28 +255,30 @@ const ChatScreen = () => {
     const token = await AsyncStorage.getItem("token");
 
     const messagePayload = {
-      providerId,
       content: newMessage.trim() || " ",
       // media: selectedMedia.length > 0 ? selectedMedia : [],
       messageType: "text",
     };
     // console.log("content", typeof messagePayload.content);
-    const response = await fetch(`http://10.10.20.30:5000/api/chats/direct`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(messagePayload),
-    });
+    const response = await fetch(
+      `http://10.10.20.30:5000/api/chats/${chatId}/messages`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(messagePayload),
+      }
+    );
 
     const data = await response.json();
 
     if (data?.success) {
-      // setMessages((prev) => [...prev, data.data.message]);
+      //   setMessages((prev) => [...prev, data.data.message]);
       setNewMessage("");
       setSelectedMedia([]);
-      console.log("message has successfully sent from user end:..");
+      console.log("message has successfully sent from provider end:...");
       // Socket emit
       //   if (socket && isConnected) {
       //     socket.emit("send-message", {
@@ -296,7 +298,7 @@ const ChatScreen = () => {
       return null;
     }
 
-    const isOwn = item?.sender?.role === "client";
+    const isOwn = item?.sender?.role === "provider";
 
     return (
       <View className={`mb-[4%] ${isOwn ? "items-end" : "items-start"}`}>
@@ -354,7 +356,7 @@ const ChatScreen = () => {
     );
   };
 
-  if (isLoading || chatLoader) {
+  if (chatLoader) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
         <ActivityIndicator size="large" color="#18649F" />
@@ -363,8 +365,7 @@ const ChatScreen = () => {
     );
   }
 
-  const { profilePhoto, fullName, isOnline, lastActive } =
-    data?.data?.provider || {};
+  const { fullName } = singleChatHistory?.data?.messages[0]?.sender || {};
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -378,9 +379,9 @@ const ChatScreen = () => {
         <ChatHeader
           userData={{
             name: fullName,
-            isOnline,
-            profilePhoto: profilePhoto?.url,
-            lastActive,
+            isOnline: false,
+            profilePhoto: "ksdfjlksdfkjlsd",
+            lastActive: null,
           }}
         />
 
@@ -428,4 +429,4 @@ const ChatScreen = () => {
   );
 };
 
-export default ChatScreen;
+export default ProviderChatScreen;

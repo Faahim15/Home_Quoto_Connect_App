@@ -49,7 +49,7 @@ const MessagesScreen = () => {
   }, [socket, isConnected, messages]);
 
   const handleNewMessage = (message) => {
-    console.log("📨 New message received:", message);
+    console.log("📨 New message received withing client tabs:", message);
 
     setMessages((prev) => {
       const chatExists = prev.find((chat) => chat._id === message.chat);
@@ -100,8 +100,11 @@ const MessagesScreen = () => {
   }, [messages, isConnected]);
 
   // Navigate to chat screen
-  const markMessageAsRead = (chatId) => {
-    router.push("/chat/displayChat");
+  const markMessageAsRead = (chatId, providerId) => {
+    router.push({
+      pathname: "/chat/chatScreen",
+      params: { chatId: chatId, providerId: providerId },
+    });
   };
 
   const renderMessageItem = ({ item }) => {
@@ -112,13 +115,16 @@ const MessagesScreen = () => {
     const lastMessage = item?.lastMessage?.content?.text;
     const isRead = item?.lastMessage?.isRead;
     const isActive = clientParticipant?.user?.isOnline;
+
+    const providerId = clientParticipant?.user?._id;
+
     const profilePhotoUrl = clientParticipant?.user?.profilePhoto?.url ?? null;
 
     return (
       <TouchableOpacity
         className="w-full mb-[4%] px-[4%]"
         activeOpacity={0.7}
-        onPress={() => markMessageAsRead(item._id)}
+        onPress={() => markMessageAsRead(item._id, providerId)}
       >
         <View
           className={`border py-[3%] rounded-lg px-[3%] flex-row items-center ${

@@ -21,6 +21,7 @@ import { useGetProviderDetailsQuery } from "../../redux/features/apiSlices/user/
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   useDirectChatMutation,
+  useGetChatsQuery,
   useGetSingleChatHistoryQuery,
 } from "../../redux/features/apiSlices/chat/chatApiSlices";
 import { formatedDate } from "../util/helper-function";
@@ -33,6 +34,7 @@ const ChatScreen = () => {
   const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const { data: chatData, isLoading: allChatLoader } = useGetChatsQuery();
   const [isTyping, setIsTyping] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [showMediaModal, setShowMediaModal] = useState(false);
@@ -42,8 +44,6 @@ const ChatScreen = () => {
   const flatListRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
-  const [sendMessageToProvider, { isLoading: chatLoading }] =
-    useDirectChatMutation();
   // Fetch userId from AsyncStorage
   useEffect(() => {
     const fetchUserId = async () => {
@@ -74,67 +74,100 @@ const ChatScreen = () => {
   }, [socket, isConnected, currentUserId, chatId]);
 
   // Fetch initial chat history
-  const fetchInitialChat = useCallback(async () => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-      if (!token) {
-        console.log("❌ Token missing");
-        return;
-      }
-      if (!providerId) {
-        console.log("❌ providerId missing");
-        return;
-      }
+  // const fetchInitialChat = useCallback(async () => {
+  //   try {
+  //     const token = await AsyncStorage.getItem("token");
+  //     if (!token) {
+  //       console.log("❌ Token missing");
+  //       return;
+  //     }
+  //     if (!providerId) {
+  //       console.log("❌ providerId missing");
+  //       return;
+  //     }
 
-      console.log("📡 Fetching initial chat for provider:", providerId);
+  //     console.log("📡 Fetching initial chat for provider:", providerId);
 
-      const response = await fetch(`http://10.10.20.30:5000/api/chats/direct`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          providerId: providerId,
-          content: " ",
-          messageType: "text",
-        }),
-      });
+  //     const response = await fetch(`http://10.10.20.30:5000/api/chats/direct`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       body: JSON.stringify({
+  //         providerId: providerId,
+  //         content: " ",
+  //         messageType: "text",
+  //       }),
+  //     });
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      if (data.success) {
-        console.log("✅ Chat initialized successfully:", data?.data?.chat?._id);
-        setChatId(data?.data?.chat?._id);
-        setMessages(data?.data?.messages || []);
-      } else {
-        console.error("❌ Failed to initialize chat:", data);
-        Alert.alert("Error", data.message || "Failed to initialize chat");
-      }
-    } catch (error) {
-      console.error("🚨 Error initializing chat:", error);
-      Alert.alert("Error", "Failed to initialize chat");
-    }
-  }, [providerId]);
+  //     if (data.success) {
+  //       console.log("✅ Chat initialized successfully:", data?.data?.chat?._id);
+  //       setChatId(data?.data?.chat?._id);
+  //       setMessages(data?.data?.messages || []);
+  //     } else {
+  //       console.error("❌ Failed to initialize chat:", data);
+  //       Alert.alert("Error", data.message || "Failed to initialize chat");
+  //     }
+  //   } catch (error) {
+  //     console.error("🚨 Error initializing chat:", error);
+  //     Alert.alert("Error", "Failed to initialize chat");
+  //   }
+  // }, [providerId]);
 
-  // Fetch chat when providerId is available
+  // useEffect(() => {
+  //   if (providerId) {
+  //     fetchInitialChat();
+  //   }
+  // }, [providerId, fetchInitialChat]);
+
+  // Combine loading checks for provider and all chats
+  if (isLoading || allChatLoader) {
+    return (
+      <View className="flex-1 bg-white justify-center items-center">
+        <ActivityIndicator size="large" color="#18649F" />
+        <Text className="mt-4 text-gray-500">Loading chat...</Text>
+      </View>
+    );
+  }
+
+  // 🧩 Find provider chat when chatData or providerId changes
   useEffect(() => {
-    if (providerId) {
-      fetchInitialChat();
-    }
-  }, [providerId, fetchInitialChat]);
+    if (chatData?.data?.chats?.length && providerId) {
+      const providerChat = chatData.data.chats.find((chat) =>
+        chat?.participants?.some((p) => p?.user?._id === providerId)
+      );
 
-  // Get chat history when chatId is available
+      if (providerChat?._id) {
+        console.log("💬 Found provider chat ID:", providerChat._id);
+        setChatId(providerChat._id);
+      } else {
+        console.log("⚠️ No existing chat found for provider:", providerId);
+      }
+    }
+  }, [chatData, providerId]);
+
+  // ✅ Fetch chat history only when chatId is available
   const {
     data: singleChatHistory,
     isLoading: chatLoader,
     error: chatError,
     refetch: refetchChatHistory,
   } = useGetSingleChatHistoryQuery(chatId, {
-    skip: !chatId, // Skip if no chatId
+    skip: !chatId,
   });
 
-  // Update messages when chat history is fetched
+  // 🔁 Refetch chat history when chatId becomes available
+  useEffect(() => {
+    if (chatId && refetchChatHistory) {
+      console.log("📥 Fetching single chat history for chatId:", chatId);
+      refetchChatHistory();
+    }
+  }, [chatId, refetchChatHistory]);
+
+  // 📨 Update messages when chat history is fetched
   useEffect(() => {
     if (singleChatHistory?.success && singleChatHistory?.data?.messages) {
       setMessages(singleChatHistory.data.messages);
@@ -292,18 +325,30 @@ const ChatScreen = () => {
   }, [socket, isConnected, chatId]);
 
   // Listen for new messages
+  const handleNewMessage = (data) => {
+    console.log("📩 New message received via wihting user room:", data);
+
+    // Option 1: Just refetch from backend for full sync
+    // refetchChatHistory();
+    // console.log("show all", messages);
+
+    // Option 2 (optional): Also append instantly for faster UI response
+    setMessages((prev) => [...prev, data]);
+
+    // Optionally scroll to bottom
+    scrollToBottom();
+  };
+
+  // Listen for new messages
   useEffect(() => {
     if (!socket || !isConnected) return;
-    socket.on("new-message", (data) => {
-      // console.log("chatting id", chatId);
-    });
+
+    socket.on("new-message", handleNewMessage);
 
     return () => {
-      socket.off("new-message", () => {
-        console.log("socke off implemented");
-      });
+      socket.off("new-message", handleNewMessage);
     };
-  }, [socket, isConnected]);
+  }, [socket, isConnected, refetchChatHistory]);
 
   // Send message function
   const sendMessage = async () => {
@@ -330,18 +375,19 @@ const ChatScreen = () => {
     const data = await response.json();
 
     if (data.success) {
-      setMessages((prev) => [...prev, data.data.message]);
+      // setMessages((prev) => [...prev, data.data.message]);
       setNewMessage("");
       setSelectedMedia([]);
-      console.log("message has successfully sent");
+      setChatId(data?.data?.chat?._id);
+      console.log("message has successfully sent from display message");
       // Socket emit
-      if (socket && isConnected) {
-        socket.emit("send-message", {
-          ...data.data.message,
-          chatId,
-        });
-        console.log("messaged emitted", chatId);
-      }
+      // if (socket && isConnected) {
+      //   socket.emit("send-message", {
+      //     ...data.data.message,
+      //     chatId,
+      //   });
+      //   console.log("messaged emitted", chatId);
+      // }
     } else {
       Alert.alert("Error", data.message || "Failed to send message");
     }
@@ -410,15 +456,6 @@ const ChatScreen = () => {
     );
   };
 
-  if (isLoading || chatLoader) {
-    return (
-      <View className="flex-1 bg-white justify-center items-center">
-        <ActivityIndicator size="large" color="#18649F" />
-        <Text className="mt-4 text-gray-500">Loading chat...</Text>
-      </View>
-    );
-  }
-
   const { profilePhoto, fullName, isOnline, lastActive } =
     data?.data?.provider || {};
 
@@ -478,7 +515,6 @@ const ChatScreen = () => {
           sendMessage={sendMessage}
           handleTypingStart={handleTypingStart}
           handleTypingStop={handleTypingStop}
-          isLoading={chatLoading}
         />
       </KeyboardAvoidingView>
     </SafeAreaView>

@@ -19,6 +19,7 @@ const MessagesScreen = () => {
   const { data, isLoading } = useGetChatsQuery();
   const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
   const [userStatus, setUserStatus] = useState({});
+
   // Load initial chats
   useEffect(() => {
     if (!isLoading && data?.data?.chats) {
@@ -49,7 +50,7 @@ const MessagesScreen = () => {
   }, [socket, isConnected, messages]);
 
   const handleNewMessage = (message) => {
-    console.log("📨 New message received:", message);
+    console.log("📨 New message received within provider tabsg:", message);
 
     setMessages((prev) => {
       const chatExists = prev.find((chat) => chat._id === message.chat);
@@ -89,10 +90,10 @@ const MessagesScreen = () => {
 
     socket.on("new-message", handleNewMessage);
     socket.on("user-status-changed", handleUserStatusChanged);
-    socket.on("user-typing", ({ userId, isTyping }) =>
-      console.log(`${userId}
- is ${isTyping ? "typing..." : "not typing"}`)
-    );
+    //     socket.on("user-typing", ({ userId, isTyping }) =>
+    //       console.log(`${userId}
+    //  is ${isTyping ? "typing..." : "not typing"}`)
+    //     );
     return () => {
       socket.off("new-message", handleNewMessage);
       socket.off("user-status-changed", handleUserStatusChanged);
@@ -100,8 +101,11 @@ const MessagesScreen = () => {
   }, [messages, isConnected]);
 
   // Navigate to chat screen
-  const markMessageAsRead = (chatId) => {
-    router.push("/chat/displayChat");
+  const markMessageAsRead = (chatId, providerId) => {
+    router.push({
+      pathname: "/chat/providerChat",
+      params: { chatId: chatId, providerId: providerId },
+    });
   };
 
   const renderMessageItem = ({ item }) => {
@@ -111,6 +115,7 @@ const MessagesScreen = () => {
 
     const lastMessage = item?.lastMessage?.content?.text;
     const isRead = item?.lastMessage?.isRead;
+    const providerId = clientParticipant?.user?._id;
     const isActive = clientParticipant?.user?.isOnline;
     const profilePhotoUrl = clientParticipant?.user?.profilePhoto?.url ?? null;
 
@@ -118,7 +123,7 @@ const MessagesScreen = () => {
       <TouchableOpacity
         className="w-full mb-[4%] px-[4%]"
         activeOpacity={0.7}
-        onPress={() => markMessageAsRead(item._id)}
+        onPress={() => markMessageAsRead(item._id, providerId)}
       >
         <View
           className={`border py-[3%] rounded-lg px-[3%] flex-row items-center ${

@@ -26,7 +26,7 @@ export const chatSlice = api.injectEndpoints(
 
       getSingleChatHistory: builder.query({
         query: (id) => ({
-          url: `/chats/${id}/messages?page=1&limit=50`,
+          url: `/chats/${id}/messages`,
           method: "GET",
         }),
         providesTags: ["chat"],
