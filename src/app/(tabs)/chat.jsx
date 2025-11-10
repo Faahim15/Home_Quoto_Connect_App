@@ -18,7 +18,7 @@ const MessagesScreen = () => {
   const { data, isLoading } = useGetChatsQuery();
   const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
   const [userStatus, setUserStatus] = useState({});
-
+  const [isTyping, setIsTyping] = useState(false);
   // Load initial chats
   useEffect(() => {
     if (!isLoading && data?.data?.chats) {
@@ -90,8 +90,9 @@ const MessagesScreen = () => {
     socket.on("new-message", handleNewMessage);
     socket.on("user-status-changed", handleUserStatusChanged);
     socket.on("user-typing", ({ userId, isTyping }) =>
-      console.log(`${userId}
- is ${isTyping ? "typing..." : "not typing"}`)
+      //         console.log(`${userId}
+      //  is ${isTyping ? `typing... ${isTyping}` : "not typing"}`)
+      setIsTyping(isTyping)
     );
     return () => {
       socket.off("new-message", handleNewMessage);
@@ -152,13 +153,19 @@ const MessagesScreen = () => {
                 {formatDateRelative(item?.lastMessage?.updatedAt) || "N/A"}
               </Text>
             </View>
-            <Text
-              className={`font-poppins-400regular text-xs ${
-                isRead ? "text-[#767676]" : "text-[#111]"
-              }`}
-            >
-              {lastMessage || "N/A"}
-            </Text>
+            {isTyping ? (
+              <Text className="text-[#0066CC] font-poppins-400regular text-xs mt-1">
+                Typing...
+              </Text>
+            ) : (
+              <Text
+                className={`font-poppins-400regular text-xs ${
+                  isRead ? "text-[#767676]" : "text-[#111]"
+                }`}
+              >
+                {lastMessage || "N/A"}
+              </Text>
+            )}
           </View>
 
           {/* Read Status */}

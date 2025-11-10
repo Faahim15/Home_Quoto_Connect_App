@@ -73,57 +73,6 @@ const ChatScreen = () => {
     joinRooms();
   }, [socket, isConnected, currentUserId, chatId]);
 
-  // Fetch initial chat history
-  // const fetchInitialChat = useCallback(async () => {
-  //   try {
-  //     const token = await AsyncStorage.getItem("token");
-  //     if (!token) {
-  //       console.log("❌ Token missing");
-  //       return;
-  //     }
-  //     if (!providerId) {
-  //       console.log("❌ providerId missing");
-  //       return;
-  //     }
-
-  //     console.log("📡 Fetching initial chat for provider:", providerId);
-
-  //     const response = await fetch(`http://10.10.20.30:5000/api/chats/direct`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       body: JSON.stringify({
-  //         providerId: providerId,
-  //         content: " ",
-  //         messageType: "text",
-  //       }),
-  //     });
-
-  //     const data = await response.json();
-
-  //     if (data.success) {
-  //       console.log("✅ Chat initialized successfully:", data?.data?.chat?._id);
-  //       setChatId(data?.data?.chat?._id);
-  //       setMessages(data?.data?.messages || []);
-  //     } else {
-  //       console.error("❌ Failed to initialize chat:", data);
-  //       Alert.alert("Error", data.message || "Failed to initialize chat");
-  //     }
-  //   } catch (error) {
-  //     console.error("🚨 Error initializing chat:", error);
-  //     Alert.alert("Error", "Failed to initialize chat");
-  //   }
-  // }, [providerId]);
-
-  // useEffect(() => {
-  //   if (providerId) {
-  //     fetchInitialChat();
-  //   }
-  // }, [providerId, fetchInitialChat]);
-
-  // Combine loading checks for provider and all chats
   if (isLoading || allChatLoader) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
@@ -141,7 +90,7 @@ const ChatScreen = () => {
       );
 
       if (providerChat?._id) {
-        console.log("💬 Found provider chat ID:", providerChat._id);
+        // console.log("💬 Found provider chat ID:", providerChat._id);
         setChatId(providerChat._id);
       } else {
         console.log("⚠️ No existing chat found for provider:", providerId);
@@ -162,7 +111,6 @@ const ChatScreen = () => {
   // 🔁 Refetch chat history when chatId becomes available
   useEffect(() => {
     if (chatId && refetchChatHistory) {
-      console.log("📥 Fetching single chat history for chatId:", chatId);
       refetchChatHistory();
     }
   }, [chatId, refetchChatHistory]);

@@ -17,19 +17,14 @@ import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import ChatHeader from "../components/tabs/chat/ChatHeader";
 import MessageInput from "../components/tabs/chat/MessageInput";
 import { useLocalSearchParams } from "expo-router";
-import { useGetProviderDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  useDirectChatMutation,
-  useGetSingleChatHistoryQuery,
-} from "../../redux/features/apiSlices/chat/chatApiSlices";
+import { useGetSingleChatHistoryQuery } from "../../redux/features/apiSlices/chat/chatApiSlices";
 import { formatedDate } from "../util/helper-function";
 import { useSocket } from "../../hooks/useSokect";
 
 const ProviderChatScreen = () => {
   const { chatId, providerId } = useLocalSearchParams();
 
-  //   const { data, isLoading } = useGetProviderDetailsQuery(providerId);
   const { width: screenWidth } = Dimensions.get("window");
   const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
   const [messages, setMessages] = useState([]);
@@ -37,9 +32,6 @@ const ProviderChatScreen = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [showMediaModal, setShowMediaModal] = useState(false);
-  //   const [chatId, setChatId] = useState("");
-  const [currentUserId, setCurrentUserId] = useState(null);
-  // const [isConnected, setIsConnected] = useState(false);
   const flatListRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
@@ -47,7 +39,6 @@ const ProviderChatScreen = () => {
   const {
     data: singleChatHistory,
     isLoading: chatLoader,
-    error: chatError,
     refetch: refetchChatHistory,
   } = useGetSingleChatHistoryQuery(chatId, {
     skip: !chatId, // Skip if no chatId
