@@ -73,15 +73,6 @@ const ChatScreen = () => {
     joinRooms();
   }, [socket, isConnected, currentUserId, chatId]);
 
-  if (isLoading || allChatLoader) {
-    return (
-      <View className="flex-1 bg-white justify-center items-center">
-        <ActivityIndicator size="large" color="#18649F" />
-        <Text className="mt-4 text-gray-500">Loading chat...</Text>
-      </View>
-    );
-  }
-
   // 🧩 Find provider chat when chatData or providerId changes
   useEffect(() => {
     if (chatData?.data?.chats?.length && providerId) {
@@ -148,6 +139,7 @@ const ChatScreen = () => {
   };
 
   // Media handling functions
+
   const selectFromLibrary = async () => {
     setShowMediaModal(false);
     const hasPermission = await requestPermissions();
@@ -403,6 +395,15 @@ const ChatScreen = () => {
       </View>
     );
   };
+
+  if (isLoading || allChatLoader) {
+    return (
+      <View className="flex-1 bg-white justify-center items-center">
+        <ActivityIndicator size="large" color="#18649F" />
+        <Text className="mt-4 text-gray-500">Loading chat...</Text>
+      </View>
+    );
+  }
 
   const { profilePhoto, fullName, isOnline, lastActive } =
     data?.data?.provider || {};

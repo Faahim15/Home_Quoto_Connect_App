@@ -13,7 +13,7 @@ export const jobSlice = api.injectEndpoints({
           body: formData,
         };
       },
-      invalidatesTags: ["user"],
+      invalidatesTags: ["Jobs", "TodaysJobs", "MyJobs", "ActiveJobs"],
     }),
 
     getAllJobs: builder.query({
@@ -21,14 +21,14 @@ export const jobSlice = api.injectEndpoints({
         url: "/jobs/my-jobs",
         method: "GET",
       }),
-      providesTags: ["Jobs"],
+      providesTags: ["MyJobs"],
     }),
     getTodaysJobs: builder.query({
       query: () => ({
         url: "/jobs/today",
         method: "GET",
       }),
-      providesTags: ["Jobs"],
+      providesTags: ["TodaysJobs"],
     }),
 
     getActiveJobs: builder.query({
@@ -36,7 +36,7 @@ export const jobSlice = api.injectEndpoints({
         url: "/jobs/active",
         method: "GET",
       }),
-      providesTags: ["Jobs"],
+      providesTags: ["ActiveJobs"],
     }),
 
     getServiceCategories: builder.query({
@@ -44,7 +44,7 @@ export const jobSlice = api.injectEndpoints({
         url: "/categories",
         method: "GET",
       }),
-      providesTags: ["Jobs"],
+      providesTags: ["Categories"],
     }),
 
     // ✅ NEW: Single Job by ID
@@ -53,14 +53,14 @@ export const jobSlice = api.injectEndpoints({
         url: `/jobs/${id}`,
         method: "GET",
       }),
-      providesTags: ["Jobs"],
+      providesTags: (result, error, arg) => [{ type: "Job", id: arg }],
     }),
     getProviderDetails: builder.query({
       query: (id) => ({
         url: `/popular/providers/${id}`,
         method: "GET",
       }),
-      providesTags: ["Jobs"],
+      providesTags: (result, error, arg) => [{ type: "Provider", id: arg }],
     }),
 
     //Specializations
@@ -70,14 +70,14 @@ export const jobSlice = api.injectEndpoints({
         url: "/categories/specializations",
         method: "GET",
       }),
-      providesTags: ["Jobs"],
+      providesTags: ["Specializations"],
     }),
     getPopularProviders: builder.query({
       query: () => ({
         url: "/popular/providers?sortBy=popularity",
         method: "GET",
       }),
-      providesTags: ["Jobs"],
+      providesTags: ["PopularProviders"],
     }),
   }),
 });

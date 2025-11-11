@@ -49,16 +49,16 @@ export default function PostJobScreen() {
     });
 
     if (!result.canceled) {
-      dispatch(
-        addPhoto({ id: Date.now().toString(), uri: result.assets[0].uri })
-      );
+      const uniqueId =
+        Date.now().toString() + Math.random().toString(36).substring(2, 9);
+      dispatch(addPhoto({ id: uniqueId, uri: result.assets[0].uri }));
     }
   };
 
   // 🖼️ Pick photo from gallery
   const pickFromGallery = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
+      mediaTypes: ["images"], // safer syntax
       allowsEditing: false,
       allowsMultipleSelection: true,
       aspect: [4, 3],
@@ -67,7 +67,9 @@ export default function PostJobScreen() {
 
     if (!result.canceled) {
       result.assets.forEach((asset) => {
-        dispatch(addPhoto({ id: Date.now().toString(), uri: asset.uri }));
+        const uniqueId =
+          Date.now().toString() + Math.random().toString(36).substring(2, 9);
+        dispatch(addPhoto({ id: uniqueId, uri: asset.uri }));
       });
     }
   };

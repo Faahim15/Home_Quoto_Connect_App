@@ -169,6 +169,7 @@ export default function JobFormScreen() {
               <LocationPicker
                 onLocationSelect={(loc) => handleInputChange("location", loc)}
                 error={errors.location}
+                value={jobData.location.address}
               />
             </View>
 
