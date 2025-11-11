@@ -8,6 +8,7 @@ export default function BotttomButtons({
   color,
   width = 148,
   onPress,
+  disabled,
 }) {
   return (
     <Pressable
@@ -18,6 +19,7 @@ export default function BotttomButtons({
         borderColor: borderColor,
         borderWidth: scale(1),
       }}
+      disabled={disabled}
       className=" justify-center  rounded-md items-center px-[3%] py-[3%] "
     >
       <Text style={{ color: color }} className="font-poppins-bold text-base  ">

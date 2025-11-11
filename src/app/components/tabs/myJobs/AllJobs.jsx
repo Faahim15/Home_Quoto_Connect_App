@@ -28,7 +28,7 @@ const ServiceCard = ({ item, showAddress }) => {
       <View className="w-full">
         <Image
           source={{
-            uri: item?.photos[0]?.url || null,
+            uri: item?.serviceCategory?.image?.url || null,
           }}
           className="rounded-xl"
           style={{ height: verticalScale(170) }}

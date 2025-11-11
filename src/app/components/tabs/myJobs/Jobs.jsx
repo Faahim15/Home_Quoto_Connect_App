@@ -7,10 +7,16 @@ import {
   Pressable,
 } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
-import QuoteReqData from "../../data/jobs/QuotesData";
 import { router } from "expo-router";
+import { useGetAllJobsQuery } from "../../../../redux/features/apiSlices/user/createJobSlices";
+import LoadingState from "../../ui/LoadingState";
+import ErrorState from "../../ui/ErrorState";
+import EmptyState from "../../ui/EmptyState";
 // Updated ServiceItem component with navigation
-const ServiceItem = ({ item }) => {
+const ServiceItem = ({ item, quote }) => {
+  const { fullName, averageRating, profilePhoto, totalReviews } =
+    quote?.provider;
+
   const serviceColors = {
     "TV repair and Installation": "bg-[#319FCA]",
     "AC Repair and Maintenance": "bg-[#FF6B6B]",
@@ -31,7 +37,7 @@ const ServiceItem = ({ item }) => {
         }`}
       >
         <Text className="text-white font-poppins-400regular text-base">
-          {item.serviceType}
+          {item?.serviceCategory?.title || "N/A"}
         </Text>
 
         {/* <Ionicons name="arrow-forward" size={16} color="#fff" /> */}
@@ -50,7 +56,7 @@ const ServiceItem = ({ item }) => {
             onPress={() =>
               router.push({
                 pathname: "/services/providerDetails",
-                params: { showButtons: true },
+                params: { quoteId: quote?._id, showButtons: true },
               })
             }
             style={{ width: scale(80), height: verticalScale(80) }}
@@ -58,26 +64,30 @@ const ServiceItem = ({ item }) => {
           >
             <Image
               source={{
-                uri: item.profileImage,
+                uri: profilePhoto?.url || null,
               }}
               className="w-full h-full rounded-full"
               resizeMode="cover"
             />
           </TouchableOpacity>
-
+          {/* {
+      item?.quotes.map((quote)=>(
+        
+      ))
+    } */}
           {/* Provider Details */}
           <View className="flex-1">
             <Text className="font-poppins-500medium text-xl text-gray-800 mb-1">
-              {item.providerName}
+              {fullName || "N/A"}
             </Text>
 
             {/* Rating */}
             <View className="flex-row items-center mb-[2%]">
               <Text className="text-[#F59E0B] font-poppins-400regular text-xs mr-1">
-                ★ {item.rating}
+                ★ {Number(averageRating) / 10 || "N/A"}
               </Text>
               <Text className="font-poppins-400regular text-[#18649F] text-xs">
-                ({item.reviews} Reviews)
+                ({totalReviews > 1 ? "Reviews" : "Review" || "N/A"})
               </Text>
             </View>
 
@@ -87,14 +97,16 @@ const ServiceItem = ({ item }) => {
                 Price
               </Text>
               <Text className="text-[#F59E0B] text-base font-poppins-semiBold">
-                {item.price}
+                {quote?.price
+                  ? `$${quote.price}`
+                  : "Request a personalized quote"}
               </Text>
             </View>
             <TouchableOpacity
               onPress={() =>
                 router.push({
                   pathname: "myJobs/quotesDetails",
-                  params: { serviceId: item.id, quoteReq: true },
+                  params: { quoteId: quote?._id, quoteReq: true },
                 })
               }
               style={{ width: scale(120), height: verticalScale(30) }}
@@ -106,7 +118,9 @@ const ServiceItem = ({ item }) => {
             </TouchableOpacity>
 
             <View className="flex-row justify-end w-full">
-              <Text className="text-gray-500 text-sm">{item.timeAgo}</Text>
+              <Text className="text-gray-500 text-sm">
+                {quote?.timeAgo || "N/A"}
+              </Text>
             </View>
           </View>
         </View>
@@ -117,16 +131,49 @@ const ServiceItem = ({ item }) => {
 
 // Updated Services component with navigation prop
 export default function Services() {
+  const { data, isLoading, error } = useGetAllJobsQuery();
+
+  if (isLoading) {
+    return <LoadingState />;
+  }
+
+  if (error) {
+    return <ErrorState error={error} />;
+  }
+
+  // Extract jobs data with fallback
+  const jobsData = data?.data?.jobs || data?.data || [];
+  const quoteData = jobsData.length > 0 ? jobsData : null;
+
+  // Filter jobs that have quotes
+  const filteredQuotes = Array.isArray(quoteData)
+    ? quoteData.filter(
+        (job) => Array.isArray(job.quotes) && job.quotes.length > 0
+      )
+    : [];
+
+  // Handle empty state
+  if (filteredQuotes.length === 0) {
+    return <EmptyState />;
+  }
+  const quoteItems = filteredQuotes.flatMap((job) =>
+    job.quotes.map((quote) => ({
+      quote,
+      job, // preserve job context
+    }))
+  );
+
   const renderServiceItem = ({ item }) => {
-    return <ServiceItem item={item} />;
+    const { quote, job } = item;
+    return <ServiceItem item={job} quote={quote} />;
   };
 
   return (
     <View className="mb-[18%]">
       <FlatList
-        data={QuoteReqData}
+        data={quoteItems}
         renderItem={renderServiceItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => item._id || index.toString()}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: scale(16),

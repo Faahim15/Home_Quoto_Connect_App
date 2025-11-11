@@ -10,7 +10,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 import UpdatedOffer from "./UpdatedOffer";
+import { formatedDate } from "../../../util/helper-function";
 export default function QuoteReqDetails({ item, quoteReq }) {
+  const { quote, job } = item;
+
+  const { fullName, averageRating, profilePhoto, totalReviews } =
+    quote?.provider;
+
   const serviceColors = {
     "TV repair and Installation": "bg-[#319FCA]",
     "AC Repair and Maintenance": "bg-[#FF6B6B]",
@@ -38,7 +44,7 @@ export default function QuoteReqDetails({ item, quoteReq }) {
           onPress={handleServicePress}
         >
           <Text className="text-white font-poppins-400regular text-base">
-            {item.serviceType}
+            {job?.serviceCategory?.title || "N/A"}
           </Text>
 
           <Ionicons name="arrow-forward" size={16} color="#fff" />
@@ -59,7 +65,7 @@ export default function QuoteReqDetails({ item, quoteReq }) {
             >
               <Image
                 source={{
-                  uri: item.profileImage,
+                  uri: profilePhoto?.url || null,
                 }}
                 className="w-full h-full rounded-full"
                 resizeMode="cover"
@@ -69,27 +75,27 @@ export default function QuoteReqDetails({ item, quoteReq }) {
             {/* Provider Details */}
             <View className="flex-1">
               <Text className="font-poppins-500medium text-xl text-gray-800 mb-1">
-                {item.providerName}
+                {fullName || "N/A"}
               </Text>
 
               {/* Rating */}
               <View className="flex-row items-center mb-[2%]">
                 <Text className="text-[#F59E0B] font-poppins-400regular text-xs mr-1">
-                  ★ {item.rating}
+                  ★ {Number(averageRating) / 10 || "N/A"}
                 </Text>
                 <Text className="font-poppins-400regular text-[#18649F] text-xs">
-                  ({item.reviews} Reviews)
+                  ({totalReviews > 1 ? "Reviews" : "Review" || "N/A"})
                 </Text>
               </View>
 
               {/* Price and Time */}
               <View className="flex-row justify-between">
                 <Text className="font-poppins-400regular text-base text-[#1F2937]">
-                  {item.quoteOption === "Accept" && "Price"}
+                  Price
                 </Text>
                 <Text className="text-[#F59E0B] text-base font-poppins-semiBold">
-                  {item.quoteOption === "Accept"
-                    ? item.price
+                  {quote?.price
+                    ? `$${quote.price}`
                     : "Request a personalized quote"}
                 </Text>
               </View>
@@ -109,20 +115,14 @@ export default function QuoteReqDetails({ item, quoteReq }) {
               <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
                 Job Status
               </Text>
-              {quoteReq ? (
-                <Text className="font-poppins-400regular mt-[10%] text-center text-base text-[#F59E0B] ">
-                  Pending
-                </Text>
-              ) : (
-                <Text
-                  className={`font-poppins-400regular mt-[10%] text-center text-base ${item.status === "In Progress" ? "text-[#1A73E8]" : item.status === "Completed" ? "text-[#00BFA5]" : "text-[#D32F2F]"} `}
-                >
-                  {item.status}
-                </Text>
-              )}
+              <Text
+                className={`font-poppins-400regular mt-[10%] text-center text-base ${job?.status === "In Progress" ? "text-[#1A73E8]" : item.status === "Completed" ? "text-[#00BFA5]" : "text-[#F59E0B]"} `} //text-[#D32F2F] use if for cancelled
+              >
+                {job?.status}
+              </Text>
             </View>
 
-            {!quoteReq && item.sentQuote && <UpdatedOffer />}
+            {!quoteReq && item?.sentQuote && <UpdatedOffer />}
 
             {/* Appointment */}
             <View className="mt-[5%]">
@@ -131,7 +131,8 @@ export default function QuoteReqDetails({ item, quoteReq }) {
               </Text>
 
               <Text className="font-poppins-400regular text-[#1F2937] text-xs pt-[2%] ">
-                This service provider is available on {item.bookingHours}
+                This service provider is available on{" "}
+                {quote?.proposedTime || "N/A"}
               </Text>
             </View>
             {/* Quote Details */}
@@ -141,7 +142,7 @@ export default function QuoteReqDetails({ item, quoteReq }) {
               </Text>
 
               <Text className="font-poppins-400regular text-[#1F2937] text-xs pt-[2%] ">
-                {item.description}
+                {quote?.description || "N/A"}
               </Text>
             </View>
             {/* Warranty & Guarantee */}
@@ -150,8 +151,20 @@ export default function QuoteReqDetails({ item, quoteReq }) {
                 Warranty & Guarantee
               </Text>
 
-              <Text className="font-poppins-400regular text-[#1F2937] text-xs pt-[2%] ">
-                All electrical work is backed by a 1-year workmanship guarantee.
+              {/* Warranty */}
+              <Text className="font-poppins-500medium text-[#1F2937] text-xs pt-[2%]">
+                Warranty:
+              </Text>
+              <Text className="font-poppins-400regular text-[#1F2937] text-xs pb-[2%]">
+                {quote?.warranty?.details || "N/A"}
+              </Text>
+
+              {/* Guarantee */}
+              <Text className="font-poppins-500medium text-[#1F2937] text-xs pt-[2%]">
+                Guarantee:
+              </Text>
+              <Text className="font-poppins-400regular text-[#1F2937] text-xs">
+                {quote?.guarantee?.details || "N/A"}
               </Text>
             </View>
           </View>

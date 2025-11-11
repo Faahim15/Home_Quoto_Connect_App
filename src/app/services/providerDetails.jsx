@@ -24,7 +24,9 @@ import XStyle from "../util/styles";
 import Toast from "react-native-toast-message";
 import { useGetProviderDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 export default function ProviderDetailsScreen() {
-  const { showButtons, profileId } = useLocalSearchParams();
+  const { showButtons, profileId, quoteId } = useLocalSearchParams();
+
+  console.log("This is from Quote id", quoteId);
 
   const { data, isLoading, error } = useGetProviderDetailsQuery(profileId);
 
