@@ -85,22 +85,22 @@ export default function ServiceDetails() {
           ]}
         >
           <View className="flex-row gap-[6%] justify-center overflow-hidden items-center">
-            <BotttomButtons
+            {/* <BotttomButtons
               onPress={() => router.replace("/provider/home")}
               backgroundColor="#fff"
               color="#EF4444"
               borderColor="#EF4444"
               title="Cancel"
               width={service?.priceRange?.isPersonalized ? "full" : 148}
-            />
-            {renderButton}
+            /> */}
+            {/* {renderButton} */}
           </View>
 
           {service?.priceRange?.isPersonalized && (
             <View className="px-[3%]">
               <CustomButton
                 onPress={() => router.push("/provider/quote/updateQuote")}
-                title="Update Quote"
+                title="Send an offer"
               />
             </View>
           )}

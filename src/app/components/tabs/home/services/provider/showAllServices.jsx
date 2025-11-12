@@ -120,7 +120,6 @@ export default function ShowAllServiceCards({ jobs, horizontal }) {
                 }
               : { rowGap: verticalScale(12), paddingBottom: verticalScale(80) }
           }
-          // Ensures proper snapping alignment
         />
       )}
     </View>

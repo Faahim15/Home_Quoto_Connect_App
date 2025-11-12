@@ -22,18 +22,26 @@ import Biography from "../components/tabs/home/services/provider/details/Biograp
 import { router, useLocalSearchParams } from "expo-router";
 import XStyle from "../util/styles";
 import Toast from "react-native-toast-message";
-import { useGetProviderDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
+import {
+  useGetPopularProvidersQuery,
+  useGetProviderDetailsQuery,
+} from "../../redux/features/apiSlices/user/createJobSlices";
 export default function ProviderDetailsScreen() {
-  const { showButtons, profileId, quoteId } = useLocalSearchParams();
+  const { showButtons, profileId } = useLocalSearchParams();
 
-  console.log("This is from Quote id", quoteId);
+  // console.log("This is from Quote id", profileId);
 
   const { data, isLoading, error } = useGetProviderDetailsQuery(profileId);
+  const {
+    data: allProvidersData,
+    isLoading: providersLoader,
+    error: providersError,
+  } = useGetPopularProvidersQuery();
 
   const shouldShowButtons = showButtons === "true";
 
   // Add loading state check
-  if (isLoading) {
+  if (providersLoader) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
         <ActivityIndicator size="large" color="#18649F" />
@@ -43,6 +51,15 @@ export default function ProviderDetailsScreen() {
       </View>
     );
   }
+  console.log("show All", allProvidersData?.data?.providers[0]?._id);
+
+  const provider = allProvidersData?.data?.providers.find(
+    (p) => p._id === profileId
+  );
+
+  console.log("show single provide value", data?.data?.provider);
+
+  console.log("show all provider value", provider);
 
   const {
     profilePhoto,
@@ -57,7 +74,7 @@ export default function ProviderDetailsScreen() {
   } = data?.data?.provider || {};
 
   // Add error state check (optional)
-  if (error) {
+  if (error || providersError) {
     return (
       <View className="flex-1 bg-white justify-center items-center px-[6%]">
         <Text className="font-poppins-semiBold text-base text-[#EF4444] text-center">

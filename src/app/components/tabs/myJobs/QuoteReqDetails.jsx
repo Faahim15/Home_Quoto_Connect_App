@@ -1,16 +1,8 @@
-import {
-  Text,
-  View,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Pressable,
-} from "react-native";
+import { Text, View, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { scale, verticalScale } from "../../adaptive/Adaptiveness";
+import { scale } from "../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 import UpdatedOffer from "./UpdatedOffer";
-import { formatedDate } from "../../../util/helper-function";
 export default function QuoteReqDetails({ item, quoteReq }) {
   const { quote, job } = item;
 

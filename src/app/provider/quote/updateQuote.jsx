@@ -1,42 +1,38 @@
 import { View, Text, ScrollView } from "react-native";
 import CustomTitle from "../../components/shared/services/CustomTitle";
-import QuoteDetails from "../../components/provider/home/UpdateQuote";
+import QuoteForm from "../../components/provider/map/QuoteForm";
 import { Ionicons } from "@expo/vector-icons";
 import BotttomButtons from "../../components/shared/services/buttons/BottomButtons";
 import XStyle from "../../util/styles";
 import { scale } from "../../components/adaptive/Adaptiveness";
 import Toast from "react-native-toast-message";
 import { router } from "expo-router";
+import { useState } from "react";
 
 export default function UpdateQuoteScreen() {
-  const quoteInfo = {
-    id: 1,
-    serviceType: "TV repair and Installation",
-    designation: "TV Technician",
-    providerName: "Jackson",
-    description: "Expert in fixing and installing all types of TVs.",
-    rating: 4.8,
-    reviews: 8,
-    price: "$320",
-    timeAgo: "14 m Ago",
-    bookingDate: "2025-07-16",
-    bookingHours: "10:00 AM - 12:00 PM",
-    specializations: ["LED TV", "Smart TV", "Wall Mount Installation"],
-    address: "123 Green Street, Los Angeles, CA",
-    profileImage:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
-    status: "In Progress",
+  console.log("ksdfjklsdflksdfjlsdfkjsdlk");
+  const [formData, setFormData] = useState({
+    appointment: false,
+    quoteDetails: "",
+    warrantyDetails: "",
+    price: 0,
+  });
+
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
   return (
     <View className="flex-1  bg-[#F9F9F9]">
       <View className="px-[4%]">
         <CustomTitle title="Update Quote" />
       </View>
+
       <ScrollView>
         <View className="mt-[3%]">
-          <QuoteDetails item={quoteInfo} />
+          <QuoteForm />
         </View>
-        {/* Info Text */}
+
         <View className="flex-row px-[4%] items-center mb-[2%]">
           <Ionicons name="bulb-outline" size={18} color="#f59e0b" />
           <Text className="font-poppins-400regular  text-justify w-[90%] text-xs text-[#1F2937] ml-[2%]">
@@ -45,6 +41,7 @@ export default function UpdateQuoteScreen() {
           </Text>
         </View>
       </ScrollView>
+
       <View
         className="flex-row gap-[6%] h-[14%]   border border-[#D8DCE0] justify-center items-center "
         style={[

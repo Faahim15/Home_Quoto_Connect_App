@@ -74,7 +74,7 @@ export const jobSlice = api.injectEndpoints({
     }),
     getPopularProviders: builder.query({
       query: () => ({
-        url: "/popular/providers?sortBy=popularity",
+        url: "/popular/providers",
         method: "GET",
       }),
       providesTags: ["PopularProviders"],

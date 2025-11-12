@@ -14,9 +14,9 @@ import ErrorState from "../../ui/ErrorState";
 import EmptyState from "../../ui/EmptyState";
 // Updated ServiceItem component with navigation
 const ServiceItem = ({ item, quote }) => {
-  const { fullName, averageRating, profilePhoto, totalReviews } =
+  const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     quote?.provider;
-
+  console.log("id", _id);
   const serviceColors = {
     "TV repair and Installation": "bg-[#319FCA]",
     "AC Repair and Maintenance": "bg-[#FF6B6B]",
@@ -56,7 +56,7 @@ const ServiceItem = ({ item, quote }) => {
             onPress={() =>
               router.push({
                 pathname: "/services/providerDetails",
-                params: { quoteId: quote?._id, showButtons: true },
+                params: { profileId: _id, showButtons: true },
               })
             }
             style={{ width: scale(80), height: verticalScale(80) }}
@@ -70,11 +70,7 @@ const ServiceItem = ({ item, quote }) => {
               resizeMode="cover"
             />
           </TouchableOpacity>
-          {/* {
-      item?.quotes.map((quote)=>(
-        
-      ))
-    } */}
+
           {/* Provider Details */}
           <View className="flex-1">
             <Text className="font-poppins-500medium text-xl text-gray-800 mb-1">
