@@ -12,7 +12,6 @@ export default function ServiceDetails() {
   const { serviceId, showButtons, showPrice } = useLocalSearchParams();
 
   const { data, isLoading, error } = useGetSingleJobQuery(serviceId);
-  const service = data?.data?.job;
 
   const shouldShowButtons = showButtons === "true";
   const shouldShowPrice = showPrice === "true";
@@ -26,7 +25,7 @@ export default function ServiceDetails() {
       </View>
     );
   }
-
+  const service = data?.data?.job;
   if (error || !service) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9] px-[6%]">
@@ -96,14 +95,17 @@ export default function ServiceDetails() {
             {/* {renderButton} */}
           </View>
 
-          {service?.priceRange?.isPersonalized && (
-            <View className="px-[3%]">
-              <CustomButton
-                onPress={() => router.push("/provider/quote/updateQuote")}
-                title="Send an offer"
-              />
-            </View>
-          )}
+          <View className="px-[3%]">
+            <CustomButton
+              onPress={() =>
+                router.push({
+                  pathname: "/provider/quote/updateQuote",
+                  params: { jobId: serviceId },
+                })
+              }
+              title="Send an offer"
+            />
+          </View>
         </View>
       )}
     </View>

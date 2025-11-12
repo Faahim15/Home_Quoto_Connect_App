@@ -16,7 +16,7 @@ import EmptyState from "../../ui/EmptyState";
 const ServiceItem = ({ item, quote }) => {
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     quote?.provider;
-  console.log("id", _id);
+  // console.log("id", _id);
   const serviceColors = {
     "TV repair and Installation": "bg-[#319FCA]",
     "AC Repair and Maintenance": "bg-[#FF6B6B]",

@@ -41,7 +41,7 @@ export default function ProviderInfo({ item, showPrice = false }) {
           <Image
             style={{ width: scale(310), height: verticalScale(177) }}
             className="rounded-md  mb-[2%] "
-            source={{ uri: mainImageSource.uri }}
+            source={{ uri: mainImageSource?.uri }}
           />
         </View>
 
@@ -52,7 +52,7 @@ export default function ProviderInfo({ item, showPrice = false }) {
               data={item?.photos}
               renderItem={showImages}
               keyExtractor={(item) =>
-                item.id || item.uri || Math.random().toString()
+                item?._id || item?.uri || Math.random().toString()
               }
               horizontal
               ItemSeparatorComponent={() => (

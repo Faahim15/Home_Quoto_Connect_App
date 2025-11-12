@@ -163,5 +163,26 @@ export async function getToken() {
     return null;
   }
 }
+export function convertToThirdDay(dateString) {
+  const originalDate = new Date(dateString);
+  const updatedDate = new Date(originalDate);
+  updatedDate.setDate(3); // Set day to 3
+  return updatedDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
+}
+
+export function formatDateWithOrdinal(dateString) {
+  const date = new Date(dateString);
+  const day = date.getUTCDate();
+  const month = date.toLocaleString("en-US", { month: "long" }); // e.g., "June"
+
+  // Get ordinal suffix
+  const getOrdinal = (n) => {
+    const s = ["th", "st", "nd", "rd"];
+    const v = n % 100;
+    return s[(v - 20) % 10] || s[v] || s[0];
+  };
+
+  return `${day}${getOrdinal(day)} ${month}`;
+}
 
 export default getSpecializationTitles;

@@ -1,9 +1,17 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import { TouchableOpacity, View } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
+import { Text } from "react-native";
 
-const RadioButton = () => {
+const RadioButton = ({ radioButtonChange, isAvailable }) => {
   const [selected, setSelected] = useState(null);
+
+  const handleSelect = (value) => {
+    setSelected(value);
+    if (typeof radioButtonChange === "function") {
+      radioButtonChange(value === "yes"); // convert to boolean
+    }
+  };
 
   return (
     <View className="px-[5%] py-[2%]">
@@ -11,18 +19,18 @@ const RadioButton = () => {
         {/* Yes Option */}
         <TouchableOpacity
           className="items-center"
-          onPress={() => setSelected("yes")}
+          onPress={() => handleSelect("yes")}
         >
           <View
             style={{ width: scale(20), height: verticalScale(20) }}
-            className={` rounded-full bg-[#f9f9f9] border items-center justify-center ${
+            className={`rounded-full bg-[#f9f9f9] border items-center justify-center ${
               selected === "yes" ? "border-[#319FCA]" : ""
             }`}
           >
             {selected === "yes" && (
               <View
                 style={{ width: scale(18), height: verticalScale(18) }}
-                className=" rounded-full bg-[#319FCA]"
+                className="rounded-full bg-[#319FCA]"
               />
             )}
           </View>
@@ -34,18 +42,18 @@ const RadioButton = () => {
         {/* No Option */}
         <TouchableOpacity
           className="items-center"
-          onPress={() => setSelected("no")}
+          onPress={() => handleSelect("no")}
         >
           <View
             style={{ width: scale(20), height: verticalScale(20) }}
-            className={` rounded-full bg-[#f9f9f9] border items-center justify-center ${
+            className={`rounded-full bg-[#f9f9f9] border items-center justify-center ${
               selected === "no" ? "border-[#319FCA]" : ""
             }`}
           >
             {selected === "no" && (
               <View
                 style={{ width: scale(18), height: verticalScale(18) }}
-                className=" rounded-full bg-[#319FCA]"
+                className="rounded-full bg-[#319FCA]"
               />
             )}
           </View>
