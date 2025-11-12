@@ -5,14 +5,13 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
-import servicesData from "../../../data/shared/ServicesData";
 import { router } from "expo-router";
 
 const ServiceCard = ({ item }) => {
-  // console.log("items:", item?.photos[0]?.url);
   const { city, state } = item?.location?.details;
   return (
     <TouchableOpacity
@@ -88,10 +87,8 @@ const ServiceCard = ({ item }) => {
         </View>
 
         {/* Location and Time */}
-
         <View className="flex-row items-center mb-[0%]">
           <Ionicons name="location-outline" size={16} color="#319FCA" />
-
           <Text className="font-poppins-400regular text-sm text-[#319FCA]">
             {city && state ? `${city}, ${state}` : "N/A"}
             <Text className="text-[#6B7280]"> | {item?.timeAgo || "N/A"}</Text>
@@ -106,9 +103,10 @@ export default function ViewAllServiceCards({
   servicesData,
   isLoading,
   error,
+  refreshing,
+  onRefresh,
 }) {
-  // Use API data if available, otherwise fallback to local data
-  const displayData = servicesData || servicesData;
+  const displayData = servicesData || [];
 
   return (
     <View className="mx-[6%] mt-[2%] justify-center items-start">
@@ -146,6 +144,15 @@ export default function ViewAllServiceCards({
             paddingBottom: verticalScale(100),
             rowGap: verticalScale(12),
           }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#175994"]} // Android
+              tintColor="#175994" // iOS
+              progressBackgroundColor="#ffffff" // Android
+            />
+          }
           ListEmptyComponent={
             <View
               className="w-full items-center justify-center"

@@ -1,4 +1,10 @@
-import { View, ScrollView, ActivityIndicator, Text } from "react-native";
+import {
+  View,
+  ScrollView,
+  ActivityIndicator,
+  Text,
+  RefreshControl,
+} from "react-native";
 import HomeTopBar from "../../components/tabs/home/HomeTopBar";
 import { useState } from "react";
 import FilterModal from "../../components/provider/home/FilteringModal";
@@ -11,20 +17,47 @@ import {
   useGetActiveJobsQuery,
   useGetTodaysJobsQuery,
 } from "../../../redux/features/apiSlices/user/createJobSlices";
+
 export default function ContractorHomeScreen() {
   const [showModal, setShowModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const {
     data: profile,
     isLoading: profileLoading,
     error: profileError,
+    refetch: refetchProfile,
   } = useUserProfileQuery();
-  const { data: todaysJobs, isLoading: todaysJobsLoading } =
-    useGetTodaysJobsQuery();
-  const { data: activeJobs, isLoading: activeJobsLoading } =
-    useGetActiveJobsQuery();
 
-  // ✅ Combined loading state
+  const {
+    data: todaysJobs,
+    isLoading: todaysJobsLoading,
+    refetch: refetchTodaysJobs,
+  } = useGetTodaysJobsQuery();
+
+  const {
+    data: activeJobs,
+    isLoading: activeJobsLoading,
+    refetch: refetchActiveJobs,
+  } = useGetActiveJobsQuery();
+
+  // Handle pull-to-refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        refetchProfile(),
+        refetchTodaysJobs(),
+        refetchActiveJobs(),
+      ]);
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  // Combined loading state
   if (profileLoading || todaysJobsLoading || activeJobsLoading) {
     return (
       <View className="flex-1 bg-[#F9FAFB] justify-center items-center">
@@ -41,7 +74,9 @@ export default function ContractorHomeScreen() {
       </View>
     );
   }
+
   const userData = profile?.data?.user || null;
+
   function modalCloseHanlder() {
     setShowModal(false);
   }
@@ -54,6 +89,15 @@ export default function ContractorHomeScreen() {
           backgroundColor: "#f9f9f9",
         }}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#175994"]} // Android
+            tintColor="#175994" // iOS
+            progressBackgroundColor="#ffffff" // Android
+          />
+        }
       >
         <View>
           <HomeTopBar userData={userData} />
@@ -69,7 +113,6 @@ export default function ContractorHomeScreen() {
         </View>
 
         {/* Active jobs */}
-
         <JobsHeader title="Active Jobs" />
         <View>
           <ShowAllServiceCards
@@ -79,10 +122,6 @@ export default function ContractorHomeScreen() {
         </View>
 
         <FilterModal visible={showModal} onClose={modalCloseHanlder} />
-        {/* <ServiceQuoteModal
-          visible={showQuoteModal}
-          onClose={() => setShowQuoteModal(false)}
-        /> */}
       </ScrollView>
     </View>
   );

@@ -1,4 +1,10 @@
-import { View, ScrollView, ActivityIndicator } from "react-native";
+import {
+  View,
+  ScrollView,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
+import { useState } from "react";
 import HomeTopBar from "../components/tabs/home/HomeTopBar";
 import PromoCard from "../components/tabs/home/PromoCard";
 import ServiceCards from "../components/shared/services/ServiceCards";
@@ -15,24 +21,60 @@ import {
 import { Text } from "react-native";
 
 export default function HomeScreen() {
+  const [refreshing, setRefreshing] = useState(false);
+
   const {
     data: profile,
     isLoading: profileLoading,
     error: profileError,
+    refetch: refetchProfile,
   } = useUserProfileQuery();
-  const { data: todaysJobs, isLoading: todaysJobsLoading } =
-    useGetTodaysJobsQuery();
-  const { data: activeJobs, isLoading: activeJobsLoading } =
-    useGetActiveJobsQuery();
 
-  const { data, isLoading, error } = useGetServiceCategoriesQuery();
+  const {
+    data: todaysJobs,
+    isLoading: todaysJobsLoading,
+    refetch: refetchTodaysJobs,
+  } = useGetTodaysJobsQuery();
+
+  const {
+    data: activeJobs,
+    isLoading: activeJobsLoading,
+    refetch: refetchActiveJobs,
+  } = useGetActiveJobsQuery();
+
+  const {
+    data,
+    isLoading,
+    error,
+    refetch: refetchCategories,
+  } = useGetServiceCategoriesQuery();
+
   const {
     data: popularProvidersData,
     isLoading: providerLoading,
     error: providersError,
+    refetch: refetchProviders,
   } = useGetPopularProvidersQuery();
 
-  // ✅ Combined loading state
+  // Handle pull-to-refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        refetchProfile(),
+        refetchTodaysJobs(),
+        refetchActiveJobs(),
+        refetchCategories(),
+        refetchProviders(),
+      ]);
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  // ✅ Combined loading state (initial load only)
   if (
     profileLoading ||
     todaysJobsLoading ||
@@ -72,7 +114,6 @@ export default function HomeScreen() {
   }
 
   const userData = profile?.data?.user || null;
-
   const providerData = popularProvidersData?.data?.providers || [];
 
   return (
@@ -82,6 +123,16 @@ export default function HomeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="flex-1 h-full"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#175994"]} // Android
+            tintColor="#175994" // iOS
+            title="Pull to refresh" // iOS
+            titleColor="#565656" // iOS
+          />
+        }
       >
         <PromoCard />
 
