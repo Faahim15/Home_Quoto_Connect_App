@@ -3,9 +3,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { scale } from "../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 import UpdatedOffer from "./UpdatedOffer";
+import { statusColorMap } from "../../../util/colors";
 export default function QuoteReqDetails({ item, quoteReq }) {
   const { quote, job } = item;
-
+  const statusColor = statusColorMap?.[quote?.status] ?? "#6B7280";
   const { fullName, averageRating, profilePhoto, totalReviews } =
     quote?.provider;
 
@@ -105,12 +106,13 @@ export default function QuoteReqDetails({ item, quoteReq }) {
 
             <View className=" mt-[5%]">
               <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
-                Job Status
+                Quote Status
               </Text>
               <Text
+                style={{ color: statusColor }}
                 className={`font-poppins-400regular mt-[10%] text-center text-base ${job?.status === "In Progress" ? "text-[#1A73E8]" : item.status === "Completed" ? "text-[#00BFA5]" : "text-[#F59E0B]"} `} //text-[#D32F2F] use if for cancelled
               >
-                {job?.status}
+                {quote?.status}
               </Text>
             </View>
 

@@ -9,7 +9,7 @@ export default function JobsHeader({ title }) {
       <TouchableOpacity
         onPress={() =>
           router.push({
-            pathname: "provider/quote/showAllJobs",
+            pathname: "/services/showAllJobs",
             params: { title: title },
           })
         }

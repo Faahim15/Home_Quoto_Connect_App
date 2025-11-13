@@ -104,7 +104,7 @@ export default function ContractorHomeScreen() {
         </View>
         <SearchBar onPress={() => setShowModal(true)} />
 
-        <JobsHeader title="Todays Jobs" />
+        <JobsHeader title="Today's Jobs" />
         <View>
           <ShowAllServiceCards
             jobs={todaysJobs?.data?.jobs}

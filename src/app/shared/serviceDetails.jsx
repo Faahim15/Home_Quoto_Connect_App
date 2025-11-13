@@ -1,4 +1,6 @@
 import { ScrollView, View, Text } from "react-native";
+import { useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import ProviderInfo from "../components/shared/services/JobDetails";
 import XStyle from "../util/styles";
@@ -10,11 +12,34 @@ import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/create
 
 export default function ServiceDetails() {
   const { serviceId, showButtons, showPrice } = useLocalSearchParams();
+  const [myQuotes, setMyQuotes] = useState([]);
 
   const { data, isLoading, error } = useGetSingleJobQuery(serviceId);
 
   const shouldShowButtons = showButtons === "true";
   const shouldShowPrice = showPrice === "true";
+
+  // Filter quotes based on userId from AsyncStorage
+  useEffect(() => {
+    const filterMyQuotes = async () => {
+      try {
+        const userId = await AsyncStorage.getItem("userId");
+
+        if (userId && data?.data?.job?.quotes) {
+          const filtered = data.data.job.quotes.filter(
+            (quote) => quote.provider._id === userId
+          );
+          setMyQuotes(filtered);
+        }
+      } catch (error) {
+        console.error("Error filtering quotes:", error);
+      }
+    };
+
+    if (data) {
+      filterMyQuotes();
+    }
+  }, [data]);
 
   if (isLoading) {
     return (
@@ -25,13 +50,20 @@ export default function ServiceDetails() {
       </View>
     );
   }
+
   const service = data?.data?.job;
+  // console.log("show services", service?.quotes);
+  console.log("my filtered quotes", service?.status);
+  const isAccepted = myQuotes?.some((quote) => quote?.status === "accepted");
+  const serviceStatus =
+    service?.status === "in_progress" || service?.status === "expired";
+  console.log("isAccepted", isAccepted, shouldShowButtons);
   if (error || !service) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9] px-[6%]">
         <CustomTitle title="Service not found" />
         <Text className="text-gray-500 text-base mt-[2%]">
-          We couldn’t locate the service details. Please check the link or try
+          We couldn't locate the service details. Please check the link or try
           again later.
         </Text>
       </View>
@@ -72,7 +104,7 @@ export default function ServiceDetails() {
         </ScrollView>
       </View>
 
-      {shouldShowButtons && (
+      {shouldShowButtons && !isAccepted && !serviceStatus && (
         <View
           className="flex-col gap-[1%] border border-[#D8DCE0]"
           style={[

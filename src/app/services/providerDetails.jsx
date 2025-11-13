@@ -51,15 +51,15 @@ export default function ProviderDetailsScreen() {
       </View>
     );
   }
-  console.log("show All", allProvidersData?.data?.providers[0]?._id);
+  // console.log("show All", allProvidersData?.data?.providers[0]?._id);
 
   const provider = allProvidersData?.data?.providers.find(
     (p) => p._id === profileId
   );
 
-  console.log("show single provide value", data?.data?.provider);
+  // console.log("show single provide value", data?.data?.provider);
 
-  console.log("show all provider value", provider);
+  // console.log("show all provider value", provider);
 
   const {
     profilePhoto,

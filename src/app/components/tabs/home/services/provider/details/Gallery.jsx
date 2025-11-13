@@ -7,14 +7,13 @@ import {
   Modal,
   TouchableOpacity,
 } from "react-native";
-import imageData from "../../../../../data/shared/Images";
 import { scale, verticalScale } from "../../../../../adaptive/Adaptiveness";
 import { useState } from "react";
 
 export default function Gallery({ portfolioImages }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
-  const allImages = portfolioImages.flatMap((item) => item.images);
+  const allImages = portfolioImages?.flatMap((item) => item.images);
 
   // console.log("this from gallery:", allImages[0].url);
 

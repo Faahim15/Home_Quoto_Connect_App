@@ -14,6 +14,7 @@ import {
 } from "../../redux/features/apiSlices/quote/quoteApiSlice";
 export default function QuoteDetails() {
   const { quoteId, quoteReq } = useLocalSearchParams();
+
   const { data, isLoading, error } = useGetAllJobsQuery();
   const [acceptQuote, { isLoading: isAccepting }] = useAcceptQuoteMutation();
   const [cancelQuote, { isLoading: isDeclining }] = useCancelQuoteMutation();
@@ -48,9 +49,12 @@ export default function QuoteDetails() {
   );
 
   const selectedQuoteItem = quoteItems.find(
-    (item) => item.quote.id === quoteId
+    (item) => item.quote._id === quoteId
   );
   const { quote } = selectedQuoteItem;
+
+  // console.log("show quotes", selectedQuoteItem?.quote?.status);
+
   const quoteReqst = quoteReq === "true";
 
   const handleAcceptQuote = async () => {

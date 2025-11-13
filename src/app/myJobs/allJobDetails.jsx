@@ -10,6 +10,7 @@ export default function ServiceDetails() {
   const { serviceId } = useLocalSearchParams();
   const { data, isLoading, error } = useGetSingleJobQuery(serviceId);
   const service = data?.data?.job;
+
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
@@ -45,20 +46,17 @@ export default function ServiceDetails() {
           <View>
             <JobInfo item={service} />
           </View>
-          {/* {showCompleteJob && (
-            <View className="mt-[8%] ">
-              <ActionButton route="ReviewFormScreen" title="Complete Job" />
-            </View>
-          )} */}
         </ScrollView>
       </View>
 
-      <View className="px-[6%] pb-[18%]">
-        <CustomButton
-          onPress={() => router.push("/jobs/jobForm")}
-          title="Edit Job"
-        />
-      </View>
+      {service?.status === "pending" && (
+        <View className="px-[6%] pb-[18%]">
+          <CustomButton
+            onPress={() => router.push("/jobs/jobForm")}
+            title="Edit Job"
+          />
+        </View>
+      )}
     </View>
   );
 }

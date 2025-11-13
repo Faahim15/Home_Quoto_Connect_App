@@ -5,13 +5,16 @@ import {
   TouchableOpacity,
   FlatList,
   Pressable,
+  RefreshControl,
 } from "react-native";
+import { useState } from "react";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 import { useGetAllJobsQuery } from "../../../../redux/features/apiSlices/user/createJobSlices";
 import LoadingState from "../../ui/LoadingState";
 import ErrorState from "../../ui/ErrorState";
 import EmptyState from "../../ui/EmptyState";
+
 // Updated ServiceItem component with navigation
 const ServiceItem = ({ item, quote }) => {
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
@@ -39,8 +42,6 @@ const ServiceItem = ({ item, quote }) => {
         <Text className="text-white font-poppins-400regular text-base">
           {item?.serviceCategory?.title || "N/A"}
         </Text>
-
-        {/* <Ionicons name="arrow-forward" size={16} color="#fff" /> */}
       </Pressable>
 
       <View
@@ -60,7 +61,7 @@ const ServiceItem = ({ item, quote }) => {
               })
             }
             style={{ width: scale(80), height: verticalScale(80) }}
-            className=" mb-[10%] rounded-full bg-blue-500 items-center justify-center"
+            className="mb-[10%] rounded-full bg-blue-500 items-center justify-center"
           >
             <Image
               source={{
@@ -106,9 +107,11 @@ const ServiceItem = ({ item, quote }) => {
                 })
               }
               style={{ width: scale(120), height: verticalScale(30) }}
-              className={` justify-center items-center  mt-[3%] rounded-md py-[2%] px-[2%] ${serviceColors[item?.serviceType] || "bg-[#0054A5]"} `}
+              className={`justify-center items-center mt-[3%] rounded-md py-[2%] px-[2%] ${
+                serviceColors[item?.serviceType] || "bg-[#0054A5]"
+              }`}
             >
-              <Text className=" font-poppins-500medium text-[10px]  text-white text-sm font-semibold">
+              <Text className="font-poppins-500medium text-[10px] text-white text-sm font-semibold">
                 Details
               </Text>
             </TouchableOpacity>
@@ -125,9 +128,22 @@ const ServiceItem = ({ item, quote }) => {
   );
 };
 
-// Updated Services component with navigation prop
+// Updated Services component with pull-to-refresh
 export default function Services() {
-  const { data, isLoading, error } = useGetAllJobsQuery();
+  const [refreshing, setRefreshing] = useState(false);
+  const { data, isLoading, error, refetch } = useGetAllJobsQuery();
+
+  // Handle pull-to-refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } catch (error) {
+      console.error("Error refreshing services:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   if (isLoading) {
     return <LoadingState />;
@@ -141,17 +157,28 @@ export default function Services() {
   const jobsData = data?.data?.jobs || data?.data || [];
   const quoteData = jobsData.length > 0 ? jobsData : null;
 
-  // Filter jobs that have quotes
+  // Filter jobs that have quotes AND filter out jobs with any accepted quotes
   const filteredQuotes = Array.isArray(quoteData)
-    ? quoteData.filter(
-        (job) => Array.isArray(job.quotes) && job.quotes.length > 0
-      )
+    ? quoteData.filter((job) => {
+        // Check if job has quotes
+        if (!Array.isArray(job.quotes) || job.quotes.length === 0) {
+          return false;
+        }
+
+        // Filter out jobs that have any quote with status "accepted"
+        const hasAcceptedQuote = job.quotes.some(
+          (quote) => quote.status === "accepted"
+        );
+
+        return !hasAcceptedQuote;
+      })
     : [];
 
   // Handle empty state
   if (filteredQuotes.length === 0) {
     return <EmptyState />;
   }
+
   const quoteItems = filteredQuotes.flatMap((job) =>
     job.quotes.map((quote) => ({
       quote,
@@ -169,12 +196,21 @@ export default function Services() {
       <FlatList
         data={quoteItems}
         renderItem={renderServiceItem}
-        keyExtractor={(item, index) => item._id || index.toString()}
+        keyExtractor={(item, index) => item.quote._id || index.toString()}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: scale(16),
           paddingBottom: scale(20),
         }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#175994"]} // Android
+            tintColor="#175994" // iOS
+            progressBackgroundColor="#ffffff" // Android
+          />
+        }
       />
     </View>
   );

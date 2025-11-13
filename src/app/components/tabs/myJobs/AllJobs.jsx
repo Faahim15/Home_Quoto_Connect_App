@@ -5,7 +5,9 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
+import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { router } from "expo-router";
@@ -104,15 +106,27 @@ const ServiceCard = ({ item, showAddress }) => {
 };
 
 export default function AllJobs({ showAddress = true }) {
-  const { data, isLoading, error } = useGetAllJobsQuery();
+  const [refreshing, setRefreshing] = useState(false);
+  const { data, isLoading, error, refetch } = useGetAllJobsQuery();
 
   // Extract jobs data with fallback
   const jobsData = data?.data?.jobs || data?.data || [];
-
   const displayData = jobsData.length > 0 ? jobsData : null;
 
+  // Handle pull-to-refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } catch (error) {
+      console.error("Error refreshing jobs:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
-    <View className=" mt-[2%] justify-center px-[2%] items-start">
+    <View className="mt-[2%] justify-center px-[2%] items-start">
       {isLoading ? (
         <View
           className="w-full items-center justify-center"
@@ -151,6 +165,15 @@ export default function AllJobs({ showAddress = true }) {
             paddingBottom: verticalScale(100),
             rowGap: verticalScale(12),
           }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#175994"]} // Android
+              tintColor="#175994" // iOS
+              progressBackgroundColor="#ffffff" // Android
+            />
+          }
           ListEmptyComponent={
             <View
               style={{

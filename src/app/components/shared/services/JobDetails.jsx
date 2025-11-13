@@ -2,6 +2,7 @@ import { View, Text, Image, FlatList } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import XStyle from "../../../util/styles";
 import { formatDateForCanada } from "../../../util/helper-function";
+import { statusColorMap } from "../../../util/colors";
 function showImages({ item }) {
   return (
     <View>
@@ -18,13 +19,8 @@ function showImages({ item }) {
 }
 export default function ProviderInfo({ item, showPrice = false }) {
   const { city, state } = item?.location?.details || {};
-
+  const statusColor = statusColorMap?.[item?.status] ?? "#6B7280";
   // console.log("sevice", item);
-  // ✅ Fix main image logic
-  const mainImageSource =
-    item?.photos && item?.photos?.length > 0 && item.photos[0].url
-      ? { uri: item.photos[0].url }
-      : null;
 
   // console.log("mainImage", item?.photos);
 
@@ -41,7 +37,7 @@ export default function ProviderInfo({ item, showPrice = false }) {
           <Image
             style={{ width: scale(310), height: verticalScale(177) }}
             className="rounded-md  mb-[2%] "
-            source={{ uri: mainImageSource?.uri }}
+            source={{ uri: item?.serviceCategory?.image?.url || null }}
           />
         </View>
 
@@ -164,6 +160,18 @@ export default function ProviderInfo({ item, showPrice = false }) {
               </Text>
             </View>
           )}
+
+          <View className="flex-row pt-[1%] justify-between">
+            <Text className="font-poppins-400regular text-base text-[#1F2937]">
+              Status
+            </Text>
+            <Text
+              style={{ color: statusColor }}
+              className=" text-base font-poppins-semiBold"
+            >
+              {item?.status || "N/A"}
+            </Text>
+          </View>
         </View>
       </View>
     </View>

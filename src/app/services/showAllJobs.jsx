@@ -1,4 +1,4 @@
-import { View, ScrollView, RefreshControl } from "react-native";
+import { View } from "react-native";
 import { useState } from "react";
 import CustomTitle from "../components/shared/CustomTitle";
 import ViewAllServiceCards from "../components/tabs/home/services/ViewAllServices";
@@ -10,6 +10,7 @@ import {
 
 export default function HomeServiceScreen() {
   const { title } = useLocalSearchParams();
+
   const [refreshing, setRefreshing] = useState(false);
 
   const {
@@ -27,7 +28,7 @@ export default function HomeServiceScreen() {
   } = useGetActiveJobsQuery();
 
   // Determine which data to use based on title
-  const isTodaysJob = title?.toLowerCase() === "today's job";
+  const isTodaysJob = title === "Today's Jobs";
   const serviceData = isTodaysJob
     ? todaysJobs?.data?.jobs
     : activeJobs?.data?.jobs;
