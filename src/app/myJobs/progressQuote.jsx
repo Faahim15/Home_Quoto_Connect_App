@@ -1,6 +1,5 @@
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, Text } from "react-native";
 import { scale } from "../components/adaptive/Adaptiveness";
-import QuoteReqData from "../components/data/jobs/QuotesData";
 import XStyle from "../util/styles";
 import { router, useLocalSearchParams } from "expo-router";
 import CustomTitle from "../components/shared/services/CustomTitle";
@@ -11,22 +10,42 @@ import Feedback from "../components/tabs/myJobs/Feedback";
 import BotttomButtons from "../components/shared/services/buttons/BottomButtons";
 import CancelModal from "../components/shared/modal/CancelModal";
 import OfferDetailsModal from "../components/shared/modal/OfferDetailsModal";
+import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
+
 export default function ProgressQuote() {
-  const { serviceId } = useLocalSearchParams();
+  const { jobId } = useLocalSearchParams();
   const [showPayment, setShowPayment] = useState(false);
   const [modalVisible, setModalVisible] = useState(true);
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
+  const { data, isLoading, error } = useGetSingleJobQuery(jobId);
+  const item = data?.data?.job;
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
+        <Text className="text-gray-500 text-base">Loading job details...</Text>
+      </View>
+    );
+  }
+
+  if (error || !item) {
+    return (
+      <View className="flex-1 justify-center items-center bg-[#F9F9F9] px-[6%]">
+        <CustomTitle title="Service not found" />
+        <Text className="text-gray-500 text-base mt-[2%]">
+          We couldn’t locate the service details. Please check the link or try
+          again later.
+        </Text>
+      </View>
+    );
+  }
+
   const appointmentData = {
     service: "TV repair",
     provider: "Jackson",
     price: "320",
   };
-  const offerData = {
-    previousPrice: 150.0,
-    offerPrice: 120.0,
-    totalPrice: 120.0,
-    discount: 30.0,
-  };
+
   const handleDecline = () => {
     setModalVisible(false);
   };
@@ -36,10 +55,9 @@ export default function ProgressQuote() {
   const handleCancelConfirm = (reason) => {
     console.log("Cancellation reason:", reason);
   };
-  const item = QuoteReqData.find((s) => s.id.toString() === serviceId);
 
   const renderButton =
-    item.status === "Completed" ? (
+    item?.status === "Completed" ? (
       <Feedback onPress={() => router.push("/shared/reviewForm")} item={item} />
     ) : (
       <>
@@ -91,7 +109,7 @@ export default function ProgressQuote() {
         visible={showPayment}
         onClose={() => setShowPayment(false)}
       />
-      {item.sentQuote && (
+      {item?.sentQuote && (
         <OfferDetailsModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}

@@ -14,9 +14,7 @@ export default function ServiceDetails() {
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
-        <Text className="text-gray-500 text-base">
-          Loading service details...
-        </Text>
+        <Text className="text-gray-500 text-base">Loading job details...</Text>
       </View>
     );
   }

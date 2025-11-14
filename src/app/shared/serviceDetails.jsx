@@ -52,12 +52,12 @@ export default function ServiceDetails() {
   }
 
   const service = data?.data?.job;
-  // console.log("show services", service?.quotes);
-  console.log("my filtered quotes", service?.status);
+
+  // console.log("my filtered quotes", service?.status);
   const isAccepted = myQuotes?.some((quote) => quote?.status === "accepted");
   const serviceStatus =
     service?.status === "in_progress" || service?.status === "expired";
-  console.log("isAccepted", isAccepted, shouldShowButtons);
+  // console.log("isAccepted", isAccepted, shouldShowButtons);
   if (error || !service) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9] px-[6%]">

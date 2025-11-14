@@ -31,9 +31,7 @@ export default function QuoteReqDetails({ item, quoteReq }) {
             borderTopLeftRadius: scale(8),
             borderTopRightRadius: scale(8),
           }}
-          className={`px-[3.5%] py-[3%] flex-row items-center justify-between ${
-            serviceColors[item?.serviceType] || "bg-gray-500"
-          }`}
+          className="px-[3.5%] bg-gray-500 py-[3%] flex-row items-center justify-between"
           onPress={handleServicePress}
         >
           <Text className="text-white font-poppins-400regular text-base">
@@ -92,12 +90,6 @@ export default function QuoteReqDetails({ item, quoteReq }) {
                     : "Request a personalized quote"}
                 </Text>
               </View>
-
-              {/* Buttons */}
-              {/* <View className="flex-row mt-[3%] gap-[3%] justify-evenly ">
-              <ContactButton name="call-outline" title="Call" />
-              <ContactButton name="chatbubble-outline" title="Message" />
-            </View> */}
             </View>
           </View>
 
@@ -110,7 +102,7 @@ export default function QuoteReqDetails({ item, quoteReq }) {
               </Text>
               <Text
                 style={{ color: statusColor }}
-                className={`font-poppins-400regular mt-[10%] text-center text-base ${job?.status === "In Progress" ? "text-[#1A73E8]" : item.status === "Completed" ? "text-[#00BFA5]" : "text-[#F59E0B]"} `} //text-[#D32F2F] use if for cancelled
+                className="font-poppins-400regular mt-[10%] text-center text-base" //text-[#D32F2F] use if for cancelled
               >
                 {quote?.status}
               </Text>

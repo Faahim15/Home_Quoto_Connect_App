@@ -20,13 +20,6 @@ const ServiceItem = ({ item, quote }) => {
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     quote?.provider;
 
-  const serviceColors = {
-    "TV repair and Installation": "bg-[#319FCA]",
-    "AC Repair and Maintenance": "bg-[#FF6B6B]",
-    "Plumbing Services": "bg-[#10B981]",
-    "Electrical Repair": "bg-[#8B5CF6]",
-  };
-
   return (
     <View className="mx-[4%] mb-[4%]">
       {/* Service Type Banner - Made clickable */}
@@ -35,9 +28,7 @@ const ServiceItem = ({ item, quote }) => {
           borderTopLeftRadius: scale(8),
           borderTopRightRadius: scale(8),
         }}
-        className={`px-[3.5%] py-[3%] flex-row items-center justify-between ${
-          serviceColors[item?.serviceType] || "bg-gray-500"
-        }`}
+        className="px-[3.5%] py-[3%] flex-row items-center justify-between bg-gray-500"
       >
         <Text className="text-white font-poppins-400regular text-base">
           {item?.serviceCategory?.title || "N/A"}
@@ -107,9 +98,7 @@ const ServiceItem = ({ item, quote }) => {
                 })
               }
               style={{ width: scale(120), height: verticalScale(30) }}
-              className={`justify-center items-center mt-[3%] rounded-md py-[2%] px-[2%] ${
-                serviceColors[item?.serviceType] || "bg-[#0054A5]"
-              }`}
+              className="bg-[#0054A5] justify-center items-center mt-[3%] rounded-md py-[2%] px-[2%]"
             >
               <Text className="font-poppins-500medium text-[10px] text-white text-sm font-semibold">
                 Details
@@ -154,7 +143,7 @@ export default function Services() {
   }
 
   // Extract jobs data with fallback
-  const jobsData = data?.data?.jobs || data?.data || [];
+  const jobsData = data?.data?.jobs || [];
   const quoteData = jobsData.length > 0 ? jobsData : null;
 
   // Filter jobs that have quotes AND filter out jobs with any accepted quotes

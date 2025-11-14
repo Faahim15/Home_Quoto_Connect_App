@@ -1,4 +1,4 @@
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import QuoteProgress from "../QuoteProgress";
 
 export default function QuoteProgressScreen() {
