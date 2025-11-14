@@ -28,6 +28,7 @@ export const quoteSlice = api.injectEndpoints({
         "Job",
         "Provider",
         "PopularProviders",
+        "user",
       ],
     }),
 

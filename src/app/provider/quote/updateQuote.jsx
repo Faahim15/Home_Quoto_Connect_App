@@ -105,11 +105,8 @@ export default function UpdateQuoteScreen() {
         },
       };
 
-      // console.log("Submitting quote payload:", payload);
-
       // Step 3: Call API
       const res = await submitQuote(payload).unwrap();
-      console.log("submit quote data:", res);
 
       // Step 4: Handle success
       if (res?.success) {

@@ -87,7 +87,7 @@ const AvatarImagePicker = () => {
             <View className="w-full h-full items-center justify-center bg-gray-200">
               <Image
                 source={{
-                  uri: "https://images.unsplash.com/photo-1593104547489-5cfb3839a3b5?w=300&h=300&fit=crop&crop=faces",
+                  uri: "https://avatar.iran.liara.run/public/boy",
                 }}
                 className="w-full h-full"
                 resizeMode="cover"

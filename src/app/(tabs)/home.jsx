@@ -118,7 +118,7 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 bg-[#F9FAFB]">
-      <HomeTopBar userData={userData} />
+      <HomeTopBar mode="user" userData={userData} />
 
       <ScrollView
         showsVerticalScrollIndicator={false}

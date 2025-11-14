@@ -1,22 +1,33 @@
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, Pressable } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
-export default function HomeTopBar({ userData }) {
+import { router } from "expo-router";
+export default function HomeTopBar({ userData, mode }) {
   const { fullName, location } = userData;
+
+  const handleEditProfile = () => {
+    if (mode === "user") {
+      router.push("/profile/editProfile");
+    } else {
+      router.push("/profile/editProfile");
+    }
+  };
 
   return (
     <View className="flex-row   pb-[1%] mx-[6.4%] mt-[2%] gap-[2%]">
       <View>
-        <Image
-          style={{
-            width: scale(32),
-            height: verticalScale(32),
-            borderRadius: scale(16),
-          }}
-          source={{
-            uri: "https://images.unsplash.com/photo-1593104547489-5cfb3839a3b5?w=300&h=300&fit=crop&crop=faces",
-          }}
-        />
+        <Pressable onPress={handleEditProfile}>
+          <Image
+            style={{
+              width: scale(32),
+              height: verticalScale(32),
+              borderRadius: scale(16),
+            }}
+            source={{
+              uri: "https://avatar.iran.liara.run/public/boy",
+            }}
+          />
+        </Pressable>
       </View>
       <View className="flex-row w-[90%] justify-between ">
         <View>
