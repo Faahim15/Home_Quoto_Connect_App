@@ -10,16 +10,10 @@ export default function QuoteReqDetails({ item, quoteReq }) {
   const { fullName, averageRating, profilePhoto, totalReviews } =
     quote?.provider;
 
-  const serviceColors = {
-    "TV repair and Installation": "bg-[#319FCA]",
-    "AC Repair and Maintenance": "bg-[#FF6B6B]",
-    "Plumbing Services": "bg-[#10B981]",
-    "Electrical Repair": "bg-[#8B5CF6]",
-  };
   const handleServicePress = () => {
     router.push({
       pathname: "/myJobs/jobDetails",
-      params: { serviceId: item.id, showButtons: true },
+      params: { serviceId: job._id, showButtons: true },
     });
   };
   return (
@@ -145,13 +139,13 @@ export default function QuoteReqDetails({ item, quoteReq }) {
                 {quote?.warranty?.details || "N/A"}
               </Text>
 
-              {/* Guarantee */}
+              {/* Guarantee
               <Text className="font-poppins-500medium text-[#1F2937] text-xs pt-[2%]">
                 Guarantee:
               </Text>
               <Text className="font-poppins-400regular text-[#1F2937] text-xs">
                 {quote?.guarantee?.details || "N/A"}
-              </Text>
+              </Text> */}
             </View>
           </View>
         </View>
