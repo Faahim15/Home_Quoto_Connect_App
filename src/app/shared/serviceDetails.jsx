@@ -1,45 +1,26 @@
 import { ScrollView, View, Text } from "react-native";
-import { useState, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLocalSearchParams, router } from "expo-router";
+import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import ProviderInfo from "../components/shared/services/JobDetails";
-import XStyle from "../util/styles";
-import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
-import BotttomButtons from "../components/shared/services/buttons/BottomButtons";
-import CustomButton from "../components/shared/services/buttons/ServiceButton";
-import { router, useLocalSearchParams } from "expo-router";
-import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
+import UpdateQuoteButton from "../components/shared/services/buttons/UpdateQuoteButton";
+import { verticalScale } from "../components/adaptive/Adaptiveness";
+import { useMyQuotes } from "../../hooks/useMyQuotes";
 
 export default function ServiceDetails() {
   const { serviceId, showButtons, showPrice } = useLocalSearchParams();
-  const [myQuotes, setMyQuotes] = useState([]);
-
   const { data, isLoading, error } = useGetSingleJobQuery(serviceId);
+  const service = data?.data?.job;
+  const myQuotes = useMyQuotes(service?.quotes);
+
+  console.log("show qutoes", myQuotes);
 
   const shouldShowButtons = showButtons === "true";
   const shouldShowPrice = showPrice === "true";
-
-  // Filter quotes based on userId from AsyncStorage
-  useEffect(() => {
-    const filterMyQuotes = async () => {
-      try {
-        const userId = await AsyncStorage.getItem("userId");
-
-        if (userId && data?.data?.job?.quotes) {
-          const filtered = data.data.job.quotes.filter(
-            (quote) => quote.provider._id === userId
-          );
-          setMyQuotes(filtered);
-        }
-      } catch (error) {
-        console.error("Error filtering quotes:", error);
-      }
-    };
-
-    if (data) {
-      filterMyQuotes();
-    }
-  }, [data]);
+  const isAccepted = myQuotes?.some((q) => q.status === "accepted");
+  const isServiceInactive = ["in_progress", "expired"].includes(
+    service?.status
+  );
 
   if (isLoading) {
     return (
@@ -51,13 +32,6 @@ export default function ServiceDetails() {
     );
   }
 
-  const service = data?.data?.job;
-
-  // console.log("my filtered quotes", service?.status);
-  const isAccepted = myQuotes?.some((quote) => quote?.status === "accepted");
-  const serviceStatus =
-    service?.status === "in_progress" || service?.status === "expired";
-  // console.log("isAccepted", isAccepted, shouldShowButtons);
   if (error || !service) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9] px-[6%]">
@@ -70,25 +44,10 @@ export default function ServiceDetails() {
     );
   }
 
-  const renderButton = service?.priceRange?.isPersonalized ? (
-    <BotttomButtons
-      onPress={() => router.push("/provider/quote/updateQuote")}
-      backgroundColor="#fff"
-      color="#175994"
-      borderColor="#175994"
-      title="Send an updated offer"
-      width="full"
-    />
-  ) : (
-    <BotttomButtons
-      onPress={() => router.push("/provider/home")}
-      backgroundColor="#fff"
-      color="#175994"
-      borderColor="#175994"
-      title="Accept"
-      width={148}
-    />
-  );
+  const shouldRenderUpdateButton =
+    shouldShowButtons &&
+    (!isAccepted || service?.status === "in_progress") &&
+    !isServiceInactive;
 
   return (
     <View className="flex-1 bg-[#F9F9F9]">
@@ -104,41 +63,14 @@ export default function ServiceDetails() {
         </ScrollView>
       </View>
 
-      {shouldShowButtons && !isAccepted && !serviceStatus && (
-        <View
-          className="flex-col gap-[1%] border border-[#D8DCE0]"
-          style={[
-            XStyle.shadowBox,
-            {
-              borderTopRightRadius: scale(20),
-              borderTopLeftRadius: scale(20),
-            },
-          ]}
-        >
-          <View className="flex-row gap-[6%] justify-center overflow-hidden items-center">
-            {/* <BotttomButtons
-              onPress={() => router.replace("/provider/home")}
-              backgroundColor="#fff"
-              color="#EF4444"
-              borderColor="#EF4444"
-              title="Cancel"
-              width={service?.priceRange?.isPersonalized ? "full" : 148}
-            /> */}
-            {/* {renderButton} */}
-          </View>
-
-          <View className="px-[3%]">
-            <CustomButton
-              onPress={() =>
-                router.push({
-                  pathname: "/provider/quote/updateQuote",
-                  params: { jobId: serviceId },
-                })
-              }
-              title="Send an offer"
-            />
-          </View>
-        </View>
+      {shouldRenderUpdateButton && (
+        <UpdateQuoteButton
+          title={
+            service?.status === "in_progress"
+              ? "Send an updated offer"
+              : "Send an offer"
+          }
+        />
       )}
     </View>
   );

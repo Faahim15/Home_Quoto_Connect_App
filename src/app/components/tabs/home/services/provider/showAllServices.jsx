@@ -4,6 +4,7 @@ import { scale, verticalScale } from "../../../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 const ServiceCard = ({ item }) => {
   const { fullName } = item?.client;
+
   const { city, state } = item?.location?.details;
 
   return (
@@ -11,7 +12,7 @@ const ServiceCard = ({ item }) => {
       onPress={() => {
         router.push({
           pathname: "/shared/serviceDetails",
-          params: { serviceId: item._id, showButtons: true, showPrice: true },
+          params: { serviceId: item?._id, showButtons: true, showPrice: true },
         });
       }}
       style={{ width: scale(330), height: verticalScale(288) }}
