@@ -8,7 +8,7 @@ export const homeApiSlices = api.injectEndpoints({
         url: `/profile/me`,
         method: "GET",
       }),
-      providesTags: ["user"],
+      providesTags: ["User"],
     }),
   }),
 });

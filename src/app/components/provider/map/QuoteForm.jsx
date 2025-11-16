@@ -11,13 +11,13 @@ export default function QuoteForm({
   quoteDetailsChange,
   onWarrantyChange,
   onPriceChange,
+  onUpdateReasonChange,
   job,
   price,
   errors,
   formData,
+  quoteValue,
 }) {
-  console.log(formData, "show");
-
   return (
     <View className="mx-[4%] mb-[4%]">
       {/* Service Type Banner - Made clickable */}
@@ -71,27 +71,29 @@ export default function QuoteForm({
             <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
               Appointment
             </Text>
-            <Text className="font-poppins-400regular text-[#1F2937] text-xs pt-[2%] ">
-              This service provider is available on{" "}
-              {formatDateWithOrdinal(job?.preferredDate)} {job?.preferredTime}.
+            <Text className="font-poppins-400regular text-[#1F2937] text-xs pt-[2%]">
+              Available on {formatDateWithOrdinal(job?.preferredDate)} at{" "}
+              {job?.preferredTime}.
             </Text>
           </View>
           <RadioButton
-            isAvailable={formData.appointment}
+            isAvailable={formData.appointment || quoteValue?.isAvailable}
             radioButtonChange={radioButtonChange}
           />
           <Error error={errors.appointment} />
+
           {/* Quote Details */}
           <View className="mt-[3%]">
             <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
               Write Quote Details
             </Text>
             <MapTextField
-              value={formData.quoteDetails}
+              value={formData.quoteDetails || quoteValue?.quoteDetails}
               quoteDetailsChange={quoteDetailsChange}
             />
             <Error error={errors.quoteDetails} />
           </View>
+
           {/* Warranty & Guarantee */}
           <View className="mt-[3%]">
             <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
@@ -99,11 +101,25 @@ export default function QuoteForm({
             </Text>
 
             <MapTextField
-              value={formData.warrantyDetails}
+              value={formData.warrantyDetails || quoteValue?.warranty}
               quoteDetailsChange={onWarrantyChange}
             />
             <Error error={errors.warrantyDetails} />
           </View>
+
+          {/* Update reasons */}
+          {onUpdateReasonChange && (
+            <View className="mt-[3%]">
+              <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
+                Describe Update Reason
+              </Text>
+              <MapTextField
+                value={formData.updateReason}
+                quoteDetailsChange={onUpdateReasonChange}
+              />
+              <Error error={errors.updateReason} />
+            </View>
+          )}
           {/* Upload detailed Quote*/}
           {/* <View className="mt-[3%]">
             <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
@@ -120,7 +136,10 @@ export default function QuoteForm({
             <Text className="font-poppins-400regular pt-[4%] text-base text-[#1F2937]">
               Offer your price
             </Text>
-            <OfferPrice value={price} onChange={onPriceChange} />
+            <OfferPrice
+              value={price || quoteValue?.price}
+              onChange={onPriceChange}
+            />
           </View>
           <Error error={errors?.price || " "} />
         </View>

@@ -11,14 +11,16 @@ import BotttomButtons from "../components/shared/services/buttons/BottomButtons"
 import CancelModal from "../components/shared/modal/CancelModal";
 import OfferDetailsModal from "../components/shared/modal/OfferDetailsModal";
 import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
+import { useQuoteById } from "../../hooks/useQuoteById";
 
 export default function ProgressQuote() {
-  const { jobId } = useLocalSearchParams();
+  const { jobId, quoteId } = useLocalSearchParams();
   const [showPayment, setShowPayment] = useState(false);
   const [modalVisible, setModalVisible] = useState(true);
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const { data, isLoading, error } = useGetSingleJobQuery(jobId);
   const item = data?.data?.job;
+  const quote = useQuoteById(item?.quotes, quoteId);
 
   if (isLoading) {
     return (
@@ -84,7 +86,7 @@ export default function ProgressQuote() {
         <CustomTitle title="Quote Details" />
       </View>
       <ScrollView>
-        <QuoteProgressDetails showStatus={true} item={item} />
+        <QuoteProgressDetails showStatus={true} job={item} quote={quote} />
       </ScrollView>
       <View
         className="flex-row w-full gap-[6%] h-[10%]  border border-[#D8DCE0] justify-center items-center "

@@ -13,7 +13,7 @@ export const jobSlice = api.injectEndpoints({
           body: formData,
         };
       },
-      invalidatesTags: ["Jobs", "TodaysJobs", "MyJobs", "ActiveJobs"],
+      invalidatesTags: ["Jobs", "TodaysJobs", "MyJobs", "ActiveJobs", "User"],
     }),
 
     getAllJobs: builder.query({

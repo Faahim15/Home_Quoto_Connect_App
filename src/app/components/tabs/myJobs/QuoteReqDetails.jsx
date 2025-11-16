@@ -79,9 +79,7 @@ export default function QuoteReqDetails({ item, quoteReq }) {
                   Price
                 </Text>
                 <Text className="text-[#F59E0B] text-base font-poppins-semiBold">
-                  {quote?.price
-                    ? `$${quote.price}`
-                    : "Request a personalized quote"}
+                  {`$${quote.price}`}
                 </Text>
               </View>
             </View>
@@ -133,19 +131,11 @@ export default function QuoteReqDetails({ item, quoteReq }) {
 
               {/* Warranty */}
               <Text className="font-poppins-500medium text-[#1F2937] text-xs pt-[2%]">
-                Warranty:
+                Warranty & Guarantee
               </Text>
               <Text className="font-poppins-400regular text-[#1F2937] text-xs pb-[2%]">
                 {quote?.warranty?.details || "N/A"}
               </Text>
-
-              {/* Guarantee
-              <Text className="font-poppins-500medium text-[#1F2937] text-xs pt-[2%]">
-                Guarantee:
-              </Text>
-              <Text className="font-poppins-400regular text-[#1F2937] text-xs">
-                {quote?.guarantee?.details || "N/A"}
-              </Text> */}
             </View>
           </View>
         </View>

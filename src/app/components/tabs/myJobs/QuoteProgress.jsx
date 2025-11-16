@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   Pressable,
+  RefreshControl,
 } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
@@ -18,11 +19,14 @@ import { statusColorMap } from "../../../util/colors";
 // Updated ServiceItem component with navigation
 const ServiceItem = ({ item }) => {
   const acceptedQuote = item?.quotes?.find(
-    (quote) => quote.status === "accepted"
+    (quote) => quote.status === "accepted" || quote.status === "updated"
   );
-  const statusColor = statusColorMap?.[acceptedQuote?.status] ?? "#6B7280";
+
+  console.log("quote progress screen", acceptedQuote?._id);
+
+  const statusColor = statusColorMap?.[item?.status] ?? "#6B7280";
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
-    acceptedQuote?.provider;
+    acceptedQuote?.provider || {};
 
   const handleServicePress = () => {};
 
@@ -93,9 +97,7 @@ const ServiceItem = ({ item }) => {
                 Price
               </Text>
               <Text className="text-[#F59E0B] text-base font-poppins-semiBold">
-                {acceptedQuote?.price
-                  ? `$${acceptedQuote.price}`
-                  : "Request a personalized quote"}
+                {`$${acceptedQuote?.price}`}
               </Text>
             </View>
             <View className="flex-row justify-end mt-[3%]">
@@ -106,19 +108,17 @@ const ServiceItem = ({ item }) => {
                 {item?.status}
               </Text>
             </View>
-            {item?.sentQuote && (
+            {acceptedQuote?.isUpdated && (
               <View className="flex-row gap-[2%] justify-end mt-[3%]">
                 <Ionicons name="warning" size={18} color="#FBBF24" />
 
-                <Text
-                  className={`font-poppins-400regular text-sm ${item.status === "In Progress" ? "text-[#1A73E8]" : item.status === "Completed" ? "text-[#00BFA5]" : "text-[#D32F2F]"} `}
-                >
+                <Text className="font-poppins-400regular text-sm  text-[#1A73E8] ">
                   sent an updated quote
                 </Text>
               </View>
             )}
             <View className="flex-row gap-[4%] ">
-              {item.status === "Completed" && (
+              {/* {item.status === "Completed" && (
                 <TouchableOpacity
                   onPress={() => router.push("/shared/reviewForm")} //navigation.navigate("ReviewFormScreen")
                   style={{ maxWidth: scale(120), height: verticalScale(30) }}
@@ -128,12 +128,12 @@ const ServiceItem = ({ item }) => {
                     Give Feedback
                   </Text>
                 </TouchableOpacity>
-              )}
+              )} */}
               <TouchableOpacity
                 onPress={() => {
                   router.push({
                     pathname: "/myJobs/progressQuote",
-                    params: { jobId: item._id },
+                    params: { jobId: item._id, quoteId: acceptedQuote?._id },
                   });
                 }}
                 style={{ width: scale(120), height: verticalScale(30) }}
@@ -143,6 +143,11 @@ const ServiceItem = ({ item }) => {
                   Details
                 </Text>
               </TouchableOpacity>
+              <View className="flex-1 flex-row pt-1 justify-end">
+                <Text className="text-gray-500 text-sm">
+                  {acceptedQuote?.timeAgo || "N/A"}
+                </Text>
+              </View>
             </View>
           </View>
         </View>
@@ -205,6 +210,15 @@ export default function QuoteProgress() {
           paddingTop: scale(16),
           paddingBottom: scale(20),
         }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#175994"]} // Android
+            tintColor="#175994" // iOS
+            progressBackgroundColor="#ffffff" // Android
+          />
+        }
       />
     </View>
   );

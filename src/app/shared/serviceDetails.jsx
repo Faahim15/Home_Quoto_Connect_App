@@ -1,28 +1,52 @@
-import { ScrollView, View, Text } from "react-native";
-import { useLocalSearchParams, router } from "expo-router";
+import { ScrollView, View, Text, RefreshControl } from "react-native";
+import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import ProviderInfo from "../components/shared/services/JobDetails";
 import UpdateQuoteButton from "../components/shared/services/buttons/UpdateQuoteButton";
 import { verticalScale } from "../components/adaptive/Adaptiveness";
 import { useMyQuotes } from "../../hooks/useMyQuotes";
+import { useState, useCallback } from "react";
 
 export default function ServiceDetails() {
   const { serviceId, showButtons, showPrice } = useLocalSearchParams();
-  const { data, isLoading, error } = useGetSingleJobQuery(serviceId);
+  const { data, isLoading, error, refetch } = useGetSingleJobQuery(serviceId);
   const service = data?.data?.job;
   const myQuotes = useMyQuotes(service?.quotes);
-
-  console.log("show qutoes", myQuotes);
+  const [refreshing, setRefreshing] = useState(false);
 
   const shouldShowButtons = showButtons === "true";
   const shouldShowPrice = showPrice === "true";
-  const isAccepted = myQuotes?.some((q) => q.status === "accepted");
-  const isServiceInactive = ["in_progress", "expired"].includes(
-    service?.status
+  const isAccepted = myQuotes?.some(
+    (q) => q.status === "accepted" || q.status === "updated"
+  );
+  const acceptedQuote = myQuotes.find(
+    (q) => q.status === "accepted" || q.status === "updated"
   );
 
-  if (isLoading) {
+  const quoteId = acceptedQuote?._id;
+
+  // console.log("from service details:", quoteId);
+
+  // Auto-refetch when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } catch (error) {
+      console.error("Error refreshing:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  if (isLoading && !refreshing) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
         <Text className="text-gray-500 text-base">
@@ -44,10 +68,9 @@ export default function ServiceDetails() {
     );
   }
 
+  const updatedOffer = isAccepted && service?.status === "in_progress";
   const shouldRenderUpdateButton =
-    shouldShowButtons &&
-    (!isAccepted || service?.status === "in_progress") &&
-    !isServiceInactive;
+    (shouldShowButtons && updatedOffer) || service?.status === "pending";
 
   return (
     <View className="flex-1 bg-[#F9F9F9]">
@@ -58,18 +81,25 @@ export default function ServiceDetails() {
         <ScrollView
           contentContainerStyle={{ paddingBottom: verticalScale(40) }}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#007AFF"]} // Android
+              tintColor="#007AFF" // iOS
+              progressBackgroundColor="#FFFFFF" // Android
+            />
+          }
         >
           <ProviderInfo showPrice={shouldShowPrice} item={service} />
         </ScrollView>
       </View>
 
-      {shouldRenderUpdateButton && (
+      {shouldRenderUpdateButton && service?.status !== "expired" && (
         <UpdateQuoteButton
-          title={
-            service?.status === "in_progress"
-              ? "Send an updated offer"
-              : "Send an offer"
-          }
+          serviceId={service?._id}
+          quoteId={quoteId}
+          title={updatedOffer ? "Send an updated offer" : "Send an offer"}
         />
       )}
     </View>

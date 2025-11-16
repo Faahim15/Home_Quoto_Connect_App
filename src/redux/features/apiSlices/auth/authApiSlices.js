@@ -15,7 +15,7 @@ export const authSlice = api.injectEndpoints({
           body: formData,
         };
       },
-      invalidatesTags: ["user"],
+      invalidatesTags: ["User"],
     }),
     verifyOtp: builder.mutation({
       query: (data) => ({
@@ -23,6 +23,7 @@ export const authSlice = api.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["User"],
     }),
     loginUser: builder.mutation({
       query: (data) => {
@@ -33,6 +34,7 @@ export const authSlice = api.injectEndpoints({
           body: data,
         };
       },
+      invalidatesTags: ["User"],
     }),
     logoutUser: builder.mutation({
       query: (data) => {
@@ -43,7 +45,7 @@ export const authSlice = api.injectEndpoints({
           body: data,
         };
       },
-      invalidatesTags: ["user"],
+      invalidatesTags: ["User"],
     }),
     forgotPassword: builder.mutation({
       query: (data) => ({
@@ -51,7 +53,7 @@ export const authSlice = api.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["user"],
+      invalidatesTags: ["User"],
     }),
     resendOtp: builder.mutation({
       query: (data) => ({
@@ -59,7 +61,7 @@ export const authSlice = api.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["user"],
+      invalidatesTags: ["User"],
     }),
     resetPassword: builder.mutation({
       query: (data) => ({
@@ -67,7 +69,7 @@ export const authSlice = api.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["user"],
+      invalidatesTags: ["User"],
     }),
   }),
   overrideExisting: true,

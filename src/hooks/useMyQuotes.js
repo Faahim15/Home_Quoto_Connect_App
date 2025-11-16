@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const useMyQuotes = (quotes) => {
   const [myQuotes, setMyQuotes] = useState([]);
   const [userId, setUserId] = useState(null);
-  console.log("show", quotes);
+
   useEffect(() => {
     const fetchUserId = async () => {
       const id = await AsyncStorage.getItem("userId");

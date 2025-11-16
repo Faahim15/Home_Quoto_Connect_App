@@ -4,14 +4,16 @@ const serviceColors = {
   "Plumbing Services": "bg-[#10B981]",
   "Electrical Repair": "bg-[#8B5CF6]",
 };
+
+//${item?.status === "In Progress" ? "text-[#1A73E8]" : item.status === "Completed" ? "text-[#00BFA5]" : "text-[#D32F2F]"}
 export const statusColorMap = {
   pending: "#FBBF24",
   accepted: "#10B981",
   declined: "#EF4444",
   updated: "#3B82F6",
-  cancelled: "#9CA3AF",
+  cancelled: "#D32F2F",
   expired: "#6B7280",
-  in_progress: "#6366F1", // Indigo tone for active work
+  in_progress: "#1A73E8", // Indigo tone for active work
 };
 
 export default serviceColors;

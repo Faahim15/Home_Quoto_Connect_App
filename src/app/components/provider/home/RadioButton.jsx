@@ -4,7 +4,9 @@ import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Text } from "react-native";
 
 const RadioButton = ({ radioButtonChange, isAvailable }) => {
-  const [selected, setSelected] = useState(null);
+  const initialValue = isAvailable === null ? null : isAvailable ? "yes" : "no";
+
+  const [selected, setSelected] = useState(initialValue);
 
   const handleSelect = (value) => {
     setSelected(value);

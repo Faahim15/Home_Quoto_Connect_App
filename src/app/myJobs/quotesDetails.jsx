@@ -1,6 +1,5 @@
 import { View, ScrollView } from "react-native";
 import { scale } from "../components/adaptive/Adaptiveness";
-import QuoteReqData from "../components/data/jobs/QuotesData";
 import XStyle from "../util/styles";
 import BotttomButtons from "../components/shared/services/buttons/BottomButtons";
 import { router, useLocalSearchParams } from "expo-router";

@@ -10,7 +10,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 import UpdatedOffer from "./UpdatedOffer";
-export default function QuoteProgressDetails({ item }) {
+import { statusColorMap } from "../../../util/colors";
+export default function QuoteProgressDetails({ quote, job }) {
+  // console.log("show", item);
+  const statusColor = statusColorMap?.[quote?.status] ?? "#6B7280";
+  const { fullName, averageRating, profilePhoto, totalReviews } =
+    quote?.provider;
   const serviceColors = {
     "TV repair and Installation": "bg-[#319FCA]",
     "AC Repair and Maintenance": "bg-[#FF6B6B]",
@@ -20,7 +25,7 @@ export default function QuoteProgressDetails({ item }) {
   const handleServicePress = () => {
     router.push({
       pathname: "/myJobs/jobDetails",
-      params: { serviceId: item.id, showButtons: false },
+      params: { serviceId: job._id, showButtons: false },
     });
   };
   return (
@@ -32,13 +37,11 @@ export default function QuoteProgressDetails({ item }) {
             borderTopLeftRadius: scale(8),
             borderTopRightRadius: scale(8),
           }}
-          className={`px-[3.5%] py-[3%] flex-row items-center justify-between ${
-            serviceColors[item?.serviceType] || "bg-gray-500"
-          }`}
+          className="px-[3.5%] py-[3%] flex-row items-center justify-between bg-gray-500"
           onPress={handleServicePress}
         >
           <Text className="text-white font-poppins-400regular text-base">
-            {item.serviceType}
+            {job?.serviceCategory?.title || "N/A"}
           </Text>
 
           <Ionicons name="arrow-forward" size={16} color="#fff" />
@@ -54,18 +57,12 @@ export default function QuoteProgressDetails({ item }) {
           <View className="flex-row items-center gap-[4%]">
             {/* Profile Image */}
             <TouchableOpacity
-              onPress={
-                () => {}
-                //   navigation.navigate("SelectedProviderDetailsScreen", {
-                //     showButtons: false,
-                //     provider: item,
-                //   })
-              }
+              onPress={() => {}}
               className="w-16 h-16 mb-[4%] rounded-full bg-blue-500 items-center justify-center"
             >
               <Image
                 source={{
-                  uri: item.profileImage,
+                  uri: profilePhoto?.url || null,
                 }}
                 className="w-full h-full rounded-full"
                 resizeMode="cover"
@@ -75,28 +72,26 @@ export default function QuoteProgressDetails({ item }) {
             {/* Provider Details */}
             <View className="flex-1">
               <Text className="font-poppins-500medium text-xl text-gray-800 mb-1">
-                {item.providerName}
+                {fullName || "N/A"}
               </Text>
 
               {/* Rating */}
               <View className="flex-row items-center mb-[2%]">
                 <Text className="text-[#F59E0B] font-poppins-400regular text-xs mr-1">
-                  ★ {item.rating}
+                  ★ {Number(averageRating) / 10 || "N/A"}
                 </Text>
                 <Text className="font-poppins-400regular text-[#18649F] text-xs">
-                  ({item.reviews} Reviews)
+                  ({totalReviews > 1 ? "Reviews" : "Review" || "N/A"})
                 </Text>
               </View>
 
               {/* Price and Time */}
               <View className="flex-row justify-between">
                 <Text className="font-poppins-400regular text-base text-[#1F2937]">
-                  {item.quoteOption === "Accept" && "Price"}
+                  {/* {item.quoteOption === "Accept" && "Price"} */}
                 </Text>
                 <Text className="text-[#F59E0B] text-base font-poppins-semiBold">
-                  {item.quoteOption === "Accept"
-                    ? item.price
-                    : "Request a personalized quote"}
+                  {`$${quote.price}`}
                 </Text>
               </View>
             </View>
@@ -107,13 +102,14 @@ export default function QuoteProgressDetails({ item }) {
 
             <View className=" mt-[5%]">
               <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
-                Job Status
+                Quote Status
               </Text>
 
               <Text
-                className={`font-poppins-400regular mt-[10%] text-center text-base ${item.status === "In Progress" ? "text-[#1A73E8]" : item.status === "Completed" ? "text-[#00BFA5]" : "text-[#D32F2F]"} `}
+                style={{ color: statusColor }}
+                className="font-poppins-400regular mt-[10%] text-center text-base "
               >
-                {item.status}
+                {job?.status}
               </Text>
             </View>
 
@@ -126,7 +122,8 @@ export default function QuoteProgressDetails({ item }) {
               </Text>
 
               <Text className="font-poppins-400regular text-[#1F2937] text-xs pt-[2%] ">
-                This service provider is available on {item.bookingHours}
+                This service provider is available on{" "}
+                {quote?.proposedTime || "N/A"}
               </Text>
             </View>
             {/* Quote Details */}
@@ -136,7 +133,7 @@ export default function QuoteProgressDetails({ item }) {
               </Text>
 
               <Text className="font-poppins-400regular text-[#1F2937] text-xs pt-[2%] ">
-                {item.description}
+                {quote?.description}
               </Text>
             </View>
             {/* Warranty & Guarantee */}
@@ -146,7 +143,7 @@ export default function QuoteProgressDetails({ item }) {
               </Text>
 
               <Text className="font-poppins-400regular text-[#1F2937] text-xs pt-[2%] ">
-                All electrical work is backed by a 1-year workmanship guarantee.
+                {quote?.warranty?.details || "N/A"}
               </Text>
             </View>
           </View>

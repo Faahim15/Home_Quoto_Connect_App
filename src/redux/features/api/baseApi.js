@@ -55,7 +55,7 @@ export const api = createApi({
   baseQuery: baseQueryWithRath,
   endpoints: () => ({}),
   tagTypes: [
-    "user",
+    "User",
     "PopularProviders",
     "Provider",
     "chat",
@@ -63,6 +63,7 @@ export const api = createApi({
     "Job",
     "TodaysJobs",
     "MyJobs",
+    "Quotes",
     "DeclineJob",
     "ActiveJobs",
     "Categories",

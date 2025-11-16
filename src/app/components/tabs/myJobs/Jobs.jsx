@@ -20,6 +20,8 @@ const ServiceItem = ({ item, quote }) => {
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     quote?.provider;
 
+  console.log("proiver", _id);
+
   return (
     <View className="mx-[4%] mb-[4%]">
       {/* Service Type Banner - Made clickable */}
@@ -105,7 +107,7 @@ const ServiceItem = ({ item, quote }) => {
               </Text>
             </TouchableOpacity>
 
-            <View className="flex-row justify-end w-full">
+            <View className="flex-row justify-end  w-full">
               <Text className="text-gray-500 text-sm">
                 {quote?.timeAgo || "N/A"}
               </Text>
@@ -144,7 +146,11 @@ export default function Services() {
 
   // Extract jobs data with fallback
   const jobsData = data?.data?.jobs || [];
-  const quoteData = jobsData.length > 0 ? jobsData : null;
+
+  const quoteData =
+    jobsData.length > 0
+      ? jobsData.filter((item) => item?.status !== "in_progress")
+      : null;
 
   // Filter jobs that have quotes AND filter out jobs with any accepted quotes
   const filteredQuotes = Array.isArray(quoteData)
@@ -156,10 +162,10 @@ export default function Services() {
 
         // Filter out jobs that have any quote with status "accepted"
         const hasAcceptedQuote = job.quotes.some(
-          (quote) => quote.status === "accepted"
+          (quote) => quote.status === "pending"
         );
 
-        return !hasAcceptedQuote;
+        return hasAcceptedQuote;
       })
     : [];
 

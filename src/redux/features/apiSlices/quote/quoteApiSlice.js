@@ -7,7 +7,7 @@ export const quoteSlice = api.injectEndpoints({
         url: `/quotes/${id}/accept`,
         method: "PUT",
       }),
-      invalidatesTags: ["MyJobs"],
+      invalidatesTags: ["MyJobs", "TodaysJobs", "ActiveJobs", "Provider"],
     }),
 
     submitQuote: builder.mutation({
@@ -28,8 +28,34 @@ export const quoteSlice = api.injectEndpoints({
         "Job",
         "Provider",
         "PopularProviders",
-        "user",
+        "User",
+        "Quotes",
       ],
+    }),
+
+    updateQuote: builder.mutation({
+      query: ({ id, ...body }) => ({
+        url: `/quotes/${id}`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: [
+        "MyJobs",
+        "TodaysJobs",
+        "ActiveJobs",
+        "Job",
+        "Provider",
+        "PopularProviders",
+        "Quotes",
+      ],
+    }),
+
+    getAllQuotes: builder.query({
+      query: () => ({
+        url: `/quotes/my-quotes`,
+        method: "GET",
+      }),
+      providesTags: ["Quotes"],
     }),
 
     cancelQuote: builder.mutation({
@@ -37,7 +63,7 @@ export const quoteSlice = api.injectEndpoints({
         url: `/quotes/${id}/decline`,
         method: "PUT",
       }),
-      invalidatesTags: ["DeclineJob"],
+      invalidatesTags: ["DeclineJob", "Quotes"],
     }),
   }),
   overrideExisting: true,
@@ -47,5 +73,7 @@ export const quoteSlice = api.injectEndpoints({
 export const {
   useAcceptQuoteMutation,
   useSubmitQuoteMutation,
+  useUpdateQuoteMutation,
+  useGetAllQuotesQuery,
   useCancelQuoteMutation,
 } = quoteSlice;
