@@ -15,7 +15,7 @@ export default function OfferPrice({
       <TextInput
         style={{ paddingVertical: verticalScale(verticalPadding) }}
         keyboardType="numeric"
-        value={value}
+        value={value !== undefined ? String(value) : "0"}
         editable={!isPersonalized}
         onChangeText={(text) => onChange(Number(text) || 0)}
         placeholderTextColor="#898989"

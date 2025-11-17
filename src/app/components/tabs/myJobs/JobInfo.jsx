@@ -1,7 +1,10 @@
 import { View, Text, Image, FlatList } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import XStyle from "../../../util/styles";
-import { formatDateForCanada } from "../../../util/helper-function";
+import {
+  formatDateForCanada,
+  getStatusLabel,
+} from "../../../util/helper-function";
 import { statusColorMap } from "../../../util/colors";
 function showImages({ item }) {
   return (
@@ -137,7 +140,7 @@ export default function JobInfo({ item }) {
             style={{ color: statusColor }}
             className=" text-base font-poppins-semiBold"
           >
-            {item?.status || "N/A"}
+            {getStatusLabel(item?.status || "N/A")}
           </Text>
         </View>
       </View>

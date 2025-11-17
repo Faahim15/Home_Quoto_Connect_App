@@ -72,8 +72,14 @@ export default function UpdatedOffer({ onApprove, onDecline }) {
   };
 
   return (
-    <View className=" justify-center items-center">
-      <View className=" flex-row gap-[4%]">
+    <View className="mt-[4%] justify-center items-center">
+      <View>
+        <Text className="font-poppins-400regular text-xs text-[#F59E0B] ">
+          Sent an updated quote!
+        </Text>
+      </View>
+
+      <View className="mt-[4%] flex-row gap-[4%]">
         <Pressable
           onPress={handleDecline}
           disabled={isButtonDisabled("decline")}

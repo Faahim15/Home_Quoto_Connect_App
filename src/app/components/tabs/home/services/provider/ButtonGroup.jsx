@@ -1,10 +1,23 @@
 import { View } from "react-native";
 import SingleButton from "./SingleButton";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function ButtonGroup({ handleInputChange }) {
-  const [activeIndex, setActiveIndex] = useState(null);
+export default function ButtonGroup({ handleInputChange, selectedOption }) {
   const titles = ["urgent", "asap", "next_week"];
+  const [activeIndex, setActiveIndex] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // ✅ Initialize active index from selectedOption prop
+  useEffect(() => {
+    if (selectedOption && !isInitialized) {
+      const index = titles.indexOf(selectedOption);
+      if (index !== -1) {
+        setActiveIndex(index);
+      }
+      setIsInitialized(true);
+    }
+  }, [selectedOption, isInitialized]);
+
   return (
     <View>
       {/* Button Selection */}

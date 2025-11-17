@@ -16,13 +16,12 @@ import LoadingState from "../../ui/LoadingState";
 import ErrorState from "../../ui/ErrorState";
 import EmptyState from "../../ui/EmptyState";
 import { statusColorMap } from "../../../util/colors";
+import { getStatusLabel } from "../../../util/helper-function";
 // Updated ServiceItem component with navigation
 const ServiceItem = ({ item }) => {
   const acceptedQuote = item?.quotes?.find(
     (quote) => quote.status === "accepted" || quote.status === "updated"
   );
-
-  console.log("quote progress screen", acceptedQuote?._id);
 
   const statusColor = statusColorMap?.[item?.status] ?? "#6B7280";
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
@@ -105,7 +104,7 @@ const ServiceItem = ({ item }) => {
                 style={{ color: statusColor }}
                 className="font-poppins-400regular text-sm"
               >
-                {item?.status}
+                {getStatusLabel(item?.status)}
               </Text>
             </View>
             {acceptedQuote?.isUpdated && (
@@ -113,7 +112,7 @@ const ServiceItem = ({ item }) => {
                 <Ionicons name="warning" size={18} color="#FBBF24" />
 
                 <Text className="font-poppins-400regular text-sm  text-[#1A73E8] ">
-                  sent an updated quote
+                  Sent an updated quote
                 </Text>
               </View>
             )}

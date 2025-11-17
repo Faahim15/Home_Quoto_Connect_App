@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,10 +10,21 @@ import { Ionicons } from "@expo/vector-icons";
 import Error from "../../shared/error/Error";
 import { useGetServiceCategoriesQuery } from "../../../../redux/features/apiSlices/user/createJobSlices";
 
-export default function ServiceSearch({ error, onSelectService }) {
+export default function ServiceSearch({
+  error,
+  onSelectService,
+  initialService,
+}) {
   const { data, isLoading } = useGetServiceCategoriesQuery();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedServiceName, setSelectedServiceName] = useState("");
+
+  // ✅ Initialize selected service from prop - watch for title changes
+  useEffect(() => {
+    if (initialService?.title) {
+      setSelectedServiceName(initialService.title);
+    }
+  }, [initialService?.title, initialService?.id, initialService?._id]);
 
   const selectService = (service) => {
     setSelectedServiceName(service?.title);

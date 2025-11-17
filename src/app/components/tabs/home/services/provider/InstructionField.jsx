@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { verticalScale } from "../../../../adaptive/Adaptiveness";
 
-export default function InstructionField({ onChangeText, mode }) {
+export default function InstructionField({ onChangeText, mode, value }) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -25,6 +25,7 @@ export default function InstructionField({ onChangeText, mode }) {
           placeholder="Write here.."
           placeholderTextColor="#898989"
           multiline
+          value={value || ""}
           onChangeText={onChangeText}
           textAlignVertical="top"
           style={{ minHeight: verticalScale(100) }}

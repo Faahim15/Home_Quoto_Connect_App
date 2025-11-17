@@ -66,11 +66,7 @@ export function formatDateRelative(isoString) {
   if (minutes > 0) return `${minutes}m ago`;
   return `${seconds}s ago`;
 }
-/**
- * Formats a timestamp into a human-readable relative time
- * @param {string} timestamp - ISO 8601 timestamp
- * @returns {string} Formatted time string
- */
+
 export const formatedDate = (timestamp) => {
   if (!timestamp) return "N/A";
 
@@ -183,6 +179,20 @@ export function formatDateWithOrdinal(dateString) {
   };
 
   return `${day}${getOrdinal(day)} ${month}`;
+}
+
+export function getStatusLabel(status) {
+  const statusMap = {
+    in_progress: "In Progress",
+    declined: "Declined",
+    pending: "Pending",
+    accepted: "Accepted",
+    updated: "Updated",
+    cancelled: "Cancelled",
+    expired: "Expired",
+  };
+
+  return statusMap[status] || "Unknown Status";
 }
 
 export default getSpecializationTitles;

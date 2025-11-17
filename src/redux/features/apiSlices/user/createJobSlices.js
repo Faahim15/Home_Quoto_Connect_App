@@ -16,6 +16,21 @@ export const jobSlice = api.injectEndpoints({
       invalidatesTags: ["Jobs", "TodaysJobs", "MyJobs", "ActiveJobs", "User"],
     }),
 
+    // NEW: Update job mutation
+    updateJob: builder.mutation({
+      query: ({ jobId, formData }) => {
+        return {
+          url: `/jobs/${jobId}`,
+          method: "PUT",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+        };
+      },
+      invalidatesTags: ["Jobs", "TodaysJobs", "MyJobs", "ActiveJobs", "User"],
+    }),
+
     getAllJobs: builder.query({
       query: () => ({
         url: "/jobs/my-jobs",
@@ -83,6 +98,7 @@ export const jobSlice = api.injectEndpoints({
 });
 export const {
   useCreateJobMutation,
+  useUpdateJobMutation,
   useGetAllJobsQuery,
   useGetTodaysJobsQuery,
   useGetActiveJobsQuery,

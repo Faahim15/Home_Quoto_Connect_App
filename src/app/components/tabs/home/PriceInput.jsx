@@ -42,7 +42,7 @@ const PriceSlider = () => {
             From
           </Text>
           <OfferPrice
-            value={priceRange.from}
+            value={priceRange.from || 0}
             onChange={(val) => handlePriceChange("from", val)}
             verticalPadding={11}
             isPersonalized={priceRange.isPersonalized}
@@ -55,7 +55,7 @@ const PriceSlider = () => {
             To
           </Text>
           <OfferPrice
-            value={priceRange.to}
+            value={priceRange.to || 0}
             onChange={(val) => handlePriceChange("to", val)}
             verticalPadding={11}
             isPersonalized={priceRange.isPersonalized}

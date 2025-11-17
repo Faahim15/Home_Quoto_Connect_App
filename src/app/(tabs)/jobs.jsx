@@ -11,16 +11,34 @@ import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import CustomButton from "../components/tabs/home/services/provider/details/CustomButton";
 import CustomTitle from "../components/shared/CustomTitle";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import {
   addPhoto,
   removePhoto as removePhotoFromStore,
+  resetJobPost,
 } from "../../redux/features/jobPost/jobPostSlice";
+import { useCallback } from "react";
+
 export default function PostJobScreen() {
   const dispatch = useDispatch();
   const photos = useSelector((state) => state.jobPost.photos);
-  // console.log("photos", photos);
+
+  // ✅ Reset job data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      console.log(
+        "🔄 Resetting job data when user focuses on PostJobScreen..."
+      );
+      dispatch(resetJobPost());
+
+      // Optional: Cleanup function if needed
+      return () => {
+        console.log("📝 PostJobScreen lost focus");
+      };
+    }, [dispatch])
+  );
+
   // 📸 Show camera or gallery options
   const showImageOptions = () => {
     Alert.alert("Select Photo", "Choose how you want to add a photo", [
@@ -58,7 +76,7 @@ export default function PostJobScreen() {
   // 🖼️ Pick photo from gallery
   const pickFromGallery = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"], // safer syntax
+      mediaTypes: ["images"],
       allowsEditing: false,
       allowsMultipleSelection: true,
       aspect: [4, 3],

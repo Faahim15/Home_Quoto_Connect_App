@@ -13,7 +13,7 @@ export const statusColorMap = {
   updated: "#3B82F6",
   cancelled: "#D32F2F",
   expired: "#6B7280",
-  in_progress: "#1A73E8", // Indigo tone for active work
+  in_progress: "#1A73E8",
 };
 
 export default serviceColors;

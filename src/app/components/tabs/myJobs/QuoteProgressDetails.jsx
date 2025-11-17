@@ -7,10 +7,12 @@ import {
   Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { scale, verticalScale } from "../../adaptive/Adaptiveness";
+import { scale } from "../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 import UpdatedOffer from "./UpdatedOffer";
 import { statusColorMap } from "../../../util/colors";
+import { getStatusLabel } from "../../../util/helper-function";
+import { formatDateWithOrdinal } from "../../../util/helper-function";
 export default function QuoteProgressDetails({ quote, job }) {
   // console.log("show", item);
   const statusColor = statusColorMap?.[quote?.status] ?? "#6B7280";
@@ -104,13 +106,16 @@ export default function QuoteProgressDetails({ quote, job }) {
               <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
                 Quote Status
               </Text>
-
-              <Text
-                style={{ color: statusColor }}
-                className="font-poppins-400regular mt-[10%] text-center text-base "
-              >
-                {job?.status}
-              </Text>
+              {quote?.isUpdated ? (
+                <UpdatedOffer />
+              ) : (
+                <Text
+                  style={{ color: statusColor }}
+                  className="font-poppins-400regular mt-[10%] text-center text-base "
+                >
+                  {getStatusLabel(job?.status)}
+                </Text>
+              )}
             </View>
 
             {/* {item.sentQuote && <UpdatedOffer />} */}
@@ -122,8 +127,8 @@ export default function QuoteProgressDetails({ quote, job }) {
               </Text>
 
               <Text className="font-poppins-400regular text-[#1F2937] text-xs pt-[2%] ">
-                This service provider is available on{" "}
-                {quote?.proposedTime || "N/A"}
+                Available on {formatDateWithOrdinal(quote?.proposedDate)} at{" "}
+                {quote?.proposedTime}.
               </Text>
             </View>
             {/* Quote Details */}

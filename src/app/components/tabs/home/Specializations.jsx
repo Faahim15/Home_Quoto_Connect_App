@@ -6,12 +6,23 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { verticalScale } from "../../adaptive/Adaptiveness";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGetSpecializationsQuery } from "../../../../redux/features/apiSlices/user/createJobSlices";
 
-export default function Specializations({ onChange }) {
+export default function Specializations({ onChange, selected }) {
   const [selectedIndexes, setSelectedIndexes] = useState([]);
+  const [isInitialized, setIsInitialized] = useState(false);
   const { data, isLoading } = useGetSpecializationsQuery();
+
+  // ✅ Initialize selected specializations from prop
+  useEffect(() => {
+    if (selected && selected.length > 0 && !isInitialized) {
+      // Extract IDs from selected specializations
+      const selectedIds = selected.map((spec) => spec._id || spec.id);
+      setSelectedIndexes(selectedIds);
+      setIsInitialized(true);
+    }
+  }, [selected, isInitialized]);
 
   const toggleSelection = (item) => {
     const isSelected = selectedIndexes.includes(item._id);

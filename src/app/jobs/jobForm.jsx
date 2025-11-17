@@ -1,8 +1,7 @@
-import React from "react";
-import { View, FlatList } from "react-native";
+import { View, FlatList, ActivityIndicator, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { router } from "expo-router";
-
+import { router, useLocalSearchParams } from "expo-router";
+import { useState, useEffect } from "react";
 // Components
 import CustomTitle from "../components/shared/CustomTitle";
 import TextField from "../components/tabs/jobs/TextField";
@@ -18,18 +17,122 @@ import CustomButton from "../components/tabs/home/services/provider/details/Cust
 import { verticalScale } from "../components/adaptive/Adaptiveness";
 import * as Yup from "yup";
 // Redux
-import { setJobField } from "../../redux/features/jobPost/jobPostSlice";
+import {
+  setJobField,
+  setJobData,
+} from "../../redux/features/jobPost/jobPostSlice";
 import Error from "../components/shared/error/Error";
+import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 
 export default function JobFormScreen() {
+  const { jobId } = useLocalSearchParams();
   const dispatch = useDispatch();
   const jobData = useSelector((state) => state.jobPost);
-  const [errors, setErrors] = React.useState({});
+  const [errors, setErrors] = useState({});
+  const [hasInitializedFromAPI, setHasInitializedFromAPI] = useState(false);
+
+  const { data, isLoading, error, refetch } = useGetSingleJobQuery(jobId, {
+    skip: !jobId,
+  });
+
+  const job = data?.data?.job;
+
+  // ✅ SMART INITIALIZATION: Only initialize OTHER fields if they are empty
+  useEffect(() => {
+    if (job && jobId && !hasInitializedFromAPI) {
+      // Check if other fields are empty (not photos since they come from upload screen)
+      const hasOtherDataInRedux =
+        jobData.title ||
+        jobData.serviceCategory?.id ||
+        jobData.specializations?.length > 0;
+
+      if (!hasOtherDataInRedux) {
+        console.log(
+          "🔄 Initializing other fields from API (photos already exist)..."
+        );
+
+        const formatDate = (dateString) => {
+          if (!dateString) return "";
+          const date = new Date(dateString);
+          return date.toISOString().split("T")[0];
+        };
+
+        // Transform specializations to match Redux format
+        const transformedSpecializations =
+          job.specializations?.map((spec) => ({
+            id: spec._id,
+            title: spec.title,
+            category: spec.category,
+          })) || [];
+
+        // Prepare form data EXCLUDING photos (since they already exist from upload screen)
+        const formData = {
+          title: job.title || "",
+          serviceCategory: {
+            id: job.serviceCategory?._id || "",
+            title: job.serviceCategory?.title || "",
+          },
+          location: {
+            type: job.location?.type || "Point",
+            coordinates: job.location?.coordinates || [],
+            address: job.location?.address || "",
+            city: job.location?.details?.city || "",
+            state: job.location?.details?.state || "",
+            country: job.location?.details?.country || "",
+            zipCode: job.location?.details?.zipCode || "",
+          },
+          urgency: job.urgency || "",
+          specificInstructions: job.description || "",
+          specializations: transformedSpecializations,
+          preferredDate: formatDate(job.preferredDate),
+          preferredTime: job.preferredTime || "",
+          priceRange: {
+            from: job.priceRange?.from || 0,
+            to: job.priceRange?.to || 0,
+            isPersonalized: job.priceRange?.isPersonalized || false,
+          },
+          houseNumber: job.location?.details?.houseNumber || "",
+          streetNumber: job.location?.details?.streetNumber || "",
+          completeAddress: job.location?.details?.completeAddress || "",
+        };
+
+        console.log("📝 Form Data to Initialize (excluding photos):", {
+          title: formData.title,
+          serviceCategory: formData.serviceCategory,
+          specializations: formData.specializations?.length,
+          photosInRedux: jobData.photos?.length, // Show existing photos count
+          urgency: formData.urgency,
+          location: formData.location,
+        });
+
+        dispatch(setJobData(formData));
+        console.log("✅ Other fields initialized from API, photos preserved");
+      } else {
+        console.log("🚫 Skipping API initialization - Redux already has data");
+        console.log("📸 Current photos in Redux:", jobData.photos?.length);
+      }
+
+      setHasInitializedFromAPI(true);
+    }
+  }, [job, jobId, hasInitializedFromAPI, dispatch, jobData]);
+
+  // 🔍 Debug current state
+  useEffect(() => {
+    console.log("📊 Current Redux State - JobFormScreen:", {
+      title: jobData.title,
+      serviceCategory: jobData.serviceCategory,
+      specializations: jobData.specializations?.length,
+      photos: jobData.photos?.length,
+      urgency: jobData.urgency,
+      location: jobData.location,
+      hasInitializedFromAPI,
+    });
+  }, [jobData]);
 
   const handleInputChange = (field, value) => {
+    console.log(`🔄 Updating ${field}:`, value);
     dispatch(setJobField({ field, value }));
 
-    // ✅ Clear errors when user interacts
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
@@ -38,7 +141,12 @@ export default function JobFormScreen() {
   const validateCurrentPage = () => {
     const currentPageSchema = Yup.object({
       title: Yup.string().required("Job title is required"),
-      serviceCategory: Yup.string().required("Service category is required"),
+      serviceCategory: Yup.object()
+        .shape({
+          id: Yup.string().required("Service category is required"),
+          title: Yup.string(),
+        })
+        .required("Service category is required"),
       location: Yup.object()
         .nullable()
         .required("Location is required")
@@ -104,14 +212,8 @@ export default function JobFormScreen() {
       specializations: Yup.array().min(1, "Select at least one specialization"),
     });
 
-    // ✅ Transform jobData before validation
-    const transformedData = {
-      ...jobData,
-      serviceCategory: jobData?.serviceCategory?.id || "",
-    };
-
     try {
-      currentPageSchema.validateSync(transformedData, { abortEarly: false });
+      currentPageSchema.validateSync(jobData, { abortEarly: false });
       setErrors({});
       return true;
     } catch (error) {
@@ -123,26 +225,81 @@ export default function JobFormScreen() {
       return false;
     }
   };
+
   const handleContinue = () => {
     if (validateCurrentPage()) {
-      router.push("/jobs/jobLocation");
-    } else console.log("errors", errors);
+      // ✅ Log final state before continuing
+      if (jobData.photos && jobData.photos.length > 0) {
+        const existingPhotos = jobData.photos.filter((p) => p.isExisting);
+        const newPhotos = jobData.photos.filter((p) => !p.isExisting);
+
+        console.log("✅ Final state before continuing:", {
+          totalPhotos: jobData.photos.length,
+          existingPhotos: existingPhotos.length,
+          newPhotos: newPhotos.length,
+          title: jobData.title,
+          serviceCategory: jobData.serviceCategory,
+          specializations: jobData.specializations?.length,
+        });
+      }
+
+      if (jobId) {
+        router.push({
+          pathname: "/jobs/jobLocation",
+          params: { jobId },
+        });
+      } else {
+        router.push("/jobs/jobLocation");
+      }
+    } else {
+      console.log("errors", errors);
+    }
   };
-  // ✅ UPDATED Conditions - from OR to-তে যেকোনো value থাকলেই disable হবে
+
+  // ✅ Price conditions
   const hasAnyPriceValue =
     jobData.priceRange?.from > 0 || jobData.priceRange?.to > 0;
 
   const isNegotiable = jobData.priceRange?.isPersonalized === true;
+
+  // Loading state
+  if (isLoading && jobId) {
+    return (
+      <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
+        <ActivityIndicator size="large" color="#4F46E5" />
+        <Text className="text-gray-600 text-base mt-4 font-medium">
+          Loading job details...
+        </Text>
+      </View>
+    );
+  }
+
+  // Error state
+  if (error && jobId) {
+    return (
+      <View className="flex-1 justify-center items-center bg-[#F9F9F9] px-[6%]">
+        <Text className="text-gray-800 text-xl font-bold mb-2">
+          Unable to Load Job
+        </Text>
+        <Text className="text-gray-500 text-base text-center mb-6">
+          We couldn't fetch the job details. Please check your connection and
+          try again.
+        </Text>
+        <CustomButton title="Retry" onPress={() => refetch()} />
+      </View>
+    );
+  }
+
   return (
     <View className="bg-[#f9f9f9] flex-1">
       {/* Header */}
       <View className="px-[6%]">
-        <CustomTitle title="Post a Job" />
+        <CustomTitle title={jobId ? "Edit Job" : "Post a Job"} />
       </View>
 
       {/* Scrollable form */}
       <FlatList
-        data={[]} // Dummy data to enable scroll
+        data={[]}
         keyExtractor={(_, index) => index.toString()}
         renderItem={null}
         contentContainerStyle={{ paddingBottom: verticalScale(70) }}
@@ -155,13 +312,15 @@ export default function JobFormScreen() {
                 label="Job Title"
                 value={jobData.title}
                 onChangeText={(value) => handleInputChange("title", value)}
+                placeholder="Enter job title"
               />
             </View>
 
             {/* 🧰 Service Search */}
             <ServiceSearch
-              error={errors.serviceCategory}
+              error={errors["serviceCategory.id"]}
               onSelectService={handleInputChange}
+              initialService={jobData.serviceCategory}
             />
 
             {/* 📍 Location */}
@@ -169,20 +328,23 @@ export default function JobFormScreen() {
               <LocationPicker
                 onLocationSelect={(loc) => handleInputChange("location", loc)}
                 error={errors.location}
-                value={jobData.location.address}
+                value={jobData.location?.address}
               />
             </View>
 
             {/* 🕒 Time Picker */}
             <View className="px-[6%]">
-              <TimePicker />
+              <TimePicker
+                initialDate={jobData.preferredDate}
+                initialTime={jobData.preferredTime}
+              />
               <Error error={errors.preferredDate} />
             </View>
 
             {/* ⚙️ Job Type / Options */}
             <View className="px-[6%]">
               <ButtonGroup
-                selectedOption={jobData.jobType}
+                selectedOption={jobData.urgency}
                 handleInputChange={handleInputChange}
               />
               <Error error={errors.urgency} />
@@ -190,7 +352,10 @@ export default function JobFormScreen() {
 
             {/* 💰 Price and Request */}
             <View className="px-[6%] mt-[3%]">
-              <PriceSlider />
+              <PriceSlider
+                initialFrom={jobData.priceRange?.from}
+                initialTo={jobData.priceRange?.to}
+              />
               <Error error={errors.priceRange} />
               <RequestButton
                 urgent={isNegotiable}
@@ -200,17 +365,18 @@ export default function JobFormScreen() {
                     isPersonalized: value,
                   });
                 }}
-                disabled={hasAnyPriceValue} // Disable when fixed price set
+                disabled={hasAnyPriceValue}
               />
             </View>
 
             {/* 📝 Instructions */}
             <View className="mt-[3%] px-[6%]">
               <InstructionField
-                // value={jobData.instructions}
+                value={jobData.specificInstructions}
                 onChangeText={(value) =>
                   handleInputChange("specificInstructions", value)
                 }
+                placeholder="Describe the job in detail..."
               />
               <Error error={errors.specificInstructions} />
             </View>
@@ -218,7 +384,7 @@ export default function JobFormScreen() {
             {/* 🧠 Specializations */}
             <View className="px-[6%]">
               <Specializations
-                // selected={jobData.specializations}
+                selected={jobData.specializations}
                 onChange={handleInputChange}
               />
               <Error error={errors.specializations} />
@@ -226,7 +392,10 @@ export default function JobFormScreen() {
 
             {/* 🚀 Continue Button */}
             <View className="px-[6%] mt-[5%]">
-              <CustomButton title="Continue" onPress={handleContinue} />
+              <CustomButton
+                title={jobId ? "Update Job" : "Continue"}
+                onPress={handleContinue}
+              />
             </View>
           </View>
         }

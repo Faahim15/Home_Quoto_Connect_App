@@ -1,4 +1,6 @@
 import { ScrollView, View } from "react-native";
+import { useFocusEffect } from "expo-router";
+import { useCallback } from "react";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import { verticalScale } from "../components/adaptive/Adaptiveness";
 import CustomButton from "../components/shared/services/buttons/ServiceButton";
@@ -6,10 +8,19 @@ import { router, useLocalSearchParams } from "expo-router";
 import JobInfo from "../components/tabs/myJobs/JobInfo";
 import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import { Text } from "react-native";
+
 export default function ServiceDetails() {
   const { serviceId } = useLocalSearchParams();
-  const { data, isLoading, error } = useGetSingleJobQuery(serviceId);
+
+  const { data, isLoading, error, refetch } = useGetSingleJobQuery(serviceId);
   const service = data?.data?.job;
+
+  // Auto-refresh when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   if (isLoading) {
     return (
@@ -24,7 +35,7 @@ export default function ServiceDetails() {
       <View className="flex-1 justify-center items-center bg-[#F9F9F9] px-[6%]">
         <CustomTitle title="Service not found" />
         <Text className="text-gray-500 text-base mt-[2%]">
-          We couldn’t locate the service details. Please check the link or try
+          We couldn't locate the service details. Please check the link or try
           again later.
         </Text>
       </View>
@@ -50,7 +61,12 @@ export default function ServiceDetails() {
       {service?.status === "pending" && (
         <View className="px-[6%] pb-[18%]">
           <CustomButton
-            onPress={() => router.push("/jobs/jobForm")}
+            onPress={() =>
+              router.push({
+                pathname: "/jobs/uploadPhotos",
+                params: { jobId: service?._id },
+              })
+            }
             title="Edit Job"
           />
         </View>

@@ -54,6 +54,16 @@ const jobPostSlice = createSlice({
       }
       state[field] = value;
     },
+    setJobData: (state, action) => {
+      const data = action.payload;
+
+      // ✅ Set all fields from payload, preserving existing values for missing fields
+      Object.keys(data).forEach((key) => {
+        if (data[key] !== undefined && data[key] !== null) {
+          state[key] = data[key];
+        }
+      });
+    },
     addPhoto: (state, action) => {
       state.photos.push(action.payload);
     },
@@ -64,7 +74,7 @@ const jobPostSlice = createSlice({
   },
 });
 
-export const { setJobField, addPhoto, removePhoto, resetJobPost } =
+export const { setJobField, setJobData, addPhoto, removePhoto, resetJobPost } =
   jobPostSlice.actions;
 
 export default jobPostSlice.reducer;

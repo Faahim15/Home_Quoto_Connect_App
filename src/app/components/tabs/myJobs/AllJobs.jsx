@@ -15,12 +15,13 @@ import { useGetAllJobsQuery } from "../../../../redux/features/apiSlices/user/cr
 
 const ServiceCard = ({ item, showAddress }) => {
   const { city, state } = item?.location?.details || {};
+
   return (
     <TouchableOpacity
       onPress={() => {
         router.push({
           pathname: "/myJobs/allJobDetails",
-          params: { serviceId: item.id },
+          params: { serviceId: item._id },
         });
       }}
       style={{ width: scale(330), height: verticalScale(288) }}
