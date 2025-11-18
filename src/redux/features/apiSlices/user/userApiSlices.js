@@ -1,8 +1,26 @@
 import { api } from "../../api/baseApi";
 
-// homeApiSlices.js
 export const homeApiSlices = api.injectEndpoints({
   endpoints: (builder) => ({
+    // Create Support Ticket
+    createSupportTicket: builder.mutation({
+      query: (ticketData) => ({
+        url: `/support/tickets`,
+        method: "POST",
+        body: {
+          title: ticketData.title,
+          description: ticketData.description,
+          category: ticketData.category,
+          priority: ticketData.priority,
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["SupportTickets"],
+    }),
+
+    // existing endpoints...
     userProfile: builder.query({
       query: () => ({
         url: `/profile/me`,
@@ -11,7 +29,6 @@ export const homeApiSlices = api.injectEndpoints({
       providesTags: ["User"],
     }),
 
-    // Get specific content (Public) - Privacy Policy, Terms & Conditions, etc.
     getContent: builder.query({
       query: (contentType) => ({
         url: `/content/${contentType}`,
@@ -22,15 +39,11 @@ export const homeApiSlices = api.injectEndpoints({
       ],
     }),
 
-    // Delete user account with current password - RAW JSON format
     deleteAccount: builder.mutation({
       query: (passwordData) => ({
         url: `/profile/delete-account`,
         method: "DELETE",
-        body: {
-          password: passwordData.password,
-        },
-        // Ensure JSON content type
+        body: { password: passwordData.password },
         headers: {
           "Content-Type": "application/json",
         },
@@ -44,4 +57,5 @@ export const {
   useUserProfileQuery,
   useGetContentQuery,
   useDeleteAccountMutation,
+  useCreateSupportTicketMutation,
 } = homeApiSlices;

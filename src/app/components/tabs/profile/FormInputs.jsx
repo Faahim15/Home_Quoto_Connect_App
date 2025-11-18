@@ -21,10 +21,11 @@ const ProfileFormInputs = () => {
 
   const [phoneNumber, setPhoneNumber] = useState("");
   const [selectedCountryCode, setSelectedCountryCode] = useState({
-    code: "+52",
-    flag: "🇲🇽",
-    country: "Mexico",
+    code: "+1",
+    flag: "🇨🇦",
+    country: "Canada",
   });
+
   const [showCountryCodePicker, setShowCountryCodePicker] = useState(false);
 
   // Sample countries data
@@ -67,15 +68,7 @@ const ProfileFormInputs = () => {
   // Sample country codes
   const countryCodes = [
     { code: "+1", flag: "🇺🇸", country: "United States" },
-    { code: "+52", flag: "🇲🇽", country: "Mexico" },
-    { code: "+44", flag: "🇬🇧", country: "United Kingdom" },
-    { code: "+33", flag: "🇫🇷", country: "France" },
-    { code: "+49", flag: "🇩🇪", country: "Germany" },
-    { code: "+91", flag: "🇮🇳", country: "India" },
-    { code: "+86", flag: "🇨🇳", country: "China" },
-    { code: "+81", flag: "🇯🇵", country: "Japan" },
-    { code: "+55", flag: "🇧🇷", country: "Brazil" },
-    { code: "+61", flag: "🇦🇺", country: "Australia" },
+    { code: "+1", flag: "🇨🇦", country: "Canada" },
   ];
 
   // Handle date change
@@ -146,7 +139,7 @@ const ProfileFormInputs = () => {
           <TextInput
             value={phoneNumber}
             onChangeText={setPhoneNumber}
-            placeholder="+92 3459864343"
+            placeholder="+1 416-123-4567"
             keyboardType="phone-pad"
             className="flex-1 px-[3%] py-[4%] text-base text-black"
             placeholderTextColor="#898989"
