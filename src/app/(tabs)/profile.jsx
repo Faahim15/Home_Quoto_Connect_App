@@ -101,7 +101,7 @@ export default function UserProfileScreen() {
         <ProfileMenuItem
           iconName={support}
           onPress={() => router.push("/profile/support")}
-          label="Help & support "
+          label="Help & support"
         />
 
         <LogoutItem onPress={logoutHanlder} />
