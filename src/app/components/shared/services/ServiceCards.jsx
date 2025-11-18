@@ -17,6 +17,7 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
             serviceId: item._id,
             showPrice: showPrice,
             whichJob: whichJob,
+            showButtons: false,
           },
         });
       }}

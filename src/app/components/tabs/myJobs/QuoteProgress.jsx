@@ -155,7 +155,6 @@ const ServiceItem = ({ item }) => {
   );
 };
 
-// Updated Services component with navigation prop
 export default function QuoteProgress() {
   const [refreshing, setRefreshing] = useState(false);
   const { data, isLoading, error, refetch } = useGetAllJobsQuery();

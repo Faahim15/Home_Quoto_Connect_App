@@ -1,64 +1,46 @@
 import { View, Text, Pressable } from "react-native";
 import { useState } from "react";
-import Toast from "react-native-toast-message";
-export default function UpdatedOffer({ onApprove, onDecline }) {
+import { useQuoteActions } from "../../../../hooks/useQuoteActions";
+// Adjust path as needed
+
+export default function UpdatedOffer({ quoteId, onSuccess }) {
   const [offerStatus, setOfferStatus] = useState(null); // null, 'approved', 'declined'
-  const [isLoading, setIsLoading] = useState(false);
+
+  const { acceptQuote, cancelQuote, isAccepting, isDeclining } =
+    useQuoteActions();
 
   const handleApproval = async () => {
-    if (isLoading || offerStatus) return;
+    if (isAccepting || offerStatus) return;
 
-    setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setOfferStatus("approved");
-      onApprove();
-
-      Toast.show({
-        type: "success",
-        text1: "Offer Approved",
-        text2: "You've successfully approved the updated offer.",
+      await acceptQuote(quoteId, () => {
+        setOfferStatus("approved");
+        if (onSuccess) {
+          onSuccess();
+        }
       });
     } catch (error) {
-      console.error("Failed to approve offer:", error);
-      Toast.show({
-        type: "error",
-        text1: "Approval Failed",
-        text2: "Something went wrong while approving the offer.",
-      });
-    } finally {
-      setIsLoading(false);
+      // Error is already handled in the hook
     }
   };
 
   const handleDecline = async () => {
-    if (isLoading || offerStatus) return;
+    if (isDeclining || offerStatus) return;
 
-    setIsLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setOfferStatus("declined");
-      onDecline();
-
-      Toast.show({
-        type: "error",
-        text1: "Offer Declined",
-        text2: "You've declined the updated offer.",
+      await cancelQuote(quoteId, () => {
+        setOfferStatus("declined");
+        if (onSuccess) {
+          onSuccess();
+        }
       });
     } catch (error) {
-      console.error("Failed to decline offer:", error);
-      Toast.show({
-        type: "error",
-        text1: "Decline Failed",
-        text2: "Something went wrong while declining the offer.",
-      });
-    } finally {
-      setIsLoading(false);
+      // Error is already handled in the hook
     }
   };
 
   const getButtonText = (type) => {
-    if (isLoading) return "Processing...";
+    if (isAccepting || isDeclining) return "Processing...";
     if (type === "approve") {
       return offerStatus === "approved" ? "Approved" : "Approve offer";
     }
@@ -66,7 +48,7 @@ export default function UpdatedOffer({ onApprove, onDecline }) {
   };
 
   const isButtonDisabled = (type) => {
-    if (isLoading) return true;
+    if (isAccepting || isDeclining) return true;
     if (offerStatus && offerStatus !== type + "d") return true;
     return false;
   };

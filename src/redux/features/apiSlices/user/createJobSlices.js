@@ -31,6 +31,14 @@ export const jobSlice = api.injectEndpoints({
       invalidatesTags: ["Jobs", "TodaysJobs", "MyJobs", "ActiveJobs", "User"],
     }),
 
+    deleteJob: builder.mutation({
+      query: (jobId) => ({
+        url: `/jobs/${jobId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Jobs", "TodaysJobs", "MyJobs", "ActiveJobs", "User"], // This will refetch relevant queries
+    }),
+
     getAllJobs: builder.query({
       query: () => ({
         url: "/jobs/my-jobs",
@@ -99,6 +107,7 @@ export const jobSlice = api.injectEndpoints({
 export const {
   useCreateJobMutation,
   useUpdateJobMutation,
+  useDeleteJobMutation,
   useGetAllJobsQuery,
   useGetTodaysJobsQuery,
   useGetActiveJobsQuery,

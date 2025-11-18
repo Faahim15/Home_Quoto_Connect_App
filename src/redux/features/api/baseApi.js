@@ -68,5 +68,6 @@ export const api = createApi({
     "ActiveJobs",
     "Categories",
     "Specializations",
+    "Content",
   ],
 });

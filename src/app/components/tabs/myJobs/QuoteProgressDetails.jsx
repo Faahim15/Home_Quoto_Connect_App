@@ -18,12 +18,7 @@ export default function QuoteProgressDetails({ quote, job }) {
   const statusColor = statusColorMap?.[quote?.status] ?? "#6B7280";
   const { fullName, averageRating, profilePhoto, totalReviews } =
     quote?.provider;
-  const serviceColors = {
-    "TV repair and Installation": "bg-[#319FCA]",
-    "AC Repair and Maintenance": "bg-[#FF6B6B]",
-    "Plumbing Services": "bg-[#10B981]",
-    "Electrical Repair": "bg-[#8B5CF6]",
-  };
+
   const handleServicePress = () => {
     router.push({
       pathname: "/myJobs/jobDetails",
@@ -107,7 +102,10 @@ export default function QuoteProgressDetails({ quote, job }) {
                 Quote Status
               </Text>
               {quote?.isUpdated ? (
-                <UpdatedOffer />
+                <UpdatedOffer
+                  quoteId={quote?._id}
+                  onSuccess={() => router.back()}
+                />
               ) : (
                 <Text
                   style={{ color: statusColor }}

@@ -10,13 +10,18 @@ export const homeApiSlices = api.injectEndpoints({
       }),
       providesTags: ["User"],
     }),
+
+    // Get specific content (Public) - Privacy Policy, Terms & Conditions, etc.
+    getContent: builder.query({
+      query: (contentType) => ({
+        url: `/content/${contentType}`,
+        method: "GET",
+      }),
+      providesTags: (result, error, contentType) => [
+        { type: "Content", id: contentType },
+      ],
+    }),
   }),
 });
 
-export const {
-  useUserProfileQuery,
-  usePromotedVideoQuery,
-  useCaragoryVideosQuery,
-  usePromotedVideoHomeQuery,
-  usePriceGetAllQuery,
-} = homeApiSlices;
+export const { useUserProfileQuery, useGetContentQuery } = homeApiSlices;

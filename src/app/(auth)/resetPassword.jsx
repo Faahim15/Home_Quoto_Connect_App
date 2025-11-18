@@ -115,7 +115,7 @@ export default function ResetPasswordScreen() {
         <PasswordField
           value={formData.confirmPassword}
           onChangeText={(text) => handleInputChange("confirmPassword", text)}
-          error={errors.password}
+          error={errors.confirmPassword}
           label="Confirm New Password"
         />
       </View>

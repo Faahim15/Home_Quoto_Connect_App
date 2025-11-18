@@ -2,18 +2,27 @@ import { ScrollView, View } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import CustomTitle from "../components/shared/services/CustomTitle";
-import { verticalScale } from "../components/adaptive/Adaptiveness";
+import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import CustomButton from "../components/shared/services/buttons/ServiceButton";
 import { router, useLocalSearchParams } from "expo-router";
 import JobInfo from "../components/tabs/myJobs/JobInfo";
 import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import { Text } from "react-native";
+import DeleteConfirmationModal from "../components/tabs/myJobs/modal/DeleteConfirmationModal";
+import { useDeleteJob } from "../../hooks/useDeleteJob";
 
 export default function ServiceDetails() {
   const { serviceId } = useLocalSearchParams();
-
   const { data, isLoading, error, refetch } = useGetSingleJobQuery(serviceId);
   const service = data?.data?.job;
+
+  const {
+    isModalVisible,
+    showDeleteModal,
+    hideDeleteModal,
+    handleDelete,
+    isLoading: isDeleting,
+  } = useDeleteJob();
 
   // Auto-refresh when screen comes into focus
   useFocusEffect(
@@ -44,7 +53,7 @@ export default function ServiceDetails() {
 
   return (
     <View className="flex-1 bg-[#F9F9F9]">
-      <View className="flex-1 mb-[2%]  px-[6%] bg-[#F9F9F9]">
+      <View className="flex-1 mb-[2%] px-[6%] bg-[#F9F9F9]">
         <CustomTitle
           title={service?.serviceCategory?.title || "Service Details"}
         />
@@ -58,19 +67,38 @@ export default function ServiceDetails() {
         </ScrollView>
       </View>
 
-      {service?.status === "pending" && (
-        <View className="px-[6%] pb-[18%]">
-          <CustomButton
-            onPress={() =>
-              router.push({
-                pathname: "/jobs/uploadPhotos",
-                params: { jobId: service?._id },
-              })
-            }
-            title="Edit Job"
-          />
-        </View>
-      )}
+      <View className="px-[6%] pb-[18%] space-y-3">
+        {service?.status === "pending" && (
+          <View className="flex-row justify-center items-center gap-x-4">
+            <CustomButton
+              onPress={() =>
+                router.push({
+                  pathname: "/jobs/uploadPhotos",
+                  params: { jobId: service?._id },
+                })
+              }
+              title="Edit Job"
+              width={scale(148)}
+            />
+            {/* Delete Button */}
+            <CustomButton
+              onPress={showDeleteModal}
+              title="Delete Job"
+              bg="#ef4444"
+              border="#ef4444"
+              width={scale(148)}
+            />
+          </View>
+        )}
+      </View>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        visible={isModalVisible}
+        onClose={hideDeleteModal}
+        onConfirm={() => handleDelete(serviceId)}
+        isLoading={isDeleting}
+      />
     </View>
   );
 }

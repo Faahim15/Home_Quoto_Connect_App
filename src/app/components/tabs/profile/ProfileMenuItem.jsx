@@ -13,18 +13,11 @@ const ProfileMenuItem = ({ iconName, label, onPress, color = "#565656" }) => {
         {
           flexDirection: "row",
           alignItems: "center",
-          //   paddingVertical: scale(16),
           height: verticalScale(60),
         },
       ]}
     >
       <View className="flex-row  items-center justify-center ">
-        {/* <Ionicons
-          name={iconName}
-          size={24}
-          color="#333"
-          style={{ marginRight: scale(16), width: scale(24) }}
-        /> */}
         <SvgXml xml={iconName} height={verticalScale(30)} width={scale(34)} />
         <Text
           style={{ color: color, marginLeft: scale(12) }}

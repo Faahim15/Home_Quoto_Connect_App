@@ -7,13 +7,14 @@ import {
   Pressable,
   RefreshControl,
 } from "react-native";
-import { useState } from "react";
+import { useState, useLayoutEffect } from "react";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useGetAllJobsQuery } from "../../../../redux/features/apiSlices/user/createJobSlices";
 import LoadingState from "../../ui/LoadingState";
 import ErrorState from "../../ui/ErrorState";
 import EmptyState from "../../ui/EmptyState";
+import { useCallback } from "react";
 
 // Updated ServiceItem component with navigation
 const ServiceItem = ({ item, quote }) => {
@@ -117,10 +118,17 @@ const ServiceItem = ({ item, quote }) => {
   );
 };
 
-// Updated Services component with pull-to-refresh
+// Updated Services component with pull-to-refresh and auto-refresh
 export default function Services() {
   const [refreshing, setRefreshing] = useState(false);
   const { data, isLoading, error, refetch } = useGetAllJobsQuery();
+
+  // Auto-refresh when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   // Handle pull-to-refresh
   const onRefresh = async () => {

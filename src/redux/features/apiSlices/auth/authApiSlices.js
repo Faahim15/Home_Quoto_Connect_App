@@ -71,6 +71,15 @@ export const authSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+    // New change password endpoint
+    changePassword: builder.mutation({
+      query: (data) => ({
+        url: `/profile/change-password`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -84,4 +93,5 @@ export const {
   useForgotPasswordMutation,
   useResendOtpMutation,
   useResetPasswordMutation,
+  useChangePasswordMutation, // New export
 } = authSlice;

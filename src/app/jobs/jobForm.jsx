@@ -37,6 +37,8 @@ export default function JobFormScreen() {
 
   const job = data?.data?.job;
 
+  console.log("job id", jobId);
+
   // ✅ SMART INITIALIZATION: Only initialize OTHER fields if they are empty
   useEffect(() => {
     if (job && jobId && !hasInitializedFromAPI) {

@@ -69,8 +69,10 @@ export default function ServiceDetails() {
   }
 
   const updatedOffer = isAccepted && service?.status === "in_progress";
+  // const shouldRenderUpdateButton =
+  //   (shouldShowButtons && updatedOffer) || service?.status === "pending";
   const shouldRenderUpdateButton =
-    (shouldShowButtons && updatedOffer) || service?.status === "pending";
+    shouldShowButtons && (updatedOffer || service?.status === "pending");
 
   return (
     <View className="flex-1 bg-[#F9F9F9]">

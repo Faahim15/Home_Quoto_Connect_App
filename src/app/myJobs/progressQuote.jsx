@@ -111,7 +111,7 @@ export default function ProgressQuote() {
         visible={showPayment}
         onClose={() => setShowPayment(false)}
       />
-      {item?.sentQuote && (
+      {/* {item?.sentQuote && (
         <OfferDetailsModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
@@ -119,7 +119,7 @@ export default function ProgressQuote() {
           onDecline={handleDecline}
           onApprove={handleApprove}
         />
-      )}
+      )} */}
     </View>
   );
 }
