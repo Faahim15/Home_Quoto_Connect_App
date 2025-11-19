@@ -70,5 +70,6 @@ export const api = createApi({
     "Specializations",
     "Content",
     "SupportTickets",
+    "Profile",
   ],
 });

@@ -1,4 +1,11 @@
-import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import ArrowBack from "../components/auth/ArrowBack";
@@ -11,15 +18,17 @@ import Testimonials from "../components/tabs/home/services/provider/details/Test
 import ReviewButton from "../components/tabs/home/services/provider/details/ReviewButton";
 import Biography from "../components/tabs/home/services/provider/details/Biography";
 import { router, useLocalSearchParams } from "expo-router";
-import QuoteReqData from "../components/data/jobs/QuotesData";
 import XStyle from "../util/styles";
 import PaymentMethodModal from "../components/shared/modal/PaymentMethodModal";
 import { useState } from "react";
+import { useGetProviderProfileDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 export default function ProviderDetailsScreen() {
   const skills = ["Lighting", "Circuit", "Wiring", "Repair"];
-  const { showButtons, serviceId } = useLocalSearchParams();
 
-  const item = QuoteReqData.find((s) => s.id.toString() === serviceId);
+  const { showButtons, providerId } = useLocalSearchParams();
+  const { isLoading, data, error } =
+    useGetProviderProfileDetailsQuery(providerId);
+
   const [showPayment, setShowPayment] = useState(false);
   const shouldShowButtons = showButtons === "true";
   const serviceColors = {
@@ -28,6 +37,47 @@ export default function ProviderDetailsScreen() {
     "Plumbing Services": "bg-[#10B981]",
     "Electrical Repair": "bg-[#8B5CF6]",
   };
+  console.log("data:", data);
+  // Add loading state check
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-white justify-center items-center">
+        <ActivityIndicator size="large" color="#18649F" />
+        <Text className="font-poppins-500medium text-sm text-[#565656] mt-4">
+          Loading provider details...
+        </Text>
+      </View>
+    );
+  }
+
+  // Add error state check (optional)
+  if (error) {
+    return (
+      <View className="flex-1 bg-white justify-center items-center px-[6%]">
+        <Text className="font-poppins-semiBold text-base text-[#EF4444] text-center">
+          Failed to load provider details
+        </Text>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="mt-4 bg-[#18649F] px-6 py-3 rounded-lg"
+        >
+          <Text className="font-poppins-500medium text-white">Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+  const {
+    profilePhoto,
+    workingHours,
+    fullName,
+    businessName,
+    bio,
+    experienceLevel,
+    averageRating,
+    totalCompletedJobs,
+    specializations,
+    _id,
+  } = data?.data?.profile || {};
   return (
     <View className="flex-1 w-full bg-white">
       <ScrollView
@@ -52,7 +102,7 @@ export default function ProviderDetailsScreen() {
           </View>
           <View className="flex-1 ">
             <Image
-              source={require("../../../assets/images/home/electrician/electrician3.png")} //../../../../../assets/images/home/electrician/electrician3.png
+              source={{ uri: profilePhoto?.url }} //../../../../../assets/images/home/electrician/electrician3.png
               style={{
                 width: scale(264),
                 height: verticalScale(290),
@@ -63,26 +113,24 @@ export default function ProviderDetailsScreen() {
           </View>
         </LinearGradient>
 
-        <Banner />
+        <Banner
+          providerId={_id}
+          data={{ name: fullName, designation: businessName }}
+        />
 
         {/* PerfomanceMetrics */}
 
-        <PerfomanceMetrics />
+        <PerfomanceMetrics
+          performanceData={{
+            avgRating: averageRating,
+            totalJobs: totalCompletedJobs,
+            experienceLevel,
+          }}
+        />
 
         {/* Skills */}
 
-        <Skills data={skills} />
-
-        {/* Book button */}
-
-        {/* {!shouldShowButtons && (
-          <View className="px-[6%]">
-            <CustomButton
-              onPress={() => router.push("/services/bookingForm")}
-              title="Book"
-            />
-          </View>
-        )} */}
+        <Skills specializations={specializations} />
 
         {/* Time Solt */}
         <View className="mx-[6%] mt-[3%] ">
@@ -91,42 +139,50 @@ export default function ProviderDetailsScreen() {
           </Text>
         </View>
         <View className="flex-row justify-start gap-[3%] mx-[6%] mt-[3%] ">
-          <TimeSlot title="7:00 AM" />
+          <TimeSlot time={workingHours?.from} />
           <View>
             <Text className="font-poppins-semiBold pt-[2%] text-base text-[#919191] ">
               To
             </Text>
           </View>
-          <TimeSlot title="10:00 PM" />
+          <TimeSlot time={workingHours?.to} />
         </View>
 
         {/* Bio  */}
-        <Biography />
+        <Biography bio={bio} />
 
         {/* Gallery Section */}
-        <View>
+        {/* <View>
           <View className="flex-row justify-between mx-[6%] mt-[3%] ">
             <Text className="font-poppins-semiBold text-base text-[#565656]">
               Gallery
             </Text>
             <TouchableOpacity
-              onPress={() => router.push("/services/showGallery")}
+              onPress={() =>
+                router.push({
+                  pathname: "/services/showGallery",
+                  params: { id: providerId },
+                })
+              }
             >
               <Text className="font-poppins-500medium text-base text-[#175994]">
                 View all
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </View> */}
 
         {/* Images section */}
-        <Gallery />
+        {/* <Gallery portfolioImages={data?.data?.portfolio} /> */}
 
         {/* Reviews */}
-        <Testimonials />
+        {/* <Testimonials testimonialData={data?.data} /> */}
 
         {/* Review Button */}
-        <ReviewButton />
+        {/* <ReviewButton
+          id={providerId}
+          totalReviews={data?.data?.reviews.length}
+        /> */}
       </ScrollView>
       {shouldShowButtons && (
         <View

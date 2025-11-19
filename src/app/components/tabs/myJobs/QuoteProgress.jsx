@@ -30,7 +30,7 @@ const ServiceItem = ({ item }) => {
   if (!acceptedQuote) return null;
 
   const statusColor = statusColorMap?.[item?.status] ?? "#6B7280";
-  const { fullName, averageRating, profilePhoto, totalReviews } =
+  const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     acceptedQuote?.provider || {};
 
   return (
@@ -62,7 +62,7 @@ const ServiceItem = ({ item }) => {
             onPress={() =>
               router.push({
                 pathname: "/myJobs/serviceProfile",
-                params: { showButtons: false, serviceId: item.id },
+                params: { showButtons: false, providerId: _id },
               })
             }
             className="w-16 h-16 mb-[20%] rounded-full bg-blue-500 items-center justify-center"

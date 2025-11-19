@@ -51,28 +51,6 @@ export default function ProviderDetailsScreen() {
       </View>
     );
   }
-  // console.log("show All", allProvidersData?.data?.providers[0]?._id);
-
-  const provider = allProvidersData?.data?.providers.find(
-    (p) => p._id === profileId
-  );
-
-  // console.log("show single provide value", data?.data?.provider);
-
-  // console.log("show all provider value", provider);
-
-  const {
-    profilePhoto,
-    workingHours,
-    fullName,
-    businessName,
-    bio,
-    experienceLevel,
-    averageRating,
-    totalCompletedJobs,
-    specializations,
-  } = data?.data?.provider || {};
-
   // Add error state check (optional)
   if (error || providersError) {
     return (
@@ -89,6 +67,19 @@ export default function ProviderDetailsScreen() {
       </View>
     );
   }
+
+  const {
+    profilePhoto,
+    workingHours,
+    fullName,
+    businessName,
+    bio,
+    experienceLevel,
+    averageRating,
+    totalCompletedJobs,
+    specializations,
+  } = data?.data?.provider || {};
+
   return (
     <View className="flex-1 bg-white">
       <ScrollView

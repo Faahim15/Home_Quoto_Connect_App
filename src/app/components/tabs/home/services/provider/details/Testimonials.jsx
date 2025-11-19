@@ -10,7 +10,7 @@ export default function Testimonials({ testimonialData }) {
           <Ionicons name="star" size={18} color="#F59E0B" />
           <Text className="font-poppins-semiBold text-base text-[#565656]">
             {" "}
-            {Number(testimonialData?.provider?.averageRating) / 10}
+            {Number(testimonialData?.provider?.averageRating) / 10 || "N/A"}
           </Text>
         </View>
         <Text className="font-poppins-semiBold text-base text-[#565656]">

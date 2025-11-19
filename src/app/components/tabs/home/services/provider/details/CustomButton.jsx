@@ -5,15 +5,24 @@ export default function CustomButton({
   title,
   onPress,
   agreeToTerms = true,
+  bg = "#175994",
+  text = "#fff",
+  borderColor = "#0054A5",
 }) {
   return (
-    <View className=" mt-[3%] bg-[#175994] border rounded-md border-[#0054A5] px-[3%] py-[3%] ">
+    <View
+      style={{ backgroundColor: bg, borderColor: borderColor }}
+      className=" mt-[3%] border rounded-md px-[3%] py-[3%] "
+    >
       <TouchableOpacity
         disabled={!agreeToTerms}
         style={{ opacity: agreeToTerms ? 1 : 0.6 }}
         onPress={onPress}
       >
-        <Text className="text-white font-poppins-bold text-center">
+        <Text
+          style={{ color: text }}
+          className=" font-poppins-bold text-center"
+        >
           {isLoading ? <ActivityIndicator color="#ffffff" /> : title}
         </Text>
       </TouchableOpacity>

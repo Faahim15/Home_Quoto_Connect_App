@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import SuccessModal from "./SuccessModal";
 
-const PaymentMethodModal = ({ visible, onClose }) => {
+const PaymentMethodModal = ({ visible, onClose, jobId }) => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -37,7 +37,12 @@ const PaymentMethodModal = ({ visible, onClose }) => {
 
           {/* Pay via App Option */}
           <TouchableOpacity
-            onPress={handleSuccessModal}
+            onPress={() =>
+              router.push({
+                pathname: "/shared/stripePayment",
+                params: { jobId: jobId },
+              })
+            }
             className="bg-white border border-[#E5E7EB] rounded-2xl p-[5%] mb-[4%] flex-row items-center"
           >
             <View className="bg-blue-500 rounded-xl p-[3%] mr-[4%]">
@@ -45,7 +50,7 @@ const PaymentMethodModal = ({ visible, onClose }) => {
             </View>
             <View className="flex-1">
               <Text className="font-poppins-semiBold text-base text-[#111827] mb-1">
-                Pay via App
+                Pay via Stripe
               </Text>
               <Text className=" font-poppins-400regular text-sm text-[#4B5563] ">
                 Pay with your linked credit{"\n"}card or app wallet

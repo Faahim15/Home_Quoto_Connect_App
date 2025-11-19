@@ -11,12 +11,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { verticalScale } from "../../adaptive/Adaptiveness";
 import Toast from "react-native-toast-message";
 import { router } from "expo-router";
-export default function CancelModal({
-  visible,
-  onClose,
-  onConfirm,
-  bookingDetails,
-}) {
+import { useCancelJobMutation } from "../../../../redux/features/apiSlices/user/createJobSlices";
+export default function CancelModal({ visible, onClose, onConfirm }) {
   const [selectedReason, setSelectedReason] = useState(null);
   const [otherReason, setOtherReason] = useState("");
 
@@ -91,7 +87,7 @@ export default function CancelModal({
             </View>
 
             {/* booking Info (if provided) */}
-            {bookingDetails && (
+            {/* {bookingDetails && (
               <View className="bg-gray-50 border border-gray-200 rounded-lg p-[4%] mb-[5%]">
                 <Text className="text-sm font-poppins-semiBold text-gray-800 mb-[2%]">
                   booking Details:
@@ -106,7 +102,7 @@ export default function CancelModal({
                   Price: ${bookingDetails.price || "0"}
                 </Text>
               </View>
-            )}
+            )} */}
 
             {/* Reason Section */}
             <Text className="text-base font-poppins-semiBold text-gray-800 mb-[3%]">

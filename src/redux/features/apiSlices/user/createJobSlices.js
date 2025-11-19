@@ -31,6 +31,17 @@ export const jobSlice = api.injectEndpoints({
       invalidatesTags: ["Jobs", "TodaysJobs", "MyJobs", "ActiveJobs", "User"],
     }),
 
+    cancelJob: builder.mutation({
+      query: ({ jobId, reason }) => ({
+        url: `/jobs/${jobId}/cancel`,
+        method: "PUT",
+        body: {
+          cancellationReason: reason,
+        },
+      }),
+      invalidatesTags: ["Jobs", "TodaysJobs", "MyJobs", "ActiveJobs", "User"],
+    }),
+
     deleteJob: builder.mutation({
       query: (jobId) => ({
         url: `/jobs/${jobId}`,
@@ -46,6 +57,7 @@ export const jobSlice = api.injectEndpoints({
       }),
       providesTags: ["MyJobs"],
     }),
+
     getTodaysJobs: builder.query({
       query: () => ({
         url: "/jobs/today",
@@ -78,12 +90,23 @@ export const jobSlice = api.injectEndpoints({
       }),
       providesTags: (result, error, arg) => [{ type: "Job", id: arg }],
     }),
+
     getProviderDetails: builder.query({
       query: (id) => ({
         url: `/popular/providers/${id}`,
         method: "GET",
       }),
       providesTags: (result, error, arg) => [{ type: "Provider", id: arg }],
+    }),
+
+    //provider  profile details
+
+    getProviderProfileDetails: builder.query({
+      query: (id) => ({
+        url: `/providers/${id}`,
+        method: "GET",
+      }),
+      providesTags: (result, error, arg) => [{ type: "Profile", id: arg }],
     }),
 
     //Specializations
@@ -95,6 +118,7 @@ export const jobSlice = api.injectEndpoints({
       }),
       providesTags: ["Specializations"],
     }),
+
     getPopularProviders: builder.query({
       query: () => ({
         url: "/popular/providers",
@@ -113,7 +137,9 @@ export const {
   useGetActiveJobsQuery,
   useGetSingleJobQuery,
   useGetProviderDetailsQuery,
+  useGetProviderProfileDetailsQuery,
   useGetSpecializationsQuery,
   useGetServiceCategoriesQuery,
   useGetPopularProvidersQuery,
+  useCancelJobMutation,
 } = jobSlice;

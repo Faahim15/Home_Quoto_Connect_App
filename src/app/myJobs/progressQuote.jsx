@@ -10,14 +10,19 @@ import Feedback from "../components/tabs/myJobs/Feedback";
 import BotttomButtons from "../components/shared/services/buttons/BottomButtons";
 import CancelModal from "../components/shared/modal/CancelModal";
 import OfferDetailsModal from "../components/shared/modal/OfferDetailsModal";
-import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
+import {
+  useCancelJobMutation,
+  useGetSingleJobQuery,
+} from "../../redux/features/apiSlices/user/createJobSlices";
 import { useQuoteById } from "../../hooks/useQuoteById";
+import Toast from "react-native-toast-message";
 
 export default function ProgressQuote() {
   const { jobId, quoteId } = useLocalSearchParams();
   const [showPayment, setShowPayment] = useState(false);
   const [modalVisible, setModalVisible] = useState(true);
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
+  const [cancelJob, { isLoading: cancelLoading }] = useCancelJobMutation();
   const { data, isLoading, error, refetch } = useGetSingleJobQuery(jobId);
   const item = data?.data?.job;
   const quote = useQuoteById(item?.quotes, quoteId);
@@ -55,14 +60,33 @@ export default function ProgressQuote() {
     price: "320",
   };
 
-  const handleDecline = () => {
-    setModalVisible(false);
-  };
-  const handleApprove = () => {
-    setModalVisible(false);
-  };
-  const handleCancelConfirm = (reason) => {
-    console.log("Cancellation reason:", reason);
+  const handleCancelConfirm = async (reason) => {
+    try {
+      const res = await cancelJob({
+        jobId,
+        reason,
+      }).unwrap();
+
+      Toast.show({
+        type: "success",
+        text1: "Booking Cancelled",
+        text2: "Your service has been cancelled successfully",
+        position: "top",
+        topOffset: 60,
+      });
+
+      setCancelModalVisible(false);
+      refetch();
+      router.back();
+    } catch (err) {
+      console.log("api error", err);
+
+      Toast.show({
+        type: "error",
+        text1: "Cancellation Failed",
+        text2: err?.message || "Please try again",
+      });
+    }
   };
 
   // const renderButton =
@@ -128,25 +152,27 @@ export default function ProgressQuote() {
           {renderButton}
         </View>
       )}
+      {/* <CancelModal
+        visible={cancelModalVisible}
+        onClose={() => setCancelModalVisible(false)}
+        onConfirm={handleCancelConfirm}
+        bookingDetails={{
+          service: item?.service?.name,
+          provider: item?.assignedProvider?.name,
+          price: quote?.price,
+        }}
+      /> */}
       <CancelModal
         visible={cancelModalVisible}
         onClose={() => setCancelModalVisible(false)}
         onConfirm={handleCancelConfirm}
-        appointmentDetails={appointmentData}
       />
+
       <PaymentMethodModal
         visible={showPayment}
+        jobId={jobId}
         onClose={() => setShowPayment(false)}
       />
-      {/* {item?.sentQuote && (
-        <OfferDetailsModal
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          offerData={item}
-          onDecline={handleDecline}
-          onApprove={handleApprove}
-        />
-      )} */}
     </View>
   );
 }
