@@ -1,11 +1,11 @@
 import { View, ScrollView, Text } from "react-native";
 import { scale } from "../components/adaptive/Adaptiveness";
 import XStyle from "../util/styles";
-import { router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import QuoteProgressDetails from "../components/tabs/myJobs/QuoteProgressDetails";
 import PaymentMethodModal from "../components/shared/modal/PaymentMethodModal";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Feedback from "../components/tabs/myJobs/Feedback";
 import BotttomButtons from "../components/shared/services/buttons/BottomButtons";
 import CancelModal from "../components/shared/modal/CancelModal";
@@ -18,9 +18,16 @@ export default function ProgressQuote() {
   const [showPayment, setShowPayment] = useState(false);
   const [modalVisible, setModalVisible] = useState(true);
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
-  const { data, isLoading, error } = useGetSingleJobQuery(jobId);
+  const { data, isLoading, error, refetch } = useGetSingleJobQuery(jobId);
   const item = data?.data?.job;
   const quote = useQuoteById(item?.quotes, quoteId);
+
+  // Auto-refresh when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   if (isLoading) {
     return (
@@ -35,7 +42,7 @@ export default function ProgressQuote() {
       <View className="flex-1 justify-center items-center bg-[#F9F9F9] px-[6%]">
         <CustomTitle title="Service not found" />
         <Text className="text-gray-500 text-base mt-[2%]">
-          We couldn’t locate the service details. Please check the link or try
+          We couldn't locate the service details. Please check the link or try
           again later.
         </Text>
       </View>
@@ -58,28 +65,45 @@ export default function ProgressQuote() {
     console.log("Cancellation reason:", reason);
   };
 
-  const renderButton =
-    item?.status === "Completed" ? (
-      <Feedback onPress={() => router.push("/shared/reviewForm")} item={item} />
-    ) : (
-      <>
-        <BotttomButtons
-          onPress={() => setCancelModalVisible(true)}
-          backgroundColor="#fff"
-          color="#EF4444"
-          borderColor="#EF4444"
-          title="Cancel"
-        />
-        <BotttomButtons
-          onPress={() => setShowPayment(true)}
-          backgroundColor="#18649F"
-          color="#fff"
-          borderColor="#18649F"
-          title="Pay Now"
-        />
-      </>
-    );
-
+  // const renderButton =
+  //   item?.status === "Completed" ? (
+  //     <Feedback onPress={() => router.push("/shared/reviewForm")} item={item} />
+  //   ) : (
+  //     <>
+  //       <BotttomButtons
+  //         onPress={() => setCancelModalVisible(true)}
+  //         backgroundColor="#fff"
+  //         color="#EF4444"
+  //         borderColor="#EF4444"
+  //         title="Cancel"
+  //       />
+  //       <BotttomButtons
+  //         onPress={() => setShowPayment(true)}
+  //         backgroundColor="#18649F"
+  //         color="#fff"
+  //         borderColor="#18649F"
+  //         title="Pay Now"
+  //       />
+  //     </>
+  //   );
+  const renderButton = (
+    <>
+      <BotttomButtons
+        onPress={() => setCancelModalVisible(true)}
+        backgroundColor="#fff"
+        color="#EF4444"
+        borderColor="#EF4444"
+        title="Cancel"
+      />
+      <BotttomButtons
+        onPress={() => setShowPayment(true)}
+        backgroundColor="#18649F"
+        color="#fff"
+        borderColor="#18649F"
+        title="Pay Now"
+      />
+    </>
+  );
   return (
     <View className="flex-1 bg-[#f9f9f9]">
       <View className="px-[4%]">
@@ -88,19 +112,22 @@ export default function ProgressQuote() {
       <ScrollView>
         <QuoteProgressDetails showStatus={true} job={item} quote={quote} />
       </ScrollView>
-      <View
-        className="flex-row w-full gap-[6%] h-[10%]  border border-[#D8DCE0] justify-center items-center "
-        style={[
-          XStyle.shadowBox,
-          {
-            borderTopRightRadius: scale(20),
-            width: "100%",
-            borderTopLeftRadius: scale(20),
-          },
-        ]}
-      >
-        {renderButton}
-      </View>
+
+      {quote?.status !== "updated" && (
+        <View
+          className="flex-row w-full gap-[6%] h-[10%]  border border-[#D8DCE0] justify-center items-center "
+          style={[
+            XStyle.shadowBox,
+            {
+              borderTopRightRadius: scale(20),
+              width: "100%",
+              borderTopLeftRadius: scale(20),
+            },
+          ]}
+        >
+          {renderButton}
+        </View>
+      )}
       <CancelModal
         visible={cancelModalVisible}
         onClose={() => setCancelModalVisible(false)}

@@ -101,7 +101,7 @@ export default function QuoteProgressDetails({ quote, job }) {
               <Text className="font-poppins-500medium pb-[2%] border-b border-[#DCDCDC] text-sm text-black">
                 Quote Status
               </Text>
-              {quote?.isUpdated ? (
+              {quote?.status === "updated" ? (
                 <UpdatedOffer
                   quoteId={quote?._id}
                   onSuccess={() => router.back()}
