@@ -76,7 +76,7 @@ export default function ProgressQuote() {
       });
 
       setCancelModalVisible(false);
-      refetch();
+      // refetch();
       router.back();
     } catch (err) {
       console.log("api error", err);

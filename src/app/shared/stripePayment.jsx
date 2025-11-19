@@ -14,8 +14,10 @@ export default function StripePayment() {
 
   const handlePayment = async () => {
     try {
-      // 1️⃣ Create payment intent
-      const res = await createPaymentIntent({ jobId }).unwrap();
+      const res = await createPaymentIntent({
+        jobId,
+        paymentMethod: "card",
+      }).unwrap();
 
       const clientSecret = res?.data?.clientSecret;
       if (!clientSecret) {
@@ -23,10 +25,13 @@ export default function StripePayment() {
         return;
       }
 
-      // 2️⃣ Init Stripe Payment Sheet
+      // Only allow card payments
       const initSheet = await initPaymentSheet({
         paymentIntentClientSecret: clientSecret,
         merchantDisplayName: "HomeQuote Connect",
+        paymentSheetParameters: {
+          allowedPaymentMethods: ["Card"],
+        },
       });
 
       if (initSheet.error) {
@@ -34,19 +39,16 @@ export default function StripePayment() {
         return;
       }
 
-      // 3️⃣ Open the Stripe Payment UI
       const paymentResult = await presentPaymentSheet();
+
+      console.log("payment Resut", paymentResult);
 
       if (paymentResult.error) {
         alert(paymentResult.error.message);
         return;
       }
 
-      // 4️⃣ Payment success → Redirect
-      router.push({
-        pathname: "/Toaster",
-        params: { res: "Payment Successful!" },
-      });
+      router.push("/home");
     } catch (err) {
       alert(err?.message || "Payment Failed!");
     }
@@ -60,7 +62,7 @@ export default function StripePayment() {
         <CustomButton
           title="Proceed to Payment"
           onPress={handlePayment}
-          isLoading={isLoading} // ⬅️ using Redux loading
+          isLoading={isLoading}
           bg="#635BFF"
           text="#fff"
           borderColor="#635BFF"
