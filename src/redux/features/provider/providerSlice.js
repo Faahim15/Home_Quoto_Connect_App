@@ -16,11 +16,12 @@ const initialState = {
   confirmPassword: "",
   category: "",
   experience: "",
-  serviceArea: "",
+  serviceArea: [],
   specializations: [],
   from: "",
   to: "",
   bio: "",
+  phone: "",
 };
 
 const providerRegSlice = createSlice({

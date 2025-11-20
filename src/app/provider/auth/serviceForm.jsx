@@ -9,12 +9,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useGetServiceCategoriesQuery } from "../../../redux/features/apiSlices/user/createJobSlices";
 import { setProviderRegister } from "../../../redux/features/provider/providerSlice";
 import * as Yup from "yup";
-import {
-  experienceOptions,
-  serviceAreaOptions,
-} from "../../components/data/provider/MapData";
+import { experienceOptions } from "../../components/data/provider/MapData";
 import Error from "../../components/shared/error/Error";
 import InstructionField from "../../components/tabs/home/services/provider/InstructionField";
+import ServiceAreaSelector from "../../components/auth/ServiceArea";
+
 const ServicesOfferScreen = () => {
   const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
@@ -30,13 +29,13 @@ const ServicesOfferScreen = () => {
     }
   };
 
-  // console.log("select", selectedServiceArea);
-
   const validateCurrentPage = () => {
     const currentPageSchema = Yup.object({
       category: Yup.string().required("Service category is required"),
-      experience: Yup.string().required("experience is required"),
-      serviceArea: Yup.string().required("serviceArea is required"),
+      experience: Yup.string().required("Experience is required"),
+      serviceArea: Yup.array()
+        .min(1, "Select at least one service area")
+        .required("Service area is required"),
       specializations: Yup.array().min(1, "Select at least one specialization"),
       bio: Yup.string()
         .required("Specific instructions are required")
@@ -69,13 +68,13 @@ const ServicesOfferScreen = () => {
       return false;
     }
   };
+
   const handleNext = () => {
     if (validateCurrentPage()) {
       router.push("/provider/auth/timePicker");
     } else console.log("errors", errors);
   };
 
-  console.log(data?.data?.categories);
   return (
     <View className="flex-1 bg-white">
       <CustomHeader title="Services you" nestedTitle="Offer" />
@@ -99,21 +98,16 @@ const ServicesOfferScreen = () => {
             field="experience"
             error={errors?.experience}
           />
-
-          <DropdownMenu
-            placeholder="Select Service Area"
-            options={serviceAreaOptions}
-            selectedValue={registrationData?.serviceArea}
-            onSelect={handleInputChange}
-            field="serviceArea"
-            error={errors?.serviceArea}
-          />
         </View>
+
+        <ServiceAreaSelector />
+        <Error error={errors?.serviceArea} />
 
         <View className="px-[1%]">
           <Specializations onChange={handleInputChange} />
           <Error error={errors?.specializations} />
         </View>
+
         {/* 📝 Instructions */}
         <View className="mt-[3%]">
           <InstructionField

@@ -11,6 +11,7 @@ import * as Yup from "yup";
 import { useRegisterUserMutation } from "../../../../redux/features/apiSlices/auth/authApiSlices";
 import { resetProviderForm } from "../../../../redux/features/provider/providerSlice";
 import Error from "../../shared/error/Error";
+
 export default function TimeRangePicker() {
   const [fromTime, setFromTime] = useState(null);
   const [toTime, setToTime] = useState(null);
@@ -24,6 +25,14 @@ export default function TimeRangePicker() {
     (spec) => spec.id
   );
 
+  // Helper function to convert time to 24-hour format string
+  const convertTo24Hour = (date) => {
+    if (!date) return "";
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
   const handleTimeChange = (event, selectedDate) => {
     if (selectedDate) {
       const updatedTime = selectedDate;
@@ -32,16 +41,16 @@ export default function TimeRangePicker() {
         setFromTime(updatedTime);
         dispatch(
           setProviderRegister({
-            field: "from", // ← Matches your Redux state
-            value: formatTime(updatedTime),
+            field: "from",
+            value: convertTo24Hour(updatedTime),
           })
         );
       } else if (showPicker.type === "to") {
         setToTime(updatedTime);
         dispatch(
           setProviderRegister({
-            field: "to", // ← Matches your Redux state
-            value: formatTime(updatedTime),
+            field: "to",
+            value: convertTo24Hour(updatedTime),
           })
         );
       }
@@ -60,21 +69,14 @@ export default function TimeRangePicker() {
           const { from } = this.parent;
           if (!from || !value) return true;
 
-          // ✅ Helper function to convert "12:34 PM" to minutes
+          // Helper function to convert "HH:MM" to minutes
           const timeToMinutes = (timeStr) => {
-            const [time, period] = timeStr.split(" ");
-            let [hours, minutes] = time.split(":").map(Number);
-
-            if (period === "PM" && hours !== 12) hours += 12;
-            if (period === "AM" && hours === 12) hours = 0;
-
+            const [hours, minutes] = timeStr.split(":").map(Number);
             return hours * 60 + minutes;
           };
 
           const fromMinutes = timeToMinutes(from);
           const toMinutes = timeToMinutes(value);
-
-          // console.log("From minutes:", fromMinutes, "To minutes:", toMinutes);
 
           return toMinutes > fromMinutes;
         }
@@ -86,14 +88,9 @@ export default function TimeRangePicker() {
           const { from } = this.parent;
           if (!from || !value) return true;
 
-          // ✅ Same helper function
+          // Helper function to convert "HH:MM" to minutes
           const timeToMinutes = (timeStr) => {
-            const [time, period] = timeStr.split(" ");
-            let [hours, minutes] = time.split(":").map(Number);
-
-            if (period === "PM" && hours !== 12) hours += 12;
-            if (period === "AM" && hours === 12) hours = 0;
-
+            const [hours, minutes] = timeStr.split(":").map(Number);
             return hours * 60 + minutes;
           };
 
@@ -107,151 +104,27 @@ export default function TimeRangePicker() {
       ),
   });
 
-  // const handleNext = async () => {
-  //   try {
-  //     // Step 1: Validate user input
-  //     await currentPageSchema.validate(registrationData, { abortEarly: false });
-  //     setErrors({});
-
-  //     // ✅ 12-hour কে 24-hour format এ convert করার function
-  //     const convertTo24Hour = (time12h) => {
-  //       if (!time12h) return "";
-
-  //       const [time, period] = time12h.trim().split(" ");
-  //       let [hours, minutes] = time.split(":");
-
-  //       hours = parseInt(hours);
-
-  //       // PM conversion
-  //       if (period === "PM" && hours !== 12) {
-  //         hours = hours + 12;
-  //       }
-  //       // AM conversion (12 AM = 00:00)
-  //       if (period === "AM" && hours === 12) {
-  //         hours = 0;
-  //       }
-
-  //       return `${hours.toString().padStart(2, "0")}:${minutes}`;
-  //     };
-
-  //     // ✅ Working hours 24-hour format এ convert করুন
-  //     const workingHours = {
-  //       from: convertTo24Hour(registrationData?.from),
-  //       to: convertTo24Hour(registrationData?.to),
-  //     };
-
-  //     console.log("📅 Working Hours Object:", workingHours);
-
-  //     // Step 2: Prepare payload
-  //     const formsData = new FormData();
-  //     formsData.append("role", "provider");
-  //     formsData.append("fullName", registrationData?.fullName);
-  //     formsData.append("email", registrationData?.email);
-  //     formsData.append("password", registrationData?.password);
-  //     formsData.append("confirmPassword", registrationData?.confirmPassword);
-  //     formsData.append("location", JSON.stringify(registrationData?.location));
-  //     formsData.append("businessName", registrationData?.category);
-  //     formsData.append("bio", registrationData?.bio);
-  //     formsData.append(
-  //       "experienceLevel",
-  //       registrationData?.experience
-  //         ?.split(" ")
-  //         .slice(0, 1)
-  //         .join("")
-  //         .toLowerCase()
-  //     );
-  //     formsData.append("specializations", JSON.stringify(specializationIds));
-  //     formsData.append(
-  //       "serviceAreas",
-  //       JSON.stringify(registrationData?.serviceArea?.split())
-  //     );
-  //     formsData.append("workingHours", JSON.stringify(workingHours));
-
-  //     // 🚀 Send to backend
-  //     const res = await registerUser(formsData).unwrap();
-  //     dispatch(resetProviderForm());
-  //     console.log("✅ provider Registration successfull:", res);
-
-  //     // Step 4: Handle success
-  //     if (res?.success) {
-  //       Toast.show({
-  //         type: "success",
-  //         text1: "Success",
-  //         text2: res?.message || "Registration successful!",
-  //         visibilityTime: 2000,
-  //       });
-  //       router.push("provider/auth/signIn");
-  //     } else {
-  //       Toast.show({
-  //         type: "error",
-  //         text1: "Error",
-  //         text2: res?.message || "Registration failed",
-  //         visibilityTime: 2000,
-  //       });
-  //     }
-  //   } catch (err) {
-  //     // Step 6: Handle validation or network errors
-  //     if (err.name === "ValidationError") {
-  //       const validationErrors = {};
-  //       err.inner.forEach((e) => {
-  //         validationErrors[e.path] = e.message;
-  //       });
-  //       setErrors(validationErrors);
-  //       console.log("🔴 Validation Errors:", validationErrors);
-  //       console.log("📋 Full Error Details:", err.inner);
-  //     } else {
-  //       console.log("API Error:", err);
-  //       const errorMessage =
-  //         err?.message ||
-  //         err?.data?.email?.[0] ||
-  //         err?.data ||
-  //         "Network or server error. Please try again.";
-
-  //       Toast.show({
-  //         type: "error",
-  //         text1: "Error",
-  //         text2: errorMessage,
-  //         visibilityTime: 2000,
-  //       });
-  //     }
-  //   }
-  // };
   const handleNext = async () => {
     try {
       await currentPageSchema.validate(registrationData, { abortEarly: false });
       setErrors({});
 
-      const convertTo24Hour = (time12h) => {
-        if (!time12h) return "";
-
-        const [time, period] = time12h.trim().split(" ");
-        let [hours, minutes] = time.split(":");
-
-        hours = parseInt(hours);
-
-        if (period === "PM" && hours !== 12) {
-          hours = hours + 12;
-        }
-        if (period === "AM" && hours === 12) {
-          hours = 0;
-        }
-
-        return `${hours.toString().padStart(2, "0")}:${minutes}`;
-      };
-
       const workingHours = {
-        from: convertTo24Hour(registrationData?.from),
-        to: convertTo24Hour(registrationData?.to),
+        from: registrationData?.from,
+        to: registrationData?.to,
       };
 
-      // ✅ FormData এর বদলে সরাসরি JSON object পাঠান
+      // Prepare serviceAreas array
+      const serviceAreas =
+        registrationData?.serviceArea?.map((area) => area.name) || [];
+
       const payload = {
         role: "provider",
         fullName: registrationData?.fullName,
         email: registrationData?.email,
         password: registrationData?.password,
         confirmPassword: registrationData?.confirmPassword,
-        location: registrationData?.location, // ✅ Already object, no need to stringify
+        location: registrationData?.location,
         businessName: registrationData?.category,
         bio: registrationData?.bio,
         experienceLevel: registrationData?.experience
@@ -259,14 +132,13 @@ export default function TimeRangePicker() {
           .slice(0, 1)
           .join("")
           .toLowerCase(),
-        specializations: specializationIds, // ✅ Already array
-        serviceAreas: registrationData?.serviceArea?.split(), // ✅ Already array
-        workingHours: workingHours, // ✅ Object হিসেবে পাঠান
+        specializations: specializationIds,
+        serviceAreas: serviceAreas,
+        workingHours: workingHours,
       };
 
       console.log("📤 Sending Payload:", JSON.stringify(payload, null, 2));
 
-      // 🚀 Send JSON instead of FormData
       const res = await registerUser(payload).unwrap();
       dispatch(resetProviderForm());
       console.log("✅ provider Registration successful:", res);
@@ -312,6 +184,7 @@ export default function TimeRangePicker() {
       }
     }
   };
+
   return (
     <>
       <View className="items-center justify-center bg-white px-[2%]">
@@ -324,7 +197,9 @@ export default function TimeRangePicker() {
             onPress={() => setShowPicker({ type: "from", show: true })}
             className="border border-gray-300 rounded-md px-[3%] py-[4%]"
           >
-            <Text className="text-gray-500">{formatTime(fromTime)}</Text>
+            <Text className="text-gray-500">
+              {registrationData?.from || "Select time"}
+            </Text>
           </TouchableOpacity>
           <Error error={errors?.from} />
         </View>
@@ -338,7 +213,9 @@ export default function TimeRangePicker() {
             onPress={() => setShowPicker({ type: "to", show: true })}
             className="border border-gray-300 rounded-md px-[3%] py-[4%]"
           >
-            <Text className="text-gray-500">{formatTime(toTime)}</Text>
+            <Text className="text-gray-500">
+              {registrationData?.to || "Select time"}
+            </Text>
           </TouchableOpacity>
           <Error error={errors?.to} />
         </View>
@@ -346,16 +223,22 @@ export default function TimeRangePicker() {
         {/* Time Picker */}
         {showPicker.show && (
           <DateTimePicker
-            value={new Date()}
+            value={
+              showPicker.type === "from" && fromTime
+                ? fromTime
+                : showPicker.type === "to" && toTime
+                  ? toTime
+                  : new Date()
+            }
             mode="time"
-            is24Hour={false}
+            is24Hour={true}
             display={Platform.OS === "ios" ? "spinner" : "default"}
             onChange={handleTimeChange}
           />
         )}
       </View>
       <View className=" flex-1 px-[2%]">
-        <FormButton onPress={handleNext} title="Next" />
+        <FormButton onPress={handleNext} title="Next" isLoading={isLoading} />
       </View>
     </>
   );

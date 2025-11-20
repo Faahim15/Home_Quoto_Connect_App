@@ -19,10 +19,14 @@ import { router } from "expo-router";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { setProviderRegister } from "../../../redux/features/provider/providerSlice";
+import PhoneInput from "../../components/auth/PhoneNumber";
 export default function SignUp() {
   const [errors, setErrors] = useState({});
+
   const dispatch = useDispatch();
+
   const registrationData = useSelector((state) => state.providerRegister);
+
   const handleInputChange = (field, value) => {
     dispatch(setProviderRegister({ field, value }));
 
@@ -46,14 +50,25 @@ export default function SignUp() {
             return value?.coordinates && value.coordinates.length === 2;
           }
         ),
+      phone: Yup.string()
+        .required("Phone number is required")
+        .test(
+          "is-valid-canadian-phone",
+          "Please enter a valid 10-digit phone number",
+          (value) => {
+            if (!value) return false;
+            // Remove all non-digits
+            const cleaned = value.replace(/\D/g, "");
+            // Check if it's exactly 10 digits
+            return cleaned.length === 10;
+          }
+        ),
       password: Yup.string()
         .required("Password is required")
         .min(8, "Password must be at least 8 characters"),
       confirmPassword: Yup.string()
         .oneOf([Yup.ref("password"), null], "Passwords must match")
         .required("Confirm Password is required"),
-      // category: Yup.string().required("Service category is required"),
-      // specializations: Yup.array().min(1, "Select at least one specialization"),
     });
 
     // ✅ Transform jobData before validation
@@ -130,7 +145,11 @@ export default function SignUp() {
               label="Email"
               value={registrationData.email}
             />
-
+            <PhoneInput
+              onChangeText={(text) => handleInputChange("phone", text)}
+              error={errors.phone}
+              value={registrationData.phone}
+            />
             <LocationPicker
               onLocationSelect={(loc) => handleInputChange("location", loc)}
               error={errors.location}

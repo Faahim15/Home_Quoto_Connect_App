@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Alert, Platform } from "react-native";
+// ImageSelector.jsx
+import React from "react";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 
-export default function ImageSelector() {
-  const [selectedFile, setSelectedFile] = useState(null);
-
+export default function ImageSelector({ selectedFile, onFileSelect }) {
   const handleUpload = async () => {
     try {
       const { status } =
@@ -32,7 +31,7 @@ export default function ImageSelector() {
             });
 
             if (!result.canceled && result.assets.length > 0) {
-              setSelectedFile({
+              onFileSelect({
                 name: result.assets[0].fileName || "image.jpg",
                 uri: result.assets[0].uri,
                 type: result.assets[0].type || "image/jpeg",
@@ -50,7 +49,7 @@ export default function ImageSelector() {
             });
 
             if (!result.canceled && result.assets.length > 0) {
-              setSelectedFile({
+              onFileSelect({
                 name: "camera_photo.jpg",
                 uri: result.assets[0].uri,
                 type: "image/jpeg",
@@ -70,18 +69,16 @@ export default function ImageSelector() {
   };
 
   return (
-    <View className="flex-1   bg-[#f9f9f9]">
+    <View className="flex-1 bg-[#f9f9f9]">
       <View className="w-full">
-        {/* Upload Area Container */}
-        <View className="  bg-[#f9f9f9]">
-          {/* Upload Area */}
+        <View className="bg-[#f9f9f9]">
           <TouchableOpacity
             onPress={handleUpload}
-            className="  bg-[#f9f9f9] border border-[#DCDCDC] rounded-lg  active:bg-blue-50/50"
+            className="bg-[#f9f9f9] border border-[#DCDCDC] rounded-lg active:bg-blue-50/50"
             activeOpacity={0.7}
           >
             {selectedFile ? (
-              <View className="flex-row  py-[5%]  px-[3%] justify-between items-center">
+              <View className="flex-row py-[5%] px-[3%] justify-between items-center">
                 <View className="flex-row h-[28px] gap-[4%]">
                   <Ionicons
                     name="checkmark-circle"
@@ -94,13 +91,13 @@ export default function ImageSelector() {
                   </Text>
                 </View>
 
-                <Text className="text-base pt-[1%] font-poppins-500medium text-[#319FCA] text-center ">
+                <Text className="text-base pt-[1%] font-poppins-500medium text-[#319FCA] text-center">
                   Tap to change file
                 </Text>
               </View>
             ) : (
-              <View className="flex-row px-[3%] gap-[5%] py-[3%]  w-full items-center ">
-                <View className="w-[32px] h-[32px] bg-blue-100 rounded-full items-center justify-center ">
+              <View className="flex-row px-[3%] gap-[5%] py-[3%] w-full items-center">
+                <View className="w-[32px] h-[32px] bg-blue-100 rounded-full items-center justify-center">
                   <Ionicons
                     name="cloud-upload-outline"
                     size={16}

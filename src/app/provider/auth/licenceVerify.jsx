@@ -1,5 +1,4 @@
 import { View, Text } from "react-native";
-import React from "react";
 import CustomTitle from "../../components/shared/CustomTitle";
 import { scale, verticalScale } from "../../components/adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";

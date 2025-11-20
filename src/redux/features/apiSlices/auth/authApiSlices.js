@@ -71,13 +71,26 @@ export const authSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
-    // New change password endpoint
     changePassword: builder.mutation({
       query: (data) => ({
         url: `/profile/change-password`,
         method: "PUT",
         body: data,
       }),
+      invalidatesTags: ["User"],
+    }),
+    // Upload verification documents (PDF for businessLicense, Image for certificate)
+    uploadVerificationDocuments: builder.mutation({
+      query: (formData) => {
+        return {
+          url: `/profile/verification-documents`,
+          method: "POST",
+          // headers: {
+          //   "Content-Type": "multipart/form-data",
+          // },
+          body: formData,
+        };
+      },
       invalidatesTags: ["User"],
     }),
   }),
@@ -93,5 +106,6 @@ export const {
   useForgotPasswordMutation,
   useResendOtpMutation,
   useResetPasswordMutation,
-  useChangePasswordMutation, // New export
+  useChangePasswordMutation,
+  useUploadVerificationDocumentsMutation, // New export
 } = authSlice;

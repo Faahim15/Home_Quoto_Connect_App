@@ -66,7 +66,8 @@ export default function SignInScreen() {
       // console.log("Login response:", res.data.user);
       console.log("show user", res?.data?.user?.role);
       // ✅ Navigate to /home
-      if (res?.data?.user?.role === "provider") router.push("/provider/home");
+      if (res?.data?.user?.role === "provider")
+        router.push("/provider/auth/licenceVerify");
       else {
         Toast.show({
           type: "info",
