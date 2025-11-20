@@ -3,10 +3,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import SuccessModal from "./SuccessModal";
+import { useCreatePaymentIntentMutation } from "../../../../redux/features/apiSlices/payment/paymentApiSlice";
+import Toast from "react-native-toast-message";
 
 const PaymentMethodModal = ({ visible, onClose, jobId }) => {
   const [showModal, setShowModal] = useState(false);
-
+  const [cashPayment, { isLoading }] = useCreatePaymentIntentMutation();
   useEffect(() => {
     if (showModal) {
       const timer = setTimeout(() => {
@@ -19,6 +21,31 @@ const PaymentMethodModal = ({ visible, onClose, jobId }) => {
   const handleSuccessModal = () => {
     // onClose();
     setShowModal(true);
+  };
+
+  const handleCashPayment = async () => {
+    try {
+      const payload = {
+        jobId: jobId,
+        paymentMethod: "cash",
+      };
+
+      const res = await cashPayment(payload).unwrap();
+
+      Toast.show({
+        type: "success",
+        text1: "Payment Successful",
+        text2: res?.message || "Cash payment has been recorded.",
+      });
+      router.replace("/shared/wait");
+    } catch (error) {
+      // ❌ Error Toast
+      Toast.show({
+        type: "error",
+        text1: "Payment Failed",
+        text2: error?.message || "Something went wrong.",
+      });
+    }
   };
 
   return (
@@ -60,7 +87,7 @@ const PaymentMethodModal = ({ visible, onClose, jobId }) => {
 
           {/* Pay Cash Option */}
           <TouchableOpacity
-            onPress={() => router.replace("/shared/wait")}
+            onPress={handleCashPayment}
             className="bg-white border border-[#E5E7EB] rounded-2xl p-[5%] flex-row items-center"
           >
             <View className="bg-green-100 rounded-xl p-[3%] mr-[4%]">

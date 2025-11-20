@@ -20,7 +20,6 @@ import Toast from "react-native-toast-message";
 export default function ProgressQuote() {
   const { jobId, quoteId } = useLocalSearchParams();
   const [showPayment, setShowPayment] = useState(false);
-  const [modalVisible, setModalVisible] = useState(true);
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const [cancelJob, { isLoading: cancelLoading }] = useCancelJobMutation();
   const { data, isLoading, error, refetch } = useGetSingleJobQuery(jobId);
@@ -34,7 +33,7 @@ export default function ProgressQuote() {
     }, [refetch])
   );
 
-  if (isLoading) {
+  if (isLoading || cancelLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
         <Text className="text-gray-500 text-base">Loading job details...</Text>
@@ -54,12 +53,6 @@ export default function ProgressQuote() {
     );
   }
 
-  const appointmentData = {
-    service: "TV repair",
-    provider: "Jackson",
-    price: "320",
-  };
-
   const handleCancelConfirm = async (reason) => {
     try {
       const res = await cancelJob({
@@ -76,7 +69,6 @@ export default function ProgressQuote() {
       });
 
       setCancelModalVisible(false);
-      // refetch();
       router.back();
     } catch (err) {
       console.log("api error", err);
@@ -89,27 +81,6 @@ export default function ProgressQuote() {
     }
   };
 
-  // const renderButton =
-  //   item?.status === "Completed" ? (
-  //     <Feedback onPress={() => router.push("/shared/reviewForm")} item={item} />
-  //   ) : (
-  //     <>
-  //       <BotttomButtons
-  //         onPress={() => setCancelModalVisible(true)}
-  //         backgroundColor="#fff"
-  //         color="#EF4444"
-  //         borderColor="#EF4444"
-  //         title="Cancel"
-  //       />
-  //       <BotttomButtons
-  //         onPress={() => setShowPayment(true)}
-  //         backgroundColor="#18649F"
-  //         color="#fff"
-  //         borderColor="#18649F"
-  //         title="Pay Now"
-  //       />
-  //     </>
-  //   );
   const renderButton = (
     <>
       <BotttomButtons
@@ -152,16 +123,6 @@ export default function ProgressQuote() {
           {renderButton}
         </View>
       )}
-      {/* <CancelModal
-        visible={cancelModalVisible}
-        onClose={() => setCancelModalVisible(false)}
-        onConfirm={handleCancelConfirm}
-        bookingDetails={{
-          service: item?.service?.name,
-          provider: item?.assignedProvider?.name,
-          price: quote?.price,
-        }}
-      /> */}
       <CancelModal
         visible={cancelModalVisible}
         onClose={() => setCancelModalVisible(false)}
