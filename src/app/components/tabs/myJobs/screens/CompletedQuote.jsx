@@ -5,19 +5,21 @@ import {
   TouchableOpacity,
   FlatList,
   Pressable,
+  RefreshControl,
 } from "react-native";
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
 import { QuoteCompletedData } from "../../../data/jobs/QuotesData";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import { useGetAllJobsQuery } from "../../../../../redux/features/apiSlices/user/createJobSlices";
+import LoadingState from "../../../ui/LoadingState";
+import ErrorState from "../../../ui/ErrorState";
+import EmptyState from "../../../ui/EmptyState";
 // Updated ServiceItem component with navigation
 const ServiceItem = ({ item }) => {
-  const serviceColors = {
-    "TV repair and Installation": "bg-[#319FCA]",
-    "AC Repair and Maintenance": "bg-[#FF6B6B]",
-    "Plumbing Services": "bg-[#10B981]",
-    "Electrical Repair": "bg-[#8B5CF6]",
-  };
-
+  const acceptedQuote = item?.quotes?.find((q) => q.status === "accepted");
+  const { fullName, averageRating, profilePhoto, totalReviews, _id } =
+    acceptedQuote?.provider || {};
   return (
     <View className="mx-[4%] mb-[4%]">
       {/* Service Type Banner - Made clickable */}
@@ -26,15 +28,11 @@ const ServiceItem = ({ item }) => {
           borderTopLeftRadius: scale(8),
           borderTopRightRadius: scale(8),
         }}
-        className={`px-[3.5%] py-[3%] flex-row items-center justify-between ${
-          serviceColors[item?.serviceType] || "bg-gray-500"
-        }`}
+        className="px-[3.5%] py-[3%] flex-row bg-gray-500 items-center justify-between"
       >
         <Text className="text-white font-poppins-400regular text-base">
-          {item.serviceType}
+          {item?.serviceCategory?.title || "N/A"}
         </Text>
-
-        {/* <Ionicons name="arrow-forward" size={16} color="#fff" /> */}
       </Pressable>
 
       <View
@@ -50,15 +48,13 @@ const ServiceItem = ({ item }) => {
             onPress={() =>
               router.push({
                 pathname: "/myJobs/serviceProfile",
-                params: { showButtons: false, serviceId: item.id },
+                params: { showButtons: false, providerId: _id },
               })
             }
             className="w-16 h-16 mb-[20%] rounded-full bg-blue-500 items-center justify-center"
           >
             <Image
-              source={{
-                uri: item.profileImage,
-              }}
+              source={{ uri: profilePhoto?.url || null }}
               className="w-full h-full rounded-full"
               resizeMode="cover"
             />
@@ -68,10 +64,13 @@ const ServiceItem = ({ item }) => {
           <View className="flex-1">
             <View className="flex-row justify-between items-center ">
               <Text className="font-poppins-500medium text-xl text-gray-800 mb-1">
-                {item.providerName}
+                {fullName || "N/A"}
               </Text>
               <View className="">
-                <Text className="font-poppins-400regular rounded p-[1%] text-white text-xs bg-[#00BFA5]">
+                <Text
+                  // style={{ color: statusColor }}
+                  className="font-poppins-400regular rounded p-[1%] text-white text-xs bg-[#00BFA5]"
+                >
                   Completed
                 </Text>
               </View>
@@ -79,10 +78,10 @@ const ServiceItem = ({ item }) => {
             {/* Rating */}
             <View className="flex-row items-center mb-[2%]">
               <Text className="text-[#F59E0B] font-poppins-400regular text-xs mr-1">
-                ★ {item.rating}
+                ★ {Number(averageRating) / 10 || "N/A"}
               </Text>
               <Text className="font-poppins-400regular text-[#18649F] text-xs">
-                ({item.reviews} Reviews)
+                ({totalReviews > 1 ? "Reviews" : "Review"})
               </Text>
             </View>
 
@@ -92,7 +91,7 @@ const ServiceItem = ({ item }) => {
                 Price
               </Text>
               <Text className="text-[#F59E0B] text-base font-poppins-semiBold">
-                {item.price}
+                {`$${acceptedQuote?.price}`}
               </Text>
             </View>
 
@@ -111,13 +110,13 @@ const ServiceItem = ({ item }) => {
                 onPress={() => {
                   router.push({
                     pathname: "/myJobs/completedQuote",
-                    params: { serviceId: item.id },
+                    params: { jobId: item._id, quoteId: acceptedQuote?._id },
                   });
                 }}
                 style={{ width: scale(120), height: verticalScale(30) }}
-                className={` justify-center items-center  mt-[3%] rounded-md py-[2%] px-[2%] ${serviceColors[item?.serviceType] || "bg-[#0054A5]"} `}
+                className="justify-center items-center  mt-[3%] rounded-md py-[2%] px-[2%] bg-[#0054A5]"
               >
-                <Text className=" font-poppins-500medium text-[10px]  text-white text-sm font-semibold">
+                <Text className="  text-[10px]  text-white text-sm font-poppins-semiBold">
                   Details
                 </Text>
               </TouchableOpacity>
@@ -131,6 +130,41 @@ const ServiceItem = ({ item }) => {
 
 // Updated Services component with navigation prop
 export default function CompletedQuote() {
+  const [refreshing, setRefreshing] = useState(false);
+  const { data, isLoading, error, refetch } = useGetAllJobsQuery();
+
+  // Auto-refresh when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  if (isLoading) return <LoadingState />;
+  if (error) return <ErrorState error={error} />;
+
+  const jobsData = data?.data?.jobs || [];
+
+  // Filter only jobs that are in progress
+  const completedJobs = jobsData.filter((job) => job.status === "completed");
+
+  // Filter only those that have an accepted or updated quote
+  // const filteredQuotes = inProgressJobs.filter((job) => {
+  //   const hasAccepted = job?.quotes?.some((q) => q.status === "accepted");
+  //   return hasAccepted;
+  // });
+
+  if (completedJobs.length === 0) {
+    return <EmptyState />;
+  }
   const renderServiceItem = ({ item }) => {
     return <ServiceItem item={item} />;
   };
@@ -138,7 +172,7 @@ export default function CompletedQuote() {
   return (
     <View className="mb-[18%]">
       <FlatList
-        data={QuoteCompletedData}
+        data={completedJobs}
         renderItem={renderServiceItem}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
@@ -146,6 +180,15 @@ export default function CompletedQuote() {
           paddingTop: scale(16),
           paddingBottom: scale(20),
         }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#175994"]}
+            tintColor="#175994"
+            progressBackgroundColor="#ffffff"
+          />
+        }
       />
     </View>
   );

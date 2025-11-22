@@ -192,7 +192,7 @@ export function getStatusLabel(status) {
     expired: "Expired",
   };
 
-  return statusMap[status] || "Unknown Status";
+  return statusMap[status] || "Completed";
 }
 
 export default getSpecializationTitles;

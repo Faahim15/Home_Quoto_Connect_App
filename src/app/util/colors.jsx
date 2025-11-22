@@ -14,6 +14,7 @@ export const statusColorMap = {
   cancelled: "#D32F2F",
   expired: "#6B7280",
   in_progress: "#1A73E8",
+  completed: "#10B981",
 };
 
 export default serviceColors;

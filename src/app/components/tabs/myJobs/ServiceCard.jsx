@@ -10,14 +10,7 @@ import CancelledQuote from "./screens/CancelledQuote";
 const ServiceCard = () => {
   const [activeTab, setActiveTab] = useState("My Jobs");
 
-  const tabs = [
-    "My Jobs",
-    "Quotes",
-    "In Progress",
-    "Unpaid",
-    "Completed",
-    "Cancelled",
-  ];
+  const tabs = ["My Jobs", "Quotes", "In Progress", "Completed", "Cancelled"];
 
   const handleTabPress = (tab) => {
     setActiveTab(tab);
@@ -29,8 +22,8 @@ const ServiceCard = () => {
         return <AllQuoteScreen />;
       case "In Progress":
         return <QuoteProgressScreen />;
-      case "Unpaid":
-        return <QuoteUnpaidScreen />;
+      // case "Unpaid":
+      //   return <QuoteUnpaidScreen />;
       case "Completed":
         return <CompletedQuote />;
       case "Cancelled":

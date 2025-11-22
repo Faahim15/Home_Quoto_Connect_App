@@ -3,18 +3,42 @@ import { QuoteCompletedData } from "../components/data/jobs/QuotesData";
 import { useLocalSearchParams } from "expo-router";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import QuoteProgressDetails from "../components/tabs/myJobs/QuoteProgressDetails";
+import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
+import { useQuoteById } from "../../hooks/useQuoteById";
+import { Text } from "react-native";
 export default function ProgressQuote() {
-  const { serviceId } = useLocalSearchParams();
+  const { jobId, quoteId } = useLocalSearchParams();
 
-  const item = QuoteCompletedData.find((s) => s.id.toString() === serviceId);
+  const { data, isLoading, error, refetch } = useGetSingleJobQuery(jobId);
+  const item = data?.data?.job;
+  const quote = useQuoteById(item?.quotes, quoteId);
 
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
+        <Text className="text-gray-500 text-base">Loading job details...</Text>
+      </View>
+    );
+  }
+
+  if (error || !item) {
+    return (
+      <View className="flex-1 justify-center items-center bg-[#F9F9F9] px-[6%]">
+        <CustomTitle title="Service not found" />
+        <Text className="text-gray-500 text-base mt-[2%]">
+          We couldn't locate the service details. Please check the link or try
+          again later.
+        </Text>
+      </View>
+    );
+  }
   return (
     <View className="flex-1 bg-[#f9f9f9]">
       <View className="px-[4%]">
         <CustomTitle title="Quote Details" />
       </View>
       <ScrollView>
-        <QuoteProgressDetails showStatus={true} item={item} />
+        <QuoteProgressDetails showStatus={true} quote={quote} job={item} />
       </ScrollView>
     </View>
   );
