@@ -39,7 +39,7 @@ export default function HomeTopBar({ userData, mode }) {
           <View className="flex-row gap-[1%] mt-[2%]">
             <Ionicons name="location-outline" size={14} color="#8891AA" />
             <Text className="font-poppins-400regular text-xs text-[#8891AA] ">
-              {location.city || "Dhaka"},{location.state || "Dhaka"}
+              {location?.city || "Dhaka"},{location?.state || "Dhaka"}
             </Text>
           </View>
         </View>
