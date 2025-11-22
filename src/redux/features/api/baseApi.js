@@ -1,10 +1,48 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// Base query function using axios
+
+// Base query function using axios (with fetch for FormData)
 const baseQueryWithRath = async (args, api, extraOptions) => {
   try {
     const token = await AsyncStorage.getItem("token");
+
+    // Check if the body is FormData
+    const isFormData = args.body instanceof FormData;
+
+    // Use fetch for FormData, axios for everything else
+    if (isFormData) {
+      console.log("Using fetch for FormData upload");
+
+      const headers = {
+        Authorization: token ? `Bearer ${token}` : "",
+        // Don't set Content-Type for FormData
+      };
+
+      const response = await fetch(`http://10.10.20.30:5000/api${args.url}`, {
+        method: args.method,
+        headers: headers,
+        body: args.body,
+      });
+
+      console.log("Fetch response status:", response.status);
+
+      if (response.status === 403 || response.status === 401) {
+        await AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem("user");
+      }
+
+      const data = await response.json();
+      console.log("Fetch response data:", data);
+
+      if (!response.ok) {
+        return { error: data };
+      }
+
+      return { data };
+    }
+
+    // Use axios for non-FormData requests
     const result = await axios({
       baseURL: "http://10.10.20.30:5000/api",
       ...args,
@@ -14,6 +52,7 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
       headers: {
         ...args.headers,
         Authorization: token ? `Bearer ${token}` : "",
+        "Content-Type": "application/json",
       },
     });
 
@@ -33,6 +72,9 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
 
     return { data: result.data };
   } catch (error) {
+    console.error("API Error:", error);
+    console.error("Error response:", error.response);
+
     if (error.response?.data) {
       if (typeof error.response.data === "string") {
         const withCurly = (error.response.data += "}");

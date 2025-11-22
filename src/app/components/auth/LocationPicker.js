@@ -15,7 +15,7 @@ import * as Location from "expo-location";
 
 const { width, height } = Dimensions.get("window");
 
-const LocationPicker = ({ onLocationSelect, error, value }) => {
+const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
   const [locationText, setLocationText] = useState("");
   const [isMapVisible, setIsMapVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -156,14 +156,18 @@ const LocationPicker = ({ onLocationSelect, error, value }) => {
 
   return (
     <View className="w-full my-[3%]">
-      <Text className="font-poppins-400regular text-base text-[#000] mb-[2%]">
+      <Text
+        className={`font-poppins-400regular   text-base  mb-[2%] ${mode === "edit" ? "text-[#5C5F62]" : "text-black"} `}
+      >
         Location
       </Text>
-      <View className="flex-row items-center bg-[#F9F9F9] border border-[#DCDCDC] rounded-md px-[1%] py-[4%]">
+      <View
+        className={`flex-row justify-center items-center  ${mode === "edit" ? "bg-white px-[1%] py-[2%] rounded-lg" : "bg-[#f9f9f9] px-[1%] py-[4%] rounded-md"} border border-[#DCDCDC] `}
+      >
         <TouchableOpacity
           onPress={() => setIsMapVisible(true)}
           disabled={isLoading}
-          className="p-[3%] rounded-full"
+          className={` ${mode === "edit" ? "pb-[1%]" : "p-[3%]"} rounded-full`}
         >
           {isLoading ? (
             <ActivityIndicator size="small" color="white" />
@@ -173,7 +177,7 @@ const LocationPicker = ({ onLocationSelect, error, value }) => {
         </TouchableOpacity>
 
         <TextInput
-          className="flex-1 font-poppins-400regular text-sm bg-[#f9f9f9] text-black"
+          className={`flex-1 font-poppins-400regular text-sm  ${mode === "edit" ? "bg-white" : "bg-[#f9f9f9]"} text-black`}
           placeholder="Tap the location icon to select"
           placeholderTextColor="#6B7280"
           value={value}

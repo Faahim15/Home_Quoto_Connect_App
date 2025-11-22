@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,13 +7,24 @@ import {
   Image,
   Alert,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
-
-const AvatarImagePicker = () => {
+import { useUpdateProfilePhotoMutation } from "../../../../redux/features/apiSlices/user/userApiSlices";
+import * as FileSystem from "expo-file-system";
+const AvatarImagePicker = ({ photo }) => {
   const [avatar, setAvatar] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [updateProfilePhoto, { isLoading }] = useUpdateProfilePhotoMutation();
+
+  // Set initial avatar from photo prop
+  useEffect(() => {
+    if (photo?.url) {
+      setAvatar(photo.url);
+    }
+  }, [photo]);
 
   // Request permissions
   const requestPermissions = async () => {
@@ -34,21 +45,85 @@ const AvatarImagePicker = () => {
     return true;
   };
 
+  // Upload image to server
+  const uploadImage = async (imageUri) => {
+    try {
+      console.log("Original imageUri:", imageUri);
+
+      // Read file as base64
+      const base64 = await FileSystem.readAsStringAsync(imageUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      // Extract filename from URI
+      const filename = imageUri.split("/").pop();
+
+      // Get file extension
+      const match = /\.(\w+)$/.exec(filename);
+      const fileType = match ? match[1] : "jpeg";
+
+      console.log("Filename:", filename);
+      console.log("File type:", fileType);
+
+      const formData = new FormData();
+
+      // Create blob from base64
+      const blob = {
+        uri: `data:image/${fileType};base64,${base64}`,
+        name: filename,
+        type: `image/${fileType}`,
+      };
+
+      formData.append("profilePhoto", blob);
+
+      console.log("FormData prepared with base64, uploading...");
+
+      // Upload to server
+      const response = await updateProfilePhoto(formData).unwrap();
+
+      console.log("Upload response:", response);
+
+      if (response?.success) {
+        Alert.alert("Success", "Profile photo updated successfully!");
+        if (response?.data?.profilePhoto?.url) {
+          setAvatar(response.data.profilePhoto.url);
+        } else if (response?.data?.url) {
+          setAvatar(response.data.url);
+        }
+      }
+    } catch (error) {
+      console.error("Upload error:", error);
+      console.error("Error data:", error?.data);
+      console.error("Error message:", error?.message);
+      Alert.alert(
+        "Upload Failed",
+        error?.data?.message ||
+          error?.message ||
+          "Failed to update profile photo. Please try again."
+      );
+      if (photo?.url) {
+        setAvatar(photo.url);
+      }
+    }
+  };
+
   // Pick image from gallery
   const pickImageFromGallery = async () => {
     const hasPermission = await requestPermissions();
     if (!hasPermission) return;
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images", "livePhotos"],
+      mediaTypes: ["images"],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.8,
     });
 
     if (!result.canceled) {
-      setAvatar(result.assets[0].uri);
+      const selectedImage = result.assets[0].uri;
+      setAvatar(selectedImage); // Show preview immediately
       setModalVisible(false);
+      await uploadImage(selectedImage); // Upload to server
     }
   };
 
@@ -64,8 +139,10 @@ const AvatarImagePicker = () => {
     });
 
     if (!result.canceled) {
-      setAvatar(result.assets[0].uri);
+      const capturedImage = result.assets[0].uri;
+      setAvatar(capturedImage); // Show preview immediately
       setModalVisible(false);
+      await uploadImage(capturedImage); // Upload to server
     }
   };
 
@@ -75,6 +152,7 @@ const AvatarImagePicker = () => {
       <TouchableOpacity
         onPress={() => setModalVisible(true)}
         className="relative"
+        disabled={isLoading}
       >
         <View className="w-[25%] aspect-square rounded-full border-2 border-gray-300 overflow-hidden bg-gray-100">
           {avatar ? (
@@ -94,6 +172,13 @@ const AvatarImagePicker = () => {
               />
             </View>
           )}
+
+          {/* Loading Overlay */}
+          {isLoading && (
+            <View className="absolute inset-0 bg-black/50 items-center justify-center">
+              <ActivityIndicator size="large" color="white" />
+            </View>
+          )}
         </View>
 
         {/* Edit Icon */}
@@ -109,7 +194,7 @@ const AvatarImagePicker = () => {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View className="absolute top-[16%] mx-[10%] w-[80%] bg-white ">
+        <View className="absolute top-[16%] mx-[10%] w-[80%] bg-white">
           <View className="bg-white rounded-t-3xl p-[5%] pb-[8%]">
             {/* Modal Header */}
             <View className="items-center mb-[5%]">
@@ -125,6 +210,7 @@ const AvatarImagePicker = () => {
               <TouchableOpacity
                 onPress={takePhotoWithCamera}
                 className="flex-row items-center p-[3%] bg-gray-50 rounded-xl"
+                disabled={isLoading}
               >
                 <View className="w-[12%] aspect-square bg-blue-100 rounded-full items-center justify-center mr-[3%]">
                   <Ionicons name="camera" size={24} color="#3B82F6" />
@@ -143,6 +229,7 @@ const AvatarImagePicker = () => {
               <TouchableOpacity
                 onPress={pickImageFromGallery}
                 className="flex-row items-center p-[3%] bg-gray-50 rounded-xl"
+                disabled={isLoading}
               >
                 <View className="w-[12%] aspect-square bg-green-100 rounded-full items-center justify-center mr-[3%]">
                   <Ionicons name="images" size={24} color="#10B981" />
@@ -161,6 +248,7 @@ const AvatarImagePicker = () => {
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
                 className="mt-[3%] p-[4%] bg-gray-100 rounded-xl"
+                disabled={isLoading}
               >
                 <Text className="text-center text-base font-medium text-gray-600">
                   Cancel

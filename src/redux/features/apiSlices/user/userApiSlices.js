@@ -20,13 +20,37 @@ export const homeApiSlices = api.injectEndpoints({
       invalidatesTags: ["SupportTickets"],
     }),
 
+    // Update Profile Photo
+    updateProfilePhoto: builder.mutation({
+      query: (formData) => ({
+        url: `/profile/photo`,
+        method: "PUT",
+        body: formData,
+        // Don't set Content-Type header - let the browser set it with boundary for multipart/form-data
+      }),
+      invalidatesTags: ["User", "Profile"],
+    }),
+
+    // Update Profile Data
+    updateProfileData: builder.mutation({
+      query: (profileData) => ({
+        url: `/profile/update`,
+        method: "PUT",
+        body: profileData,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["User", "Profile"],
+    }),
+
     // existing endpoints...
     userProfile: builder.query({
       query: () => ({
         url: `/profile/me`,
         method: "GET",
       }),
-      providesTags: ["User"],
+      providesTags: ["User", "Profile"],
     }),
 
     getContent: builder.query({
@@ -48,9 +72,10 @@ export const homeApiSlices = api.injectEndpoints({
           "Content-Type": "application/json",
         },
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["User", "Profile"],
     }),
   }),
+  overrideExisting: true,
 });
 
 export const {
@@ -58,4 +83,6 @@ export const {
   useGetContentQuery,
   useDeleteAccountMutation,
   useCreateSupportTicketMutation,
+  useUpdateProfilePhotoMutation,
+  useUpdateProfileDataMutation,
 } = homeApiSlices;

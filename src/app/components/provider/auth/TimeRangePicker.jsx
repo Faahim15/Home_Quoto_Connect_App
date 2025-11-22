@@ -11,6 +11,7 @@ import * as Yup from "yup";
 import { useRegisterUserMutation } from "../../../../redux/features/apiSlices/auth/authApiSlices";
 import { resetProviderForm } from "../../../../redux/features/provider/providerSlice";
 import Error from "../../shared/error/Error";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function TimeRangePicker() {
   const [fromTime, setFromTime] = useState(null);
@@ -142,6 +143,11 @@ export default function TimeRangePicker() {
       const res = await registerUser(payload).unwrap();
       dispatch(resetProviderForm());
       console.log("✅ provider Registration successful:", res);
+      // ⭐ IMPORTANT: Save token to AsyncStorage immediately
+      if (res?.data?.token) {
+        await AsyncStorage.setItem("token", res.data.token);
+        console.log("✅ Token saved to AsyncStorage");
+      }
 
       if (res?.success) {
         Toast.show({

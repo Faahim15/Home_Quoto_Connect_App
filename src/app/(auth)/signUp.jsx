@@ -182,24 +182,6 @@ export default function SignUpScreen() {
               onChangeText={(text) => handleInputChange("email", text)}
               error={errors.email}
             />
-            {/* 
-            <TextField
-              label="Phone Number"
-              placeholder="+8801XXXXXXXXX"
-              IconName="call-outline"
-              value={formData.phoneNumber}
-              onChangeText={(text) => handleInputChange("phoneNumber", text)}
-              error={errors.phoneNumber}
-            /> */}
-
-            {/* <TextField
-              label="Date of Birth"
-              placeholder="YYYY-MM-DD"
-              IconName="calendar-outline"
-              value={formData.dateOfBirth}
-              onChangeText={(text) => handleInputChange("dateOfBirth", text)}
-              error={errors.dateOfBirth}
-            /> */}
 
             <LocationPicker
               onLocationSelect={(loc) => handleInputChange("location", loc)}

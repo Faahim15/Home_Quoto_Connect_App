@@ -1,91 +1,112 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   TextInput,
-  Modal,
-  ScrollView,
   Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
-const ProfileFormInputs = () => {
-  const [dateOfBirth, setDateOfBirth] = useState("");
+const ProfileFormInputs = ({ formData, onInputChange }) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  const [country, setCountry] = useState("Mexico");
-  const [showCountryPicker, setShowCountryPicker] = useState(false);
+  // Format ISO date to DD/MM/YYYY
+  const formatDateToDisplay = (isoDate) => {
+    if (!isoDate) return "";
 
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [selectedCountryCode, setSelectedCountryCode] = useState({
-    code: "+1",
-    flag: "🇨🇦",
-    country: "Canada",
-  });
+    try {
+      const date = new Date(isoDate);
+      if (isNaN(date.getTime())) return "";
 
-  const [showCountryCodePicker, setShowCountryCodePicker] = useState(false);
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const year = date.getFullYear();
 
-  // Sample countries data
-  const countries = [
-    "Afghanistan",
-    "Albania",
-    "Algeria",
-    "Argentina",
-    "Australia",
-    "Austria",
-    "Bangladesh",
-    "Belgium",
-    "Brazil",
-    "Canada",
-    "China",
-    "Denmark",
-    "Egypt",
-    "France",
-    "Germany",
-    "India",
-    "Indonesia",
-    "Italy",
-    "Japan",
-    "Mexico",
-    "Netherlands",
-    "Norway",
-    "Pakistan",
-    "Russia",
-    "Saudi Arabia",
-    "South Korea",
-    "Spain",
-    "Sweden",
-    "Switzerland",
-    "Turkey",
-    "United Kingdom",
-    "United States",
-    "Vietnam",
-  ];
+      return `${day}/${month}/${year}`;
+    } catch (error) {
+      console.error("Date formatting error:", error);
+      return "";
+    }
+  };
 
-  // Sample country codes
-  const countryCodes = [
-    { code: "+1", flag: "🇺🇸", country: "United States" },
-    { code: "+1", flag: "🇨🇦", country: "Canada" },
-  ];
+  // Set initial date from formData and format it
+  useEffect(() => {
+    if (formData?.dateOfBirth) {
+      try {
+        // Check if it's already in DD/MM/YYYY format
+        if (formData.dateOfBirth.includes("/")) {
+          const [day, month, year] = formData.dateOfBirth.split("/");
+          const date = new Date(year, month - 1, day);
+          if (!isNaN(date.getTime())) {
+            setSelectedDate(date);
+          }
+        } else {
+          // It's in ISO format (1999-01-01T00:00:00.000Z)
+          const date = new Date(formData.dateOfBirth);
+          if (!isNaN(date.getTime())) {
+            setSelectedDate(date);
+            // Format and update the display
+            const formatted = formatDateToDisplay(formData.dateOfBirth);
+            if (formatted && formatted !== formData.dateOfBirth) {
+              onInputChange("dateOfBirth", formatted);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error parsing date:", error);
+      }
+    }
+  }, [formData?.dateOfBirth]);
+
+  // Format phone number function
+  const formatPhoneNumber = (text) => {
+    // Remove all non-digits
+    const cleaned = text.replace(/\D/g, "");
+
+    // Limit to 10 digits
+    const limited = cleaned.slice(0, 10);
+
+    // Format with spaces: XXX XXX XXXX
+    let formatted = limited;
+    if (limited.length > 3) {
+      formatted = limited.slice(0, 3) + " " + limited.slice(3);
+    }
+    if (limited.length > 6) {
+      formatted =
+        limited.slice(0, 3) +
+        " " +
+        limited.slice(3, 6) +
+        " " +
+        limited.slice(6);
+    }
+
+    return formatted;
+  };
+
+  // Handle phone number change
+  const handlePhoneChange = (text) => {
+    const formatted = formatPhoneNumber(text);
+    onInputChange("phoneNumber", formatted);
+  };
 
   // Handle date change
   const onDateChange = (event, selected) => {
     setShowDatePicker(false);
     if (selected) {
       setSelectedDate(selected);
-      const formattedDate = selected.toLocaleDateString("en-GB");
-      setDateOfBirth(formattedDate);
+      const formattedDate = formatDateToDisplay(selected.toISOString());
+      onInputChange("dateOfBirth", formattedDate);
     }
   };
 
   return (
     <View className="">
       {/* Date of Birth */}
-      <View className=" mt-[1.5%]">
-        <Text className="font-poppins-400regular text-base text-[#5C5F62] ">
+      <View className="mt-[1.5%]">
+        <Text className="font-poppins-400regular text-base text-[#5C5F62]">
           Date of Birth
         </Text>
         <TouchableOpacity
@@ -93,55 +114,36 @@ const ProfileFormInputs = () => {
           className="flex-row mt-[1.5%] items-center justify-between bg-white border border-gray-200 rounded-xl px-[4%] py-[4%]"
         >
           <Text
-            className={`text-base ${dateOfBirth ? "text-[#898989]" : "text-gray-400"}`}
+            className={`text-base ${formData?.dateOfBirth ? "text-[#898989]" : "text-gray-400"}`}
           >
-            {dateOfBirth || "28/11/2005"}
+            {formData?.dateOfBirth || "DD/MM/YYYY"}
           </Text>
           <Ionicons name="calendar-outline" size={20} color="#898989" />
         </TouchableOpacity>
       </View>
-
-      {/* Country */}
-      {/* <View className="mt-[1.5%]">
-        <Text className="font-poppins-400regular text-base text-[#5C5F62] ">
-          Country
-        </Text>
-        <TouchableOpacity
-          onPress={() => setShowCountryPicker(true)}
-          className="flex-row mt-[1.5%] items-center justify-between bg-white border border-gray-200 rounded-xl px-[4%] py-[4%]"
-        >
-          <Text className="text-base text-[#6B7280]">{country}</Text>
-          <Ionicons name="chevron-down" size={20} color="#565656" />
-        </TouchableOpacity>
-      </View> */}
 
       {/* Phone Number */}
       <View className="mt-[1.5%]">
         <Text className="font-poppins-400regular text-base text-[#5C5F62]">
           Phone number
         </Text>
-        <View className="flex-row mt-[1.5%]  bg-white border border-gray-200 rounded-xl overflow-hidden">
-          {/* Country Code Selector */}
-          <TouchableOpacity
-            onPress={() => setShowCountryCodePicker(true)}
-            className="flex-row items-center px-[3%] py-[4%] border-r border-gray-200"
-          >
-            <Text className="text-base mr-[1%]">
-              {selectedCountryCode.flag}
+        <View className="flex-row mt-[1.5%] bg-white border border-gray-200 rounded-xl overflow-hidden">
+          {/* Canadian Flag */}
+          <View className="flex-row items-center px-[3%] py-[4%] border-r border-gray-200">
+            <Text className="text-xl mr-[2%]">🇨🇦</Text>
+            <Text className="text-base font-poppins-400regular text-[#898989]">
+              +1
             </Text>
-            <Text className="text-base font-poppins-400regular text-[#898989] mr-[1%]">
-              {selectedCountryCode.code}
-            </Text>
-            <Ionicons name="chevron-down" size={16} color="#9CA3AF" />
-          </TouchableOpacity>
+          </View>
 
           {/* Phone Input */}
           <TextInput
-            value={phoneNumber}
-            onChangeText={setPhoneNumber}
-            placeholder="+1 416-123-4567"
+            value={formData?.phoneNumber || ""}
+            onChangeText={handlePhoneChange}
+            placeholder="XXX XXX XXXX"
             keyboardType="phone-pad"
-            className="flex-1 px-[3%] py-[4%] text-base text-black"
+            maxLength={12} // 10 digits + 2 spaces
+            className="flex-1 px-[3%] py-[4%] text-base text-black font-poppins-400regular"
             placeholderTextColor="#898989"
           />
         </View>
@@ -157,86 +159,6 @@ const ProfileFormInputs = () => {
           maximumDate={new Date()}
         />
       )}
-
-      {/* Country Picker Modal */}
-      <Modal
-        visible={showCountryPicker}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setShowCountryPicker(false)}
-      >
-        <View className=" ">
-          <View className="bg-white bo mx-[5%] mt-[40%]  rounded-t-3xl max-h-[70%]">
-            {/* Header */}
-            <View className="flex-row items-center justify-between px-[6%] py-[4%] border-b border-gray-200">
-              <Text className="text-lg font-semibold text-gray-800">
-                Select Country
-              </Text>
-              <TouchableOpacity onPress={() => setShowCountryPicker(false)}>
-                <Ionicons name="close" size={24} color="#6B7280" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Countries List */}
-            <ScrollView className="px-[6%]">
-              {countries.map((countryName, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => {
-                    setCountry(countryName);
-                    setShowCountryPicker(false);
-                  }}
-                  className="py-[3%] border-b border-gray-100"
-                >
-                  <Text className="text-base text-gray-800">{countryName}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Country Code Picker Modal */}
-      <Modal
-        visible={showCountryCodePicker}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setShowCountryCodePicker(false)}
-      >
-        <View className="  mx-[0%] mt-[40%]  bg-white bg-opacity-50">
-          <View className="bg-white rounded-t-3xl ">
-            {/* Header */}
-            <View className="flex-row items-center justify-between px-[6%] py-[4%] border-b border-gray-200">
-              <Text className="text-lg font-semibold text-gray-800">
-                Select Country Code
-              </Text>
-              <TouchableOpacity onPress={() => setShowCountryCodePicker(false)}>
-                <Ionicons name="close" size={24} color="#6B7280" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Country Codes List */}
-            <ScrollView className="px-[6%]">
-              {countryCodes.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => {
-                    setSelectedCountryCode(item);
-                    setShowCountryCodePicker(false);
-                  }}
-                  className="flex-row items-center py-[3%] border-b border-gray-100"
-                >
-                  <Text className="text-xl mr-[3%]">{item.flag}</Text>
-                  <Text className="text-base text-gray-800 mr-[2%]">
-                    {item.country}
-                  </Text>
-                  <Text className="text-base text-gray-600">{item.code}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 };

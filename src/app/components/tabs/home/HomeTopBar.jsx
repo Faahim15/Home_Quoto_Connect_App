@@ -3,7 +3,7 @@ import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 export default function HomeTopBar({ userData, mode }) {
-  const { fullName, location } = userData;
+  const { fullName, location, profilePhoto } = userData;
 
   const handleEditProfile = () => {
     if (mode === "user") {
@@ -24,7 +24,8 @@ export default function HomeTopBar({ userData, mode }) {
               borderRadius: scale(16),
             }}
             source={{
-              uri: "https://avatar.iran.liara.run/public/boy",
+              uri:
+                profilePhoto?.url || "https://avatar.iran.liara.run/public/boy",
             }}
           />
         </Pressable>
