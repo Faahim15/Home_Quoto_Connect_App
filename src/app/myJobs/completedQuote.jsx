@@ -1,5 +1,4 @@
 import { View, ScrollView } from "react-native";
-import { QuoteCompletedData } from "../components/data/jobs/QuotesData";
 import { useLocalSearchParams } from "expo-router";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import QuoteProgressDetails from "../components/tabs/myJobs/QuoteProgressDetails";

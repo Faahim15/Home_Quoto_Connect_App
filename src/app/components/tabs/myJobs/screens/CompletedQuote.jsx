@@ -8,7 +8,6 @@ import {
   RefreshControl,
 } from "react-native";
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
-import { QuoteCompletedData } from "../../../data/jobs/QuotesData";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { useGetAllJobsQuery } from "../../../../../redux/features/apiSlices/user/createJobSlices";
@@ -174,7 +173,7 @@ export default function CompletedQuote() {
       <FlatList
         data={completedJobs}
         renderItem={renderServiceItem}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => item._id.toString() || index.toString()}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: scale(16),

@@ -2,6 +2,23 @@ import { api } from "../../api/baseApi";
 
 export const quoteSlice = api.injectEndpoints({
   endpoints: (builder) => ({
+    // ⭐ Book Provider Directly
+    bookProvider: builder.mutation({
+      query: ({ providerId, body }) => ({
+        url: `/popular/providers/${providerId}/book`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: [
+        "MyJobs",
+        "TodaysJobs",
+        "ActiveJobs",
+        "Job",
+        "Provider",
+        "PopularProviders",
+      ],
+    }),
+
     acceptQuote: builder.mutation({
       query: ({ id }) => ({
         url: `/quotes/${id}/accept`,
@@ -66,11 +83,13 @@ export const quoteSlice = api.injectEndpoints({
       invalidatesTags: ["DeclineJob", "Quotes"],
     }),
   }),
+
   overrideExisting: true,
 });
 
 // ✅ Export hooks
 export const {
+  useBookProviderMutation,
   useAcceptQuoteMutation,
   useSubmitQuoteMutation,
   useUpdateQuoteMutation,
