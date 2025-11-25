@@ -27,6 +27,14 @@ export const quoteSlice = api.injectEndpoints({
       invalidatesTags: ["MyJobs", "TodaysJobs", "ActiveJobs", "Provider"],
     }),
 
+    acceptOfferQuote: builder.mutation({
+      query: ({ id }) => ({
+        url: `/quotes/${id}/accept-as-provider`,
+        method: "PUT",
+      }),
+      invalidatesTags: ["MyJobs", "TodaysJobs", "ActiveJobs", "Provider"],
+    }),
+
     submitQuote: builder.mutation({
       query: (formData) => {
         return {
@@ -102,6 +110,7 @@ export const quoteSlice = api.injectEndpoints({
 export const {
   useBookProviderMutation,
   useAcceptQuoteMutation,
+  useAcceptOfferQuoteMutation,
   useSubmitQuoteMutation,
   useUpdateQuoteMutation,
   useGetAllQuotesQuery,

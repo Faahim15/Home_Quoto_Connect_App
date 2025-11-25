@@ -18,7 +18,7 @@ import Toast from "react-native-toast-message";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
-  useAcceptQuoteMutation,
+  useAcceptOfferQuoteMutation,
   useGetAllQuotesQuery,
   useRemoveQuoteMutation,
 } from "../../../../redux/features/apiSlices/quote/quoteApiSlice";
@@ -32,7 +32,8 @@ const ServiceCard = ({ item }) => {
 
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
 
-  const [acceptQuote, { isLoading: isAccepting }] = useAcceptQuoteMutation();
+  const [acceptQuote, { isLoading: isAccepting }] =
+    useAcceptOfferQuoteMutation();
   const [cancelJob, { isLoading: cancelLoading }] = useRemoveQuoteMutation();
 
   const jobId = item?._id;
@@ -89,7 +90,7 @@ const ServiceCard = ({ item }) => {
       onPress={() =>
         router.push({
           pathname: "/provider/myJobs/quoteRequest",
-          params: { serviceId: item.id },
+          params: { quoteId: item?._id },
         })
       }
     >

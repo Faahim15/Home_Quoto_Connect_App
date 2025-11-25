@@ -3,11 +3,17 @@ import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import XStyle from "../../../util/styles";
 import PaymentChecklist from "./PaymentCheckList";
 import imageData from "../../data/shared/Images";
+import {
+  capitalizeFirstLetter,
+  formatDateForCanada,
+  getStatusLabel,
+} from "../../../util/helper-function";
+import { statusColorMap } from "../../../util/colors";
 function showImages({ item }) {
   return (
     <View>
       <Image
-        source={item.image}
+        source={{ uri: item?.url }}
         style={{
           width: scale(90),
           height: verticalScale(80),
@@ -21,6 +27,19 @@ export default function JobSummary({
   quoteInfo,
   showPaymentCheckList = false,
 }) {
+  const {
+    title,
+    description,
+    serviceCategory,
+    photos,
+    specializations,
+    preferredDate,
+    preferredTime,
+    priceRange,
+  } = quoteInfo?.job || {};
+  const { profilePhoto, fullName } = quoteInfo?.job?.client || {};
+  const { city, state } = quoteInfo?.job?.location?.details || {};
+  const statusColor = statusColorMap?.[quoteInfo?.status] ?? "#6B7280";
   return (
     <View
       style={XStyle.shadowBox}
@@ -28,27 +47,32 @@ export default function JobSummary({
     >
       <View>
         <Text className="font-poppins-500medium text-base text-[#565656] ">
-          Tv repair and installation
+          {title || "N/A"}
         </Text>
         <View className="border-b border-[#CACACA] mb-[2%] mt-[3%] ">
           <Image
             style={{ width: scale(310), height: verticalScale(177) }}
             className="rounded-md  mb-[2%] "
-            source={require("../../../../../assets/images/home/jobs/summary1.png")}
+            source={{ uri: serviceCategory?.image?.url || null }}
           />
         </View>
-        <View className="mt-[1%]">
-          <FlatList
-            data={imageData}
-            renderItem={showImages}
-            keyExtractor={(item) => item.id}
-            horizontal
-            ItemSeparatorComponent={() => (
-              <View style={{ paddingRight: scale(10) }} />
-            )}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
+        {/* ✅ Fix FlatList - check if photoData has items */}
+        {photos && photos.length > 0 && (
+          <View className="mt-[1%]">
+            <FlatList
+              data={photos}
+              renderItem={showImages}
+              keyExtractor={(item) =>
+                item?._id || item?.url || Math.random().toString()
+              }
+              horizontal
+              ItemSeparatorComponent={() => (
+                <View style={{ paddingRight: scale(10) }} />
+              )}
+              showsHorizontalScrollIndicator={false}
+            />
+          </View>
+        )}
 
         <View className="flex-col border-b border-[#CACACA] mb-[2%] w-full overflow-hidden">
           <View className="flex-col gap-[6%] mt-[3%]">
@@ -56,8 +80,7 @@ export default function JobSummary({
               Job Details
             </Text>
             <Text className="font-poppins-400regular text-justify text-xs text-[#5C5F62] ">
-              Need TV repair and wall-mount installation. TV and bracket already
-              available.
+              {description || "N/A"}
             </Text>
           </View>
           {/* Service */}
@@ -66,7 +89,7 @@ export default function JobSummary({
               Service
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              Electrician
+              {capitalizeFirstLetter(serviceCategory?.title) || "N/A"}
             </Text>
           </View>
           {/* Specializations */}
@@ -75,16 +98,18 @@ export default function JobSummary({
               Specializations
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              Home Installation, Repair
+              {specializations[0]?.title}{" "}
+              {specializations?.length > 1
+                ? `+${specializations.length - 1}`
+                : ""}
             </Text>
           </View>
-          <View className="flex-row mt-[3%] w-[70%] gap-[25%] ">
+          <View className="flex-row mt-[3%] justify-between gap-[25%] ">
             <Text className="font-poppins-semiBold text-xs text-[#6B7280]">
               Address
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              Street no. 23 Ouch west road Alibagh, Alibagh, Ouch, 18750,
-              Pakistan
+              {city && state ? `${city}, ${state}` : "N/A"}
             </Text>
           </View>
           {/* Booking Date */}
@@ -93,7 +118,7 @@ export default function JobSummary({
               Booking date
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              December 23, 2023
+              {formatDateForCanada(preferredDate) || "N/A"}
             </Text>
           </View>
           {/* Booking hours */}
@@ -102,30 +127,63 @@ export default function JobSummary({
               Booking Hours
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              10:00 AM
+              {preferredTime || "N/A"}
             </Text>
           </View>
         </View>
 
-        <View className="flex-row justify-between">
-          <Text className="font-poppins-semiBold text-sm text-[#565656] ">
-            Price
+        <View>
+          <Text className="font-poppins-semiBold text-base text-[#1F2937]">
+            Posted by
           </Text>
-          <Text
-            className={`font-poppins-semiBold text-sm ${quoteInfo?.requiresPersonalizedQuote ? "text-[#F59E0B]" : "text-[#175994]"} `}
-          >
-            {quoteInfo
-              ? quoteInfo.requiresPersonalizedQuote
-                ? "Request a personlized quote"
-                : quoteInfo.price
-              : "$320"}
-          </Text>
+          <View className="flex-row gap-[4%] pb-[2%] border-b border-[#CACACA] ">
+            <Image
+              style={{
+                width: scale(40),
+                height: verticalScale(40),
+                borderRadius: scale(20),
+              }}
+              source={{
+                uri: profilePhoto?.url || "https://via.placeholder.com/300",
+              }}
+              className="mt-[2%]"
+            />
+            <View className="mt-[2%]">
+              <Text className="font-poppins-500medium text-xl text-[#1F2937]">
+                {fullName || "N/A"}
+              </Text>
+            </View>
+          </View>
+
+          <View className="flex-row justify-between">
+            <Text className="font-poppins-semiBold text-sm text-[#6B7280] ">
+              Price
+            </Text>
+            <Text className="font-poppins-semiBold text-sm  text-[#F59E0B]">
+              {priceRange?.isPersonalized
+                ? "Request a personalized..."
+                : `$${priceRange?.from || null}-$${priceRange?.to || null}`}
+            </Text>
+          </View>
+
+          <View className="flex-row pt-[1%] justify-between">
+            <Text className="font-poppins-semiBold text-sm text-[#6B7280]">
+              Status
+            </Text>
+            <Text
+              style={{ color: statusColor }}
+              className=" text-base font-poppins-semiBold"
+            >
+              {getStatusLabel(quoteInfo?.status || "N/A")}
+            </Text>
+          </View>
         </View>
-        {showPaymentCheckList && quoteInfo.status === "Completed" && (
+
+        {/* {showPaymentCheckList && quoteInfo.status === "Completed" && (
           <View className="py-[4%] mt-[3%] bg-[#F5F5F5] rounded-lg ">
             <PaymentChecklist />
           </View>
-        )}
+        )} */}
       </View>
     </View>
   );

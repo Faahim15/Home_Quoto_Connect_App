@@ -1,4 +1,4 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, ActivityIndicator } from "react-native";
 import { scale } from "../../../adaptive/Adaptiveness";
 
 export default function BotttomButtons({
@@ -9,6 +9,7 @@ export default function BotttomButtons({
   width = 148,
   onPress,
   disabled,
+  loading,
 }) {
   return (
     <Pressable
@@ -18,13 +19,21 @@ export default function BotttomButtons({
         backgroundColor: backgroundColor,
         borderColor: borderColor,
         borderWidth: scale(1),
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingVertical: scale(10),
+        borderRadius: scale(8),
       }}
-      disabled={disabled}
-      className=" justify-center  rounded-md items-center px-[3%] py-[3%] "
+      disabled={disabled || loading} // disable while loading
     >
-      <Text style={{ color: color }} className="font-poppins-bold text-base  ">
-        {title}
-      </Text>
+      {loading ? (
+        <ActivityIndicator size="small" color={color} />
+      ) : (
+        <Text style={{ color: color }} className="font-poppins-bold text-base">
+          {title}
+        </Text>
+      )}
     </Pressable>
   );
 }
