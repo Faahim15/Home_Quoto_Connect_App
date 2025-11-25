@@ -75,6 +75,17 @@ export const quoteSlice = api.injectEndpoints({
       providesTags: ["Quotes"],
     }),
 
+    removeQuote: builder.mutation({
+      query: ({ jobId, reason }) => ({
+        url: `/quotes/${jobId}/cancel`,
+        method: "PUT",
+        body: {
+          cancellationReason: reason,
+        },
+      }),
+      invalidatesTags: ["Jobs", "TodaysJobs", "MyJobs", "ActiveJobs", "User"],
+    }),
+
     cancelQuote: builder.mutation({
       query: ({ id }) => ({
         url: `/quotes/${id}/decline`,
@@ -95,4 +106,5 @@ export const {
   useUpdateQuoteMutation,
   useGetAllQuotesQuery,
   useCancelQuoteMutation,
+  useRemoveQuoteMutation,
 } = quoteSlice;
