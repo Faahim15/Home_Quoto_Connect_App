@@ -9,18 +9,21 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { router, useFocusEffect } from "expo-router";
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   addPhoto,
   removePhoto as removePhotoFromStore,
   resetJobPost,
+  setJobField,
 } from "../../redux/features/jobPost/jobPostSlice";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import CustomTitle from "../components/shared/CustomTitle";
 import CustomButton from "../components/tabs/home/services/provider/details/CustomButton";
 
-export default function PostJobScreen() {
+export default function DirectPostJobScreen() {
+  const { providerId } = useLocalSearchParams();
   const dispatch = useDispatch();
   const photos = useSelector((state) => state.jobPost.photos);
 
@@ -38,6 +41,27 @@ export default function PostJobScreen() {
       };
     }, [dispatch])
   );
+
+  // ✅ Save providerId to both Redux and AsyncStorage when it's available
+  useEffect(() => {
+    const saveProviderId = async () => {
+      if (providerId) {
+        try {
+          console.log("💾 Saving providerId to Redux:", providerId);
+          dispatch(setJobField({ field: "providerId", value: providerId }));
+
+          console.log("💾 Saving providerId to AsyncStorage:", providerId);
+          await AsyncStorage.setItem("providerId", providerId);
+
+          console.log("✅ ProviderId saved successfully to both stores");
+        } catch (error) {
+          console.error("❌ Error saving providerId to AsyncStorage:", error);
+        }
+      }
+    };
+
+    saveProviderId();
+  }, [providerId, dispatch]);
 
   // 📸 Show camera or gallery options
   const showImageOptions = () => {
@@ -103,7 +127,8 @@ export default function PostJobScreen() {
       Alert.alert("Please add at least one photo to continue");
       return;
     }
-    router.push("/jobs/jobForm");
+    console.log("✅ Continuing with providerId:", providerId);
+    router.push("/shared/directFormBooking");
   };
 
   return (

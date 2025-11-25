@@ -141,7 +141,12 @@ export default function ProviderDetailsScreen() {
         {!shouldShowButtons && (
           <View className="px-[6%]">
             <CustomButton
-              onPress={() => router.push("/shared/directBooking")}
+              onPress={() =>
+                router.push({
+                  pathname: "/shared/directBooking",
+                  params: { providerId: profileId },
+                })
+              }
               title="Book"
             />
           </View>

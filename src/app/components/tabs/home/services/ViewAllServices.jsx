@@ -12,7 +12,7 @@ import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 
 const ServiceCard = ({ item }) => {
-  const { city, state } = item?.location?.details;
+  const { city, state } = item?.location?.details || {};
   return (
     <TouchableOpacity
       onPress={() => {

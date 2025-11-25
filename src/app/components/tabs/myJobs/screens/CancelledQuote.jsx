@@ -12,14 +12,9 @@ import { useCallback, useState } from "react";
 import { useGetAllJobsQuery } from "../../../../../redux/features/apiSlices/user/createJobSlices";
 import LoadingState from "../../../ui/LoadingState";
 import ErrorState from "../../../ui/ErrorState";
+import EmptyState from "../../../ui/EmptyState";
 // Updated ServiceItem component with navigation
 const ServiceItem = ({ item }) => {
-  const serviceColors = {
-    "TV repair and Installation": "bg-[#319FCA]",
-    "AC Repair and Maintenance": "bg-[#FF6B6B]",
-    "Plumbing Services": "bg-[#10B981]",
-    "Electrical Repair": "bg-[#8B5CF6]",
-  };
   const acceptedQuote = item?.quotes?.find((q) => q.status === "accepted");
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     acceptedQuote?.provider || {};

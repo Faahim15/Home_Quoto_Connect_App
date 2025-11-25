@@ -93,14 +93,6 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
         {showAddress && (
           <View className="flex-row items-center mb-[0%]">
             <Ionicons name="location-outline" size={16} color="#319FCA" />
-
-            {/* <Text className="font-poppins-400regular text-sm text-[#319FCA]">
-              {city && state ? `${city}, ${state}` : "N/A"}
-              <Text className="text-[#6B7280]">
-                {" "}
-                | {item?.timeAgo || "N/A"}
-              </Text>
-            </Text> */}
             <Text className="font-poppins-400regular text-sm text-[#319FCA]">
               {city && state ? `${city}, ${state}` : "N/A"}
               {" | "}

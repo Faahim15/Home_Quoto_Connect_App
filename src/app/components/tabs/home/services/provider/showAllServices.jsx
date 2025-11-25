@@ -5,7 +5,7 @@ import { router } from "expo-router";
 const ServiceCard = ({ item }) => {
   const { fullName } = item?.client;
 
-  const { city, state } = item?.location?.details;
+  const { city, state } = item?.location?.details || {};
 
   return (
     <TouchableOpacity

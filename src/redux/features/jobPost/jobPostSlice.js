@@ -31,6 +31,7 @@ const initialState = {
   houseNumber: 0,
   streetNumber: 0,
   completeAddress: "",
+  providerId: "",
 };
 
 const jobPostSlice = createSlice({

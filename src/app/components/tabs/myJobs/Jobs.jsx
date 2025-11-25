@@ -7,7 +7,7 @@ import {
   Pressable,
   RefreshControl,
 } from "react-native";
-import { useState, useLayoutEffect } from "react";
+import { useState } from "react";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { router, useFocusEffect } from "expo-router";
 import { useGetAllJobsQuery } from "../../../../redux/features/apiSlices/user/createJobSlices";
@@ -86,9 +86,7 @@ const ServiceItem = ({ item, quote }) => {
                 Price
               </Text>
               <Text className="text-[#F59E0B] text-base font-poppins-semiBold">
-                {quote?.price
-                  ? `$${quote.price}`
-                  : "Request a personalized quote"}
+                {quote?.price ? `$${quote.price}` : "Request a personalized..."}
               </Text>
             </View>
             <TouchableOpacity
@@ -168,7 +166,9 @@ export default function Services() {
 
         // Filter out jobs that have any quote with status "accepted"
         const hasAcceptedQuote = job.quotes.some(
-          (quote) => quote.status === "pending"
+          (quote) =>
+            quote.status === "pending" &&
+            quote.description !== "Direct booking - quote to be provided"
         );
 
         return hasAcceptedQuote;
