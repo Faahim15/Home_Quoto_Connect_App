@@ -136,13 +136,13 @@ export default function PromoCard() {
         <View className=" ">
           <View
             style={[XStyle.lightShadow]}
-            className="bg-white  flex-row rounded-md items-center px-[3%] py-[3%]"
+            className="bg-white  flex-row rounded-md mt-[1%] items-center px-[3%] py-[3%]"
           >
             <Ionicons name="search" size={24} color="#6B7280" />
             <TextInput
               placeholder="Search here..."
               placeholderTextColor="#898989"
-              className="flex-1 ml-[2%] px-[2%] py-[3%]  font-poppins-400regular"
+              className="flex-1 ml-[2%] px-[2%] py-[3%]   font-poppins-400regular"
               color="#000"
               value={searchText}
               onChangeText={handleSearchChange}
@@ -202,8 +202,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: scale(16),
     paddingVertical: verticalScale(16),
-    borderBottomWidth: scale(1),
-    borderBottomColor: "#eee",
+    // borderBottomWidth: scale(1),
+    // borderBottomColor: "#eee",
   },
 
   recentSearchesList: {
@@ -215,8 +215,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: scale(16),
     paddingVertical: verticalScale(16),
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0f0f0",
+    // borderBottomWidth: 1,
+    // borderBottomColor: "#f0f0f0",
   },
   recentSearchTerm: {
     fontSize: 16,

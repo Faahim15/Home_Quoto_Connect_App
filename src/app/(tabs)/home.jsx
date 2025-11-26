@@ -3,14 +3,19 @@ import {
   ScrollView,
   ActivityIndicator,
   RefreshControl,
+  Text,
 } from "react-native";
 import { useState } from "react";
+
+// Components
 import HomeTopBar from "../components/tabs/home/HomeTopBar";
 import PromoCard from "../components/tabs/home/PromoCard";
 import ServiceCards from "../components/shared/services/ServiceCards";
 import PopularServices from "../components/tabs/home/services/PopulareServices";
 import ServiceProvider from "../components/tabs/home/services/ServiceProvider";
 import ServiceHeader from "../components/tabs/home/ServiceHeader";
+
+// RTK Query Hooks
 import { useUserProfileQuery } from "../../redux/features/apiSlices/user/userApiSlices";
 import {
   useGetTodaysJobsQuery,
@@ -18,15 +23,15 @@ import {
   useGetServiceCategoriesQuery,
   useGetPopularProvidersQuery,
 } from "../../redux/features/apiSlices/user/createJobSlices";
-import { Text } from "react-native";
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
+  // ********** Redux API Calls **********
   const {
     data: profile,
     isLoading: profileLoading,
-    error: profileError,
+    isError: profileError,
     refetch: refetchProfile,
   } = useUserProfileQuery();
 
@@ -43,20 +48,18 @@ export default function HomeScreen() {
   } = useGetActiveJobsQuery();
 
   const {
-    data,
-    isLoading,
-    error,
+    data: categoriesData,
+    isLoading: categoriesLoading,
     refetch: refetchCategories,
   } = useGetServiceCategoriesQuery();
 
   const {
     data: popularProvidersData,
     isLoading: providerLoading,
-    error: providersError,
     refetch: refetchProviders,
   } = useGetPopularProvidersQuery();
 
-  // Handle pull-to-refresh
+  // ********** Pull to Refresh **********
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -67,98 +70,90 @@ export default function HomeScreen() {
         refetchCategories(),
         refetchProviders(),
       ]);
-    } catch (error) {
-      console.error("Error refreshing data:", error);
     } finally {
       setRefreshing(false);
     }
   };
 
-  // ✅ Combined loading state (initial load only)
-  if (
+  // ********** Global Loading **********
+  const isGlobalLoading =
     profileLoading ||
     todaysJobsLoading ||
     activeJobsLoading ||
-    isLoading ||
-    providerLoading
-  ) {
+    categoriesLoading ||
+    providerLoading;
+
+  if (isGlobalLoading) {
     return (
       <View className="flex-1 bg-[#F9FAFB] justify-center items-center">
-        <View className="flex-col items-center justify-center">
-          <ActivityIndicator
-            size="large"
-            color="#175994"
-            style={{ marginBottom: 16 }}
-          />
-          <Text className="font-poppins-500medium text-base text-[#565656]">
-            Loading...
-          </Text>
-        </View>
+        <ActivityIndicator size="large" color="#175994" />
+        <Text className="mt-2 text-[#565656] font-poppins-500medium">
+          Loading...
+        </Text>
       </View>
     );
   }
 
+  // ********** Error UI **********
   if (profileError) {
     return (
       <View className="flex-1 bg-[#F9FAFB] justify-center items-center px-6">
-        <View className="flex-col items-center justify-center">
-          <Text className="font-poppins-500medium text-lg text-red-500 mb-2">
-            Unable to Load Data
-          </Text>
-          <Text className="font-poppins-400regular text-sm text-[#6B7280] text-center">
-            Please check your connection and try again
-          </Text>
-        </View>
+        <Text className="text-lg text-red-500 font-poppins-500medium">
+          Unable to Load Data
+        </Text>
+        <Text className="text-sm text-[#6B7280] text-center mt-2 font-poppins-400regular">
+          Please check your connection and try again.
+        </Text>
       </View>
     );
   }
 
+  // ********** Extract Data **********
   const userData = profile?.data?.user || null;
-  const providerData = popularProvidersData?.data?.providers || [];
+  const providerList = popularProvidersData?.data?.providers || [];
+  const categoryList = categoriesData?.data?.categories || [];
 
+  // ********** Render UI **********
   return (
     <View className="flex-1 bg-[#F9FAFB]">
       <HomeTopBar mode="user" userData={userData} />
 
+      <PromoCard />
+
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className="flex-1 h-full"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            colors={["#175994"]} // Android
-            tintColor="#175994" // iOS
-            title="Pull to refresh" // iOS
-            titleColor="#565656" // iOS
+            colors={["#175994"]}
+            tintColor="#175994"
           />
         }
       >
-        <PromoCard />
-
-        {/* Today's Jobs section */}
+        {/* Today's Jobs */}
         <ServiceHeader title="Today's Jobs" />
         <ServiceCards
-          jobs={todaysJobs?.data?.jobs}
-          showPrice={true}
-          showAddress={true}
+          jobs={todaysJobs?.data?.jobs || []}
+          showPrice
+          showAddress
           whichJob="todaysJob"
         />
 
-        {/* Active Jobs section */}
+        {/* Active Jobs */}
         <ServiceHeader title="Active Jobs" />
         <ServiceCards
-          jobs={activeJobs?.data?.jobs}
-          showPrice={true}
-          showAddress={true}
+          jobs={activeJobs?.data?.jobs || []}
+          showPrice
+          showAddress
           whichJob="active job"
         />
 
-        {/* popular service */}
-        <PopularServices categories={data?.data?.categories} />
+        {/* Popular Services */}
+        <PopularServices categories={categoryList} />
 
-        {/* Popular Service Provider section */}
-        <ServiceProvider providerData={providerData} />
+        {/* Popular Providers */}
+        <ServiceProvider providerData={providerList} />
       </ScrollView>
     </View>
   );
