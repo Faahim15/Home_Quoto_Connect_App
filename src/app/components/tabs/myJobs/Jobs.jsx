@@ -21,6 +21,8 @@ const ServiceItem = ({ item, quote }) => {
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     quote?.provider;
 
+  // console.log("provider", quote);
+
   return (
     <View className="mx-[4%] mb-[4%]">
       {/* Service Type Banner - Made clickable */}
@@ -153,7 +155,7 @@ export default function Services() {
 
   const quoteData =
     jobsData.length > 0
-      ? jobsData.filter((item) => item?.status !== "in_progress")
+      ? jobsData.filter((item) => item?.status === "pending")
       : null;
 
   // Filter jobs that have quotes AND filter out jobs with any accepted quotes

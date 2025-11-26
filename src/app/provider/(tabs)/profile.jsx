@@ -1,11 +1,18 @@
-import { Text, View, ScrollView } from "react-native";
+import {
+  Text,
+  View,
+  ScrollView,
+  RefreshControl,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
 import ContractorDetails from "../../components/provider/profile/ProviderDetails";
 import ProfileMenuItem from "../../components/tabs/profile/ProfileMenuItem";
 import LogoutItem from "../../components/tabs/profile/LogoutItem";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import ConfirmationModal from "../../components/tabs/profile/ConfirmationModal";
-import { router } from "expo-router";
-import Toast from "react-native-toast-message"; // Add this import
+import { router, useFocusEffect } from "expo-router";
+import Toast from "react-native-toast-message";
 import {
   myEarnings,
   editProfile,
@@ -20,28 +27,53 @@ import {
   support,
 } from "../../../../assets/svg/profile";
 import { useLogoutUserMutation } from "../../../redux/features/apiSlices/auth/authApiSlices";
+import { useUserProfileQuery } from "../../../redux/features/apiSlices/user/userApiSlices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ContractorProfileScreen() {
+  const [modalVisible, setModalVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [logout, { isLoading: logoutLoading }] = useLogoutUserMutation();
+
+  const {
+    data: profile,
+    isLoading: profileLoading,
+    error: profileError,
+    refetch: refetchProfile,
+  } = useUserProfileQuery();
+
+  // Refetch when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refetchProfile();
+    }, [refetchProfile])
+  );
+
+  // Pull to refresh handler
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await refetchProfile();
+    } catch (error) {
+      console.error("Refresh error:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetchProfile]);
+
   function logoutHanlder() {
     setModalVisible(true);
   }
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [logout, { isLoading }] = useLogoutUserMutation();
-
   const handleYes = async () => {
     try {
-      // Call logout API
       await logout().unwrap();
-
-      // Remove token from AsyncStorage
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("userId");
 
       setModalVisible(false);
 
-      // Show success toast
       Toast.show({
         type: "success",
         text1: "Logged Out Successfully",
@@ -50,7 +82,6 @@ export default function ContractorProfileScreen() {
         visibilityTime: 2000,
       });
 
-      // Navigate after a short delay to show toast
       setTimeout(() => {
         router.replace("/onboarding/loginChoice");
       }, 500);
@@ -58,7 +89,6 @@ export default function ContractorProfileScreen() {
       console.error("Logout error:", error);
       setModalVisible(false);
 
-      // Show error toast
       Toast.show({
         type: "error",
         text1: "Logout Failed",
@@ -73,12 +103,68 @@ export default function ContractorProfileScreen() {
     setModalVisible(false);
   };
 
+  const { profilePhoto, fullName } = profile?.data?.user || {};
+
+  // Professional loading state
+  if (profileLoading && !profile) {
+    return (
+      <View className="flex-1 bg-[#F9F9F9] items-center justify-center">
+        <ActivityIndicator size="large" color="#007AFF" />
+        <Text className="font-poppins-medium text-sm text-[#565656] mt-3">
+          Loading profile...
+        </Text>
+      </View>
+    );
+  }
+
+  // Logout loading overlay
+  if (logoutLoading) {
+    return (
+      <View className="flex-1 bg-[#F9F9F9] items-center justify-center">
+        <ActivityIndicator size="large" color="#007AFF" />
+        <Text className="font-poppins-medium text-sm text-[#565656] mt-3">
+          Logging out...
+        </Text>
+      </View>
+    );
+  }
+
+  // Error state
+  if (profileError && !profile) {
+    return (
+      <View className="flex-1 bg-[#F9F9F9] items-center justify-center px-[5%]">
+        <Text className="font-poppins-semiBold text-base text-[#1F2937] mb-2">
+          Unable to load profile
+        </Text>
+        <Text className="font-poppins-regular text-sm text-[#565656] text-center mb-4">
+          Please check your connection and try again
+        </Text>
+        <TouchableOpacity
+          onPress={() => refetchProfile()}
+          className="bg-[#007AFF] px-6 py-3 rounded-lg"
+        >
+          <Text className="font-poppins-medium text-white">Retry</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   return (
     <>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#007AFF"
+            colors={["#007AFF"]}
+          />
+        }
+      >
         <View className="flex-1 px-[6%] bg-[#F9F9F9]">
           {/* Contractor Details */}
-          <ContractorDetails />
+          <ContractorDetails userData={profile?.data?.user} />
           {/* Profile information */}
           <View className="mt-[3%]">
             <View>
@@ -162,19 +248,17 @@ export default function ContractorProfileScreen() {
                   visible={modalVisible}
                   onClose={() => setModalVisible(false)}
                   title="Do you want to log out?"
-                  yesText={isLoading ? "Logging out..." : "Yes"}
+                  yesText={logoutLoading ? "Logging out..." : "Yes"}
                   noText="No"
                   onYes={handleYes}
                   onNo={handleNo}
-                  isLoading={isLoading}
+                  isLoading={logoutLoading}
                 />
               </View>
             </View>
           </View>
         </View>
       </ScrollView>
-      {/* Toast component - Add this at the end */}
-      <Toast />
     </>
   );
 }

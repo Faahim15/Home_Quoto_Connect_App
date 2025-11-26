@@ -1,12 +1,9 @@
-import React from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   Modal,
   Image,
-  Pressable,
-  Dimensions,
   Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -14,14 +11,19 @@ import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import MapButton from "./MapButton";
 import { router } from "expo-router";
 
-const ServiceQuoteModal = ({ visible, selectedUser, onClose }) => {
-  if (!selectedUser) return null;
+const ServiceQuoteModal = ({ visible, selectedJob, onClose }) => {
+  if (!selectedJob) return null;
 
-  const item = selectedUser.service;
+  const job = selectedJob;
+  const quote = job.quotes?.[0];
+  const client = job.client;
+  const location = job.location;
+  const serviceCategory = job.serviceCategory;
+  const photos = job.photos?.[0];
 
   const handleContact = () => {
     onClose();
-    Alert.alert("Contact", `Contacting ${item.author}...`);
+    Alert.alert("Contact", `Contacting ${client?.fullName}...`);
   };
 
   return (
@@ -39,7 +41,7 @@ const ServiceQuoteModal = ({ visible, selectedUser, onClose }) => {
         {/* Card Image */}
         <View className="w-full">
           <Image
-            source={{ uri: item.image }}
+            source={{ uri: photos?.url }}
             className="rounded-lg "
             style={{ height: verticalScale(160) }}
             resizeMode="cover"
@@ -53,20 +55,20 @@ const ServiceQuoteModal = ({ visible, selectedUser, onClose }) => {
             className="text-gray-900 font-poppins-500medium text-base mb-[2%]"
             numberOfLines={2}
           >
-            {item.title}
+            {job.title}
           </Text>
 
-          {/* Author */}
+          {/* Author/Client */}
           <View className="flex-row items-center mb-[2%]">
             <Image
-              source={{ uri: item.authorImage }}
+              source={{ uri: client?.profilePhoto?.url }}
               style={{ width: scale(16), height: verticalScale(16) }}
               className=" bg-gray-300 rounded-full mr-[2%]"
             />
             <Text className="font-poppins-400regular text-sm">
               by{" "}
               <Text className="font-poppins-400regular text-[#319FCA] text-sm ">
-                {item.author}
+                {client?.fullName}
               </Text>
             </Text>
           </View>
@@ -75,7 +77,7 @@ const ServiceQuoteModal = ({ visible, selectedUser, onClose }) => {
           <View className="flex-row gap-[2%] items-center mb-[2%]">
             <Ionicons name="construct-outline" size={16} color="#6B7280" />
             <Text className="font-poppins-400regular text-sm text-[#6B7280] ">
-              {item.service}
+              {serviceCategory?.title}
             </Text>
           </View>
 
@@ -85,11 +87,13 @@ const ServiceQuoteModal = ({ visible, selectedUser, onClose }) => {
             <Text className="text-gray-500 text-sm ml-[1%]"></Text>
 
             <Text className="font-poppins-400regular text-sm text-[#319FCA] ">
-              {item.location}{" "}
-              <Text className="text-[#6B7280]">| {item.time}</Text>
+              {location?.details?.city}{" "}
+              <Text className="text-[#6B7280]">| {job.preferredTime}</Text>
             </Text>
           </View>
         </View>
+
+        {/* Action Buttons */}
         <View className="flex-row gap-[4%] mt-[4%] mb-[4%]">
           <MapButton
             onPress={() => router.push("/provider/quote/updateQuote")}

@@ -1,7 +1,7 @@
 import { View, Image, Text } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
-export default function ContractorDetails() {
+export default function ContractorDetails({ userData }) {
   return (
     <View>
       <View>
@@ -13,7 +13,7 @@ export default function ContractorDetails() {
         <View className="mt-[3%] flex-row gap-[4%] ">
           <Image
             source={{
-              uri: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+              uri: userData?.profilePhoto?.url || null,
             }}
             className="border border-[#fff] rounded-full"
             style={{ width: scale(92), height: verticalScale(92) }}
@@ -22,13 +22,13 @@ export default function ContractorDetails() {
           {/* details */}
           <View className="flex-col gap-[1%] pt-[6%] ">
             <Text className="font-poppins-semiBold text-lg text-[#565656] ">
-              Mahrama
+              {userData?.fullName || "N/A"}
             </Text>
             <Text className="font-poppins-500medium text-xs text-[#565656] ">
-              Electrician
+              {userData?.businessName}
             </Text>
             <Text className="text-[#F59E0B]  font-poppins-400regular text-xs ">
-              ★ 4.3
+              ★ {Number(userData?.averageRating) / 10}
             </Text>
           </View>
         </View>
@@ -40,7 +40,9 @@ export default function ContractorDetails() {
             color="#2B54A4"
             style={{ marginRight: "10%" }}
           />
-          <Text className="text-[#2B54A4] font-poppins-bold text-base">25</Text>
+          <Text className="text-[#2B54A4] font-poppins-bold text-base">
+            {userData?.credits}
+          </Text>
         </View>
       </View>
     </View>
