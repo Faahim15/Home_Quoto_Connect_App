@@ -29,6 +29,8 @@ export default function SupportScreen() {
     description: "",
   });
 
+  const [ticketId, setTicketId] = useState(null);
+
   const [createSupportTicket, { isLoading }] = useCreateSupportTicketMutation();
 
   const categoryOptions = [
@@ -96,9 +98,16 @@ export default function SupportScreen() {
         priority: formData.priority,
       }).unwrap();
 
+      console.log("showing the result:", result);
+
+      // Store the ticket ID
+      if (result?.data?.ticket?._id) {
+        setTicketId(result.data.ticket._id);
+      }
+
       Alert.alert(
         "Success",
-        "Your support ticket has been submitted successfully!",
+        `Your support ticket has been submitted successfully!\nTicket ID: ${result?.data?.ticket?._id || "N/A"}`,
         [
           {
             text: "OK",
@@ -119,9 +128,20 @@ export default function SupportScreen() {
     } catch (error) {
       Alert.alert(
         "Error",
-        error?.data?.message || "Failed to submit ticket. Please try again."
+        error?.message || "Failed to submit ticket. Please try again."
       );
     }
+  };
+
+  const handleLiveChat = () => {
+    if (!ticketId) {
+      Alert.alert(
+        "No Ticket Found",
+        "Please create a support ticket first before starting a live chat."
+      );
+      return;
+    }
+    Alert.alert("Live Chat", `Opening live chat for ticket: ${ticketId}`);
   };
 
   return (
@@ -232,12 +252,12 @@ export default function SupportScreen() {
               </View>
 
               <ActionButton
-                backgroundColor="#F9F9F9"
-                borderColor="#0054A5"
+                backgroundColor={!ticketId ? "#E0E0E0" : "#F9F9F9"}
+                borderColor={!ticketId ? "#CACACA" : "#0054A5"}
                 title="Live Chat"
-                color="#0054A5"
-                onPress={() => Alert.alert("Live Chat", "Opening live chat...")}
-                disabled={isLoading}
+                color={!ticketId ? "#898989" : "#0054A5"}
+                onPress={handleLiveChat}
+                disabled={!ticketId || isLoading}
               />
             </View>
           </ScrollView>

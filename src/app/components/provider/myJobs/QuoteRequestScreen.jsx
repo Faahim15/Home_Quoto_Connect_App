@@ -22,7 +22,6 @@ import {
   useGetAllQuotesQuery,
   useRemoveQuoteMutation,
 } from "../../../../redux/features/apiSlices/quote/quoteApiSlice";
-import { useCancelJobMutation } from "../../../../redux/features/apiSlices/user/createJobSlices";
 
 // ----------------------------------------------------------
 // ServiceCard Component
@@ -85,7 +84,7 @@ const ServiceCard = ({ item }) => {
 
   return (
     <TouchableOpacity
-      style={{ width: scale(327), height: verticalScale(270) }}
+      style={{ width: scale(327), height: verticalScale(200) }}
       className="bg-white flex-col border border-[#D4E0EB] px-[4.5%] rounded-xl shadow-sm overflow-hidden"
       onPress={() =>
         router.push({
@@ -99,7 +98,7 @@ const ServiceCard = ({ item }) => {
         <Image
           source={{ uri: profilePhoto?.url || undefined }}
           style={{ width: scale(48), height: verticalScale(48) }}
-          className="bg-gray-300 mt-[12%] rounded-full mr-[2%]"
+          className="bg-gray-300 mt-[2%] rounded-full mr-[2%]"
         />
 
         {/* Main Content */}
@@ -156,7 +155,7 @@ const ServiceCard = ({ item }) => {
       </View>
 
       {/* Buttons */}
-      <View className="flex-row gap-[2%] mt-[5%]">
+      <View className="flex-row gap-[2%] mt-[4%]">
         <BottomButtons
           onPress={() => setCancelModalVisible(true)}
           width={145}
@@ -234,7 +233,7 @@ export default function QuotesRequestScreen() {
           Unable to Load Quotes
         </Text>
         <Text className="font-poppins-400regular text-sm text-gray-600 mt-2 text-center">
-          {error?.data?.message || "Something went wrong. Please try again."}
+          {error?.message || "Something went wrong. Please try again."}
         </Text>
 
         <TouchableOpacity

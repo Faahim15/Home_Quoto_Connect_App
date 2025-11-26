@@ -10,9 +10,7 @@ import XStyle from "../../util/styles";
 import BotttomButtons from "../../components/shared/services/buttons/BottomButtons";
 import { scale } from "../../components/adaptive/Adaptiveness";
 import { useLocalSearchParams } from "expo-router";
-import serviceData from "../../components/data/provider/MyJobsData";
 import { router } from "expo-router";
-import CustomButton from "../../components/shared/services/buttons/ServiceButton";
 import CancelModal from "../../components/shared/modal/CancelModal";
 import { useState } from "react";
 import Toast from "react-native-toast-message";
@@ -72,11 +70,6 @@ export default function QuotesRequestDetailScreen() {
     );
   }
 
-  const appointmentData = {
-    service: "TV repair",
-    provider: "Jackson",
-    price: "320",
-  };
   const pendingJobs = data?.data?.quotes?.find((q) => q._id === quoteId) || [];
   // ---------------------------
   // Accept Quote
@@ -181,7 +174,6 @@ export default function QuotesRequestDetailScreen() {
         visible={cancelModalVisible}
         onClose={() => setCancelModalVisible(false)}
         onConfirm={handleCancelConfirm}
-        appointmentDetails={appointmentData}
       />
     </View>
   );

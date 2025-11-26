@@ -20,6 +20,14 @@ export const homeApiSlices = api.injectEndpoints({
       invalidatesTags: ["SupportTickets"],
     }),
 
+    joinLiveSupport: builder.mutation({
+      query: (ticketId) => ({
+        url: `/support/tickets/${ticketId}/join-live`,
+        method: "POST",
+      }),
+      invalidatesTags: ["SupportTickets"],
+    }),
+
     // Update Profile Photo
     updateProfilePhoto: builder.mutation({
       query: (formData) => ({
@@ -79,10 +87,11 @@ export const homeApiSlices = api.injectEndpoints({
 });
 
 export const {
+  useCreateSupportTicketMutation,
+  useJoinLiveSupportMutation,
   useUserProfileQuery,
   useGetContentQuery,
   useDeleteAccountMutation,
-  useCreateSupportTicketMutation,
   useUpdateProfilePhotoMutation,
   useUpdateProfileDataMutation,
 } = homeApiSlices;

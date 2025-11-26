@@ -1,11 +1,24 @@
-import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import PaymentChecklist from "../../tabs/jobs/PaymentCheckList";
 import { acceptJobData } from "../../data/provider/MyJobsData";
-import { useCallback } from "react";
-import { router } from "expo-router";
+import { useCallback, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useGetAllQuotesQuery } from "../../../../redux/features/apiSlices/quote/quoteApiSlice";
+import { getStatusLabel } from "../../../util/helper-function";
+import { statusColorMap } from "../../../util/colors";
 const ServiceCard = ({ item }) => {
+  const { profilePhoto, fullName } = item?.job?.client || {};
+  const { city, state } = item?.job?.location?.details || {};
+  const statusColor = statusColorMap?.[item?.status] ?? "#6B7280";
   const handlePress = useCallback(() => {
     router.push({
       pathname: "/provider/myJobs/acceptJobs",
@@ -23,7 +36,7 @@ const ServiceCard = ({ item }) => {
         {/* User Image */}
         <View className="">
           <Image
-            source={{ uri: item.authorImage }}
+            source={{ uri: profilePhoto?.url || undefined }}
             style={{ width: scale(48), height: verticalScale(48) }}
             className="mt-[12%] bg-gray-300 rounded-full mr-[2%]"
           />
@@ -36,7 +49,7 @@ const ServiceCard = ({ item }) => {
             className="text-gray-900 font-poppins-500medium text-base mt-[2%] "
             numberOfLines={2}
           >
-            {item.title}
+            {item?.job?.title || "N/A"}
           </Text>
 
           {/* Author */}
@@ -44,7 +57,7 @@ const ServiceCard = ({ item }) => {
             <Text className="font-poppins-400regular text-sm">
               by{" "}
               <Text className="font-poppins-400regular text-[#319FCA] text-sm ">
-                {item.author}
+                {fullName || "N/A"}
               </Text>
             </Text>
           </View>
@@ -53,7 +66,7 @@ const ServiceCard = ({ item }) => {
           <View className="flex-row gap-[2%] items-center mt-[2%]">
             <Ionicons name="construct-outline" size={16} color="#6B7280" />
             <Text className="font-poppins-400regular text-sm text-[#6B7280] ">
-              {item.service}
+              {item?.job?.serviceCategory?.title || "N/A"}
             </Text>
           </View>
 
@@ -63,8 +76,8 @@ const ServiceCard = ({ item }) => {
             <Text className="text-gray-500 text-sm ml-[1%]"></Text>
 
             <Text className="font-poppins-400regular text-sm text-[#319FCA] ">
-              {item.location}{" "}
-              <Text className="text-[#6B7280]">| {item.time}</Text>
+              {city && state ? `${city}, ${state}` : "N/A"}{" "}
+              <Text className="text-[#6B7280]">| {item?.timeAgo}</Text>
             </Text>
           </View>
         </View>
@@ -76,8 +89,12 @@ const ServiceCard = ({ item }) => {
         <Text className="font-poppins-400regular text-base text-[#1F2937] ">
           Price
         </Text>
-        <Text className="font-poppins-semiBold text-lg text-[#F59E0B] ">
-          {item.price}
+        <Text className="font-poppins-semiBold text-base text-[#F59E0B] ">
+          {item?.job?.priceRange?.isPersonalized
+            ? "Request a personalized..."
+            : `$${item?.job?.priceRange?.from || 0} - $${
+                item?.job?.priceRange?.to || 0
+              }`}
         </Text>
       </View>
       {/* Status section */}
@@ -87,15 +104,16 @@ const ServiceCard = ({ item }) => {
           status
         </Text>
         <Text
+          style={{ color: statusColor }}
           className={`font-poppins-400regular text-base ${item.status === "In Progress" ? "text-[#1A73E8]" : item.status === "Completed" ? "text-[#00BFA5]" : "text-[#D32F2F]"} `}
         >
-          {item.status}
+          {getStatusLabel(item?.status || "N/A")}
         </Text>
       </View>
 
       {/* Job and payment confirmation section */}
 
-      {item.status === "Completed" && (
+      {item?.status === "completed" && (
         <View className="py-[2%]  bg-[#F5F5F5] rounded-lg ">
           <PaymentChecklist />
         </View>
@@ -105,20 +123,111 @@ const ServiceCard = ({ item }) => {
 };
 
 export default function AcceptJobsScreen() {
+  const { data, isLoading, error, refetch } = useGetAllQuotesQuery();
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Refresh when screen focuses
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
+
+  // Pull to Refresh
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
+
+  // ------------------------------------------
+  // Loading State
+  // ------------------------------------------
+  if (isLoading) {
+    return (
+      <View className="flex-1 justify-center items-center bg-[#f9f9f9]">
+        <ActivityIndicator size="large" color="#175994" />
+        <Text className="font-poppins-400regular text-sm text-gray-600 mt-4">
+          Loading quotes...
+        </Text>
+      </View>
+    );
+  }
+
+  // ------------------------------------------
+  // Error State
+  // ------------------------------------------
+  if (error) {
+    return (
+      <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">
+        <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
+        <Text className="font-poppins-600semiBold text-lg text-gray-900 mt-4 text-center">
+          Unable to Load Quotes
+        </Text>
+        <Text className="font-poppins-400regular text-sm text-gray-600 mt-2 text-center">
+          {error?.message || "Something went wrong. Please try again."}
+        </Text>
+
+        <TouchableOpacity
+          onPress={refetch}
+          className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
+        >
+          <Text className="font-poppins-500medium text-white text-base">
+            Retry
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+  // ------------------------------------------
+  // Empty State
+  // ------------------------------------------
+  const acceptedJobs =
+    data?.data?.quotes?.filter((q) => q.status === "accepted") || [];
+
+  if (acceptedJobs.length === 0) {
+    return (
+      <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">
+        <Ionicons name="document-text-outline" size={64} color="#9CA3AF" />
+
+        <Text className="font-poppins-600semiBold text-lg text-gray-900 mt-4 text-center">
+          No Quotes Available
+        </Text>
+
+        <Text className="font-poppins-400regular text-sm text-gray-600 mt-2 text-center">
+          You don't have any quote requests at the moment.
+        </Text>
+
+        <TouchableOpacity
+          onPress={refetch}
+          className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
+        >
+          <Text className="font-poppins-500medium text-white text-base">
+            Refresh
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
   return (
     <View className={`  justify-center items-center  bg-[#f9f9f9] mt-[4%]`}>
       <FlatList
-        data={acceptJobData}
+        data={acceptedJobs}
         renderItem={({ item }) => <ServiceCard item={item} />}
-        keyExtractor={(item) => item.id}
-        horizontal={false}
-        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item, idx) => item._id || idx.toString()}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: verticalScale(100),
           rowGap: verticalScale(12),
         }}
-        snapToAlignment="start" // Ensures proper snapping alignment
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={["#175994"]}
+            tintColor="#175994"
+          />
+        }
       />
     </View>
   );
