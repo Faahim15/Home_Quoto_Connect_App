@@ -12,10 +12,12 @@ import {
   Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { useSocket } from "../../../../hooks/useSokect";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useSendSupportMessageMutation } from "../../../../redux/features/apiSlices/user/userApiSlices";
+import {
+  useGetSupportTicketMessagesQuery,
+  useSendSupportMessageMutation,
+} from "../../../../redux/features/apiSlices/user/userApiSlices";
 
 export default function LiveChatModal({ visible, onClose, ticketId }) {
   const [messages, setMessages] = useState([]);
@@ -28,9 +30,16 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
 
   const [sendSupportMessage, { isLoading }] = useSendSupportMessageMutation();
 
-  console.log("tickedId", ticketId);
+  const {
+    data,
+    isLoading: messageLoader,
+    refetch,
+  } = useGetSupportTicketMessagesQuery(ticketId, {
+    skip: !ticketId,
+  });
 
-  // Fetch userId from AsyncStorage
+  // getting userId here
+
   useEffect(() => {
     const fetchUserId = async () => {
       const userId = await AsyncStorage.getItem("userId");
@@ -39,181 +48,117 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
     fetchUserId();
   }, []);
 
-  // Join rooms when socket is ready
+  //receiving the messages
+
+  useEffect(() => {
+    if (data?.data?.messages) {
+      setMessages(data.data.messages);
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: false });
+      }, 100);
+    }
+  }, [data]);
+
+  //  joinRooms
+
   useEffect(() => {
     const joinRooms = async () => {
       if (!socket || !isConnected || !currentUserId || !ticketId) return;
 
-      console.log("sender User Id:", currentUserId);
-
-      // 1️⃣ Personal room
       socket.emit("user-join", currentUserId);
-
-      // 2️⃣ Notifications room
       socket.emit("join-notifications", currentUserId);
-
-      // 3️⃣ Chat room
-      console.log("🎯 Joining chat room:", ticketId);
       socket.emit("join-chat", ticketId);
     };
-
     joinRooms();
   }, [socket, isConnected, currentUserId, ticketId]);
 
-  // Listen for socket events
+  //  listening to new messages
+
+  const handleNewMessage = (message) => {
+    console.log("new messages", message);
+    setMessages((prev) => [...prev, message]);
+
+    setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+  };
+  const handleUserTyping = (data) => {
+    if (data.userId !== currentUserId) {
+      setIsTyping(true);
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(() => setIsTyping(false), 3000);
+    }
+  };
+
   useEffect(() => {
     if (!socket) return;
 
-    // Listen for new messages
-    const handleNewMessage = (message) => {
-      console.log("📩 New message received:", message);
-      setMessages((prev) => [...prev, message]);
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 100);
-    };
-
-    // Listen for typing indicator
-    const handleUserTyping = (data) => {
-      console.log("⌨️ User typing:", data);
-      if (data.userId !== currentUserId) {
-        setIsTyping(true);
-
-        // Clear existing timeout
-        if (typingTimeoutRef.current) {
-          clearTimeout(typingTimeoutRef.current);
-        }
-
-        // Set new timeout
-        typingTimeoutRef.current = setTimeout(() => {
-          setIsTyping(false);
-        }, 3000);
-      }
-    };
-
-    // Attach listeners
     socket.on("new-message", handleNewMessage);
     socket.on("user-typing", handleUserTyping);
 
-    // Cleanup
     return () => {
       socket.off("new-message", handleNewMessage);
       socket.off("user-typing", handleUserTyping);
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     };
   }, [socket, currentUserId]);
+
+  //  listening to new messages end here
 
   const handleSendMessage = async () => {
     if (!inputText.trim() || !socket || !isConnected) return;
 
     const text = inputText.trim();
-
-    console.log("see text", text);
-
     const localMessage = {
       _id: Date.now().toString(),
       sender: { _id: currentUserId },
       content: { text },
       createdAt: new Date().toISOString(),
+      senderRole: "user",
+      messageType: "text",
     };
 
-    // Optimistic UI update
     setMessages((prev) => [...prev, localMessage]);
-
     setInputText("");
-
-    // Scroll down
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }, 100);
+    setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
 
     try {
-      // 1️⃣ Send to API (database save)
       await sendSupportMessage({
         ticketId,
         messageType: "text",
-        content: text || "",
+        content: text,
       }).unwrap();
-
-      // 2️⃣ Emit through socket (realtime)
-      // socket.emit("send-message", {
-      //   chatId: ticketId,
-      //   senderId: currentUserId,
-      //   text,
-      //   timestamp: new Date().toISOString(),
-      // });
+      refetch();
     } catch (error) {
-      console.log("❌ Message Send Failed:", error);
-
-      // You may show toast here later
+      setMessages((prev) => prev.filter((msg) => msg._id !== localMessage._id));
     }
+    socket.emit("send-message", {
+      ticketId, //chatId: ticketId
+      content: text,
+      messageType: "text",
+    });
   };
 
   const handleTyping = () => {
-    if (socket && isConnected) {
+    if (socket && isConnected)
       socket.emit("typing", { ticketId, userId: currentUserId });
-    }
   };
 
-  const renderMessage = ({ item }) => {
-    const isMyMessage = item.sender?._id === currentUserId;
+  const renderSystemMessage = (item) => {
+    let systemText = "";
+    if (item.systemMessageType === "ticket_created")
+      systemText = "Ticket created";
+    else if (item.systemMessageType === "status_changed")
+      systemText = item.content?.text || "Status changed";
 
     return (
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: isMyMessage ? "flex-end" : "flex-start",
-          marginVertical: verticalScale(4),
-          paddingHorizontal: scale(16),
-        }}
-      >
-        {!isMyMessage && (
-          <View
-            style={{
-              width: scale(32),
-              height: scale(32),
-              borderRadius: scale(16),
-              backgroundColor: "#E0E0E0",
-              marginRight: scale(8),
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Ionicons name="person" size={scale(18)} color="#666" />
-          </View>
-        )}
-
-        <View
-          style={{
-            maxWidth: "70%",
-            backgroundColor: isMyMessage ? "#0054A5" : "#F0F0F0",
-            paddingHorizontal: scale(12),
-            paddingVertical: verticalScale(8),
-            borderRadius: scale(16),
-            borderBottomRightRadius: isMyMessage ? scale(4) : scale(16),
-            borderBottomLeftRadius: isMyMessage ? scale(16) : scale(4),
-          }}
-        >
-          <Text
-            style={{
-              color: isMyMessage ? "#FFF" : "#333",
-              fontSize: scale(14),
-              fontFamily: "Poppins-Regular",
-            }}
-          >
-            {item.content?.text || item.text}
+      <View className="items-center my-3 px-4">
+        <View className="bg-gray-100 px-4 py-1.5 rounded-xl">
+          <Text className="text-gray-500 text-xs text-center">
+            {systemText}
           </Text>
-          <Text
-            style={{
-              color: isMyMessage ? "#E0E0E0" : "#999",
-              fontSize: scale(10),
-              marginTop: verticalScale(2),
-              fontFamily: "Poppins-Regular",
-            }}
-          >
-            {new Date(item.createdAt || item.timestamp).toLocaleTimeString([], {
+          <Text className="text-gray-400 text-[9px] text-center mt-0.5">
+            {new Date(item.createdAt).toLocaleDateString([], {
+              month: "short",
+              day: "numeric",
               hour: "2-digit",
               minute: "2-digit",
             })}
@@ -223,6 +168,112 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
     );
   };
 
+  const renderMessage = ({ item }) => {
+    if (item.systemMessageType) return renderSystemMessage(item);
+
+    const isMyMessage = item.sender?._id === currentUserId;
+    const senderName = item.sender?.fullName || "Unknown";
+    const senderPhoto = item.sender?.profilePhoto?.url;
+
+    return (
+      <View
+        className={`flex-row ${isMyMessage ? "justify-end" : "justify-start"} my-1.5 px-4`}
+      >
+        {!isMyMessage && (
+          <View className="mr-2 items-center">
+            {senderPhoto ? (
+              <Image
+                source={{ uri: senderPhoto }}
+                className="w-9 h-9 rounded-full bg-gray-300"
+              />
+            ) : (
+              <View className="w-9 h-9 rounded-full bg-blue-700 justify-center items-center">
+                <Ionicons name="person" size={20} color="#FFF" />
+              </View>
+            )}
+          </View>
+        )}
+
+        <View
+          className={`max-w-[70%] ${isMyMessage ? "items-end" : "items-start"}`}
+        >
+          {!isMyMessage && (
+            <Text className="text-blue-700 text-[11px] font-medium mb-0.5 ml-1">
+              {senderName}
+            </Text>
+          )}
+
+          <View
+            className={`px-3.5 py-2 rounded-xl ${isMyMessage ? "bg-blue-700 rounded-br-[4px]" : "bg-gray-200 rounded-bl-[4px]"} shadow-sm`}
+          >
+            <Text
+              className={`${isMyMessage ? "text-white" : "text-gray-800"} text-sm leading-5`}
+            >
+              {item.content?.text || item.text}
+            </Text>
+            <View className="flex-row items-center justify-end mt-1">
+              <Text
+                className={`${isMyMessage ? "text-white/70" : "text-gray-400"} text-[10px]`}
+              >
+                {new Date(item.createdAt || item.timestamp).toLocaleTimeString(
+                  [],
+                  { hour: "2-digit", minute: "2-digit" }
+                )}
+              </Text>
+              {isMyMessage && (
+                <Ionicons
+                  name={item.isRead ? "checkmark-done" : "checkmark"}
+                  size={14}
+                  color={item.isRead ? "#4CAF50" : "rgba(255,255,255,0.7)"}
+                  className="ml-1"
+                />
+              )}
+            </View>
+          </View>
+        </View>
+
+        {isMyMessage && (
+          <View className="ml-2">
+            {senderPhoto ? (
+              <Image
+                source={{ uri: senderPhoto }}
+                className="w-9 h-9 rounded-full bg-gray-300"
+              />
+            ) : (
+              <View className="w-9 h-9 rounded-full bg-blue-700 justify-center items-center">
+                <Ionicons name="person" size={20} color="#FFF" />
+              </View>
+            )}
+          </View>
+        )}
+      </View>
+    );
+  };
+
+  //   const renderDateSeparator = (date) => {
+  //     const isToday = new Date(date).toDateString() === new Date().toDateString();
+  //     const isYesterday =
+  //       new Date(date).toDateString() ===
+  //       new Date(Date.now() - 86400000).toDateString();
+  //     const dateText = isToday
+  //       ? "Today"
+  //       : isYesterday
+  //         ? "Yesterday"
+  //         : new Date(date).toLocaleDateString([], {
+  //             month: "short",
+  //             day: "numeric",
+  //             year: "numeric",
+  //           });
+
+  //     return (
+  //       <View className="items-center my-4">
+  //         <View className="bg-blue-100 px-4 py-1.5 rounded-xl">
+  //           <Text className="text-blue-700 text-sm font-medium">{dateText}</Text>
+  //         </View>
+  //       </View>
+  //     );
+  //   };
+
   return (
     <Modal
       visible={visible}
@@ -230,224 +281,116 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
       onRequestClose={onClose}
       statusBarTranslucent
     >
-      <View style={{ flex: 1, backgroundColor: "#FFF" }}>
+      <KeyboardAvoidingView
+        className="flex-1 bg-white"
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // Adjust header height here
+      >
         {/* Header */}
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            paddingHorizontal: scale(16),
-            paddingVertical: verticalScale(12),
-            paddingTop: verticalScale(50),
-            backgroundColor: "#0054A5",
-            borderBottomWidth: 1,
-            borderBottomColor: "#E0E0E0",
-          }}
-        >
-          <TouchableOpacity
-            onPress={onClose}
-            style={{ marginRight: scale(12) }}
-          >
-            <Ionicons name="arrow-back" size={scale(24)} color="#FFF" />
+        <View className="flex-row items-center px-4 py-3 pt-12 bg-blue-700 border-b border-gray-200 z-50">
+          <TouchableOpacity onPress={onClose} className="mr-3">
+            <Ionicons name="arrow-back" size={24} color="#FFF" />
           </TouchableOpacity>
 
-          <View
-            style={{
-              width: scale(40),
-              height: scale(40),
-              borderRadius: scale(20),
-              backgroundColor: "#FFF",
-              justifyContent: "center",
-              alignItems: "center",
-              marginRight: scale(12),
-            }}
-          >
-            <Ionicons name="headset" size={scale(20)} color="#0054A5" />
+          <View className="w-10 h-10 rounded-full bg-white justify-center items-center mr-3">
+            <Ionicons name="headset" size={20} color="#0054A5" />
           </View>
 
-          <View style={{ flex: 1 }}>
-            <Text
-              style={{
-                fontSize: scale(16),
-                fontFamily: "Poppins-SemiBold",
-                color: "#FFF",
-              }}
-            >
+          <View className="flex-1">
+            <Text className="text-white text-base font-semibold">
               Support Team
             </Text>
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <View className="flex-row items-center">
               <View
-                style={{
-                  width: scale(8),
-                  height: scale(8),
-                  borderRadius: scale(4),
-                  backgroundColor: isConnected ? "#4CAF50" : "#999",
-                  marginRight: scale(6),
-                }}
+                className={`w-2 h-2 rounded-full mr-1.5 ${
+                  isConnected ? "bg-green-500" : "bg-gray-400"
+                }`}
               />
-              <Text
-                style={{
-                  fontSize: scale(12),
-                  fontFamily: "Poppins-Regular",
-                  color: "#E0E0E0",
-                }}
-              >
+              <Text className="text-gray-200 text-xs">
                 {isConnected ? "Active now" : "Connecting..."}
               </Text>
             </View>
           </View>
 
           <TouchableOpacity>
-            <Ionicons name="ellipsis-vertical" size={scale(20)} color="#FFF" />
+            <Ionicons name="ellipsis-vertical" size={20} color="#FFF" />
           </TouchableOpacity>
         </View>
 
-        {/* Messages Area */}
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
-        >
-          {messages.length === 0 ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                paddingHorizontal: scale(40),
-              }}
-            >
-              <View
-                style={{
-                  width: scale(100),
-                  height: scale(100),
-                  borderRadius: scale(50),
-                  backgroundColor: "#F5F5F5",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginBottom: verticalScale(16),
-                }}
-              >
-                <Ionicons
-                  name="chatbubbles-outline"
-                  size={scale(50)}
-                  color="#CCC"
-                />
+        {/* Messages List */}
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          renderItem={renderMessage}
+          keyExtractor={(item, index) => item._id || index.toString()}
+          contentContainerStyle={{
+            paddingVertical: 16,
+            paddingBottom: 100,
+            backgroundColor: "#F9FAFB",
+          }}
+          keyboardShouldPersistTaps="handled" // Important for tapping on messages while keyboard open
+          onContentSizeChange={() =>
+            flatListRef.current?.scrollToEnd({ animated: true })
+          }
+          onLayout={() => flatListRef.current?.scrollToEnd({ animated: false })}
+        />
+
+        {isTyping && (
+          <View className="px-4 py-2 bg-gray-50">
+            <View className="flex-row items-center">
+              <View className="w-8 h-8 rounded-full bg-blue-700 justify-center items-center mr-2">
+                <Ionicons name="person" size={16} color="#FFF" />
               </View>
-              <Text
-                style={{
-                  fontSize: scale(16),
-                  fontFamily: "Poppins-Regular",
-                  color: "#999",
-                  textAlign: "center",
-                }}
-              >
-                Start your message
+              <Text className="text-gray-500 text-xs italic">
+                Support team is typing...
               </Text>
             </View>
-          ) : (
-            <FlatList
-              ref={flatListRef}
-              data={messages}
-              renderItem={renderMessage}
-              keyExtractor={(item, index) => item._id || index.toString()}
-              contentContainerStyle={{
-                paddingVertical: verticalScale(16),
+          </View>
+        )}
+
+        {/* Input */}
+        <View className="flex-row items-center px-4 py-3 border-t border-gray-200 bg-white">
+          <View className="flex-1 flex-row items-center bg-gray-100 rounded-full px-4 py-2 mr-2">
+            <TextInput
+              className="flex-1 text-gray-800 text-sm max-h-24"
+              placeholder="Type your message..."
+              placeholderTextColor="#999"
+              value={inputText}
+              onChangeText={(text) => {
+                setInputText(text);
+                handleTyping();
               }}
+              multiline
               onContentSizeChange={() =>
                 flatListRef.current?.scrollToEnd({ animated: true })
               }
             />
-          )}
-
-          {isTyping && (
-            <View
-              style={{
-                paddingHorizontal: scale(16),
-                paddingVertical: verticalScale(8),
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: scale(12),
-                  fontFamily: "Poppins-Regular",
-                  color: "#999",
-                  fontStyle: "italic",
-                }}
-              >
-                Support is typing...
-              </Text>
-            </View>
-          )}
-
-          {/* Input Area */}
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              paddingHorizontal: scale(16),
-              paddingVertical: verticalScale(12),
-              borderTopWidth: 1,
-              borderTopColor: "#E0E0E0",
-              backgroundColor: "#FFF",
-            }}
-          >
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "row",
-                alignItems: "center",
-                backgroundColor: "#F5F5F5",
-                borderRadius: scale(24),
-                paddingHorizontal: scale(16),
-                paddingVertical: verticalScale(8),
-                marginRight: scale(8),
-              }}
-            >
-              <TextInput
-                style={{
-                  flex: 1,
-                  fontSize: scale(14),
-                  fontFamily: "Poppins-Regular",
-                  color: "#333",
-                  maxHeight: verticalScale(100),
-                }}
-                placeholder="Type something..."
-                placeholderTextColor="#999"
-                value={inputText}
-                onChangeText={(text) => {
-                  setInputText(text);
-                  handleTyping();
-                }}
-                multiline
-              />
-              <TouchableOpacity style={{ marginLeft: scale(8) }}>
-                <Ionicons name="attach" size={scale(20)} color="#666" />
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-              onPress={handleSendMessage}
-              disabled={!inputText.trim() || !isConnected}
-              style={{
-                width: scale(44),
-                height: scale(44),
-                borderRadius: scale(22),
-                backgroundColor:
-                  inputText.trim() && isConnected ? "#0054A5" : "#E0E0E0",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Ionicons
-                name="send"
-                size={scale(20)}
-                color={inputText.trim() && isConnected ? "#FFF" : "#999"}
-              />
+            <TouchableOpacity className="ml-2">
+              <Ionicons name="attach" size={20} color="#666" />
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
-      </View>
+
+          <TouchableOpacity
+            onPress={handleSendMessage}
+            disabled={!inputText.trim() || !isConnected || isLoading}
+            className={`w-11 h-11 rounded-full justify-center items-center ${
+              inputText.trim() && isConnected && !isLoading
+                ? "bg-blue-700"
+                : "bg-gray-200"
+            }`}
+          >
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#FFF" />
+            ) : (
+              <Ionicons
+                name="send"
+                size={20}
+                color={inputText.trim() && isConnected ? "#FFF" : "#999"}
+              />
+            )}
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

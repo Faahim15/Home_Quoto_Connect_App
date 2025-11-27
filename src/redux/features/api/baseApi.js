@@ -112,6 +112,7 @@ export const api = createApi({
     "Specializations",
     "Content",
     "SupportTickets",
+    "SupportTicketsMessages",
     "Profile",
   ],
 });

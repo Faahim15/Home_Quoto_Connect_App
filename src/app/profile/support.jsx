@@ -60,16 +60,22 @@ export default function SupportScreen() {
     { value: "urgent", label: "Urgent" },
   ];
 
-  // Check for existing tickets and set the most recent open ticket
+  // Check for existing tickets and set the most recent open/in_progress ticket
   useEffect(() => {
     if (data?.data?.tickets && data.data.tickets.length > 0) {
-      // Find the most recent open ticket
+      // Prioritize in_progress ticket over open ticket
+      const inProgressTicket = data.data.tickets.find(
+        (ticket) => ticket.status === "in_progress"
+      );
+
       const openTicket = data.data.tickets.find(
         (ticket) => ticket.status === "open"
       );
 
-      if (openTicket) {
-        setTicketId(openTicket._id);
+      const activeTicket = inProgressTicket || openTicket;
+
+      if (activeTicket) {
+        setTicketId(activeTicket._id);
       } else {
         setTicketId(null);
       }

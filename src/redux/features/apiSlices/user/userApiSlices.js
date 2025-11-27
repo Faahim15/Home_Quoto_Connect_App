@@ -17,7 +17,7 @@ export const homeApiSlices = api.injectEndpoints({
           "Content-Type": "application/json",
         },
       }),
-      invalidatesTags: ["SupportTickets"],
+      invalidatesTags: ["SupportTickets", "SupportTicketsMessages"],
     }),
 
     // send support  messages
@@ -63,6 +63,17 @@ export const homeApiSlices = api.injectEndpoints({
         method: "GET",
       }),
       providesTags: ["SupportTickets"],
+    }),
+
+    // Get messages of a support ticket
+    getSupportTicketMessages: builder.query({
+      query: (ticketId) => ({
+        url: `/support/tickets/${ticketId}/messages`,
+        method: "GET",
+      }),
+      providesTags: (result, error, ticketId) => [
+        { type: "SupportTicketsMessages", id: ticketId },
+      ],
     }),
 
     // Update Profile Photo
@@ -130,6 +141,7 @@ export const {
   useGetSupportTicketsQuery,
   useUserProfileQuery,
   useGetContentQuery,
+  useGetSupportTicketMessagesQuery,
   useDeleteAccountMutation,
   useUpdateProfilePhotoMutation,
   useUpdateProfileDataMutation,
