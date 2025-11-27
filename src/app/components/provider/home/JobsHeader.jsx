@@ -10,7 +10,7 @@ export default function JobsHeader({ title }) {
         onPress={() =>
           router.push({
             pathname: "/services/showAllJobs",
-            params: { title: title },
+            params: { title: title, showButtons: true },
           })
         }
       >

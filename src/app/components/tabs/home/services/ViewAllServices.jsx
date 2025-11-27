@@ -11,14 +11,18 @@ import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 
-const ServiceCard = ({ item }) => {
+const ServiceCard = ({ item, showButtons }) => {
   const { city, state } = item?.location?.details || {};
   return (
     <TouchableOpacity
       onPress={() => {
         router.push({
           pathname: "/shared/serviceDetails",
-          params: { serviceId: item._id, showButtons: false, showPrice: true },
+          params: {
+            serviceId: item._id,
+            showButtons: showButtons,
+            showPrice: true,
+          },
         });
       }}
       style={{ width: scale(330), height: verticalScale(288) }}
@@ -105,6 +109,7 @@ export default function ViewAllServiceCards({
   error,
   refreshing,
   onRefresh,
+  showButtons,
 }) {
   const displayData = servicesData || [];
 
@@ -136,7 +141,9 @@ export default function ViewAllServiceCards({
       ) : (
         <FlatList
           data={displayData}
-          renderItem={({ item }) => <ServiceCard item={item} />}
+          renderItem={({ item }) => (
+            <ServiceCard showButtons={showButtons} item={item} />
+          )}
           keyExtractor={(item, index) => item?.id || index.toString()}
           numColumns={1}
           showsVerticalScrollIndicator={false}

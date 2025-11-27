@@ -20,12 +20,49 @@ export const homeApiSlices = api.injectEndpoints({
       invalidatesTags: ["SupportTickets"],
     }),
 
+    // send support  messages
+    sendSupportMessage: builder.mutation({
+      query: ({ ticketId, messageType, content }) => {
+        const formData = new FormData();
+
+        // Always send message type
+        formData.append("messageType", messageType);
+
+        if (messageType === "text") {
+          // Text message
+          formData.append("content", content);
+        } else {
+          // Media & File message
+          formData.append("content", {
+            uri: content.uri,
+            name: content.name,
+            type: content.type,
+          });
+        }
+
+        return {
+          url: `/support/tickets/${ticketId}/messages`,
+          method: "POST",
+          body: formData,
+        };
+      },
+      invalidatesTags: ["SupportTickets"],
+    }),
+
     joinLiveSupport: builder.mutation({
       query: (ticketId) => ({
         url: `/support/tickets/${ticketId}/join-live`,
         method: "POST",
       }),
       invalidatesTags: ["SupportTickets"],
+    }),
+
+    getSupportTickets: builder.query({
+      query: () => ({
+        url: `/support/tickets`,
+        method: "GET",
+      }),
+      providesTags: ["SupportTickets"],
     }),
 
     // Update Profile Photo
@@ -88,7 +125,9 @@ export const homeApiSlices = api.injectEndpoints({
 
 export const {
   useCreateSupportTicketMutation,
+  useSendSupportMessageMutation,
   useJoinLiveSupportMutation,
+  useGetSupportTicketsQuery,
   useUserProfileQuery,
   useGetContentQuery,
   useDeleteAccountMutation,

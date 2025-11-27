@@ -56,7 +56,7 @@ export default function DirectJobSummaryScreen() {
 
     // 🧾 Append all fields
     formData.append("title", jobData.title);
-    formData.append("description", jobData.specificInstructions);
+    // formData.append("description", jobData.specificInstructions);
     formData.append("serviceCategory", jobData?.serviceCategory?.id);
 
     // Specializations

@@ -20,7 +20,6 @@ import { useLocalSearchParams } from "expo-router";
 import { useGetProviderDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
-  useDirectChatMutation,
   useGetChatsQuery,
   useGetSingleChatHistoryQuery,
 } from "../../redux/features/apiSlices/chat/chatApiSlices";

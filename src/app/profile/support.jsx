@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -17,7 +17,11 @@ import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import InputField from "../components/tabs/profile/InputField";
 import ActionButton from "../components/tabs/profile/ActionButton";
 import Dropdown from "../components/tabs/profile/Dropdown";
-import { useCreateSupportTicketMutation } from "../../redux/features/apiSlices/user/userApiSlices";
+import LiveChatModal from "../components/shared/modal/LiveChatModal";
+import {
+  useCreateSupportTicketMutation,
+  useGetSupportTicketsQuery,
+} from "../../redux/features/apiSlices/user/userApiSlices";
 
 export default function SupportScreen() {
   const [formData, setFormData] = useState({
@@ -30,8 +34,15 @@ export default function SupportScreen() {
   });
 
   const [ticketId, setTicketId] = useState(null);
+  const [showChatModal, setShowChatModal] = useState(false);
 
   const [createSupportTicket, { isLoading }] = useCreateSupportTicketMutation();
+
+  const {
+    data,
+    isLoading: getSupportLoader,
+    error,
+  } = useGetSupportTicketsQuery();
 
   const categoryOptions = [
     { value: "technical", label: "Technical" },
@@ -49,6 +60,22 @@ export default function SupportScreen() {
     { value: "urgent", label: "Urgent" },
   ];
 
+  // Check for existing tickets and set the most recent open ticket
+  useEffect(() => {
+    if (data?.data?.tickets && data.data.tickets.length > 0) {
+      // Find the most recent open ticket
+      const openTicket = data.data.tickets.find(
+        (ticket) => ticket.status === "open"
+      );
+
+      if (openTicket) {
+        setTicketId(openTicket._id);
+      } else {
+        setTicketId(null);
+      }
+    }
+  }, [data]);
+
   // Handle form field changes
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -65,8 +92,6 @@ export default function SupportScreen() {
       [`${field}Label`]: label,
     }));
   };
-
-  console.log("formdata", formData);
 
   const handleSubmit = async () => {
     // Dismiss keyboard before submission
@@ -141,7 +166,7 @@ export default function SupportScreen() {
       );
       return;
     }
-    Alert.alert("Live Chat", `Opening live chat for ticket: ${ticketId}`);
+    setShowChatModal(true);
   };
 
   return (
@@ -262,6 +287,13 @@ export default function SupportScreen() {
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
+
+        {/* Live Chat Modal */}
+        <LiveChatModal
+          visible={showChatModal}
+          onClose={() => setShowChatModal(false)}
+          ticketId={ticketId}
+        />
       </View>
     </TouchableWithoutFeedback>
   );

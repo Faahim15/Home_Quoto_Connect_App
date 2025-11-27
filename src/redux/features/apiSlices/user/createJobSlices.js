@@ -73,25 +73,63 @@ export const jobSlice = api.injectEndpoints({
       } = {}) => {
         const params = new URLSearchParams();
 
-        params.append("page", page.toString());
-        params.append("limit", limit.toString());
-        params.append("radius", radius.toString());
-        params.append("sortBy", sortBy);
+        // Only append if value exists and is not undefined/null
+        if (page !== undefined && page !== null) {
+          params.append("page", page.toString());
+        }
 
-        if (serviceType) params.append("serviceType", serviceType);
-        if (urgent !== undefined) params.append("urgent", urgent.toString());
-        if (minPrice !== undefined)
+        if (limit !== undefined && limit !== null) {
+          params.append("limit", limit.toString());
+        }
+
+        if (radius !== undefined && radius !== null) {
+          params.append("radius", radius.toString());
+        }
+
+        if (sortBy) {
+          params.append("sortBy", sortBy);
+        }
+
+        // Only append optional parameters if they have values
+        if (serviceType) {
+          params.append("serviceType", serviceType);
+        }
+
+        if (urgent !== undefined && urgent !== null) {
+          params.append("urgent", urgent.toString());
+        }
+
+        if (minPrice !== undefined && minPrice !== null) {
           params.append("minPrice", minPrice.toString());
-        if (maxPrice !== undefined)
+        }
+
+        if (maxPrice !== undefined && maxPrice !== null) {
           params.append("maxPrice", maxPrice.toString());
-        if (rating !== undefined) params.append("rating", rating.toString());
-        if (experienceLevel) params.append("experienceLevel", experienceLevel);
-        if (specializations) params.append("specializations", specializations);
-        if (search) params.append("search", search);
-        if (latitude !== undefined)
+        }
+
+        if (rating !== undefined && rating !== null) {
+          params.append("rating", rating.toString());
+        }
+
+        if (experienceLevel) {
+          params.append("experienceLevel", experienceLevel);
+        }
+
+        if (specializations) {
+          params.append("specializations", specializations);
+        }
+
+        if (search) {
+          params.append("search", search);
+        }
+
+        if (latitude !== undefined && latitude !== null) {
           params.append("latitude", latitude.toString());
-        if (longitude !== undefined)
+        }
+
+        if (longitude !== undefined && longitude !== null) {
           params.append("longitude", longitude.toString());
+        }
 
         return {
           url: `/jobs?${params.toString()}`,

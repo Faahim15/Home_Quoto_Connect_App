@@ -15,12 +15,29 @@ import { verticalScale } from "../../components/adaptive/Adaptiveness";
 import { useUserProfileQuery } from "../../../redux/features/apiSlices/user/userApiSlices";
 import {
   useGetActiveJobsQuery,
+  useGetAllJobsQuery,
   useGetTodaysJobsQuery,
 } from "../../../redux/features/apiSlices/user/createJobSlices";
 
 export default function ContractorHomeScreen() {
   const [showModal, setShowModal] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+
+  // Add at the top with other useState declarations
+  const [filters, setFilters] = useState({
+    serviceType: "",
+    urgent: undefined,
+    minPrice: undefined,
+    maxPrice: undefined,
+    specializations: "",
+    search: "",
+    sortBy: "createdAt",
+  });
+
+  const [searchText, setSearchText] = useState("");
+
+  // Track if user has applied any filters or search
+  const [hasActiveFilters, setHasActiveFilters] = useState(false);
 
   const {
     data: profile,
@@ -41,15 +58,103 @@ export default function ContractorHomeScreen() {
     refetch: refetchActiveJobs,
   } = useGetActiveJobsQuery();
 
-  // Handle pull-to-refresh
+  console.log("filters", filters);
+
+  // Update your getAllJobs query to use filters - only fetch when there are active filters
+  const {
+    data: allJobs,
+    isLoading: allJobsLoading,
+    error,
+    refetch: refetchAllJobs,
+  } = useGetAllJobsQuery(
+    {
+      ...filters,
+    },
+    {
+      skip: !hasActiveFilters, // Skip query if no active filters
+    }
+  );
+  // Add search handler
+  const handleSearchChange = (text) => {
+    setSearchText(text);
+
+    if (text.length >= 3) {
+      // Apply search when 3+ characters
+      setFilters((prev) => ({
+        ...prev,
+        search: text,
+      }));
+      setHasActiveFilters(true);
+    } else {
+      // Clear search when less than 3 characters
+      setFilters((prev) => ({
+        ...prev,
+        search: "",
+      }));
+      // Check if other filters are active
+      const otherFiltersActive = checkIfOtherFiltersActive({
+        ...filters,
+        search: "",
+      });
+      setHasActiveFilters(otherFiltersActive);
+    }
+  };
+
+  // Helper function to check if any filters are active
+  const checkIfOtherFiltersActive = (filterObj) => {
+    return (
+      filterObj.serviceType !== "" ||
+      filterObj.urgent !== undefined ||
+      filterObj.minPrice !== undefined ||
+      filterObj.maxPrice !== undefined ||
+      filterObj.specializations !== "" ||
+      filterObj.search !== ""
+    );
+  };
+
+  // Add filter apply handler
+  const handleApplyFilters = (newFilters) => {
+    const updatedFilters = {
+      ...filters,
+      ...newFilters,
+    };
+    setFilters(updatedFilters);
+    setHasActiveFilters(checkIfOtherFiltersActive(updatedFilters));
+    setShowModal(false);
+  };
+
+  // Add clear filters handler
+  const handleClearFilters = () => {
+    setFilters({
+      serviceType: "",
+      urgent: undefined,
+      minPrice: undefined,
+      maxPrice: undefined,
+      specializations: "",
+      search: searchText, // Keep search text in input
+      sortBy: "createdAt",
+    });
+
+    // Only keep active if search text exists and is 3+ chars
+    setHasActiveFilters(searchText.length >= 3);
+  };
+
+  // Update onRefresh to include allJobs refetch only if filters are active
   const onRefresh = async () => {
     setRefreshing(true);
     try {
-      await Promise.all([
+      const promises = [
         refetchProfile(),
         refetchTodaysJobs(),
         refetchActiveJobs(),
-      ]);
+      ];
+
+      // Only refetch filtered jobs if filters are active
+      if (hasActiveFilters) {
+        promises.push(refetchAllJobs());
+      }
+
+      await Promise.all(promises);
     } catch (error) {
       console.error("Error refreshing data:", error);
     } finally {
@@ -81,6 +186,9 @@ export default function ContractorHomeScreen() {
     setShowModal(false);
   }
 
+  // console.log("show jobssssssssssss", allJobs?.data?.jobs?.length);
+  // console.log("hasActiveFilters", hasActiveFilters);
+
   return (
     <View className="flex-1 bg-[#f9f9f9]">
       <ScrollView
@@ -102,26 +210,75 @@ export default function ContractorHomeScreen() {
         <View>
           <HomeTopBar userData={userData} />
         </View>
-        <SearchBar onPress={() => setShowModal(true)} />
+        <SearchBar
+          onPress={() => setShowModal(true)}
+          value={searchText}
+          onChangeText={handleSearchChange}
+        />
 
-        <JobsHeader title="Today's Jobs" />
-        <View>
-          <ShowAllServiceCards
-            jobs={todaysJobs?.data?.jobs}
-            horizontal={true}
-          />
-        </View>
+        {/* Show filtered results only when filters are active */}
+        {hasActiveFilters && (
+          <>
+            <JobsHeader
+              title="Filtered Results"
+              count={allJobs?.data?.jobs?.length || 0}
+            />
+            <View>
+              {allJobsLoading ? (
+                <View className="py-10 items-center">
+                  <ActivityIndicator size="small" color="#175994" />
+                  <Text className="font-poppins-400regular text-sm text-gray-500 mt-2">
+                    Searching...
+                  </Text>
+                </View>
+              ) : allJobs?.data?.jobs?.length > 0 ? (
+                <ShowAllServiceCards
+                  jobs={allJobs?.data?.jobs}
+                  horizontal={false}
+                />
+              ) : (
+                <View className="py-10 px-6 items-center">
+                  <Text className="font-poppins-500medium text-base text-gray-600 text-center">
+                    No jobs found matching your filters
+                  </Text>
+                  <Text className="font-poppins-400regular text-sm text-gray-500 text-center mt-2">
+                    Try adjusting your search or filters
+                  </Text>
+                </View>
+              )}
+            </View>
+          </>
+        )}
 
-        {/* Active jobs */}
-        <JobsHeader title="Active Jobs" />
-        <View>
-          <ShowAllServiceCards
-            jobs={activeJobs?.data?.jobs}
-            horizontal={true}
-          />
-        </View>
+        {/* Show default sections only when no filters are active */}
+        {!hasActiveFilters && (
+          <>
+            <JobsHeader title="Today's Jobs" />
+            <View>
+              <ShowAllServiceCards
+                jobs={todaysJobs?.data?.jobs}
+                horizontal={true}
+              />
+            </View>
 
-        <FilterModal visible={showModal} onClose={modalCloseHanlder} />
+            {/* Active jobs */}
+            <JobsHeader title="Active Jobs" />
+            <View>
+              <ShowAllServiceCards
+                jobs={activeJobs?.data?.jobs}
+                horizontal={true}
+              />
+            </View>
+          </>
+        )}
+
+        <FilterModal
+          visible={showModal}
+          onClose={modalCloseHanlder}
+          onApplyFilters={handleApplyFilters}
+          onClearFilters={handleClearFilters}
+          currentFilters={filters}
+        />
       </ScrollView>
     </View>
   );

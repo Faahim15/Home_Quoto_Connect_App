@@ -9,7 +9,7 @@ import {
 } from "../../redux/features/apiSlices/user/createJobSlices";
 
 export default function HomeServiceScreen() {
-  const { title } = useLocalSearchParams();
+  const { title, showButtons } = useLocalSearchParams();
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -62,6 +62,7 @@ export default function HomeServiceScreen() {
         error={error}
         refreshing={refreshing}
         onRefresh={onRefresh}
+        showButtons={showButtons}
       />
     </View>
   );
