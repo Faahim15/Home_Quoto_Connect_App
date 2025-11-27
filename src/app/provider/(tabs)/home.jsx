@@ -18,6 +18,7 @@ import {
   useGetAllJobsQuery,
   useGetTodaysJobsQuery,
 } from "../../../redux/features/apiSlices/user/createJobSlices";
+import FilterHeader from "../../components/provider/home/FilterHeader";
 
 export default function ContractorHomeScreen() {
   const [showModal, setShowModal] = useState(false);
@@ -26,10 +27,8 @@ export default function ContractorHomeScreen() {
   // Add at the top with other useState declarations
   const [filters, setFilters] = useState({
     serviceType: "",
-    urgent: undefined,
     minPrice: undefined,
     maxPrice: undefined,
-    specializations: "",
     search: "",
     sortBy: "createdAt",
   });
@@ -78,25 +77,30 @@ export default function ContractorHomeScreen() {
   const handleSearchChange = (text) => {
     setSearchText(text);
 
+    // When search has 3 or more characters
     if (text.length >= 3) {
-      // Apply search when 3+ characters
-      setFilters((prev) => ({
-        ...prev,
-        search: text,
-      }));
-      setHasActiveFilters(true);
+      const updatedFilters = {
+        serviceType: "",
+        minPrice: undefined,
+        maxPrice: undefined,
+        sortBy: "createdAt",
+        search: text, // only active filter
+      };
+
+      setFilters(updatedFilters);
+      setHasActiveFilters(true); // search is active
     } else {
-      // Clear search when less than 3 characters
-      setFilters((prev) => ({
-        ...prev,
-        search: "",
-      }));
-      // Check if other filters are active
-      const otherFiltersActive = checkIfOtherFiltersActive({
-        ...filters,
-        search: "",
-      });
-      setHasActiveFilters(otherFiltersActive);
+      // Reset everything when search is too short
+      const clearedFilters = {
+        serviceType: "",
+        minPrice: undefined,
+        maxPrice: undefined,
+        sortBy: "createdAt",
+        search: "", // no search
+      };
+
+      setFilters(clearedFilters);
+      setHasActiveFilters(false); // no active filters
     }
   };
 
@@ -104,10 +108,8 @@ export default function ContractorHomeScreen() {
   const checkIfOtherFiltersActive = (filterObj) => {
     return (
       filterObj.serviceType !== "" ||
-      filterObj.urgent !== undefined ||
       filterObj.minPrice !== undefined ||
       filterObj.maxPrice !== undefined ||
-      filterObj.specializations !== "" ||
       filterObj.search !== ""
     );
   };
@@ -127,16 +129,44 @@ export default function ContractorHomeScreen() {
   const handleClearFilters = () => {
     setFilters({
       serviceType: "",
-      urgent: undefined,
       minPrice: undefined,
       maxPrice: undefined,
+      urgent: undefined,
       specializations: "",
-      search: searchText, // Keep search text in input
       sortBy: "createdAt",
+      search: "", // Always clear search
     });
 
-    // Only keep active if search text exists and is 3+ chars
-    setHasActiveFilters(searchText.length >= 3);
+    setSearchText(""); // Also clear UI input field
+
+    setHasActiveFilters(false); // No filters active
+  };
+
+  const handleSearchSubmit = () => {
+    const trimmed = searchText.trim();
+
+    if (trimmed.length >= 3) {
+      setFilters({
+        serviceType: "",
+        minPrice: undefined,
+        maxPrice: undefined,
+        sortBy: "createdAt",
+        search: trimmed,
+      });
+
+      setHasActiveFilters(true);
+    } else {
+      // If search less than 3 chars → reset filter
+      setFilters({
+        serviceType: "",
+        minPrice: undefined,
+        maxPrice: undefined,
+        sortBy: "createdAt",
+        search: "",
+      });
+
+      setHasActiveFilters(false);
+    }
   };
 
   // Update onRefresh to include allJobs refetch only if filters are active
@@ -191,6 +221,55 @@ export default function ContractorHomeScreen() {
 
   return (
     <View className="flex-1 bg-[#f9f9f9]">
+      <View>
+        <HomeTopBar userData={userData} />
+      </View>
+      <SearchBar
+        onPress={() => setShowModal(true)}
+        value={searchText}
+        onChangeText={setSearchText}
+        onSubmitEditing={handleSearchSubmit}
+      />
+
+      {/* Show filtered results only when filters are active */}
+      {hasActiveFilters && (
+        <>
+          {/* <JobsHeader
+            title="Filtered Results"
+            count={allJobs?.data?.jobs?.length || 0}
+          /> */}
+          <FilterHeader
+            title="Filtered Results"
+            count={allJobs?.data?.jobs?.length || 0}
+          />
+
+          <View>
+            {allJobsLoading ? (
+              <View className="py-10 items-center">
+                <ActivityIndicator size="small" color="#175994" />
+                <Text className="font-poppins-400regular text-sm text-gray-500 mt-2">
+                  Searching...
+                </Text>
+              </View>
+            ) : allJobs?.data?.jobs?.length > 0 ? (
+              <ShowAllServiceCards
+                jobs={allJobs?.data?.jobs}
+                horizontal={false}
+              />
+            ) : (
+              <View className="py-10 px-6 items-center">
+                <Text className="font-poppins-500medium text-base text-gray-600 text-center">
+                  No jobs found matching your filters
+                </Text>
+                <Text className="font-poppins-400regular text-sm text-gray-500 text-center mt-2">
+                  Try adjusting your search or filters
+                </Text>
+              </View>
+            )}
+          </View>
+        </>
+      )}
+
       <ScrollView
         contentContainerStyle={{
           paddingBottom: verticalScale(40),
@@ -207,49 +286,6 @@ export default function ContractorHomeScreen() {
           />
         }
       >
-        <View>
-          <HomeTopBar userData={userData} />
-        </View>
-        <SearchBar
-          onPress={() => setShowModal(true)}
-          value={searchText}
-          onChangeText={handleSearchChange}
-        />
-
-        {/* Show filtered results only when filters are active */}
-        {hasActiveFilters && (
-          <>
-            <JobsHeader
-              title="Filtered Results"
-              count={allJobs?.data?.jobs?.length || 0}
-            />
-            <View>
-              {allJobsLoading ? (
-                <View className="py-10 items-center">
-                  <ActivityIndicator size="small" color="#175994" />
-                  <Text className="font-poppins-400regular text-sm text-gray-500 mt-2">
-                    Searching...
-                  </Text>
-                </View>
-              ) : allJobs?.data?.jobs?.length > 0 ? (
-                <ShowAllServiceCards
-                  jobs={allJobs?.data?.jobs}
-                  horizontal={false}
-                />
-              ) : (
-                <View className="py-10 px-6 items-center">
-                  <Text className="font-poppins-500medium text-base text-gray-600 text-center">
-                    No jobs found matching your filters
-                  </Text>
-                  <Text className="font-poppins-400regular text-sm text-gray-500 text-center mt-2">
-                    Try adjusting your search or filters
-                  </Text>
-                </View>
-              )}
-            </View>
-          </>
-        )}
-
         {/* Show default sections only when no filters are active */}
         {!hasActiveFilters && (
           <>

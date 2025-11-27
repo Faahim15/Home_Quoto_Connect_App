@@ -1,6 +1,7 @@
 // ============================================
-// FilterModal.js - CLEAN & REUSING EXISTING COMPONENTS
+// FilterModal.js - UPDATED FOR OBJECT SERVICE TYPE
 // ============================================
+
 import {
   View,
   Text,
@@ -15,12 +16,13 @@ import {
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import DropdownMenu from "../profile/DropdownMenu";
-import CanadianLocationDropdown from "./CanLocationDrop";
+
 import PriceSlider from "../../tabs/home/PriceInput";
 import ApplyFilterButton from "../../tabs/home/FilterButton";
 import { useGetServiceCategoriesQuery } from "../../../../redux/features/apiSlices/user/createJobSlices";
 import { setJobField } from "../../../../redux/features/jobPost/jobPostSlice";
+
+import FilterDropdown from "../profile/FilterDropdown";
 
 export default function FilterModal({
   visible,
@@ -32,27 +34,25 @@ export default function FilterModal({
   const dispatch = useDispatch();
   const { data, isLoading } = useGetServiceCategoriesQuery();
 
-  // Get price range from Redux (same as PriceSlider uses)
   const priceRange = useSelector((state) => state.jobPost.priceRange);
 
   const [localFilters, setLocalFilters] = useState({
-    serviceType: "",
-    location: null,
-    latitude: undefined,
-    longitude: undefined,
+    serviceType: null, // <-- full object
+    // location: null,
+    // latitude: undefined,
+    // longitude: undefined,
   });
 
-  // Sync with parent filters when modal opens
+  // Sync with parent filters
   useEffect(() => {
     if (visible && currentFilters) {
       setLocalFilters({
-        serviceType: currentFilters.serviceType || "",
-        location: null,
-        latitude: currentFilters.latitude,
-        longitude: currentFilters.longitude,
+        serviceType: currentFilters.serviceType || null,
+        // location: null,
+        // latitude: currentFilters.latitude,
+        // longitude: currentFilters.longitude,
       });
 
-      // Sync price range to Redux if exists
       if (currentFilters.minPrice || currentFilters.maxPrice) {
         dispatch(
           setJobField({
@@ -68,12 +68,14 @@ export default function FilterModal({
     }
   }, [visible, currentFilters, dispatch]);
 
-  // Handle service type selection (DropdownMenu format)
+  // Handle service type as OBJECT
   const handleServiceTypeSelect = (field, value) => {
-    setLocalFilters((prev) => ({ ...prev, serviceType: value }));
+    setLocalFilters((prev) => ({
+      ...prev,
+      serviceType: value, // full object
+    }));
   };
 
-  // Handle location selection
   const handleLocationSelect = (locationData) => {
     setLocalFilters((prev) => ({
       ...prev,
@@ -83,15 +85,16 @@ export default function FilterModal({
     }));
   };
 
-  // Apply filters
+  // Final apply filters
   const handleApply = () => {
     const filtersToApply = {
       ...localFilters,
+      serviceType: localFilters.serviceType?._id, // send only ID to backend
       minPrice: priceRange.from > 0 ? priceRange.from : undefined,
       maxPrice: priceRange.to > 0 ? priceRange.to : undefined,
     };
 
-    // Filter out undefined/null values
+    // Clean empty values
     const cleanedFilters = Object.entries(filtersToApply).reduce(
       (acc, [key, value]) => {
         if (value !== undefined && value !== null && value !== "") {
@@ -106,16 +109,14 @@ export default function FilterModal({
     onClose();
   };
 
-  // Clear all filters
   const handleClear = () => {
     setLocalFilters({
-      serviceType: "",
+      serviceType: null,
       location: null,
       latitude: undefined,
       longitude: undefined,
     });
 
-    // Reset Redux price range
     dispatch(
       setJobField({
         field: "priceRange",
@@ -126,14 +127,12 @@ export default function FilterModal({
     onClearFilters?.();
   };
 
-  // Check if any filters are active
   const hasActiveFilters =
     localFilters.serviceType ||
     localFilters.location ||
     priceRange.from > 0 ||
     priceRange.to > 0;
 
-  // Format service categories for dropdown
   const serviceOptions = data?.data?.categories || [];
 
   return (
@@ -145,7 +144,7 @@ export default function FilterModal({
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View className="flex-1 bg-black/50 justify-center items-center">
-          <TouchableWithoutFeedback onPress={() => {}}>
+          <TouchableWithoutFeedback>
             <KeyboardAvoidingView
               behavior={Platform.OS === "ios" ? "padding" : "height"}
               keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
@@ -154,9 +153,10 @@ export default function FilterModal({
               <View className="bg-white rounded-lg border border-gray-200">
                 {/* Header */}
                 <View className="flex-row items-center justify-between px-6 py-4 border-b border-gray-200">
-                  <Text className="text-lg font-poppins-600semibold text-gray-800">
+                  <Text className="text-lg font-poppins-bold text-gray-800">
                     Filter Jobs
                   </Text>
+
                   <View className="flex-row items-center gap-3">
                     {hasActiveFilters && (
                       <TouchableOpacity onPress={handleClear}>
@@ -165,13 +165,14 @@ export default function FilterModal({
                         </Text>
                       </TouchableOpacity>
                     )}
+
                     <TouchableOpacity onPress={onClose}>
                       <Ionicons name="close" size={24} color="#6B7280" />
                     </TouchableOpacity>
                   </View>
                 </View>
 
-                {/* Content */}
+                {/* Body */}
                 <ScrollView
                   showsVerticalScrollIndicator={false}
                   keyboardShouldPersistTaps="handled"
@@ -179,12 +180,9 @@ export default function FilterModal({
                   bounces={false}
                 >
                   <View className="px-6 py-4">
-                    {/* Service Type */}
+                    {/* Service Type Dropdown */}
                     <View className="mb-5">
-                      <Text className="text-base font-poppins-600semibold text-gray-800 mb-3">
-                        Service Type
-                      </Text>
-                      <DropdownMenu
+                      <FilterDropdown
                         isLoading={isLoading}
                         placeholder="Select service type"
                         options={serviceOptions}
@@ -195,18 +193,7 @@ export default function FilterModal({
                       />
                     </View>
 
-                    {/* Location */}
-                    <View className="mb-5">
-                      <Text className="text-base font-poppins-600semibold text-gray-800 mb-3">
-                        Location
-                      </Text>
-                      <CanadianLocationDropdown
-                        onLocationSelect={handleLocationSelect}
-                        selectedLocation={localFilters.location}
-                      />
-                    </View>
-
-                    {/* Price Range - Reusing existing PriceSlider component */}
+                    {/* Price Slider */}
                     <View className="mb-5">
                       <PriceSlider />
                     </View>

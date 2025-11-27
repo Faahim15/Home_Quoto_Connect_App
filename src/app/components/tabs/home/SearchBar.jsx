@@ -1,7 +1,12 @@
 import { View, Text, TouchableOpacity, TextInput } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function SearchBar({ onPress, value, onChangeText }) {
+export default function SearchBar({
+  onPress,
+  value,
+  onChangeText,
+  onSubmitEditing,
+}) {
   return (
     <View className="mx-[6%] pb-[1%] mt-[3%]">
       <View className="bg-white border border-gray-300 flex-row rounded-lg items-center px-[3%] py-[1%]">
@@ -13,6 +18,7 @@ export default function SearchBar({ onPress, value, onChangeText }) {
           color="#000"
           value={value}
           onChangeText={onChangeText}
+          onSubmitEditing={onSubmitEditing}
         />
         <TouchableOpacity onPress={onPress}>
           <Ionicons name="options-outline" size={24} color="#6B7280" />
