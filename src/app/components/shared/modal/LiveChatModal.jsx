@@ -6,29 +6,33 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
-  KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
   Image,
+  StatusBar,
+  SafeAreaView,
+  Keyboard,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSocket } from "../../../../hooks/useSokect";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  useGetSupportTicketMessagesQuery,
-  useSendSupportMessageMutation,
-} from "../../../../redux/features/apiSlices/user/userApiSlices";
-
+import { useGetSupportTicketMessagesQuery } from "../../../../redux/features/apiSlices/user/userApiSlices";
+import * as ImagePicker from "expo-image-picker";
+import AttachOptionsModal from "./AttachOptionalModal";
+import * as FileSystem from "expo-file-system";
 export default function LiveChatModal({ visible, onClose, ticketId }) {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
+  const [attachments, setAttachments] = useState("");
+  const [showAttachModal, setShowAttachModal] = useState(false);
   const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
+  const [containerHeight, setContainerHeight] = useState(0);
   const flatListRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
-  const [sendSupportMessage, { isLoading }] = useSendSupportMessageMutation();
+  console.log("show attachments", attachments);
 
   const {
     data,
@@ -38,8 +42,35 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
     skip: !ticketId,
   });
 
-  // getting userId here
+  console.log("tikced id", ticketId);
 
+  // Track keyboard height
+  useEffect(() => {
+    const showListener = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      (e) => {
+        const keyboardHeight = e.endCoordinates.height;
+        setContainerHeight(keyboardHeight);
+        setTimeout(() => {
+          flatListRef.current?.scrollToEnd({ animated: true });
+        }, 100);
+      }
+    );
+
+    const hideListener = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => {
+        setContainerHeight(0);
+      }
+    );
+
+    return () => {
+      showListener.remove();
+      hideListener.remove();
+    };
+  }, []);
+
+  // getting userId here
   useEffect(() => {
     const fetchUserId = async () => {
       const userId = await AsyncStorage.getItem("userId");
@@ -49,7 +80,6 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
   }, []);
 
   //receiving the messages
-
   useEffect(() => {
     if (data?.data?.messages) {
       setMessages(data.data.messages);
@@ -60,26 +90,21 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
   }, [data]);
 
   //  joinRooms
-
   useEffect(() => {
     const joinRooms = async () => {
-      if (!socket || !isConnected || !currentUserId || !ticketId) return;
-
-      socket.emit("user-join", currentUserId);
-      socket.emit("join-notifications", currentUserId);
-      socket.emit("join-chat", ticketId);
+      if (!socket || !ticketId) return;
+      socket.emit("join-support-ticket", { ticketId });
     };
     joinRooms();
-  }, [socket, isConnected, currentUserId, ticketId]);
+  }, [socket, ticketId]);
 
   //  listening to new messages
-
   const handleNewMessage = (message) => {
     console.log("new messages", message);
-    setMessages((prev) => [...prev, message]);
-
+    setMessages((prev) => [...prev, message?.data]);
     setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
   };
+
   const handleUserTyping = (data) => {
     if (data.userId !== currentUserId) {
       setIsTyping(true);
@@ -91,55 +116,94 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("new-message", handleNewMessage);
-    socket.on("user-typing", handleUserTyping);
+    socket.on("new-support-message", handleNewMessage);
+    socket.on("support-user-typing", handleUserTyping);
 
     return () => {
-      socket.off("new-message", handleNewMessage);
-      socket.off("user-typing", handleUserTyping);
+      socket.off("new-support-message", handleNewMessage);
+      socket.off("support-user-typing", handleUserTyping);
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     };
   }, [socket, currentUserId]);
 
-  //  listening to new messages end here
+  const pickImages = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsMultipleSelection: true,
+        quality: 0.7,
+      });
+
+      if (!result.canceled) {
+        const selected = result.assets.map((item) => ({
+          uri: item.uri,
+          type: "image",
+          filename: item.fileName || `image_${Date.now()}.jpg`,
+        }));
+        setAttachments((prev) => [...prev, ...selected]);
+      }
+    } catch (err) {
+      console.log("pick image error", err);
+    }
+  };
+
+  const takePhoto = async () => {
+    try {
+      const result = await ImagePicker.launchCameraAsync({
+        quality: 0.7,
+      });
+
+      if (!result.canceled) {
+        const asset = result.assets[0];
+        setAttachments((prev) => [
+          ...prev,
+          {
+            uri: asset.uri,
+            type: "image",
+            filename: `camera_${Date.now()}.jpg`,
+          },
+        ]);
+      }
+    } catch (err) {
+      console.log("camera error", err);
+    }
+  };
 
   const handleSendMessage = async () => {
     if (!inputText.trim() || !socket || !isConnected) return;
 
     const text = inputText.trim();
-    const localMessage = {
-      _id: Date.now().toString(),
-      sender: { _id: currentUserId },
-      content: { text },
-      createdAt: new Date().toISOString(),
-      senderRole: "user",
-      messageType: "text",
-    };
 
-    setMessages((prev) => [...prev, localMessage]);
     setInputText("");
     setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
 
+    const payload = {
+      ticketId,
+      content: {
+        text: text,
+        attachments: attachments.map((file) => ({
+          type: file.type, // "image"
+          filename: file.filename,
+          mimeType: "image/jpeg", // or derive from file.uri if needed
+          url: file.uri, // raw file path
+        })),
+      },
+      messageType: attachments.length > 0 ? "image" : "text",
+    };
+
     try {
-      await sendSupportMessage({
-        ticketId,
-        messageType: "text",
-        content: text,
-      }).unwrap();
+      socket.emit("support-message", payload);
+      setAttachments([]);
       refetch();
     } catch (error) {
-      setMessages((prev) => prev.filter((msg) => msg._id !== localMessage._id));
+      console.log("error", error);
+      // setMessages((prev) => prev.filter((msg) => msg._id !== localMessage._id));
     }
-    socket.emit("send-message", {
-      ticketId, //chatId: ticketId
-      content: text,
-      messageType: "text",
-    });
   };
 
   const handleTyping = () => {
     if (socket && isConnected)
-      socket.emit("typing", { ticketId, userId: currentUserId });
+      socket.emit("support-user-typing", { ticketId, userId: currentUserId });
   };
 
   const renderSystemMessage = (item) => {
@@ -174,6 +238,9 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
     const isMyMessage = item.sender?._id === currentUserId;
     const senderName = item.sender?.fullName || "Unknown";
     const senderPhoto = item.sender?.profilePhoto?.url;
+    const hasAttachments =
+      item.content?.attachments && item.content.attachments.length > 0;
+    const isImageMessage = item.messageType === "image";
 
     return (
       <View
@@ -206,11 +273,46 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
           <View
             className={`px-3.5 py-2 rounded-xl ${isMyMessage ? "bg-blue-700 rounded-br-[4px]" : "bg-gray-200 rounded-bl-[4px]"} shadow-sm`}
           >
-            <Text
-              className={`${isMyMessage ? "text-white" : "text-gray-800"} text-sm leading-5`}
-            >
-              {item.content?.text || item.text}
-            </Text>
+            {/* Text content */}
+            {item.content?.text && item.content.text.trim() !== "" && (
+              <Text
+                className={`${isMyMessage ? "text-white" : "text-gray-800"} text-sm leading-5 mb-2`}
+              >
+                {item.content.text}
+              </Text>
+            )}
+
+            {/* Image attachments */}
+            {hasAttachments && isImageMessage && (
+              <View className="space-y-2">
+                {item.content.attachments.map((attachment, index) => (
+                  <TouchableOpacity
+                    key={attachment._id || index}
+                    onPress={() => {
+                      // You can add image preview functionality here
+                      console.log("Image pressed:", attachment.url);
+                    }}
+                    activeOpacity={0.8}
+                  >
+                    <Image
+                      source={{ uri: attachment.url }}
+                      className="w-48 h-32 rounded-lg"
+                      resizeMode="cover"
+                    />
+                    {/* {attachment.filename && (
+                      <Text
+                        className={`text-xs mt-1 ${isMyMessage ? "text-white/70" : "text-gray-500"}`}
+                        numberOfLines={1}
+                      >
+                        {attachment.filename}
+                      </Text>
+                    )} */}
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
+            {/* Time and read status */}
             <View className="flex-row items-center justify-end mt-1">
               <Text
                 className={`${isMyMessage ? "text-white/70" : "text-gray-400"} text-[10px]`}
@@ -250,44 +352,23 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
     );
   };
 
-  //   const renderDateSeparator = (date) => {
-  //     const isToday = new Date(date).toDateString() === new Date().toDateString();
-  //     const isYesterday =
-  //       new Date(date).toDateString() ===
-  //       new Date(Date.now() - 86400000).toDateString();
-  //     const dateText = isToday
-  //       ? "Today"
-  //       : isYesterday
-  //         ? "Yesterday"
-  //         : new Date(date).toLocaleDateString([], {
-  //             month: "short",
-  //             day: "numeric",
-  //             year: "numeric",
-  //           });
-
-  //     return (
-  //       <View className="items-center my-4">
-  //         <View className="bg-blue-100 px-4 py-1.5 rounded-xl">
-  //           <Text className="text-blue-700 text-sm font-medium">{dateText}</Text>
-  //         </View>
-  //       </View>
-  //     );
-  //   };
-
   return (
     <Modal
       visible={visible}
       animationType="slide"
       onRequestClose={onClose}
-      statusBarTranslucent
+      statusBarTranslucent={false}
     >
-      <KeyboardAvoidingView
+      <View
         className="flex-1 bg-white"
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0} // Adjust header height here
+        style={{
+          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+        }}
       >
+        {/* <StatusBar barStyle="light-content" backgroundColor="#1d4ed8" /> */}
+
         {/* Header */}
-        <View className="flex-row items-center px-4 py-3 pt-12 bg-blue-700 border-b border-gray-200 z-50">
+        <View className="flex-row items-center px-4 py-3 bg-blue-700 border-b border-gray-200">
           <TouchableOpacity onPress={onClose} className="mr-3">
             <Ionicons name="arrow-back" size={24} color="#FFF" />
           </TouchableOpacity>
@@ -317,80 +398,122 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
           </TouchableOpacity>
         </View>
 
-        {/* Messages List */}
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          renderItem={renderMessage}
-          keyExtractor={(item, index) => item._id || index.toString()}
-          contentContainerStyle={{
-            paddingVertical: 16,
-            paddingBottom: 100,
-            backgroundColor: "#F9FAFB",
-          }}
-          keyboardShouldPersistTaps="handled" // Important for tapping on messages while keyboard open
-          onContentSizeChange={() =>
-            flatListRef.current?.scrollToEnd({ animated: true })
-          }
-          onLayout={() => flatListRef.current?.scrollToEnd({ animated: false })}
-        />
+        {/* Messages List - This is the key part */}
+        <View className="flex-1" style={{ marginBottom: 0 }}>
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            renderItem={renderMessage}
+            keyExtractor={(item, index) => item._id || index.toString()}
+            contentContainerStyle={{
+              paddingVertical: 16,
+              backgroundColor: "#F9FAFB",
+              flexGrow: 1,
+              paddingBottom: 80,
+            }}
+            keyboardShouldPersistTaps="handled"
+            onContentSizeChange={() =>
+              flatListRef.current?.scrollToEnd({ animated: true })
+            }
+            ListFooterComponent={
+              isTyping ? (
+                <View className="px-4 py-2 bg-gray-50">
+                  <View className="flex-row items-center">
+                    <View className="w-8 h-8 rounded-full bg-blue-700 justify-center items-center mr-2">
+                      <Ionicons name="person" size={16} color="#FFF" />
+                    </View>
+                    <Text className="text-gray-500 text-xs italic">
+                      Support team is typing...
+                    </Text>
+                  </View>
+                </View>
+              ) : null
+            }
+          />
+        </View>
 
-        {isTyping && (
-          <View className="px-4 py-2 bg-gray-50">
-            <View className="flex-row items-center">
-              <View className="w-8 h-8 rounded-full bg-blue-700 justify-center items-center mr-2">
-                <Ionicons name="person" size={16} color="#FFF" />
-              </View>
-              <Text className="text-gray-500 text-xs italic">
-                Support team is typing...
-              </Text>
+        {/* Input - Fixed at bottom with absolute positioning */}
+        <View
+          className="absolute bottom-0 left-0 border right-0 border-t border-gray-200 bg-white"
+          // style={{
+          //   bottom: 0,
+          // }}
+        >
+          {attachments.length > 0 && (
+            <View className="px-4 py-2 flex-row flex-wrap bg-white">
+              {attachments.map((file, index) => (
+                <View key={index} className="mr-2 mb-2 relative">
+                  <Image
+                    source={{ uri: file.uri }}
+                    className="w-20 h-20 rounded-lg"
+                  />
+                  <TouchableOpacity
+                    onPress={() =>
+                      setAttachments((prev) =>
+                        prev.filter((_, i) => i !== index)
+                      )
+                    }
+                    className="absolute top-1 right-1 bg-black/60 rounded-full p-1"
+                  >
+                    <Ionicons name="close" color="white" size={14} />
+                  </TouchableOpacity>
+                </View>
+              ))}
             </View>
-          </View>
-        )}
+          )}
 
-        {/* Input */}
-        <View className="flex-row items-center px-4 py-3 border-t border-gray-200 bg-white">
-          <View className="flex-1 flex-row items-center bg-gray-100 rounded-full px-4 py-2 mr-2">
-            <TextInput
-              className="flex-1 text-gray-800 text-sm max-h-24"
-              placeholder="Type your message..."
-              placeholderTextColor="#999"
-              value={inputText}
-              onChangeText={(text) => {
-                setInputText(text);
-                handleTyping();
-              }}
-              multiline
-              onContentSizeChange={() =>
-                flatListRef.current?.scrollToEnd({ animated: true })
-              }
-            />
-            <TouchableOpacity className="ml-2">
-              <Ionicons name="attach" size={20} color="#666" />
+          <View className="flex-row items-center px-4 py-3">
+            <View className="flex-1 flex-row items-center bg-gray-100 rounded-full px-4 py-2 mr-2">
+              <TextInput
+                className="flex-1 text-gray-800 text-sm max-h-24"
+                placeholder="Type your message..."
+                placeholderTextColor="#999"
+                value={inputText}
+                onChangeText={(text) => {
+                  setInputText(text);
+                  handleTyping();
+                }}
+                multiline
+                onFocus={() => {
+                  setTimeout(() => {
+                    flatListRef.current?.scrollToEnd({ animated: true });
+                  }, 300);
+                }}
+              />
+              <TouchableOpacity
+                className="ml-2"
+                onPress={() => setShowAttachModal(true)}
+              >
+                <Ionicons name="attach" size={20} color="#666" />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              onPress={handleSendMessage}
+              disabled={!inputText.trim() || !isConnected}
+              className={`w-11 h-11 rounded-full justify-center items-center ${
+                inputText.trim() && isConnected ? "bg-blue-700" : "bg-gray-200"
+              }`}
+            >
+              {messageLoader ? (
+                <ActivityIndicator size="small" color="#FFF" />
+              ) : (
+                <Ionicons
+                  name="send"
+                  size={20}
+                  color={inputText.trim() && isConnected ? "#FFF" : "#999"}
+                />
+              )}
             </TouchableOpacity>
           </View>
-
-          <TouchableOpacity
-            onPress={handleSendMessage}
-            disabled={!inputText.trim() || !isConnected || isLoading}
-            className={`w-11 h-11 rounded-full justify-center items-center ${
-              inputText.trim() && isConnected && !isLoading
-                ? "bg-blue-700"
-                : "bg-gray-200"
-            }`}
-          >
-            {isLoading ? (
-              <ActivityIndicator size="small" color="#FFF" />
-            ) : (
-              <Ionicons
-                name="send"
-                size={20}
-                color={inputText.trim() && isConnected ? "#FFF" : "#999"}
-              />
-            )}
-          </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
+        <AttachOptionsModal
+          visible={showAttachModal}
+          onClose={() => setShowAttachModal(false)}
+          onCamera={takePhoto}
+          onGallery={pickImages}
+        />
+      </View>
     </Modal>
   );
 }

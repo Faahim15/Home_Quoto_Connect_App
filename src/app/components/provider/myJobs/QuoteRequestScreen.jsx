@@ -166,13 +166,23 @@ const ServiceCard = ({ item }) => {
           loading={cancelLoading}
         />
 
+        {/* router.push({
+        pathname: "/provider/quote/updateQuote",
+        params: { jobId: serviceId },
+      }); */}
+
         <BottomButtons
-          onPress={handleAcceptQuote}
+          onPress={() =>
+            router.push({
+              pathname: "/provider/quote/updateQuote",
+              params: { jobId: item?.job?._id },
+            })
+          }
           width={145}
           backgroundColor="#fff"
           color="#175994"
           borderColor="#175994"
-          title="Accept Offer"
+          title="Send Offer"
           loading={isAccepting}
         />
       </View>

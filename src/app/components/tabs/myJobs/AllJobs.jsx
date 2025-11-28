@@ -11,7 +11,10 @@ import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { router } from "expo-router";
-import { useGetAllJobsQuery } from "../../../../redux/features/apiSlices/user/createJobSlices";
+import {
+  useGetAllJobsQuery,
+  useGetMyJobsQuery,
+} from "../../../../redux/features/apiSlices/user/createJobSlices";
 
 const ServiceCard = ({ item, showAddress }) => {
   const { city, state } = item?.location?.details || {};
@@ -108,7 +111,7 @@ const ServiceCard = ({ item, showAddress }) => {
 
 export default function AllJobs({ showAddress = true }) {
   const [refreshing, setRefreshing] = useState(false);
-  const { data, isLoading, error, refetch } = useGetAllJobsQuery();
+  const { data, isLoading, error, refetch } = useGetMyJobsQuery();
 
   // Extract jobs data with fallback
   const jobsData = data?.data?.jobs || data?.data || [];

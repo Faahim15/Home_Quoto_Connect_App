@@ -11,7 +11,7 @@ import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { useState, useCallback } from "react";
-import { useGetAllJobsQuery } from "../../../../redux/features/apiSlices/user/createJobSlices";
+import { useGetMyJobsQuery } from "../../../../redux/features/apiSlices/user/createJobSlices";
 import LoadingState from "../../ui/LoadingState";
 import ErrorState from "../../ui/ErrorState";
 import EmptyState from "../../ui/EmptyState";
@@ -27,11 +27,17 @@ const ServiceItem = ({ item }) => {
     item?.quotes?.find((q) => q.status === "accepted");
 
   // ⛔ DO NOT RENDER ANYTHING IF NO ACCEPTED/UPDATED QUOTE
-  if (!acceptedQuote) return null;
+  if (
+    !acceptedQuote ||
+    acceptedQuote?.description === "Direct booking - quote to be provided"
+  )
+    return null;
 
   const statusColor = statusColorMap?.[item?.status] ?? "#6B7280";
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     acceptedQuote?.provider || {};
+
+  // console.log("accepted", acceptedQuote?.description);
 
   return (
     <View className="mx-[4%] mb-[4%]">
@@ -155,7 +161,7 @@ const ServiceItem = ({ item }) => {
 // ----------------------
 export default function QuoteProgress() {
   const [refreshing, setRefreshing] = useState(false);
-  const { data, isLoading, error, refetch } = useGetAllJobsQuery();
+  const { data, isLoading, error, refetch } = useGetMyJobsQuery();
 
   // Auto-refresh when screen comes into focus
   useFocusEffect(

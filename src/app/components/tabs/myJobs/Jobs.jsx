@@ -10,10 +10,7 @@ import {
 import { useState } from "react";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { router, useFocusEffect } from "expo-router";
-import {
-  useGetAllJobsQuery,
-  useGetMyJobsQuery,
-} from "../../../../redux/features/apiSlices/user/createJobSlices";
+import { useGetMyJobsQuery } from "../../../../redux/features/apiSlices/user/createJobSlices";
 import LoadingState from "../../ui/LoadingState";
 import ErrorState from "../../ui/ErrorState";
 import EmptyState from "../../ui/EmptyState";
@@ -24,8 +21,9 @@ const ServiceItem = ({ item, quote }) => {
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     quote?.provider;
 
-  console.log("provider", quote?.provider);
-
+  if (quote?.description === "Direct booking - quote to be provided") {
+    return null;
+  }
   return (
     <View className="mx-[4%] mb-[4%]">
       {/* Service Type Banner - Made clickable */}

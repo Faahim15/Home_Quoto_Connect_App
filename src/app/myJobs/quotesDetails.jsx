@@ -6,15 +6,18 @@ import { router, useLocalSearchParams } from "expo-router";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import QuoteReqDetails from "../components/tabs/myJobs/QuoteReqDetails";
 import Toast from "react-native-toast-message";
-import { useGetAllJobsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import {
   useAcceptQuoteMutation,
   useCancelQuoteMutation,
 } from "../../redux/features/apiSlices/quote/quoteApiSlice";
+import LoadingState from "../components/ui/LoadingState";
+import ErrorState from "../components/ui/ErrorState";
+import EmptyState from "../components/ui/EmptyState";
+import { useGetMyJobsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 export default function QuoteDetails() {
   const { quoteId, quoteReq } = useLocalSearchParams();
 
-  const { data, isLoading, error } = useGetAllJobsQuery();
+  const { data, isLoading, error } = useGetMyJobsQuery();
   const [acceptQuote, { isLoading: isAccepting }] = useAcceptQuoteMutation();
   const [cancelQuote, { isLoading: isDeclining }] = useCancelQuoteMutation();
   if (isLoading) {

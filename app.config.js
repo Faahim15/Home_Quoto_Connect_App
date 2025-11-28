@@ -37,6 +37,9 @@ export default {
         foregroundImage: "./assets/images/logo/logo.png",
         backgroundColor: "#ffffff",
       },
+
+      softwareKeyboardLayoutMode: "adjustResize",
+
       edgeToEdgeEnabled: true,
     },
     web: {

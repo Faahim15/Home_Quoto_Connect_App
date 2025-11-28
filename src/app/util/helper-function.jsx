@@ -199,4 +199,12 @@ export function getStatusLabel(status) {
   return statusMap[status] || "Completed";
 }
 
+export const convertToBase64 = async (uri) => {
+  const base64 = await FileSystem.readAsStringAsync(uri, {
+    encoding: FileSystem.EncodingType.Base64,
+  });
+
+  return `data:image/jpeg;base64,${base64}`;
+};
+
 export default getSpecializationTitles;
