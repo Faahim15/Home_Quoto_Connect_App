@@ -165,7 +165,9 @@ export default function UserProfileScreen() {
           <View className="mt-[2%] items-center justify-center">
             <Image
               source={{
-                uri: profilePhoto?.url || "https://via.placeholder.com/96",
+                uri:
+                  profilePhoto?.url ||
+                  "https://avatar.iran.liara.run/public/boy",
               }}
               style={{ width: scale(96), height: verticalScale(96) }}
               className="rounded-full border-2 border-white"

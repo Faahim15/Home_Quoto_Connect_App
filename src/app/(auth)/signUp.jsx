@@ -19,13 +19,13 @@ import { router } from "expo-router";
 import * as Yup from "yup";
 import Toast from "react-native-toast-message";
 import { useRegisterUserMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
+import PhoneInput from "../components/auth/PhoneNumber";
 
 export default function SignUpScreen() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    // phoneNumber: "",
-    // dateOfBirth: "",
+    phone: "",
     password: "",
     confirmPassword: "",
     location: null,
@@ -52,18 +52,22 @@ export default function SignUpScreen() {
   const validationSchema = Yup.object({
     fullName: Yup.string().required("Full Name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
-    // phoneNumber: Yup.string()
-    //   .required("Phone number is required")
-    //   .matches(/^\+?[1-9]\d{1,14}$/, "Invalid phone number format"),
-    // // dateOfBirth: Yup.string()
-    //   .required("Date of birth is required")
-    //   .test("is-valid-date", "Invalid date format (YYYY-MM-DD)", (value) => {
-    //     if (!value) return false;
-    //     return /^\d{4}-\d{2}-\d{2}$/.test(value);
-    //   }),
     password: Yup.string()
       .required("Password is required")
       .min(8, "Password must be at least 8 characters"),
+    phone: Yup.string()
+      .required("Phone number is required")
+      .test(
+        "is-valid-canadian-phone",
+        "Please enter a valid 10-digit phone number",
+        (value) => {
+          if (!value) return false;
+          // Remove all non-digits
+          const cleaned = value.replace(/\D/g, "");
+          // Check if it's exactly 10 digits
+          return cleaned.length === 10;
+        }
+      ),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Passwords must match")
       .required("Confirm Password is required"),
@@ -186,8 +190,13 @@ export default function SignUpScreen() {
             <LocationPicker
               onLocationSelect={(loc) => handleInputChange("location", loc)}
               error={errors.location}
+              value={formData?.location?.address}
             />
-
+            <PhoneInput
+              onChangeText={(text) => handleInputChange("phone", text)}
+              error={errors.phone}
+              value={formData?.phone}
+            />
             <PasswordField
               label="Password"
               value={formData.password}
@@ -214,7 +223,7 @@ export default function SignUpScreen() {
                   placeholder="Confirm password"
                   placeholderTextColor="#9CA3AF"
                   secureTextEntry={!showConfirmPassword}
-                  value={formData.location.address}
+                  value={formData?.confirmPassword}
                   onChangeText={(text) =>
                     handleInputChange("confirmPassword", text)
                   }

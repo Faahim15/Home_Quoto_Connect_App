@@ -11,7 +11,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { verticalScale } from "../../adaptive/Adaptiveness";
 import Toast from "react-native-toast-message";
 import { router } from "expo-router";
-import { useCancelJobMutation } from "../../../../redux/features/apiSlices/user/createJobSlices";
 export default function CancelModal({ visible, onClose, onConfirm }) {
   const [selectedReason, setSelectedReason] = useState(null);
   const [otherReason, setOtherReason] = useState("");
@@ -85,24 +84,6 @@ export default function CancelModal({ visible, onClose, onConfirm }) {
                 be undone.
               </Text>
             </View>
-
-            {/* booking Info (if provided) */}
-            {/* {bookingDetails && (
-              <View className="bg-gray-50 border border-gray-200 rounded-lg p-[4%] mb-[5%]">
-                <Text className="text-sm font-poppins-semiBold text-gray-800 mb-[2%]">
-                  booking Details:
-                </Text>
-                <Text className="text-xs font-poppins-400regular text-gray-600">
-                  Service: {bookingDetails.service || "N/A"}
-                </Text>
-                <Text className="text-xs mt-[0.5%] font-poppins-400regular text-gray-600">
-                  Provider: {bookingDetails.provider || "N/A"}
-                </Text>
-                <Text className="text-xs mt-[0.5%] font-poppins-400regular text-gray-600">
-                  Price: ${bookingDetails.price || "0"}
-                </Text>
-              </View>
-            )} */}
 
             {/* Reason Section */}
             <Text className="text-base font-poppins-semiBold text-gray-800 mb-[3%]">

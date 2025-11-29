@@ -4,24 +4,24 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  ActivityIndicator,
   RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
-import PaymentChecklist from "../../tabs/jobs/PaymentCheckList";
-import { acceptJobData } from "../../data/provider/MyJobsData";
+import { cancelledJobData } from "../../data/provider/MyJobsData";
 import { useCallback, useState } from "react";
 import { router, useFocusEffect } from "expo-router";
 import { useGetAllQuotesQuery } from "../../../../redux/features/apiSlices/quote/quoteApiSlice";
-import { getStatusLabel } from "../../../util/helper-function";
 import { statusColorMap } from "../../../util/colors";
+import { getStatusLabel } from "../../../util/helper-function";
 const ServiceCard = ({ item }) => {
   const { profilePhoto, fullName } = item?.job?.client || {};
   const { city, state } = item?.job?.location?.details || {};
   const statusColor = statusColorMap?.[item?.status] ?? "#6B7280";
   const handlePress = useCallback(() => {
     router.push({
-      pathname: "/provider/myJobs/acceptJobs",
+      pathname: "/provider/myJobs/completedJobs",
       params: { quoteId: item?._id, jobId: item?.job?._id, showButtons: "yes" },
     });
   }, [item]);
@@ -103,7 +103,7 @@ const ServiceCard = ({ item }) => {
           style={{ color: statusColor }}
           className={`font-poppins-400regular text-base`}
         >
-          {getStatusLabel(item?.job?.status || "N/A")}
+          {getStatusLabel(item?.status || "N/A")}
         </Text>
       </View>
 
@@ -112,7 +112,7 @@ const ServiceCard = ({ item }) => {
   );
 };
 
-export default function AcceptJobsScreen() {
+export default function CompletedJobs() {
   const { data, isLoading, error, refetch } = useGetAllQuotesQuery();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -172,12 +172,11 @@ export default function AcceptJobsScreen() {
   // ------------------------------------------
   // Empty State
   // ------------------------------------------
-  const acceptedJobs =
-    data?.data?.quotes?.filter(
-      (q) => q?.status === "accepted" && q?.job?.status === "in_progress"
-    ) || [];
+  const completedJobs =
+    data?.data?.quotes?.filter((q) => q?.job?.status === "completed") || [];
+  console.log("compleded", completedJobs);
 
-  if (acceptedJobs.length === 0) {
+  if (completedJobs.length === 0) {
     return (
       <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">
         <Ionicons name="document-text-outline" size={64} color="#9CA3AF" />
@@ -201,10 +200,11 @@ export default function AcceptJobsScreen() {
       </View>
     );
   }
+
   return (
     <View className="justify-center items-center  bg-[#f9f9f9] mt-[4%]">
       <FlatList
-        data={acceptedJobs}
+        data={completedJobs}
         renderItem={({ item }) => <ServiceCard item={item} />}
         keyExtractor={(item, idx) => item._id || idx.toString()}
         showsVerticalScrollIndicator={false}

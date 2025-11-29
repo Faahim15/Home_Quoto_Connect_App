@@ -1,80 +1,194 @@
-import { View, Text, ScrollView } from "react-native";
-import React, { useState } from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
+import { useState } from "react";
 import CustomTitle from "../../components/shared/CustomTitle";
-import JobSummary from "../../components/tabs/jobs/JobSummary";
-import { acceptJobData } from "../../components/data/provider/MyJobsData";
-import CustomButton from "../../components/shared/services/buttons/ServiceButton";
-import CancelModal from "../../components/shared/modal/CancelModal";
+import ProviderJobSummary from "../../components/tabs/jobs/ProviderJobSummary";
 import BotttomButtons from "../../components/shared/services/buttons/BottomButtons";
 import { router, useLocalSearchParams } from "expo-router";
 import XStyle from "../../util/styles";
 import { scale, verticalScale } from "../../components/adaptive/Adaptiveness";
+import { useGetAllQuotesQuery } from "../../../redux/features/apiSlices/quote/quoteApiSlice";
+import { Ionicons } from "@expo/vector-icons";
+
+import CashConfirmModal from "../../components/shared/modal/CashConfirmModal";
+
+// Payment APIs
+
+import {
+  useConfirmCashPaymentMutation,
+  useGetTransactionByJobQuery,
+} from "../../../redux/features/apiSlices/payment/paymentApiSlice";
+
+import Toast from "react-native-toast-message";
+
 export default function AcceptJobDetailScreen() {
-  const { serviceId } = useLocalSearchParams();
-  const [cancelModalVisible, setCancelModalVisible] = useState(false);
-  const handleCancelConfirm = (reason) => {
-    console.log("Cancellation reason:", reason);
-  };
-  const appointmentData = {
-    service: "TV repair",
-    provider: "Jackson",
-    price: "320",
+  const { quoteId, jobId } = useLocalSearchParams();
+
+  const [cashConfirmModalVisible, setCashConfirmModalVisible] = useState(false);
+
+  // Fetch all quotes
+  const { data, isLoading, error, refetch } = useGetAllQuotesQuery();
+
+  // console.log("job id", jobId, quoteId);
+
+  // Fetch transaction by jobId
+  const {
+    data: transactionData,
+    isLoading: transactionLoader,
+    error: transactionError,
+  } = useGetTransactionByJobQuery(jobId, { skip: !jobId });
+
+  // Mutation for confirming cash payment
+  const [confirmCashPayment, { isLoading: confirming }] =
+    useConfirmCashPaymentMutation();
+
+  const handleConfirmPayment = async () => {
+    try {
+      // 1️⃣ Check if transaction data exists
+      const transactionId = transactionData?.data?.transaction?._id;
+
+      if (!transactionId) {
+        Toast.show({
+          type: "error",
+          text1: "Transaction not found",
+        });
+        return;
+      }
+
+      // 2️⃣ Check if already confirmed
+      const alreadyConfirmed =
+        transactionData?.data?.transaction?.cashPayment?.confirmedByProvider;
+
+      if (alreadyConfirmed) {
+        Toast.show({
+          type: "info",
+          text1: "Payment already confirmed",
+        });
+        setCashConfirmModalVisible(false);
+        return;
+      }
+
+      // 3️⃣ Confirm cash payment
+      await confirmCashPayment(transactionId).unwrap();
+
+      Toast.show({
+        type: "success",
+        text1: "Payment confirmed",
+      });
+
+      setCashConfirmModalVisible(false);
+      router.push("/provider/myJobs");
+    } catch (err) {
+      Toast.show({
+        type: "error",
+        text1: "Payment confirmation failed",
+        text2: err?.message || "Please try again.",
+      });
+    }
   };
 
-  const quoteInfo = acceptJobData.find((s) => s.id.toString() === serviceId);
-  // console.log(quoteInfo, "hello");
-  return (
-    <View className="flex-1  bg-[#f9f9f9]">
-      <View className="px-[6%]">
-        <CustomTitle title={quoteInfo.service} />
+  // Loading UI
+  if (isLoading || transactionLoader) {
+    return (
+      <View className="flex-1 justify-center items-center bg-[#f9f9f9]">
+        <ActivityIndicator size="large" color="#175994" />
+        <Text className="font-poppins-400regular text-sm text-gray-600 mt-4">
+          Loading details...
+        </Text>
       </View>
+    );
+  }
+
+  // Error UI
+  if (error || transactionError) {
+    return (
+      <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">
+        <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
+        <Text className="font-poppins-600semiBold text-lg text-gray-900 mt-4 text-center">
+          Failed to Load Information
+        </Text>
+        <TouchableOpacity
+          onPress={refetch}
+          className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
+        >
+          <Text className="font-poppins-500medium text-white text-base">
+            Retry
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const acceptedJob = data?.data?.quotes?.find((q) => q._id === quoteId) || {};
+
+  return (
+    <View className="flex-1 bg-[#f9f9f9]">
+      {/* Title */}
+      <View className="px-[6%]">
+        <CustomTitle
+          title={acceptedJob?.job?.serviceCategory?.title || "Service Details"}
+        />
+      </View>
+
+      {/* Summary */}
       <ScrollView
         contentContainerStyle={{ paddingBottom: verticalScale(50) }}
         className="px-[6%]"
       >
-        <JobSummary quoteInfo={quoteInfo} showPaymentCheckList={true} />
+        <ProviderJobSummary
+          quoteInfo={acceptedJob}
+          showPaymentCheckList={true}
+        />
       </ScrollView>
-      {quoteInfo.status === "In Progress" && (
-        <View
-          className=" gap-[1%]   border border-[#D8DCE0]  "
-          style={[
-            XStyle.shadowBox,
-            {
-              borderTopRightRadius: scale(20),
-              borderTopLeftRadius: scale(20),
-              // height: verticalScale(140),
-            },
-          ]}
-        >
-          <View className="flex-row gap-[6%]  justify-center overflow-hidden items-center ">
-            <BotttomButtons
-              onPress={() => {
-                setCancelModalVisible(true);
-                // router.replace("/provider/home");
-              }}
-              backgroundColor="#fff"
-              color="#EF4444"
-              borderColor="#EF4444"
-              title="Cancel"
-              width={148}
-            />
 
-            <BotttomButtons
-              onPress={() => router.push("/provider/quote/updateQuote")}
-              backgroundColor="#175994"
-              color="#fff"
-              borderColor="#0054A5"
-              title="Update Quote"
-              width={148}
-            />
-          </View>
+      {/* Bottom Action Buttons */}
+      <View
+        className="gap-[1%] border border-[#D8DCE0]"
+        style={[
+          XStyle.shadowBox,
+          {
+            borderTopRightRadius: scale(20),
+            borderTopLeftRadius: scale(20),
+          },
+        ]}
+      >
+        <View className="flex-row gap-[6%] justify-center items-center">
+          <BotttomButtons
+            onPress={() => setCashConfirmModalVisible(true)}
+            backgroundColor="#10B981"
+            color="#fff"
+            borderColor="#10B981"
+            title={confirming ? "Confirming..." : "Confirm Payment"}
+            width={148}
+            disabled={confirming}
+          />
+
+          <BotttomButtons
+            onPress={() =>
+              router.push({
+                pathname: "/provider/quote/updateQuoteOffer",
+                params: { jobId: jobId },
+              })
+            }
+            backgroundColor="#175994"
+            color="#fff"
+            borderColor="#0054A5"
+            title="Send Updated Quote"
+            width={148}
+          />
         </View>
-      )}
-      <CancelModal
-        visible={cancelModalVisible}
-        onClose={() => setCancelModalVisible(false)}
-        onConfirm={handleCancelConfirm}
-        appointmentDetails={appointmentData}
+      </View>
+
+      {/* Cash Confirm Modal */}
+      <CashConfirmModal
+        visible={cashConfirmModalVisible}
+        onClose={() => setCashConfirmModalVisible(false)}
+        onConfirm={handleConfirmPayment}
       />
     </View>
   );

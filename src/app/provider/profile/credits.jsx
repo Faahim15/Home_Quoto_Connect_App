@@ -3,8 +3,11 @@ import CustomTitle from "../../components/shared/services/CustomTitle";
 import AddMoreButton from "../../components/provider/profile/AddMoreButton";
 import RecentActivity from "../../components/provider/profile/Recent";
 import { router, useLocalSearchParams } from "expo-router";
+import { useUserProfileQuery } from "../../../redux/features/apiSlices/user/userApiSlices";
 export default function CreditsDetailScreen() {
   //   const totalCredits = route?.params.selectedPlanId;
+
+  const { data, isLoading, error } = useUserProfileQuery();
   const { selectedPlanId } = useLocalSearchParams();
   const creditsHandler = () => {
     // navigation.navigate("BuyCreditScreen");

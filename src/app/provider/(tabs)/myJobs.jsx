@@ -3,11 +3,12 @@ import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import QuotesRequestScreen from "../../components/provider/myJobs/QuoteRequestScreen";
 import AcceptJobsScreen from "../../components/provider/myJobs/AcceptJobScreen";
 import CancelledJobs from "../../components/provider/myJobs/CancelledJobs";
+import CompletedJobs from "../../components/provider/myJobs/CompletedJobs";
 
 const ContractorJobScreen = () => {
   const [activeTab, setActiveTab] = useState("Quote Requests");
 
-  const tabs = ["Quote Requests", "Accepted Jobs", "Cancelled Jobs"];
+  const tabs = ["Quote Requests", "In Progress", "Cancelled", "Completed"];
 
   const handleTabPress = (tab) => {
     setActiveTab(tab);
@@ -15,10 +16,12 @@ const ContractorJobScreen = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case "Accepted Jobs":
+      case "In Progress":
         return <AcceptJobsScreen />;
-      case "Cancelled Jobs":
+      case "Cancelled":
         return <CancelledJobs />;
+      case "Completed":
+        return <CompletedJobs />;
       default:
         return <QuotesRequestScreen />;
     }

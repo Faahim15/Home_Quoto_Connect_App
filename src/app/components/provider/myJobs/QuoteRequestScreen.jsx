@@ -18,7 +18,6 @@ import Toast from "react-native-toast-message";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
-  useAcceptOfferQuoteMutation,
   useGetAllQuotesQuery,
   useRemoveQuoteMutation,
 } from "../../../../redux/features/apiSlices/quote/quoteApiSlice";
@@ -31,36 +30,9 @@ const ServiceCard = ({ item }) => {
 
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
 
-  const [acceptQuote, { isLoading: isAccepting }] =
-    useAcceptOfferQuoteMutation();
   const [cancelJob, { isLoading: cancelLoading }] = useRemoveQuoteMutation();
 
   const jobId = item?._id;
-
-  // ---------------------------
-  // Accept Quote
-  // ---------------------------
-  const handleAcceptQuote = async () => {
-    try {
-      await acceptQuote({ id: item?._id }).unwrap();
-
-      Toast.show({
-        type: "success",
-        text1: "Offer Accepted",
-        text2: "You've successfully accepted the offer.",
-        position: "top",
-        topOffset: 60,
-      });
-
-      router.replace("/provider/home");
-    } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Failed to Accept",
-        text2: error?.message || "Something went wrong.",
-      });
-    }
-  };
 
   // ---------------------------
   // Cancel Job
@@ -89,7 +61,7 @@ const ServiceCard = ({ item }) => {
       onPress={() =>
         router.push({
           pathname: "/provider/myJobs/quoteRequest",
-          params: { quoteId: item?._id },
+          params: { quoteId: item?._id, jobId: item?.job?._id },
         })
       }
     >
@@ -174,7 +146,7 @@ const ServiceCard = ({ item }) => {
         <BottomButtons
           onPress={() =>
             router.push({
-              pathname: "/provider/quote/updateQuote",
+              pathname: "/provider/quote/provideUpdatedOffer",
               params: { jobId: item?.job?._id },
             })
           }
@@ -183,7 +155,6 @@ const ServiceCard = ({ item }) => {
           color="#175994"
           borderColor="#175994"
           title="Send Offer"
-          loading={isAccepting}
         />
       </View>
 

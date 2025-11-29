@@ -8,11 +8,11 @@ import {
 import React from "react";
 import CustomTitle from "../../components/shared/CustomTitle";
 import JobSummary from "../../components/tabs/jobs/JobSummary";
-import { cancelledJobData } from "../../components/data/provider/MyJobsData";
+import { completedJobsData } from "../../components/data/provider/MyJobsData";
 import { useLocalSearchParams } from "expo-router";
 import { useGetAllQuotesQuery } from "../../../redux/features/apiSlices/quote/quoteApiSlice";
 import { Ionicons } from "@expo/vector-icons";
-export default function CancelledJobDetailScreen() {
+export default function CompletedJobsDetailScreen() {
   const { quoteId, jobId } = useLocalSearchParams();
 
   // Fetch all quotes
@@ -50,17 +50,20 @@ export default function CancelledJobDetailScreen() {
     );
   }
 
-  const cancelledJob = data?.data?.quotes?.find((q) => q._id === quoteId) || {};
+  const completedJobs =
+    data?.data?.quotes?.find((q) => q._id === quoteId) || {};
 
   return (
     <View className="flex-1  bg-[#f9f9f9]">
       <View className="px-[6%]">
         <CustomTitle
-          title={cancelledJob?.job?.serviceCategory?.title || "Service Details"}
+          title={
+            completedJobs?.job?.serviceCategory?.title || "Service Details"
+          }
         />
       </View>
       <ScrollView className="px-[6%]">
-        <JobSummary quoteInfo={cancelledJob} showPaymentCheckList={true} />
+        <JobSummary quoteInfo={completedJobs} showPaymentCheckList={true} />
       </ScrollView>
     </View>
   );

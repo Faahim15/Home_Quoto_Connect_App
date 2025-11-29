@@ -19,11 +19,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useGetSupportTicketMessagesQuery } from "../../../../redux/features/apiSlices/user/userApiSlices";
 import * as ImagePicker from "expo-image-picker";
 import AttachOptionsModal from "./AttachOptionalModal";
-import * as FileSystem from "expo-file-system";
+// import * as FileSystem from "expo-file-system";
 export default function LiveChatModal({ visible, onClose, ticketId }) {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
-  const [attachments, setAttachments] = useState("");
+  const [attachments, setAttachments] = useState([]);
   const [showAttachModal, setShowAttachModal] = useState(false);
   const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
   const [currentUserId, setCurrentUserId] = useState(null);
@@ -174,7 +174,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
 
     const text = inputText.trim();
 
-    setInputText("");
+    console.log("live chat", text);
     setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
 
     const payload = {
@@ -194,6 +194,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
     try {
       socket.emit("support-message", payload);
       setAttachments([]);
+      setInputText("");
       refetch();
     } catch (error) {
       console.log("error", error);

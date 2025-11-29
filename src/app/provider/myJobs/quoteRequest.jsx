@@ -20,13 +20,12 @@ import {
   useRemoveQuoteMutation,
 } from "../../../redux/features/apiSlices/quote/quoteApiSlice";
 import { Text } from "react-native";
+// import { capitalizeFirstLetter } from "../../util/helper-function";
+import { Ionicons } from "@expo/vector-icons";
 import { capitalizeFirstLetter } from "../../util/helper-function";
 export default function QuotesRequestDetailScreen() {
-  const { quoteId } = useLocalSearchParams();
+  const { quoteId, jobId } = useLocalSearchParams();
   const { data, isLoading, error, refetch } = useGetAllQuotesQuery();
-
-  const [acceptQuote, { isLoading: isAccepting }] =
-    useAcceptOfferQuoteMutation();
   const [cancelJob, { isLoading: cancelLoading }] = useRemoveQuoteMutation();
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
 
@@ -71,30 +70,6 @@ export default function QuotesRequestDetailScreen() {
   }
 
   const pendingJobs = data?.data?.quotes?.find((q) => q._id === quoteId) || [];
-  // ---------------------------
-  // Accept Quote
-  // ---------------------------
-  const handleAcceptQuote = async () => {
-    try {
-      await acceptQuote({ id: quoteId }).unwrap();
-
-      Toast.show({
-        type: "success",
-        text1: "Offer Accepted",
-        text2: "You've successfully accepted the offer.",
-        position: "top",
-        topOffset: 60,
-      });
-
-      router.replace("/provider/home");
-    } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Failed to Accept",
-        text2: error?.message || "Something went wrong.",
-      });
-    }
-  };
 
   // ---------------------------
   // Cancel Job
@@ -150,25 +125,20 @@ export default function QuotesRequestDetailScreen() {
           />
 
           <BotttomButtons
-            onPress={handleAcceptQuote}
+            onPress={() =>
+              router.push({
+                pathname: "/provider/quote/provideUpdatedOffer",
+                params: { jobId: jobId },
+              })
+            }
             width={145}
             backgroundColor="#fff"
             color="#175994"
             borderColor="#175994"
-            title="Accept Offer"
-            loading={isAccepting}
+            title="Send Offer"
+            // loading={isAccepting}
           />
-
-          {/* {renderButton} */}
         </View>
-        {/* {!item.requiresPersonalizedQuote && (
-          <View className="px-[3%]">
-            <CustomButton
-              onPress={() => router.push("/provider/quote/updateQuote")}
-              title="Update Quote"
-            />
-          </View>
-        )} */}
       </View>
       <CancelModal
         visible={cancelModalVisible}

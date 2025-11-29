@@ -9,7 +9,7 @@ import {
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { useGetAllJobsQuery } from "../../../../../redux/features/apiSlices/user/createJobSlices";
+import { useGetMyJobsQuery } from "../../../../../redux/features/apiSlices/user/createJobSlices";
 import LoadingState from "../../../ui/LoadingState";
 import ErrorState from "../../../ui/ErrorState";
 import EmptyState from "../../../ui/EmptyState";
@@ -129,7 +129,7 @@ const ServiceItem = ({ item }) => {
 // Updated Services component with navigation prop
 export default function CancelledQuote() {
   const [refreshing, setRefreshing] = useState(false);
-  const { data, isLoading, error, refetch } = useGetAllJobsQuery();
+  const { data, isLoading, error, refetch } = useGetMyJobsQuery();
 
   // Auto-refresh when screen comes into focus
   useFocusEffect(

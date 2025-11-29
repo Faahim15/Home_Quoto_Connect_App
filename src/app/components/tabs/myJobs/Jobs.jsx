@@ -21,9 +21,9 @@ const ServiceItem = ({ item, quote }) => {
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     quote?.provider;
 
-  if (quote?.description === "Direct booking - quote to be provided") {
-    return null;
-  }
+  // if (quote?.description === "Direct booking - quote to be provided") {
+  //   return null;
+  // }
   return (
     <View className="mx-[4%] mb-[4%]">
       {/* Service Type Banner - Made clickable */}
