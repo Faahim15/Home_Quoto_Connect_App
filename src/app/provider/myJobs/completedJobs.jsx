@@ -58,8 +58,6 @@ export default function CompletedJobsDetailScreen() {
   const completedJobs =
     data?.data?.quotes?.find((q) => q._id === quoteId) || {};
 
-  console.log("completed jobs", completedJobs?.price);
-
   return (
     <View className="flex-1  bg-[#f9f9f9]">
       <View className="px-[6%]">

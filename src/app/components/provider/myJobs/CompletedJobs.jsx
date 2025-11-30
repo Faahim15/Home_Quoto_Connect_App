@@ -15,7 +15,6 @@ import { router, useFocusEffect } from "expo-router";
 import { useGetAllQuotesQuery } from "../../../../redux/features/apiSlices/quote/quoteApiSlice";
 import { statusColorMap } from "../../../util/colors";
 import { getStatusLabel } from "../../../util/helper-function";
-import CustomTitle from "../../shared/CustomTitle";
 import CustomButton from "../../tabs/home/services/provider/details/CustomButton";
 const ServiceCard = ({ item }) => {
   const { profilePhoto, fullName } = item?.job?.client || {};
@@ -187,8 +186,6 @@ export default function CompletedJobs() {
   // ------------------------------------------
   const completedJobs =
     data?.data?.quotes?.filter((q) => q?.job?.status === "completed") || [];
-
-  console.log("compleded", completedJobs[0]?.job?.status);
 
   if (completedJobs.length === 0) {
     return (

@@ -3,7 +3,19 @@ import { api } from "../../api/baseApi";
 export const paymentSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     // ----------------------------------------------------
-    // ⭐ Create Payment Intent (Stripe)
+    // ⭐ Setup Stripe Connect (POST)
+    // ----------------------------------------------------
+    setupStripeConnect: builder.mutation({
+      query: (body) => ({
+        url: "/payments/setup-connect",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Profile", "Payments", "Wallet"],
+    }),
+
+    // ----------------------------------------------------
+    // ⭐ Create Payment Intent (POST)
     // ----------------------------------------------------
     createPaymentIntent: builder.mutation({
       query: (body) => ({
@@ -23,33 +35,34 @@ export const paymentSlice = api.injectEndpoints({
         "ActiveJobs",
         "SupportTickets",
         "Profile",
+        "Payments",
       ],
     }),
 
     // ----------------------------------------------------
-    // ⭐ Get Transaction by Job ID
+    // ⭐ GET Transaction by Job ID
     // ----------------------------------------------------
     getTransactionByJob: builder.query({
       query: (jobId) => ({
         url: `/payments/transaction/by-job/${jobId}`,
         method: "GET",
       }),
-      providesTags: ["Transactions"],
+      providesTags: ["Payments"],
     }),
 
     // ----------------------------------------------------
-    // ⭐ Confirm Cash Payment
+    // ⭐ Confirm Cash Payment (PUT)
     // ----------------------------------------------------
     confirmCashPayment: builder.mutation({
       query: (transactionId) => ({
         url: `/payments/cash/${transactionId}/confirm`,
         method: "PUT",
       }),
-      invalidatesTags: ["Transactions", "Jobs", "Job"],
+      invalidatesTags: ["Payments", "Jobs", "Job"],
     }),
 
     // ----------------------------------------------------
-    // ⭐ Purchase Subscription
+    // ⭐ Purchase Subscription (POST)
     // ----------------------------------------------------
     purchaseSubscription: builder.mutation({
       query: (body) => ({
@@ -61,7 +74,7 @@ export const paymentSlice = api.injectEndpoints({
     }),
 
     // ----------------------------------------------------
-    // ⭐ Purchase Credits
+    // ⭐ Purchase Credits (POST)
     // ----------------------------------------------------
     purchaseCredits: builder.mutation({
       query: (body) => ({
@@ -73,20 +86,47 @@ export const paymentSlice = api.injectEndpoints({
     }),
 
     // ----------------------------------------------------
-    // ⭐ Get My Subscription
+    // ⭐ GET My Subscription
+    // GET: /subscriptions/my-subscription
     // ----------------------------------------------------
-    getMySubscription: builder.query({
-      query: () => `/subscriptions/my-subscription`,
+    getSubscriptionPackage: builder.query({
+      query: () => ({
+        url: `/subscriptions`,
+        method: "GET",
+      }),
       providesTags: ["Subscriptions"],
     }),
 
+    getMySubscription: builder.query({
+      query: () => ({
+        url: `/subscriptions/my-subscription`,
+        method: "GET",
+      }),
+      providesTags: ["MySubscriptions"],
+    }),
+
     // ----------------------------------------------------
-    // ⭐ Get Credits Activity
+    // ⭐ GET Credits Activity
     // GET: /subscriptions/credits/activity
     // ----------------------------------------------------
     getCreditsActivity: builder.query({
-      query: () => `/subscriptions/credits/activity`,
-      providesTags: ["Credits"],
+      query: () => ({
+        url: `/subscriptions/credits/activity`,
+        method: "GET",
+      }),
+      providesTags: ["Credits", "Payments"],
+    }),
+
+    // ----------------------------------------------------
+    // ⭐ GET Wallet Info
+    // GET: /payments/wallet
+    // ----------------------------------------------------
+    getWallet: builder.query({
+      query: () => ({
+        url: `/payments/wallet`,
+        method: "GET",
+      }),
+      providesTags: ["Wallet", "Payments"],
     }),
   }),
 
@@ -95,11 +135,14 @@ export const paymentSlice = api.injectEndpoints({
 
 // Export Hooks
 export const {
+  useSetupStripeConnectMutation,
   useCreatePaymentIntentMutation,
   useGetTransactionByJobQuery,
   useConfirmCashPaymentMutation,
   usePurchaseSubscriptionMutation,
   usePurchaseCreditsMutation,
+  useGetSubscriptionPackageQuery,
   useGetMySubscriptionQuery,
   useGetCreditsActivityQuery,
+  useGetWalletQuery,
 } = paymentSlice;

@@ -116,5 +116,9 @@ export const api = createApi({
     "Profile",
     "Transactions",
     "Reviews",
+    "Wallet",
+    "Payments",
+    "Subscriptions",
+    "MySubscriptions",
   ],
 });

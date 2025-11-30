@@ -4,13 +4,32 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { scale } from "../../adaptive/Adaptiveness";
 
-export default function BookingStatsCard({ periodOptions, title }) {
+export default function BookingStatsCard({
+  periodOptions,
+  title,
+  statistics,
+  mode,
+}) {
   const [selectedPeriod, setSelectedPeriod] = useState("This month");
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const selectedData = periodOptions.find(
     (option) => option.label === selectedPeriod
   );
+  const { today, this_week, this_month, last_month, this_year, all_time } =
+    statistics || {};
+  // Map labels to their corresponding data
+  const periodMap = {
+    Today: today,
+    "This week": this_week,
+    "This month": this_month,
+    "Last month": last_month,
+    "This year": this_year,
+    "All time": all_time,
+  };
+
+  // Pick choosenData directly from the map
+  const choosenData = periodMap[selectedData?.label] || "";
 
   const handleSelectPeriod = (period) => {
     setSelectedPeriod(period.label);
@@ -33,7 +52,9 @@ export default function BookingStatsCard({ periodOptions, title }) {
               {title}
             </Text>
             <Text className="text-white font-poppins-bold text-3xl ">
-              {selectedData?.bookings || 0}
+              {mode === "earnings"
+                ? choosenData?.totalEarnings
+                : choosenData?.totalBookings || 0}
             </Text>
             <Text className="font-poppins-400regular text-white text-xs  mt-[3%]">
               {selectedPeriod}
@@ -97,9 +118,9 @@ export default function BookingStatsCard({ periodOptions, title }) {
                   >
                     {item.label}
                   </Text>
-                  <Text className="text-gray-500 text-sm">
+                  {/* <Text className="text-gray-500 text-sm">
                     {item.bookings} bookings
-                  </Text>
+                  </Text> */}
                 </TouchableOpacity>
               )}
             />

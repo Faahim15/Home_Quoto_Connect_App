@@ -11,6 +11,8 @@ import BotttomButtons from "../components/shared/services/buttons/BottomButtons"
 export default function ProgressQuote() {
   const { jobId, quoteId } = useLocalSearchParams();
 
+  // console.log("job id", jobId);
+
   const { data, isLoading, error, refetch } = useGetSingleJobQuery(jobId);
   const item = data?.data?.job;
   const quote = useQuoteById(item?.quotes, quoteId);

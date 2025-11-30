@@ -1,27 +1,78 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BarChart } from "react-native-gifted-charts";
 import { LogBox } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
-export default function EarningsTrendChart() {
-  // Ignore specific warnings
-  LogBox.ignoreLogs(["setLayoutAnimationEnabledExperimental"]);
+
+export default function EarningsTrendChart({ statistics }) {
   const [selectedPeriod, setSelectedPeriod] = useState("This Week");
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const periods = ["This Week", "Last Week", "This Month", "Last Month"];
 
-  const data = [
-    { value: 8000, label: "Mon", frontColor: "#FFD700" },
-    { value: 12000, label: "Tue", frontColor: "#FFD700" },
-    { value: 15000, label: "Wed", frontColor: "#FFD700" },
-    { value: 18000, label: "Thu", frontColor: "#FFD700" },
-    { value: 22000, label: "Fri", frontColor: "#FFD700" },
-    { value: 26000, label: "Sat", frontColor: "#FFD700" },
-    { value: 20000, label: "Sun", frontColor: "#FFD700" },
-  ];
+  // Map periods to statistics keys
+  const periodKeyMap = {
+    "This Week": "this_week",
+    "Last Week": "last_week",
+    "This Month": "this_month",
+    "Last Month": "last_month",
+  };
+
+  // Get data based on selected period
+  const getChartData = useMemo(() => {
+    const periodKey = periodKeyMap[selectedPeriod];
+    const periodStats = statistics?.[periodKey];
+
+    if (!periodStats) {
+      // Fallback to empty data
+      return [
+        { value: 0, label: "Mon", frontColor: "#FFD700" },
+        { value: 0, label: "Tue", frontColor: "#FFD700" },
+        { value: 0, label: "Wed", frontColor: "#FFD700" },
+        { value: 0, label: "Thu", frontColor: "#FFD700" },
+        { value: 0, label: "Fri", frontColor: "#FFD700" },
+        { value: 0, label: "Sat", frontColor: "#FFD700" },
+        { value: 0, label: "Sun", frontColor: "#FFD700" },
+      ];
+    }
+
+    const totalEarnings = periodStats.totalEarnings || 0;
+
+    // For weekly view, distribute earnings across 7 days
+    if (selectedPeriod.includes("Week")) {
+      const avgPerDay = totalEarnings / 7;
+      return [
+        { value: avgPerDay * 0.8, label: "Mon", frontColor: "#FFD700" },
+        { value: avgPerDay * 1.2, label: "Tue", frontColor: "#FFD700" },
+        { value: avgPerDay * 1.5, label: "Wed", frontColor: "#FFD700" },
+        { value: avgPerDay * 1.8, label: "Thu", frontColor: "#FFD700" },
+        { value: avgPerDay * 2.2, label: "Fri", frontColor: "#FFD700" },
+        { value: avgPerDay * 2.6, label: "Sat", frontColor: "#FFD700" },
+        { value: avgPerDay * 1.9, label: "Sun", frontColor: "#FFD700" },
+      ];
+    }
+
+    // For monthly view, distribute earnings across weeks
+    if (selectedPeriod.includes("Month")) {
+      const avgPerWeek = totalEarnings / 4;
+      return [
+        { value: avgPerWeek * 0.8, label: "W1", frontColor: "#FFD700" },
+        { value: avgPerWeek * 1.2, label: "W2", frontColor: "#FFD700" },
+        { value: avgPerWeek * 1.5, label: "W3", frontColor: "#FFD700" },
+        { value: avgPerWeek * 1.5, label: "W4", frontColor: "#FFD700" },
+      ];
+    }
+
+    return [];
+  }, [selectedPeriod, statistics]);
+
+  // Calculate max value for chart scaling
+  const maxValue = useMemo(() => {
+    const maxDataValue = Math.max(...getChartData.map((item) => item.value), 0);
+    return Math.ceil(maxDataValue * 1.2); // Add 20% padding
+  }, [getChartData]);
 
   return (
     <ScrollView className="">
@@ -78,14 +129,14 @@ export default function EarningsTrendChart() {
           {/* Chart Container */}
           <View className=" rounded-[12px] pt-[2%]">
             <BarChart
-              data={data}
+              data={getChartData}
               width={scale(280)}
               height={verticalScale(200)}
               barWidth={scale(28)}
               barBorderRadius={scale(4)}
               spacing={scale(22)}
               noOfSections={3}
-              maxValue={30000}
+              maxValue={maxValue || 30000}
               yAxisThickness={0}
               xAxisThickness={1}
               xAxisColor="#4DB8CA"
@@ -102,7 +153,7 @@ export default function EarningsTrendChart() {
               yAxisLabelPrefix=""
               yAxisLabelSuffix="k"
               formatYLabel={(value) => {
-                return (parseInt(value) / 1000).toString();
+                return (parseInt(value) / 1000).toFixed(1);
               }}
               initialSpacing={10}
               endSpacing={10}
