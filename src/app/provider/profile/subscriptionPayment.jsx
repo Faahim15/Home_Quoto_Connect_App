@@ -9,7 +9,7 @@ export default function StripePayment() {
   const { subscriptionId } = useLocalSearchParams();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
-  console.log("id", subscriptionId);
+  //   console.log("id", subscriptionId);
 
   // ⬇️ Now isLoading comes from RTK Query
   const [purchaseSubscription, { isLoading }] =
@@ -17,8 +17,8 @@ export default function StripePayment() {
 
   const handlePayment = async () => {
     try {
-      const res = await createPaymentIntent({
-        jobId,
+      const res = await purchaseSubscription({
+        subscriptionId,
         paymentMethod: "card",
       }).unwrap();
 
@@ -51,7 +51,7 @@ export default function StripePayment() {
         return;
       }
 
-      router.push("/home");
+      router.push("/provider/home");
     } catch (err) {
       alert(err?.message || "Payment Failed!");
     }

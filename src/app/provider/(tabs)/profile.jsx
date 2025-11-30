@@ -192,11 +192,11 @@ export default function ContractorProfileScreen() {
                   onPress={() => router.push("provider/profile/projectGallery")}
                   label="Project Gallery"
                 />
-                <ProfileMenuItem
+                {/* <ProfileMenuItem
                   iconName={verification}
                   onPress={() => router.push("provider/profile/verification")}
                   label="Verification"
-                />
+                /> */}
               </View>
             </View>
 

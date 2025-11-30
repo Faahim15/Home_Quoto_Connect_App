@@ -57,7 +57,7 @@ export default function ContractorHomeScreen() {
     refetch: refetchActiveJobs,
   } = useGetActiveJobsQuery();
 
-  console.log("filters", filters);
+  // console.log("filters", filters);
 
   // Update your getAllJobs query to use filters - only fetch when there are active filters
   const {
