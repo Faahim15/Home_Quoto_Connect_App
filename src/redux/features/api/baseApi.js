@@ -115,5 +115,6 @@ export const api = createApi({
     "SupportTicketsMessages",
     "Profile",
     "Transactions",
+    "Reviews",
   ],
 });

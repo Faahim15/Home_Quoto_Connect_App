@@ -9,9 +9,14 @@ import React from "react";
 import CustomTitle from "../../components/shared/CustomTitle";
 import JobSummary from "../../components/tabs/jobs/JobSummary";
 import { completedJobsData } from "../../components/data/provider/MyJobsData";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useGetAllQuotesQuery } from "../../../redux/features/apiSlices/quote/quoteApiSlice";
 import { Ionicons } from "@expo/vector-icons";
+import ProviderJobSummary from "../../components/tabs/jobs/ProviderJobSummary";
+import XStyle from "../../util/styles";
+import { scale } from "../../components/adaptive/Adaptiveness";
+import BotttomButtons from "../../components/shared/services/buttons/BottomButtons";
+import CustomButton from "../../components/tabs/home/services/provider/details/CustomButton";
 export default function CompletedJobsDetailScreen() {
   const { quoteId, jobId } = useLocalSearchParams();
 
@@ -53,6 +58,8 @@ export default function CompletedJobsDetailScreen() {
   const completedJobs =
     data?.data?.quotes?.find((q) => q._id === quoteId) || {};
 
+  console.log("completed jobs", completedJobs?.price);
+
   return (
     <View className="flex-1  bg-[#f9f9f9]">
       <View className="px-[6%]">
@@ -63,8 +70,49 @@ export default function CompletedJobsDetailScreen() {
         />
       </View>
       <ScrollView className="px-[6%]">
-        <JobSummary quoteInfo={completedJobs} showPaymentCheckList={true} />
+        <ProviderJobSummary
+          quoteInfo={completedJobs}
+          showPaymentCheckList={true}
+        />
       </ScrollView>
+      <View
+        className="flex-col gap-[1%]   border border-[#D8DCE0]  "
+        style={[
+          XStyle.shadowBox,
+          {
+            borderTopRightRadius: scale(20),
+            borderTopLeftRadius: scale(20),
+            // height: verticalScale(140),
+          },
+        ]}
+      >
+        <View className="flex-row gap-[6%]  justify-center overflow-hidden items-center ">
+          <BotttomButtons
+            onPress={() =>
+              router.push({
+                pathname: "provider/reviewForm",
+                params: { jobId: jobId },
+              })
+            }
+            width={320}
+            backgroundColor="#175994"
+            color="#fff"
+            borderColor="#175994"
+            title="Give Feedback"
+            // loading={cancelLoading}
+          />
+
+          {/* <CustomButton
+            onPress={() =>
+              router.push({
+                pathname: "provider/reviewForm",
+                params: { jobId: jobId },
+              })
+            }
+            title="Give Feedback"
+          /> */}
+        </View>
+      </View>
     </View>
   );
 }

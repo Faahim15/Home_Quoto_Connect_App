@@ -132,7 +132,7 @@ export default function ShowAllServiceCards({ jobs, horizontal }) {
               ? { paddingRight: verticalScale(100) }
               : { rowGap: verticalScale(12), paddingBottom: verticalScale(180) }
           }
-          // ⭐ ADDED — Professional Pull-To-Refresh
+          // ⭐ Works ONLY if vertical
           refreshControl={
             !horizontal ? (
               <RefreshControl
@@ -143,9 +143,6 @@ export default function ShowAllServiceCards({ jobs, horizontal }) {
               />
             ) : undefined
           }
-          // ⭐ ADDED — Refresh for horizontal list
-          onRefresh={horizontal ? onRefresh : undefined}
-          refreshing={horizontal ? refreshing : undefined}
         />
       )}
     </View>

@@ -3,14 +3,15 @@ import { View, Text, TouchableOpacity, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Ratings from "./Ratings";
 
-const ratingOptions = ["1", "1.5", "2", "2.5", "3", "3.5", "4", "4.5", "5"];
+const ratingOptions = ["1", "2", "3", "4", "5"];
 
-export default function RatingDropdown() {
-  const [selectedRating, setSelectedRating] = useState(null);
+export default function RatingDropdown({ selected, onSelect }) {
+  const [selectedRating, setSelectedRating] = useState(selected || null);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleSelect = (value) => {
     setSelectedRating(value);
+    onSelect && onSelect(value); // ⭐ pass up
     setShowDropdown(false);
   };
 

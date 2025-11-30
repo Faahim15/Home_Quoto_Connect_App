@@ -15,6 +15,8 @@ import { router, useFocusEffect } from "expo-router";
 import { useGetAllQuotesQuery } from "../../../../redux/features/apiSlices/quote/quoteApiSlice";
 import { statusColorMap } from "../../../util/colors";
 import { getStatusLabel } from "../../../util/helper-function";
+import CustomTitle from "../../shared/CustomTitle";
+import CustomButton from "../../tabs/home/services/provider/details/CustomButton";
 const ServiceCard = ({ item }) => {
   const { profilePhoto, fullName } = item?.job?.client || {};
   const { city, state } = item?.job?.location?.details || {};
@@ -103,11 +105,22 @@ const ServiceCard = ({ item }) => {
           style={{ color: statusColor }}
           className={`font-poppins-400regular text-base`}
         >
-          {getStatusLabel(item?.status || "N/A")}
+          {getStatusLabel(item?.job?.status || "N/A")}
         </Text>
       </View>
 
       {/* Job and payment confirmation section */}
+      <View className="mb-[2%]">
+        <CustomButton
+          onPress={() =>
+            router.push({
+              pathname: "provider/reviewForm",
+              params: { jobId: item?.job?._id },
+            })
+          }
+          title="Give Feedback"
+        />
+      </View>
     </TouchableOpacity>
   );
 };
@@ -174,7 +187,8 @@ export default function CompletedJobs() {
   // ------------------------------------------
   const completedJobs =
     data?.data?.quotes?.filter((q) => q?.job?.status === "completed") || [];
-  console.log("compleded", completedJobs);
+
+  console.log("compleded", completedJobs[0]?.job?.status);
 
   if (completedJobs.length === 0) {
     return (

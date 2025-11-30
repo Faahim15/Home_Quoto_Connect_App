@@ -26,7 +26,7 @@ import {
 // ServiceCard Component
 // ----------------------------------------------------------
 const ServiceCard = ({ item }) => {
-  if (!item?.job) return null;
+  if (!item?.job || !item?.job?.isDirectBooking) return null;
 
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
 

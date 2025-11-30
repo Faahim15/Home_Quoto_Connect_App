@@ -96,7 +96,15 @@ const ServiceItem = ({ item }) => {
 
             <View className="flex-row gap-[4%] ">
               <TouchableOpacity
-                onPress={() => router.push("/shared/reviewForm")} //navigation.navigate("ReviewFormScreen")
+                onPress={() =>
+                  router.push({
+                    pathname: "provider/reviewForm",
+                    params: {
+                      jobId: item?._id,
+                      reviewType: "client-to-provider",
+                    },
+                  })
+                } //navigation.navigate("ReviewFormScreen")
                 style={{ maxWidth: scale(120), height: verticalScale(30) }}
                 className="justify-center items-center  mt-[3%] rounded-md py-[2%] px-[2%] bg-[#00BFA5] "
               >

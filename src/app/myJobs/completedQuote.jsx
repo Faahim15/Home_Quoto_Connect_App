@@ -1,10 +1,13 @@
 import { View, ScrollView } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import QuoteProgressDetails from "../components/tabs/myJobs/QuoteProgressDetails";
 import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import { useQuoteById } from "../../hooks/useQuoteById";
 import { Text } from "react-native";
+import XStyle from "../util/styles";
+import { scale } from "../components/adaptive/Adaptiveness";
+import BotttomButtons from "../components/shared/services/buttons/BottomButtons";
 export default function ProgressQuote() {
   const { jobId, quoteId } = useLocalSearchParams();
 
@@ -39,6 +42,47 @@ export default function ProgressQuote() {
       <ScrollView>
         <QuoteProgressDetails showStatus={true} quote={quote} job={item} />
       </ScrollView>
+
+      <View
+        className="flex-col gap-[1%]   border border-[#D8DCE0]  "
+        style={[
+          XStyle.shadowBox,
+          {
+            borderTopRightRadius: scale(20),
+            borderTopLeftRadius: scale(20),
+            // height: verticalScale(140),
+          },
+        ]}
+      >
+        <View className="flex-row gap-[6%]  justify-center overflow-hidden items-center ">
+          <BotttomButtons
+            onPress={() =>
+              router.push({
+                pathname: "provider/reviewForm",
+                params: {
+                  jobId: jobId,
+                  reviewType: "client-to-provider",
+                },
+              })
+            }
+            width={320}
+            backgroundColor="#175994"
+            color="#fff"
+            borderColor="#175994"
+            title="Give Feedback"
+            // loading={cancelLoading}
+          />
+          {/* <CustomButton
+                  onPress={() =>
+                    router.push({
+                      pathname: "provider/reviewForm",
+                      params: { jobId: jobId },
+                    })
+                  }
+                  title="Give Feedback"
+                /> */}
+        </View>
+      </View>
     </View>
   );
 }
