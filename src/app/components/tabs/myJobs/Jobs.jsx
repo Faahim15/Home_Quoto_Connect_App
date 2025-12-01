@@ -21,9 +21,6 @@ const ServiceItem = ({ item, quote }) => {
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     quote?.provider;
 
-  // if (quote?.description === "Direct booking - quote to be provided") {
-  //   return null;
-  // }
   return (
     <View className="mx-[4%] mb-[4%]">
       {/* Service Type Banner - Made clickable */}
@@ -51,8 +48,8 @@ const ServiceItem = ({ item, quote }) => {
           <TouchableOpacity
             onPress={() =>
               router.push({
-                pathname: "/services/providerDetails",
-                params: { profileId: _id, showButtons: true },
+                pathname: "/myJobs/serviceProfile",
+                params: { profileId: _id, showButtons: false },
               })
             }
             style={{ width: scale(80), height: verticalScale(80) }}
@@ -198,7 +195,9 @@ export default function Services() {
       <FlatList
         data={quoteItems}
         renderItem={renderServiceItem}
-        keyExtractor={(item, index) => item.quote._id || index.toString()}
+        keyExtractor={(item, index) =>
+          item?._id || item.quote._id || index.toString()
+        }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingTop: scale(16),

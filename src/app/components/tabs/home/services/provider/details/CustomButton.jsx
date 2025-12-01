@@ -8,20 +8,20 @@ export default function CustomButton({
   bg = "#175994",
   text = "#fff",
   borderColor = "#0054A5",
+  disabled,
 }) {
   return (
     <View
-      style={{ backgroundColor: bg, borderColor: borderColor }}
-      className=" mt-[3%] border rounded-md px-[3%] py-[3%] "
+      style={{
+        backgroundColor: disabled ? "#9CA3AF" : bg, // lighter gray for disabled
+        borderColor: disabled ? "#9CA3AF" : borderColor,
+      }}
+      className="mt-[3%] border rounded-md px-[3%] py-[3%]"
     >
-      <TouchableOpacity
-        disabled={!agreeToTerms}
-        style={{ opacity: agreeToTerms ? 1 : 0.6 }}
-        onPress={onPress}
-      >
+      <TouchableOpacity disabled={disabled || !agreeToTerms} onPress={onPress}>
         <Text
-          style={{ color: text }}
-          className=" font-poppins-bold text-center"
+          style={{ color: disabled ? "#FFFFFF" : text }} // white text on disabled gray
+          className="font-poppins-bold text-center"
         >
           {isLoading ? <ActivityIndicator color="#ffffff" /> : title}
         </Text>

@@ -5,10 +5,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
-import React from "react";
 import CustomTitle from "../../components/shared/CustomTitle";
-import JobSummary from "../../components/tabs/jobs/JobSummary";
-import { completedJobsData } from "../../components/data/provider/MyJobsData";
 import { router, useLocalSearchParams } from "expo-router";
 import { useGetAllQuotesQuery } from "../../../redux/features/apiSlices/quote/quoteApiSlice";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,7 +13,7 @@ import ProviderJobSummary from "../../components/tabs/jobs/ProviderJobSummary";
 import XStyle from "../../util/styles";
 import { scale } from "../../components/adaptive/Adaptiveness";
 import BotttomButtons from "../../components/shared/services/buttons/BottomButtons";
-import CustomButton from "../../components/tabs/home/services/provider/details/CustomButton";
+
 export default function CompletedJobsDetailScreen() {
   const { quoteId, jobId } = useLocalSearchParams();
 
@@ -58,6 +55,11 @@ export default function CompletedJobsDetailScreen() {
   const completedJobs =
     data?.data?.quotes?.find((q) => q._id === quoteId) || {};
 
+  // console.log("show data", completedJobs?.reviews?.provider_to_client);
+  const isAlreadyReviewed = !!completedJobs?.reviews?.provider_to_client;
+
+  console.log("is", isAlreadyReviewed);
+
   return (
     <View className="flex-1  bg-[#f9f9f9]">
       <View className="px-[6%]">
@@ -93,22 +95,13 @@ export default function CompletedJobsDetailScreen() {
               })
             }
             width={320}
-            backgroundColor="#175994"
+            backgroundColor={isAlreadyReviewed ? "#9CA3AF" : "#175994"}
             color="#fff"
-            borderColor="#175994"
-            title="Give Feedback"
-            // loading={cancelLoading}
+            borderColor={isAlreadyReviewed ? "#9CA3AF" : "#175994"}
+            title={isAlreadyReviewed ? "Reviewed" : "Give Feedback"}
+            loading={isLoading}
+            disabled={isAlreadyReviewed}
           />
-
-          {/* <CustomButton
-            onPress={() =>
-              router.push({
-                pathname: "provider/reviewForm",
-                params: { jobId: jobId },
-              })
-            }
-            title="Give Feedback"
-          /> */}
         </View>
       </View>
     </View>

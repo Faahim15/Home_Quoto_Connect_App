@@ -1,13 +1,13 @@
-import { Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import AllReviews from "../components/tabs/home/services/provider/details/AllReviews";
 import { useLocalSearchParams } from "expo-router";
-import { useGetProviderDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
+import { useGetProviderProfileDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 
 export default function AllReviewScreen() {
   const { id } = useLocalSearchParams();
-  const { data, isLoading, error } = useGetProviderDetailsQuery(id);
-  console.log("this from allreviewpage:", id);
+  const { data, isLoading, error } = useGetProviderProfileDetailsQuery(id);
+  // console.log("this from allreviewpage:", id);
   // Add loading state check
   if (isLoading) {
     return (

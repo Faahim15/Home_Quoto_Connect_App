@@ -9,6 +9,8 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import ArrowBack from "../components/auth/ArrowBack";
+import BotttomButtons from "../components/shared/services/buttons/BottomButtons";
+import CustomButton from "../components/tabs/home/services/provider/details/CustomButton";
 import TimeSlot from "../components/tabs/home/services/provider/details/TimeSlot";
 import Gallery from "../components/tabs/home/services/provider/details/Gallery";
 import Banner from "../components/tabs/home/services/provider/details/Banner";
@@ -19,27 +21,27 @@ import ReviewButton from "../components/tabs/home/services/provider/details/Revi
 import Biography from "../components/tabs/home/services/provider/details/Biography";
 import { router, useLocalSearchParams } from "expo-router";
 import XStyle from "../util/styles";
-import PaymentMethodModal from "../components/shared/modal/PaymentMethodModal";
-import { useState } from "react";
-import { useGetProviderProfileDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
+import Toast from "react-native-toast-message";
+import {
+  useGetPopularProvidersQuery,
+  useGetProviderProfileDetailsQuery,
+} from "../../redux/features/apiSlices/user/createJobSlices";
+
 export default function ProviderDetailsScreen() {
-  const skills = ["Lighting", "Circuit", "Wiring", "Repair"];
+  const { showButtons, profileId } = useLocalSearchParams();
 
-  const { showButtons, providerId } = useLocalSearchParams();
-  const { isLoading, data, error } =
-    useGetProviderProfileDetailsQuery(providerId);
+  const { data, isLoading, error } =
+    useGetProviderProfileDetailsQuery(profileId);
+  const {
+    data: allProvidersData,
+    isLoading: providersLoader,
+    error: providersError,
+  } = useGetPopularProvidersQuery();
 
-  const [showPayment, setShowPayment] = useState(false);
   const shouldShowButtons = showButtons === "true";
-  const serviceColors = {
-    "TV repair and Installation": "bg-[#319FCA]",
-    "AC Repair and Maintenance": "bg-[#FF6B6B]",
-    "Plumbing Services": "bg-[#10B981]",
-    "Electrical Repair": "bg-[#8B5CF6]",
-  };
-  console.log("data:", data);
+
   // Add loading state check
-  if (isLoading) {
+  if (providersLoader) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
         <ActivityIndicator size="large" color="#18649F" />
@@ -51,7 +53,7 @@ export default function ProviderDetailsScreen() {
   }
 
   // Add error state check (optional)
-  if (error) {
+  if (error || providersError) {
     return (
       <View className="flex-1 bg-white justify-center items-center px-[6%]">
         <Text className="font-poppins-semiBold text-base text-[#EF4444] text-center">
@@ -66,6 +68,7 @@ export default function ProviderDetailsScreen() {
       </View>
     );
   }
+
   const {
     profilePhoto,
     workingHours,
@@ -76,11 +79,14 @@ export default function ProviderDetailsScreen() {
     averageRating,
     totalCompletedJobs,
     specializations,
-    _id,
-  } = data?.data?.profile || {};
+  } = data?.data?.provider || {};
+
+  const hasReviews = data?.data?.reviews && data?.data?.reviews.length > 0;
+
   return (
-    <View className="flex-1 w-full bg-white">
+    <View className="flex-1 bg-white">
       <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: verticalScale(40) }}
         className="flex-1 "
       >
@@ -100,21 +106,22 @@ export default function ProviderDetailsScreen() {
           <View className="w-10 h-10 mx-[6%] mt-[6%] rounded-[20px] bg-white ">
             <ArrowBack />
           </View>
-          <View className="flex-1 ">
+          <View className="flex-1 justify-center items-center ">
             <Image
-              source={{ uri: profilePhoto?.url }} //../../../../../assets/images/home/electrician/electrician3.png
+              source={{ uri: profilePhoto?.url }}
               style={{
                 width: scale(264),
                 height: verticalScale(290),
                 marginTop: verticalScale(0),
                 marginLeft: scale(30),
               }}
+              resizeMode="cover"
             />
           </View>
         </LinearGradient>
 
         <Banner
-          providerId={_id}
+          providerId={data?.data?.provider._id}
           data={{ name: fullName, designation: businessName }}
         />
 
@@ -131,6 +138,22 @@ export default function ProviderDetailsScreen() {
         {/* Skills */}
 
         <Skills specializations={specializations} />
+
+        {/* Book button */}
+
+        {!shouldShowButtons && (
+          <View className="px-[6%]">
+            <CustomButton
+              onPress={() =>
+                router.push({
+                  pathname: "/shared/directBooking",
+                  params: { providerId: profileId },
+                })
+              }
+              title="Book"
+            />
+          </View>
+        )}
 
         {/* Time Solt */}
         <View className="mx-[6%] mt-[3%] ">
@@ -152,7 +175,7 @@ export default function ProviderDetailsScreen() {
         <Biography bio={bio} />
 
         {/* Gallery Section */}
-        {/* <View>
+        <View>
           <View className="flex-row justify-between mx-[6%] mt-[3%] ">
             <Text className="font-poppins-semiBold text-base text-[#565656]">
               Gallery
@@ -161,7 +184,7 @@ export default function ProviderDetailsScreen() {
               onPress={() =>
                 router.push({
                   pathname: "/services/showGallery",
-                  params: { id: providerId },
+                  params: { id: profileId },
                 })
               }
             >
@@ -170,47 +193,65 @@ export default function ProviderDetailsScreen() {
               </Text>
             </TouchableOpacity>
           </View>
-        </View> */}
+        </View>
 
         {/* Images section */}
-        {/* <Gallery portfolioImages={data?.data?.portfolio} /> */}
+        <Gallery portfolioImages={data?.data?.portfolio} />
 
         {/* Reviews */}
-        {/* <Testimonials testimonialData={data?.data} /> */}
-
-        {/* Review Button */}
-        {/* <ReviewButton
-          id={providerId}
-          totalReviews={data?.data?.reviews.length}
-        /> */}
+        {hasReviews ? (
+          <>
+            <Testimonials testimonialData={data?.data} />
+            <ReviewButton
+              id={profileId}
+              totalReviews={data?.data?.reviews.length}
+            />
+          </>
+        ) : (
+          <View className="mx-[6%] mt-[6%] bg-[#F9F9F9] rounded-lg p-6 border border-[#E5E5E5]">
+            <Text className="font-poppins-semiBold text-base text-[#565656] text-center mb-2">
+              No Reviews Yet
+            </Text>
+            <Text className="font-poppins-400regular text-sm text-[#919191] text-center">
+              This provider hasn't received any reviews yet. Be the first to
+              book and share your experience!
+            </Text>
+          </View>
+        )}
       </ScrollView>
       {shouldShowButtons && (
         <View
-          className="flex-row w-full gap-[6%] h-[10%]  border border-[#D8DCE0] justify-center items-center "
+          className="flex-row gap-[6%] h-[14%]  border border-[#D8DCE0] justify-center items-center "
           style={[
             XStyle.shadowBox,
-            {
-              borderTopRightRadius: scale(20),
-              width: "100%",
-              borderTopLeftRadius: scale(20),
-            },
+            { borderTopRightRadius: scale(20), borderTopLeftRadius: scale(20) },
           ]}
         >
-          <TouchableOpacity
-            onPress={() => setShowPayment(true)} //navigation.navigate("WaitConfirmationScreen")
-            style={{ width: "100%", height: verticalScale(40) }}
-            className={` justify-center items-center  mt-[3%] rounded-md py-[2%] px-[2%] ${serviceColors[item?.serviceType] || "bg-[#0054A5]"} `}
-          >
-            <Text className=" font-poppins-bold   text-white text-base ">
-              Pay Now
-            </Text>
-          </TouchableOpacity>
+          <BotttomButtons
+            onPress={() => {
+              Toast.show({
+                type: "info",
+                text1: "Request Declined",
+                text2: "The provider has been notified of your decision",
+                position: "top",
+                visibilityTime: 3000,
+              });
+              router.back();
+            }}
+            backgroundColor="#fff"
+            color="#EF4444"
+            borderColor="#EF4444"
+            title="Decline"
+          />
+          <BotttomButtons
+            onPress={() => router.back()}
+            backgroundColor="#18649F"
+            color="#fff"
+            borderColor="#18649F"
+            title="Accept"
+          />
         </View>
       )}
-      <PaymentMethodModal
-        visible={showPayment}
-        onClose={() => setShowPayment(false)}
-      />
     </View>
   );
 }

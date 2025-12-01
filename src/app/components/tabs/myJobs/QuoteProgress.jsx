@@ -68,7 +68,7 @@ const ServiceItem = ({ item }) => {
             onPress={() =>
               router.push({
                 pathname: "/myJobs/serviceProfile",
-                params: { showButtons: false, providerId: _id },
+                params: { showButtons: false, profileId: _id },
               })
             }
             className="w-16 h-16 mb-[20%] rounded-full bg-blue-500 items-center justify-center"

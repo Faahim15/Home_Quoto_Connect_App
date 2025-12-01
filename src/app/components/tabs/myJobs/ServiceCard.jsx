@@ -22,8 +22,6 @@ const ServiceCard = () => {
         return <AllQuoteScreen />;
       case "In Progress":
         return <QuoteProgressScreen />;
-      // case "Unpaid":
-      //   return <QuoteUnpaidScreen />;
       case "Completed":
         return <CompletedQuote />;
       case "Cancelled":

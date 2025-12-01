@@ -29,6 +29,8 @@ import {
 export default function ProviderDetailsScreen() {
   const { showButtons, profileId } = useLocalSearchParams();
 
+  console.log("provider Id", profileId);
+
   // console.log("This is from Quote id", profileId);
 
   const { data, isLoading, error } = useGetProviderDetailsQuery(profileId);

@@ -1,4 +1,4 @@
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, ActivityIndicator } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import QuoteProgressDetails from "../components/tabs/myJobs/QuoteProgressDetails";
@@ -11,16 +11,20 @@ import BotttomButtons from "../components/shared/services/buttons/BottomButtons"
 export default function ProgressQuote() {
   const { jobId, quoteId } = useLocalSearchParams();
 
-  // console.log("job id", jobId);
-
   const { data, isLoading, error, refetch } = useGetSingleJobQuery(jobId);
   const item = data?.data?.job;
+  const review = data?.data?.reviews;
   const quote = useQuoteById(item?.quotes, quoteId);
+
+  const isAlreadyReviewed = !!review?.client_to_provider;
 
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
-        <Text className="text-gray-500 text-base">Loading job details...</Text>
+        <ActivityIndicator size="large" color="#4B5563" />
+        <Text className="text-gray-500 text-base mt-2">
+          Loading job details...
+        </Text>
       </View>
     );
   }
@@ -58,31 +62,25 @@ export default function ProgressQuote() {
       >
         <View className="flex-row gap-[6%]  justify-center overflow-hidden items-center ">
           <BotttomButtons
-            onPress={() =>
-              router.push({
-                pathname: "provider/reviewForm",
-                params: {
-                  jobId: jobId,
-                  reviewType: "client-to-provider",
-                },
-              })
-            }
+            onPress={() => {
+              if (!isAlreadyReviewed) {
+                router.push({
+                  pathname: "provider/reviewForm",
+                  params: {
+                    jobId: item?._id,
+                    reviewType: "client-to-provider",
+                  },
+                });
+              }
+            }}
             width={320}
-            backgroundColor="#175994"
-            color="#fff"
-            borderColor="#175994"
-            title="Give Feedback"
-            // loading={cancelLoading}
+            backgroundColor={isAlreadyReviewed ? "#6b7280" : "#175994"}
+            color={isAlreadyReviewed ? "#10B981" : "#fff"}
+            borderColor={isAlreadyReviewed ? "#6b7280" : "#175994"}
+            title={isAlreadyReviewed ? "Reviewed" : "Give Feedback"}
+            loading={isLoading}
+            disabled={isAlreadyReviewed}
           />
-          {/* <CustomButton
-                  onPress={() =>
-                    router.push({
-                      pathname: "provider/reviewForm",
-                      params: { jobId: jobId },
-                    })
-                  }
-                  title="Give Feedback"
-                /> */}
         </View>
       </View>
     </View>

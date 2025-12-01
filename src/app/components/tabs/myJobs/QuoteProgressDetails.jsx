@@ -15,8 +15,14 @@ import { getStatusLabel } from "../../../util/helper-function";
 import { formatDateWithOrdinal } from "../../../util/helper-function";
 export default function QuoteProgressDetails({ quote, job }) {
   // console.log("show", item);
-  const statusColor = statusColorMap?.[quote?.status] ?? "#6B7280";
-  const { fullName, averageRating, profilePhoto, totalReviews } =
+  let statusColor;
+  if (job?.status === "cancelled") {
+    statusColor = statusColorMap?.[job?.status] ?? "#6B7280";
+  } else {
+    statusColor = statusColorMap?.[quote?.status] ?? "#6B7280";
+  }
+
+  const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     quote?.provider;
 
   const handleServicePress = () => {
@@ -54,7 +60,12 @@ export default function QuoteProgressDetails({ quote, job }) {
           <View className="flex-row items-center gap-[4%]">
             {/* Profile Image */}
             <TouchableOpacity
-              onPress={() => {}}
+              onPress={() =>
+                router.push({
+                  pathname: "/myJobs/serviceProfile",
+                  params: { profileId: _id, showButtons: false },
+                })
+              }
               className="w-16 h-16 mb-[4%] rounded-full bg-blue-500 items-center justify-center"
             >
               <Image
@@ -109,7 +120,7 @@ export default function QuoteProgressDetails({ quote, job }) {
               ) : (
                 <Text
                   style={{ color: statusColor }}
-                  className="font-poppins-400regular mt-[10%] text-center text-base "
+                  className="font-poppins-semiBold mt-[10%] text-center text-base "
                 >
                   {getStatusLabel(job?.status)}
                 </Text>

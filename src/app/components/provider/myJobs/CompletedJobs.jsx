@@ -20,6 +20,10 @@ const ServiceCard = ({ item }) => {
   const { profilePhoto, fullName } = item?.job?.client || {};
   const { city, state } = item?.job?.location?.details || {};
   const statusColor = statusColorMap?.[item?.status] ?? "#6B7280";
+
+  // console.log("items", item?.reviews?.provider_to_client);
+  const isAlreadyReviewed = !!item?.reviews?.provider_to_client;
+
   const handlePress = useCallback(() => {
     router.push({
       pathname: "/provider/myJobs/completedJobs",
@@ -117,7 +121,8 @@ const ServiceCard = ({ item }) => {
               params: { jobId: item?.job?._id },
             })
           }
-          title="Give Feedback"
+          title={isAlreadyReviewed ? "Reviewed" : "Give Feedback"}
+          disabled={isAlreadyReviewed}
         />
       </View>
     </TouchableOpacity>

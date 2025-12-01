@@ -7,7 +7,7 @@ import { statusColorMap } from "../../../util/colors";
 export default function QuoteReqDetails({ item, quoteReq }) {
   const { quote, job } = item;
   const statusColor = statusColorMap?.[quote?.status] ?? "#6B7280";
-  const { fullName, averageRating, profilePhoto, totalReviews } =
+  const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     quote?.provider;
 
   const handleServicePress = () => {
@@ -16,6 +16,7 @@ export default function QuoteReqDetails({ item, quoteReq }) {
       params: { serviceId: job._id, showButtons: true },
     });
   };
+  // console.log("job deatils", quote);
   return (
     <View>
       <View className="mx-[4%] mb-[4%]">
@@ -45,7 +46,12 @@ export default function QuoteReqDetails({ item, quoteReq }) {
           <View className="flex-row items-center gap-[4%]">
             {/* Profile Image */}
             <TouchableOpacity
-              onPress={() => {}}
+              onPress={() =>
+                router.push({
+                  pathname: "/myJobs/serviceProfile",
+                  params: { profileId: _id, showButtons: false },
+                })
+              }
               className="w-16 h-16 mb-[4%] rounded-full bg-blue-500 items-center justify-center"
             >
               <Image

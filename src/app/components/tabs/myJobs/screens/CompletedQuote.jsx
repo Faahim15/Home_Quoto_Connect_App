@@ -19,6 +19,9 @@ const ServiceItem = ({ item }) => {
   const acceptedQuote = item?.quotes?.find((q) => q.status === "accepted");
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     acceptedQuote?.provider || {};
+
+  const isAlreadyReviewed = !!item?.reviews?.client_to_provider;
+
   return (
     <View className="mx-[4%] mb-[4%]">
       {/* Service Type Banner - Made clickable */}
@@ -47,7 +50,7 @@ const ServiceItem = ({ item }) => {
             onPress={() =>
               router.push({
                 pathname: "/myJobs/serviceProfile",
-                params: { showButtons: false, providerId: _id },
+                params: { showButtons: false, profileId: _id },
               })
             }
             className="w-16 h-16 mb-[20%] rounded-full bg-blue-500 items-center justify-center"
@@ -95,21 +98,37 @@ const ServiceItem = ({ item }) => {
             </View>
 
             <View className="flex-row gap-[4%] ">
+              {/* GIVE FEEDBACK BUTTON */}
               <TouchableOpacity
-                onPress={() =>
-                  router.push({
-                    pathname: "provider/reviewForm",
-                    params: {
-                      jobId: item?._id,
-                      reviewType: "client-to-provider",
-                    },
-                  })
-                } //navigation.navigate("ReviewFormScreen")
-                style={{ maxWidth: scale(120), height: verticalScale(30) }}
-                className="justify-center items-center  mt-[3%] rounded-md py-[2%] px-[2%] bg-[#00BFA5] "
+                disabled={isAlreadyReviewed} // disable when reviewed
+                onPress={() => {
+                  if (!isAlreadyReviewed) {
+                    router.push({
+                      pathname: "provider/reviewForm",
+                      params: {
+                        jobId: item?._id,
+                        reviewType: "client-to-provider",
+                      },
+                    });
+                  }
+                }}
+                style={{
+                  Width: scale(120),
+                  height: verticalScale(32),
+                  // opacity: isAlreadyReviewed ? 0.5 : 1, // faded style
+                }}
+                className={`justify-center items-center mt-[3%] rounded-md py-[2%] px-[2%] 
+    ${isAlreadyReviewed ? "bg-[#00BFA5]" : "bg-[#00BFA5]"}
+  `}
               >
-                <Text className=" font-poppins-500medium text-[10px]  text-white text-sm font-semibold">
-                  Give Feedback
+                <Text
+                  className={`text-[10px] text-white  text-sm font-poppins-500medium ${
+                    isAlreadyReviewed
+                      ? "font-poppins-400regular"
+                      : "font-poppins-500medium"
+                  }`}
+                >
+                  {isAlreadyReviewed ? `Reviewed` : "Give Feedback"}
                 </Text>
               </TouchableOpacity>
 
@@ -160,14 +179,8 @@ export default function CompletedQuote() {
 
   const jobsData = data?.data?.jobs || [];
 
-  // Filter only jobs that are in progress
+  // Filter only jobs that are completed
   const completedJobs = jobsData.filter((job) => job.status === "completed");
-
-  // Filter only those that have an accepted or updated quote
-  // const filteredQuotes = inProgressJobs.filter((job) => {
-  //   const hasAccepted = job?.quotes?.some((q) => q.status === "accepted");
-  //   return hasAccepted;
-  // });
 
   if (completedJobs.length === 0) {
     return <EmptyState />;

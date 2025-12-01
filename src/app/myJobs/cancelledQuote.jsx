@@ -1,10 +1,10 @@
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, Text, ActivityIndicator } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import QuoteProgressDetails from "../components/tabs/myJobs/QuoteProgressDetails";
 import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import { useQuoteById } from "../../hooks/useQuoteById";
-import { Text } from "react-native";
+
 export default function ProgressQuote() {
   const { jobId, quoteId } = useLocalSearchParams();
 
@@ -15,7 +15,10 @@ export default function ProgressQuote() {
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
-        <Text className="text-gray-500 text-base">Loading job details...</Text>
+        <ActivityIndicator size="large" color="#4B5563" />
+        <Text className="text-gray-500 text-base mt-2">
+          Loading job details...
+        </Text>
       </View>
     );
   }
@@ -31,6 +34,7 @@ export default function ProgressQuote() {
       </View>
     );
   }
+
   return (
     <View className="flex-1 bg-[#f9f9f9]">
       <View className="px-[4%]">
