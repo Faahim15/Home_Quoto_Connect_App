@@ -15,6 +15,7 @@ import {
   useGetWalletQuery,
   useSetupStripeConnectMutation,
 } from "../../../redux/features/apiSlices/payment/paymentApiSlice";
+import CustomTitle from "../../components/shared/services/CustomTitle";
 
 const StripePayment = () => {
   const [setupStripeConnect, { isLoading: isSettingUp }] =
@@ -121,13 +122,17 @@ const StripePayment = () => {
       }
     >
       {/* Header */}
-      <View className="bg-white px-6 py-8 border-b border-gray-200">
-        <Text className="text-2xl font-poppins-bold text-gray-900">
+      <View className="bg-[#f9f9f9] px-6 border-b border-gray-200">
+        {/* <Text className="text-2xl font-poppins-bold text-gray-900">
           Stripe Payment
         </Text>
-        <Text className="text-gray-600 mt-2">
+        <Text className="text-gray-600 font-poppins-400regular mt-2">
           Manage your payments and earnings
-        </Text>
+        </Text> */}
+        <CustomTitle title="Stripe Payment" />
+        {/* <Text className="text-gray-600 font-poppins-400regular mt-2">
+          Manage your payments and earnings
+        </Text> */}
       </View>
 
       <View className="px-6 py-6">
@@ -144,10 +149,10 @@ const StripePayment = () => {
               />
             </View>
             <View className="ml-4 flex-1">
-              <Text className="text-lg font-semibold text-gray-900">
+              <Text className="text-base font-poppins-bold text-gray-900">
                 {isConnected ? "Connected" : "Not Connected"}
               </Text>
-              <Text className="text-sm text-gray-600 mt-1 capitalize">
+              <Text className="text-xs text-gray-600 font-poppins-400regular mt-1 capitalize">
                 {isConnected
                   ? `Status: ${accountStatus || "Active"}`
                   : "No Stripe account connected"}
@@ -157,7 +162,7 @@ const StripePayment = () => {
 
           {isConnected && (
             <View className="bg-green-50 rounded-lg p-4 mt-2">
-              <Text className="text-green-800 text-sm">
+              <Text className="text-green-800 font-poppins-400regular text-xs">
                 ✓ Your Stripe account is successfully connected and ready to
                 receive payments.
               </Text>
@@ -168,19 +173,25 @@ const StripePayment = () => {
         {/* Balance Overview */}
         {isConnected && wallet && (
           <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
-            <Text className="text-gray-600 text-sm mb-4">Wallet Balance</Text>
+            <Text className="text-gray-600 font-poppins-400regular text-sm mb-4">
+              Wallet Balance
+            </Text>
 
             <View className="flex-row justify-between items-center mb-4">
               <View className="flex-1">
-                <Text className="text-gray-500 text-xs mb-1">Available</Text>
-                <Text className="text-2xl font-bold text-gray-900">
+                <Text className="text-gray-500 font-poppins-400regular text-xs mb-1">
+                  Available
+                </Text>
+                <Text className="text-2xl font-poppins-bold text-gray-900">
                   {formatCurrency(wallet.availableBalance)}
                 </Text>
               </View>
 
               <View className="flex-1">
-                <Text className="text-gray-500 text-xs mb-1">Pending</Text>
-                <Text className="text-xl font-semibold text-yellow-600">
+                <Text className="text-gray-500 font-poppins-400regular text-xs mb-1">
+                  Pending
+                </Text>
+                <Text className="text-xl font-poppins-semiBold text-yellow-600">
                   {formatCurrency(wallet.pendingBalance)}
                 </Text>
               </View>
@@ -188,14 +199,18 @@ const StripePayment = () => {
 
             <View className="border-t border-gray-200 pt-4">
               <View className="flex-row justify-between mb-2">
-                <Text className="text-gray-600 text-sm">Total Earned</Text>
-                <Text className="text-gray-900 font-semibold">
+                <Text className="text-gray-600 font-poppins-400regular text-sm">
+                  Total Earned
+                </Text>
+                <Text className="text-gray-900 font-poppins-semiBold ">
                   {formatCurrency(wallet.totalEarned)}
                 </Text>
               </View>
               <View className="flex-row justify-between">
-                <Text className="text-gray-600 text-sm">Withdrawn</Text>
-                <Text className="text-gray-900 font-semibold">
+                <Text className="text-gray-600 font-poppins-400regular text-sm">
+                  Withdrawn
+                </Text>
+                <Text className="text-gray-900 font-poppins-semiBold">
                   {formatCurrency(wallet.withdrawnBalance)}
                 </Text>
               </View>
@@ -206,14 +221,14 @@ const StripePayment = () => {
         {/* Statistics */}
         {isConnected && statistics && (
           <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
-            <Text className="text-lg font-semibold text-gray-900 mb-4">
+            <Text className="text-lg font-poppins-semiBold text-gray-900 mb-4">
               This Month
             </Text>
 
             <View className="flex-row justify-between">
               <View className="flex-1 bg-blue-50 rounded-xl p-4 mr-3">
                 <Ionicons name="calendar-outline" size={20} color="#3B82F6" />
-                <Text className="text-2xl font-bold text-blue-900 mt-2">
+                <Text className="text-2xl font-poppins-bold text-blue-900 mt-2">
                   {statistics.this_month.totalBookings}
                 </Text>
                 <Text className="text-blue-700 text-xs mt-1">Bookings</Text>
@@ -221,10 +236,12 @@ const StripePayment = () => {
 
               <View className="flex-1 bg-green-50 rounded-xl p-4">
                 <Ionicons name="cash-outline" size={20} color="#10B981" />
-                <Text className="text-2xl font-bold text-green-900 mt-2">
+                <Text className="text-2xl font-poppins-bold text-green-900 mt-2">
                   {formatCurrency(statistics.this_month.totalEarnings)}
                 </Text>
-                <Text className="text-green-700 text-xs mt-1">Earnings</Text>
+                <Text className="text-green-700 font-poppins-400regular text-xs mt-1">
+                  Earnings
+                </Text>
               </View>
             </View>
           </View>
@@ -234,10 +251,10 @@ const StripePayment = () => {
         {isConnected && recentTransactions.length > 0 && (
           <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">
             <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-lg font-semibold text-gray-900">
+              <Text className="text-lg font-poppins-semiBold text-gray-900">
                 Recent Transactions
               </Text>
-              <Text className="text-xs text-gray-500">
+              <Text className="text-xs font-poppins-400regular text-gray-500">
                 {recentTransactions.length} transactions
               </Text>
             </View>
@@ -250,25 +267,25 @@ const StripePayment = () => {
                 <View className="flex-row justify-between items-start">
                   <View className="flex-1">
                     <View className="flex-row items-center mb-1">
-                      <Text className="text-sm font-medium text-gray-900 capitalize">
+                      <Text className="text-sm font-poppins-500medium text-gray-900 capitalize">
                         {transaction.metadata?.type ||
                           transaction.paymentMethod}
                       </Text>
                       <View
                         className={`ml-2 px-2 py-0.5 rounded ${getStatusColor(transaction.status)}`}
                       >
-                        <Text className="text-xs capitalize">
+                        <Text className="text-xs font-poppins-400regular capitalize">
                           {transaction.status}
                         </Text>
                       </View>
                     </View>
-                    <Text className="text-xs text-gray-500">
+                    <Text className="text-xs font-poppins-400regular text-gray-500">
                       {formatDate(transaction.createdAt)}
                     </Text>
                   </View>
 
                   <Text
-                    className={`text-base font-semibold ${transaction.status === "refunded" ? "text-red-600" : "text-gray-900"}`}
+                    className={`text-base font-poppins-semiBold ${transaction.status === "refunded" ? "text-red-600" : "text-gray-900"}`}
                   >
                     {transaction.status === "refunded" && "-"}$
                     {transaction.amount.toFixed(2)}
@@ -276,7 +293,7 @@ const StripePayment = () => {
                 </View>
 
                 {transaction.metadata?.credits && (
-                  <Text className="text-xs text-gray-500 mt-1">
+                  <Text className="text-xs font-poppins-400regular text-gray-500 mt-1">
                     {transaction.metadata.credits} credits
                   </Text>
                 )}
@@ -297,14 +314,14 @@ const StripePayment = () => {
               {isSettingUp ? (
                 <>
                   <ActivityIndicator color="white" size="small" />
-                  <Text className="text-white font-semibold text-base ml-3">
+                  <Text className="text-white font-poppins-semiBold text-base ml-3">
                     Setting up...
                   </Text>
                 </>
               ) : (
                 <>
                   <Ionicons name="add-circle-outline" size={20} color="white" />
-                  <Text className="text-white font-semibold text-base ml-2">
+                  <Text className="text-white font-poppins-semiBold text-base ml-2">
                     Setup Stripe Connect
                   </Text>
                 </>
@@ -314,20 +331,20 @@ const StripePayment = () => {
             <TouchableOpacity
               onPress={handleSetupStripeConnect}
               disabled={isSettingUp}
-              className={`bg-gray-100 rounded-xl py-4 px-6 flex-row items-center justify-center ${isSettingUp ? "opacity-60" : ""}`}
+              className={`bg-indigo-600  rounded-xl py-4 px-6 flex-row items-center justify-center ${isSettingUp ? "opacity-60" : ""}`}
               activeOpacity={0.7}
             >
               {isSettingUp ? (
                 <>
                   <ActivityIndicator color="#4B5563" size="small" />
-                  <Text className="text-gray-700 font-semibold text-base ml-3">
+                  <Text className="text-gray-700 font-poppins-semiBold text-base ml-3">
                     Updating...
                   </Text>
                 </>
               ) : (
                 <>
-                  <Ionicons name="settings-outline" size={20} color="#4B5563" />
-                  <Text className="text-gray-700 font-semibold text-base ml-2">
+                  <Ionicons name="settings-outline" size={20} color="#fff" />
+                  <Text className="text-white font-poppins-semiBold text-base ml-2">
                     Manage Account
                   </Text>
                 </>

@@ -73,7 +73,7 @@ export default function Specializations({ onChange, selected }) {
       <Text className="font-poppins-semiBold text-base text-[#6B7280]">
         Specializations
       </Text>
-      <View className="mt-[3%]">
+      <View className="mt-[0%]">
         {isLoading ? (
           <View className="py-4 items-center justify-center">
             <ActivityIndicator size="small" color="#319FCA" />

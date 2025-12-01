@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Platform } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { formatTime } from "../../../util/helper-function";
 import { useDispatch, useSelector } from "react-redux";
 import FormButton from "../../auth/FormButton";
 import { router } from "expo-router";
