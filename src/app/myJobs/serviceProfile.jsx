@@ -22,26 +22,18 @@ import Biography from "../components/tabs/home/services/provider/details/Biograp
 import { router, useLocalSearchParams } from "expo-router";
 import XStyle from "../util/styles";
 import Toast from "react-native-toast-message";
-import {
-  useGetPopularProvidersQuery,
-  useGetProviderProfileDetailsQuery,
-} from "../../redux/features/apiSlices/user/createJobSlices";
+import { useGetProviderProfileDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 
 export default function ProviderDetailsScreen() {
   const { showButtons, profileId } = useLocalSearchParams();
 
   const { data, isLoading, error } =
     useGetProviderProfileDetailsQuery(profileId);
-  const {
-    data: allProvidersData,
-    isLoading: providersLoader,
-    error: providersError,
-  } = useGetPopularProvidersQuery();
 
   const shouldShowButtons = showButtons === "true";
 
   // Add loading state check
-  if (providersLoader) {
+  if (isLoading) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
         <ActivityIndicator size="large" color="#18649F" />
@@ -53,7 +45,7 @@ export default function ProviderDetailsScreen() {
   }
 
   // Add error state check (optional)
-  if (error || providersError) {
+  if (error) {
     return (
       <View className="flex-1 bg-white justify-center items-center px-[6%]">
         <Text className="font-poppins-semiBold text-base text-[#EF4444] text-center">

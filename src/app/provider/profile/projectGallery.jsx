@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,68 +8,86 @@ import {
   SafeAreaView,
   FlatList,
   Alert,
+  ActivityIndicator,
+  Modal,
+  Dimensions,
+  RefreshControl,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import CustomTitle from "../../components/shared/CustomTitle";
 import { scale, verticalScale } from "../../components/adaptive/Adaptiveness";
 import AddMoreButton from "../../components/provider/profile/AddMoreButton";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useGetProviderProfileDetailsQuery } from "../../../redux/features/apiSlices/user/createJobSlices";
+import { useFocusEffect, router } from "expo-router";
 
-const ProjectGalleryScreen = ({ navigation }) => {
-  const [projects, setProjects] = useState([
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+const ProjectGalleryScreen = () => {
+  const [userId, setUserId] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Fetch userId from AsyncStorage
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem("userId");
+        if (storedUserId) {
+          setUserId(storedUserId);
+          // console.log("Fetched userId:", storedUserId);
+        } else {
+          console.log("No userId found in AsyncStorage");
+        }
+      } catch (error) {
+        console.error("Error fetching userId:", error);
+      }
+    };
+    fetchUserId();
+  }, []);
+
+  // API call
+  const { data, isLoading, error, refetch } = useGetProviderProfileDetailsQuery(
+    userId,
     {
-      id: 1,
-      title: "Project 1",
-      images: [
-        {
-          id: 1,
-          uri: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400&h=300&fit=crop",
-          type: "after",
-        },
-        {
-          id: 2,
-          uri: "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&h=300&fit=crop",
-          type: "before",
-        },
-        {
-          id: 3,
-          uri: "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&h=300&fit=crop",
-          type: "before",
-        },
-        {
-          id: 4,
-          uri: "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400&h=300&fit=crop",
-          type: "before",
-        },
-      ],
-    },
-    {
-      id: 2,
-      title: "Project 2",
-      images: [
-        {
-          id: 3,
-          uri: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
-          type: "after",
-        },
-        {
-          id: 4,
-          uri: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
-          type: "before",
-        },
-        {
-          id: 5,
-          uri: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=300&fit=crop",
-          type: "before",
-        },
-        {
-          id: 6,
-          uri: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
-          type: "before",
-        },
-      ],
-    },
-  ]);
+      skip: !userId,
+    }
+  );
+
+  useEffect(() => {
+    if (data?.data?.portfolio) {
+      const formattedProjects = data.data.portfolio.map((project) => ({
+        id: project._id,
+        title: project.title || "Untitled Project",
+        serviceCategory: project.serviceCategory?.title || "",
+        projectDate: project.projectDate,
+        images: project.images.map((image) => ({
+          id: image._id,
+          uri: image.url,
+          type: image.imageType || "during",
+        })),
+      }));
+      setProjects(formattedProjects);
+    }
+  }, [data]);
+
+  // Refetch data when screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      if (userId) {
+        refetch();
+      }
+    }, [userId])
+  );
+
+  // Pull to refresh
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    refetch().finally(() => setRefreshing(false));
+  }, [refetch]);
 
   const requestPermissions = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -99,10 +117,9 @@ const ProjectGalleryScreen = ({ navigation }) => {
         const newImages = result.assets.map((asset, index) => ({
           id: Date.now() + index,
           uri: asset.uri,
-          type: "after", // Default to 'after', can be changed later
+          type: "after",
         }));
 
-        // Create a new project with selected images
         const newProject = {
           id: Date.now(),
           title: `Project ${projects.length + 1}`,
@@ -123,8 +140,13 @@ const ProjectGalleryScreen = ({ navigation }) => {
   };
 
   const handleImagePress = (imageUri) => {
-    // Handle image press - maybe open full screen view
-    console.log("Image pressed:", imageUri);
+    setSelectedImage(imageUri);
+    setIsImageModalVisible(true);
+  };
+
+  const closeImageModal = () => {
+    setIsImageModalVisible(false);
+    setSelectedImage(null);
   };
 
   const toggleImageType = (projectId, imageId) => {
@@ -147,109 +169,143 @@ const ProjectGalleryScreen = ({ navigation }) => {
     );
   };
 
-  const renderImage = ({ item: image, index, projectId }) => (
-    <View className="relative mr-[3%] mb-[3%]" style={{ width: "47%" }}>
-      <TouchableOpacity
-        onPress={() => handleImagePress(image.uri)}
-        onLongPress={() => toggleImageType(projectId, image.id)}
-        activeOpacity={0.8}
-        className="relative"
+  const renderImage = ({ item: image, index }) => (
+    <TouchableOpacity
+      onPress={() => handleImagePress(image.uri)}
+      onLongPress={() => toggleImageType(image.projectId, image.id)}
+      activeOpacity={0.8}
+      className="mr-[3%]"
+    >
+      <Image
+        source={{ uri: image.uri }}
+        style={{
+          width: scale(150),
+          height: verticalScale(160),
+          borderRadius: 10,
+        }}
+        resizeMode="cover"
+      />
+      <View
+        style={{
+          top: verticalScale(10),
+          left: scale(10),
+          width: scale(32),
+          height: scale(32),
+        }}
+        className="absolute bg-[#319FCA] rounded-full items-center justify-center"
       >
-        <Image
-          source={{ uri: image.uri }}
-          style={{ height: verticalScale(160) }}
-          className="w-full  rounded-lg"
-          resizeMode="cover"
-        />
-
-        {/* Camera Icon Overlay */}
-        <View
-          style={{
-            top: verticalScale(10),
-            left: scale(10),
-            width: scale(32),
-            height: scale(32),
-          }}
-          className="absolute  bg-[#319FCA] rounded-full items-center justify-center"
-        >
-          <Ionicons name="camera" size={16} color="white" />
-        </View>
-
-        {/* Before/After Label */}
-        {image.type && (
-          <View
-            style={{
-              bottom: verticalScale(10),
-              right: scale(10),
-              paddingHorizontal: scale(8),
-              paddingVertical: verticalScale(4),
-            }}
-            className="absolute  bg-black/70  rounded"
-          >
-            <Text className="text-white text-xl font-semibold">
-              {image.type}
-            </Text>
-          </View>
-        )}
-      </TouchableOpacity>
-    </View>
+        <Ionicons name="camera" size={16} color="white" />
+      </View>
+    </TouchableOpacity>
   );
 
   const renderProject = ({ item: project }) => (
     <View className="mt-[5%]">
-      {/* Project Title */}
       <Text className="text-base font-poppins-500medium text-[#175994] mb-[3%] px-[4%]">
         {project.title}
       </Text>
-
-      {/* Project Images in FlatList */}
-      <View className="px-[4%]">
-        <FlatList
-          data={project.images}
-          renderItem={({ item, index }) =>
-            renderImage({ item, index, projectId: project.id })
-          }
-          keyExtractor={(item) => item.id.toString()}
-          numColumns={2}
-          showsVerticalScrollIndicator={false}
-          columnWrapperStyle={{ justifyContent: "space-between" }}
-          scrollEnabled={false}
-        />
-      </View>
+      {project.serviceCategory && (
+        <Text className="text-sm font-poppins-regular text-gray-600 mb-[2%] px-[4%]">
+          {project.serviceCategory}
+        </Text>
+      )}
+      {project.projectDate && (
+        <Text className="text-xs font-poppins-regular text-gray-500 mb-[3%] px-[4%]">
+          {new Date(project.projectDate).toLocaleDateString()}
+        </Text>
+      )}
+      <FlatList
+        data={project.images.map((img) => ({ ...img, projectId: project.id }))}
+        renderItem={renderImage}
+        keyExtractor={(item) => item.id.toString()}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingLeft: scale(16) }}
+      />
     </View>
   );
 
   return (
     <SafeAreaView className="flex-1 bg-[#f9f9f9]">
-      {/* Header */}
-      <View className="flex-row px-[3%] ">
+      <View className="flex-row px-[3%]">
         <CustomTitle title="Project Gallery" />
       </View>
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Projects List */}
-        <FlatList
-          data={projects}
-          renderItem={renderProject}
-          keyExtractor={(item) => item.id.toString()}
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={false}
-        />
-
-        {/* Add More Project Button */}
-        {/* <TouchableOpacity
-          onPress={pickImages}
-          className="mt-[8%] mb-[6%] border border-[#319FCA] bg-[#319FCA] py-[4%] rounded-full items-center justify-center mx-[4%]"
-        >
-          <View className="flex-row items-center">
-            <Ionicons name="add" size={20} color="white" />
-            <Text className="text-white font-poppins-bold text-base ml-[1%]">
-              Add more project
-            </Text>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: verticalScale(180) }}
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {isLoading && (
+          <View className="flex-1 items-center justify-center py-[10%]">
+            <ActivityIndicator size="large" color="#319FCA" />
+            <Text className="text-gray-500 mt-2">Loading projects...</Text>
           </View>
-        </TouchableOpacity> */}
-        <AddMoreButton onPress={pickImages} />
+        )}
+        {error && (
+          <View className="flex-1 items-center justify-center py-[10%]">
+            <Text className="text-red-500">Failed to load projects</Text>
+          </View>
+        )}
+        {!isLoading && !error && (
+          <FlatList
+            data={projects}
+            renderItem={renderProject}
+            keyExtractor={(item) => item.id.toString()}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={false}
+            ListEmptyComponent={
+              <View className="flex-1 items-center justify-center py-[10%]">
+                <Text className="text-gray-500">No projects yet</Text>
+              </View>
+            }
+          />
+        )}
+        <AddMoreButton
+          onPress={() => router.push("provider/profile/projectGalleryForm")}
+        />
       </ScrollView>
+
+      <Modal
+        visible={isImageModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={closeImageModal}
+      >
+        <View className="flex-1 bg-black">
+          <SafeAreaView>
+            <TouchableOpacity
+              onPress={closeImageModal}
+              className="absolute top-[2%] right-[4%] z-10"
+              style={{
+                width: scale(40),
+                height: scale(40),
+                backgroundColor: "rgba(0,0,0,0.5)",
+                borderRadius: scale(20),
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Ionicons name="close" size={24} color="white" />
+            </TouchableOpacity>
+          </SafeAreaView>
+          <View className="flex-1 justify-center items-center">
+            {selectedImage && (
+              <Image
+                source={{ uri: selectedImage }}
+                style={{
+                  width: SCREEN_WIDTH,
+                  height: SCREEN_HEIGHT,
+                }}
+                resizeMode="contain"
+              />
+            )}
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

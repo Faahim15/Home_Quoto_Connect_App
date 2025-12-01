@@ -76,6 +76,34 @@ export const homeApiSlices = api.injectEndpoints({
       ],
     }),
 
+    createProjectGallery: builder.mutation({
+      query: ({ images, title, serviceCategory, projectDate }) => {
+        const formData = new FormData();
+
+        // Append multiple images
+        images.forEach((img, index) => {
+          formData.append("images", {
+            uri: img.uri,
+            name: img.name || `image_${index}.jpg`,
+            type: img.type || "image/jpeg",
+          });
+        });
+
+        // Append text fields
+        formData.append("title", title);
+        formData.append("serviceCategory", serviceCategory);
+        formData.append("projectDate", projectDate);
+
+        return {
+          url: `/project-gallery`,
+          method: "POST",
+          body: formData,
+          // Do NOT set Content-Type → it must be auto-set
+        };
+      },
+      invalidatesTags: ["PopularProviders", "Provider"],
+    }),
+
     // Update Profile Photo
     updateProfilePhoto: builder.mutation({
       query: (formData) => ({
@@ -144,5 +172,6 @@ export const {
   useGetSupportTicketMessagesQuery,
   useDeleteAccountMutation,
   useUpdateProfilePhotoMutation,
+  useCreateProjectGalleryMutation,
   useUpdateProfileDataMutation,
 } = homeApiSlices;

@@ -10,9 +10,12 @@ export default function InputField({
 }) {
   return (
     <View className="mt-[1.5%]">
-      <Text className="font-poppins-400regular bg-gray-50 text-base text-[#5C5F62]">
-        {label}
-      </Text>
+      {label && (
+        <Text className="font-poppins-400regular bg-gray-50 text-base text-[#5C5F62]">
+          {label}
+        </Text>
+      )}
+
       <TextInput
         placeholder={placeholder}
         keyboardType={keyboardType}

@@ -58,8 +58,6 @@ export default function CompletedJobsDetailScreen() {
   // console.log("show data", completedJobs?.reviews?.provider_to_client);
   const isAlreadyReviewed = !!completedJobs?.reviews?.provider_to_client;
 
-  console.log("is", isAlreadyReviewed);
-
   return (
     <View className="flex-1  bg-[#f9f9f9]">
       <View className="px-[6%]">
