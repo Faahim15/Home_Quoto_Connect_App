@@ -120,5 +120,6 @@ export const api = createApi({
     "Payments",
     "Subscriptions",
     "MySubscriptions",
+    "Credits",
   ],
 });

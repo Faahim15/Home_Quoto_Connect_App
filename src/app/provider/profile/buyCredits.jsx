@@ -1,97 +1,141 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import CustomTitle from "../../components/shared/services/CustomTitle";
 import { verticalScale } from "../../components/adaptive/Adaptiveness";
 import { router } from "expo-router";
+import { useGetCreditsPackagesQuery } from "../../../redux/features/apiSlices/payment/paymentApiSlice";
 
 const BuyCreditScreen = () => {
-  const [selectedPlan, setSelectedPlan] = useState(25);
+  const [selectedPlan, setSelectedPlan] = useState(null);
 
-  const plans = [
-    {
-      id: 20,
-      title: "20 Credits",
-      price: "$400",
-      features: "Best for small to medium jobs",
-    },
-    {
-      id: 50,
-      title: "50 Credits",
-      price: "$1000",
-      features: "Ideal for larger projects",
-    },
-    {
-      id: 100,
-      title: "100 Credits",
-      price: "$2000",
-      features: "Perfect for enterprise-level jobs",
-    },
-  ];
+  const { data, isLoading, error } = useGetCreditsPackagesQuery();
+
+  const packages = data?.data?.packages || [];
+
   function buyCreditHandler() {
-    // navigation.navigate("CreditsDetailScreen", {
-    //   selectedPlanId: selectedPlan,
-    // });
+    if (!selectedPlan) return;
+
     router.push({
-      pathname: "provider/profile/credits",
-      params: { selectedPlanId: selectedPlan },
+      pathname: "provider/profile/creditsPayment",
+      params: { selectedPackageId: selectedPlan },
     });
   }
+
+  if (isLoading) {
+    return (
+      <View className="flex-1 bg-[#f9f9f9] items-center justify-center">
+        <ActivityIndicator size="large" color="#0054A5" />
+        <Text className="text-[#0F161C] font-poppins-400regular text-sm mt-4">
+          Loading packages...
+        </Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View className="flex-1 bg-[#f9f9f9] items-center justify-center px-[6%]">
+        <Text className="text-red-500 font-poppins-500medium text-base text-center">
+          Failed to load packages. Please try again.
+        </Text>
+      </View>
+    );
+  }
+
+  const selectedPackage = packages.find((pkg) => pkg._id === selectedPlan);
 
   return (
     <View className="flex-1 bg-[#f9f9f9]">
       <View className="px-[6%]">
         <CustomTitle title="Subscription" />
       </View>
+
       <ScrollView
         contentContainerStyle={{ paddingBottom: verticalScale(180) }}
-        className="flex-1  px-[6%] py-[3%]"
+        className="flex-1 px-[6%] "
+        showsVerticalScrollIndicator={false}
       >
-        <View className=" mt-[6%] gap-[4%]">
-          {plans.map((plan) => (
+        <View className="mt-[3%] gap-[3%]">
+          {packages.map((pkg) => (
             <TouchableOpacity
-              key={plan.id}
-              onPress={() => setSelectedPlan(plan.id)}
-              className={` 
-    ${selectedPlan === plan.id ? "bg-blue-50 border-[#175994]" : "bg-white border-gray-300"} 
-    ${selectedPlan === plan.id ? "opacity-100" : "opacity-75"} 
-    border-2 rounded-xl p-[5%] shadow-sm
-  `}
+              key={pkg._id}
+              onPress={() => setSelectedPlan(pkg._id)}
+              className={`${
+                selectedPlan === pkg._id
+                  ? "bg-blue-50 border-[#175994]"
+                  : "bg-white border-gray-300"
+              } ${
+                selectedPlan === pkg._id ? "opacity-100" : "opacity-75"
+              } border-2 rounded-xl p-[5%] shadow-sm`}
               activeOpacity={1}
             >
-              {/* Header with Icon and Title */}
+              {/* Popular Badge */}
+              {pkg.isPopular && (
+                <View className="absolute -top-2 left-4 bg-[#F59E0B] px-3 py-1 rounded-full">
+                  <Text className="text-white text-xs font-poppins-semiBold">
+                    POPULAR
+                  </Text>
+                </View>
+              )}
+
+              {/* Header with Title */}
               <View className="flex-row border-b border-[#dcdcdc] pb-[2%] items-center mb-[4%]">
-                <Text className="text-base  font-poppins-500medium text-[#175994]">
-                  {plan.title}
+                <Text className="text-base font-poppins-500medium text-[#175994]">
+                  {pkg.name}
                 </Text>
               </View>
 
-              {/* Features List */}
+              {/* Credits Count */}
+              <View className="mb-[3%]">
+                <Text className="text-[#0F161C] font-poppins-semiBold text-xl">
+                  {pkg.credits} Credits
+                </Text>
+              </View>
+
+              {/* Description */}
               <View className="mb-[5%]">
                 <View className="flex-row items-start mb-[2%]">
-                  <Text className="text-[#175994] text-base mr-[2%] ">✓</Text>
+                  <Text className="text-[#175994] text-base mr-[2%]">✓</Text>
                   <Text className="text-[#0F161C] font-poppins-400regular text-xs flex-1 leading-5">
-                    {plan.features}
+                    {pkg.description}
                   </Text>
                 </View>
               </View>
 
               {/* Price Section */}
-              <View className="border-t flex-row justify-between border-[#DCDCDC] pt-[4%]">
-                <Text className="text-[#1F2937] text-base font-poppins-400regular mb-[1%]">
-                  Price
-                </Text>
-                <View className="flex-row items-baseline">
-                  <Text className="text-[#F59E0B] text-lg font-poppins-semiBold ">
-                    {plan.price}
+              <View className="border-t flex-row justify-between items-center border-[#DCDCDC] pt-[4%]">
+                <View>
+                  <Text className="text-[#1F2937] text-sm font-poppins-400regular mb-[1%]">
+                    Price
                   </Text>
-                  <Text className="text-[#F59E0B] font-poppins-semiBold text-base ml-1">
-                    {plan.period}
+                  {pkg.discount > 0 && (
+                    <View className="flex-row items-center gap-2">
+                      <Text className="text-[#9CA3AF] text-xs font-poppins-400regular line-through">
+                        ${pkg.originalPrice}
+                      </Text>
+                      <View className="bg-green-100 px-2 py-0.5 rounded">
+                        <Text className="text-green-700 text-xs font-poppins-semiBold ">
+                          {pkg.discount}% OFF
+                        </Text>
+                      </View>
+                    </View>
+                  )}
+                </View>
+                <View className="flex-row items-baseline">
+                  <Text className="text-[#F59E0B] text-xl font-poppins-semiBold">
+                    ${pkg.price}
                   </Text>
                 </View>
               </View>
 
               {/* Selection Indicator */}
-              {selectedPlan === plan.id && (
+              {selectedPlan === pkg._id && (
                 <View className="absolute top-[3%] right-[3%]">
                   <View className="bg-[#175994] rounded-full w-6 h-6 items-center justify-center">
                     <Text className="text-white text-xs">✓</Text>
@@ -102,14 +146,20 @@ const BuyCreditScreen = () => {
           ))}
         </View>
       </ScrollView>
+
       {/* Continue Button */}
       <TouchableOpacity
         onPress={buyCreditHandler}
-        className="bg-[#0054A5] rounded-xl py-[4%] mx-[6%]  mb-[5%]"
+        disabled={!selectedPlan}
+        className={`${
+          selectedPlan ? "bg-[#0054A5]" : "bg-gray-300"
+        } rounded-xl py-[4%] mx-[6%] mb-[5%]`}
         activeOpacity={1}
       >
-        <Text className="text-white text-center text-base font-poppins-bold ">
-          Continue with {plans.find((p) => p.id === selectedPlan)?.title} Plan
+        <Text className="text-white text-center text-base font-poppins-bold">
+          {selectedPackage
+            ? `Continue with ${selectedPackage.name}`
+            : "Select a Plan to Continue"}
         </Text>
       </TouchableOpacity>
     </View>

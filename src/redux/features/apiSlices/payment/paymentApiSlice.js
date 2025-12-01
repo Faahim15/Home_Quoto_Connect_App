@@ -118,6 +118,18 @@ export const paymentSlice = api.injectEndpoints({
     }),
 
     // ----------------------------------------------------
+    // ⭐ GET Credits Packages
+    // GET: subscriptions/credits/packages
+    // ----------------------------------------------------
+    getCreditsPackages: builder.query({
+      query: () => ({
+        url: `subscriptions/credits/packages`,
+        method: "GET",
+      }),
+      providesTags: ["Credits", "Payments"],
+    }),
+
+    // ----------------------------------------------------
     // ⭐ GET Wallet Info
     // GET: /payments/wallet
     // ----------------------------------------------------
@@ -144,5 +156,6 @@ export const {
   useGetSubscriptionPackageQuery,
   useGetMySubscriptionQuery,
   useGetCreditsActivityQuery,
+  useGetCreditsPackagesQuery,
   useGetWalletQuery,
 } = paymentSlice;
