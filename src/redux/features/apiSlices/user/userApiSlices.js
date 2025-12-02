@@ -128,6 +128,40 @@ export const homeApiSlices = api.injectEndpoints({
       invalidatesTags: ["User", "Profile"],
     }),
 
+    // Add this inside the endpoints of homeApiSlices
+    submitBackgroundCheck: builder.mutation({
+      query: ({ idFront, idBack, consentForm }) => {
+        const formData = new FormData();
+
+        // Append files
+        formData.append("idFront", {
+          uri: idFront.uri,
+          name: idFront.name || "idFront.png",
+          type: idFront.type || "image/png",
+        });
+
+        formData.append("idBack", {
+          uri: idBack.uri,
+          name: idBack.name || "idBack.png",
+          type: idBack.type || "image/png",
+        });
+
+        formData.append("consentForm", {
+          uri: consentForm.uri,
+          name: consentForm.name || "consentForm.png",
+          type: consentForm.type || "image/png",
+        });
+
+        return {
+          url: `/background-check/submit`,
+          method: "POST",
+          body: formData,
+          // Do NOT set Content-Type header → let fetch set it for multipart/form-data
+        };
+      },
+      invalidatesTags: ["User", "Profile"], // adjust if needed
+    }),
+
     // existing endpoints...
     userProfile: builder.query({
       query: () => ({
@@ -173,5 +207,6 @@ export const {
   useDeleteAccountMutation,
   useUpdateProfilePhotoMutation,
   useCreateProjectGalleryMutation,
+  useSubmitBackgroundCheckMutation,
   useUpdateProfileDataMutation,
 } = homeApiSlices;

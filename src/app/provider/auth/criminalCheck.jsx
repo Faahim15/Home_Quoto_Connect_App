@@ -1,16 +1,47 @@
-import { View, Text } from "react-native";
+import { View, Text, ScrollView, Alert } from "react-native";
+import { useState } from "react";
+import { router } from "expo-router";
 import CustomTitle from "../../components/shared/CustomTitle";
 import VerifyHeader from "../../components/provider/auth/VerifyHeader";
-import Uploader from "../../components/provider/auth/Uploader";
 import ImageSelector from "../../components/shared/imagePicker/ImagePicker";
 import LicenceHeader from "../../components/provider/auth/LicenceHeader";
 import CustomButton from "../../components/onboarding/CustomButton";
-import { router } from "expo-router";
-export default function criminalCheck() {
+import { useSubmitBackgroundCheckMutation } from "../../../redux/features/apiSlices/user/userApiSlices";
+
+export default function CriminalCheck() {
+  const [consentForm, setConsentForm] = useState(null);
+  const [idFront, setIdFront] = useState(null);
+  const [idBack, setIdBack] = useState(null);
+
+  const [submitBackgroundCheck, { isLoading }] =
+    useSubmitBackgroundCheckMutation();
+
+  const handleSubmit = async () => {
+    if (!consentForm || !idFront || !idBack) {
+      Alert.alert("Missing Files", "Please upload all required documents.");
+      return;
+    }
+
+    try {
+      await submitBackgroundCheck({ idFront, idBack, consentForm }).unwrap();
+      Alert.alert("Success", "Background check submitted successfully!");
+      router.push("/provider/auth/validation");
+    } catch (error) {
+      Alert.alert(
+        "Error",
+        error?.message || "Failed to submit. Please try again."
+      );
+    }
+  };
+
   return (
     <View className="flex-1 bg-[#F9F9F9]">
-      <View className="mx-[6%]">
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: "6%", paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}
+      >
         <CustomTitle />
+
         <View className="mt-[9%]">
           <VerifyHeader
             title="Criminal Background Check"
@@ -18,25 +49,47 @@ export default function criminalCheck() {
           />
         </View>
 
-        <Uploader
-          title="Upload ID (front and back if applicable)"
-          subtitle="Accepted Document Types: Passport, National ID"
-        />
-
         <View className="mt-[8%]">
           <LicenceHeader
             title="Upload Signed Consent Form"
-            subtitle="Supported file types: PDF, JPG, PNG"
+            subtitle="Supported file types: JPG, PNG"
           />
           <View className="flex-1 mt-[2%]">
-            <ImageSelector />
+            <ImageSelector
+              selectedFile={consentForm}
+              onFileSelect={setConsentForm}
+            />
+          </View>
+
+          <View className="mt-[2%]">
+            <LicenceHeader
+              title="Please upload the front side of your ID card"
+              subtitle="Supported file types: JPG, PNG"
+            />
+            <View className="flex-1 mt-[2%]">
+              <ImageSelector selectedFile={idFront} onFileSelect={setIdFront} />
+            </View>
+          </View>
+
+          <View className="mt-[2%]">
+            <LicenceHeader
+              title="Please upload the back side of your ID card"
+              subtitle="Supported file types: JPG, PNG"
+            />
+            <View className="flex-1 mt-[2%]">
+              <ImageSelector selectedFile={idBack} onFileSelect={setIdBack} />
+            </View>
           </View>
         </View>
+      </ScrollView>
+
+      <View className="mb-[20%]">
+        <CustomButton
+          onPress={handleSubmit}
+          title={isLoading ? "Submitting..." : "Continue"}
+          disabled={isLoading}
+        />
       </View>
-      <CustomButton
-        onPress={() => router.push("/provider/auth/validation")}
-        title="Continue"
-      />
     </View>
   );
 }
