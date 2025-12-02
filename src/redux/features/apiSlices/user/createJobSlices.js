@@ -203,6 +203,24 @@ export const jobSlice = api.injectEndpoints({
       providesTags: (result, error, arg) => [{ type: "Profile", id: arg }],
     }),
 
+    // Search Providers
+    searchProviders: builder.query({
+      query: ({ minRating, sortBy, serviceCategory, search } = {}) => {
+        const params = new URLSearchParams();
+
+        if (minRating) params.append("minRating", minRating);
+        if (sortBy) params.append("sortBy", sortBy);
+        if (serviceCategory) params.append("serviceCategory", serviceCategory);
+        if (search) params.append("searchQuery", search);
+
+        return {
+          url: `/popular/providers?${params.toString()}`,
+          method: "GET",
+        };
+      },
+      providesTags: ["PopularProviders"],
+    }),
+
     getPopularProviders: builder.query({
       query: () => ({
         url: "/popular/providers",
@@ -230,5 +248,6 @@ export const {
   useGetSpecializationsQuery,
   useGetProviderDetailsQuery,
   useGetProviderProfileDetailsQuery,
+  useSearchProvidersQuery,
   useGetPopularProvidersQuery,
 } = jobSlice;
