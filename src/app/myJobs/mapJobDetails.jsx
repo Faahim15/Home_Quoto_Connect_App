@@ -7,13 +7,28 @@ import BotttomButtons from "../components/shared/services/buttons/BottomButtons"
 import { router, useLocalSearchParams } from "expo-router";
 import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import { Text } from "react-native";
+import UpdateQuoteButton from "../components/shared/services/buttons/UpdateQuoteButton";
+import { useMyQuotes } from "../../hooks/useMyQuotes";
 export default function MapJobDetails() {
   const { serviceId, showButtons } = useLocalSearchParams();
 
-  const { data, isLoading, error } = useGetSingleJobQuery(serviceId);
+  const { data, isLoading } = useGetSingleJobQuery(serviceId);
 
-  const shouldShowbutton = showButtons === "true";
+  // const shouldShowbuttons = showButtons === "true";
+  const service = data?.data?.job;
+  const myQuotes = useMyQuotes(service?.quotes);
 
+  const isAccepted = myQuotes?.some(
+    (q) => q.status === "accepted" || q.status === "updated"
+  );
+  const acceptedQuote = myQuotes.find(
+    (q) => q.status === "accepted" || q.status === "updated"
+  );
+  const quoteId = acceptedQuote?._id;
+
+  const updatedOffer = isAccepted && service?.status === "in_progress";
+  const shouldRenderUpdateButton =
+    updatedOffer || service?.status === "pending";
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
@@ -24,7 +39,7 @@ export default function MapJobDetails() {
     );
   }
 
-  const service = data?.data?.job;
+  console.log("data", data?.data);
 
   return (
     <View className="flex-1 bg-[#F9F9F9]">
@@ -39,29 +54,13 @@ export default function MapJobDetails() {
           </View>
         </ScrollView>
       </View>
-      {shouldShowbutton && (
-        <View
-          className="flex-row gap-[6%] h-[14%]  border border-[#D8DCE0] justify-center items-center "
-          style={[
-            XStyle.shadowBox,
-            { borderTopRightRadius: scale(20), borderTopLeftRadius: scale(20) },
-          ]}
-        >
-          <BotttomButtons
-            onPress={() => router.replace("/myJobs")}
-            backgroundColor="#fff"
-            color="#EF4444"
-            borderColor="#EF4444"
-            title="Decline"
-          />
-          <BotttomButtons
-            onPress={() => router.replace("/myJobs")}
-            backgroundColor="#18649F"
-            color="#fff"
-            borderColor="#18649F"
-            title="Accept"
-          />
-        </View>
+
+      {shouldRenderUpdateButton && service?.status !== "expired" && (
+        <UpdateQuoteButton
+          serviceId={service?._id}
+          quoteId={quoteId}
+          title={updatedOffer ? "Send an updated offer" : "Send an offer"}
+        />
       )}
     </View>
   );

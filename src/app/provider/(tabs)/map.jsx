@@ -7,7 +7,7 @@ import MapHeader from "../../components/provider/map/MapHeader";
 import MapContainer from "../../components/provider/map/MapContainer";
 import BottomStatusPanel from "../../components/provider/map/BottomStatusPanel";
 import ServiceQuoteModal from "../../components/shared/modal/ServiceQuoteModal";
-import nearbyUsers from "../../components/data/provider/MapData";
+
 const MapScreen = () => {
   const [isOnline, setIsOnline] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
@@ -56,6 +56,11 @@ const MapScreen = () => {
 
   useEffect(() => {
     return () => {
+      // Cleanup: dismiss any open alerts when component unmounts
+      if (Alert.dismissAll) {
+        Alert.dismissAll();
+      }
+
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
       }
@@ -68,61 +73,6 @@ const MapScreen = () => {
     }
   }, [userLocation]);
 
-  // const getCurrentLocation = async () => {
-  //   try {
-  //     const { status } = await Location.requestForegroundPermissionsAsync();
-  //     if (status !== "granted") {
-  //       Alert.alert(
-  //         "Permission denied",
-  //         "Location permission is required to show your position on the map."
-  //       );
-  //       return;
-  //     }
-
-  //     const location = await Location.getCurrentPositionAsync({});
-  //     const newLocation = {
-  //       latitude: location.coords.latitude,
-  //       longitude: location.coords.longitude,
-  //     };
-  //     setUserLocation(newLocation);
-
-  //     try {
-  //       const reverseGeocode = await Location.reverseGeocodeAsync({
-  //         latitude: newLocation.latitude,
-  //         longitude: newLocation.longitude,
-  //       });
-
-  //       if (reverseGeocode.length > 0) {
-  //         const place = reverseGeocode[0];
-  //         const locationParts = [];
-
-  //         if (place.city) locationParts.push(place.city);
-  //         if (place.region) locationParts.push(place.region);
-  //         if (place.country) locationParts.push(place.country);
-
-  //         const locationName = locationParts.join(", ") || "Current Location";
-  //         setCurrentLocationName(locationName);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error getting location name:", error);
-  //       setCurrentLocationName("Current Location");
-  //     }
-
-  //     if (mapRef) {
-  //       mapRef.animateToRegion(
-  //         {
-  //           latitude: newLocation.latitude,
-  //           longitude: newLocation.longitude,
-  //           latitudeDelta: 0.01,
-  //           longitudeDelta: 0.01,
-  //         },
-  //         1000
-  //       );
-  //     }
-  //   } catch (error) {
-  //     console.error("Error getting location:", error);
-  //   }
-  // };
   const getCurrentLocation = async () => {
     try {
       // Step 1: Check if location services are enabled
@@ -130,7 +80,8 @@ const MapScreen = () => {
       if (!isEnabled) {
         Alert.alert(
           "Location Services Disabled",
-          "Please enable location services in your device settings to use this feature."
+          "Please enable location services in your device settings to use this feature.",
+          [{ text: "OK" }]
         );
         return;
       }
@@ -140,24 +91,81 @@ const MapScreen = () => {
       if (status !== "granted") {
         Alert.alert(
           "Permission Denied",
-          "Location permission is required to show your position on the map."
+          "Location permission is required to show your position on the map.",
+          [{ text: "OK" }]
         );
         return;
       }
 
-      // Step 3: Get current location with proper configuration
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Balanced,
-        timeInterval: 10000, // 10 seconds timeout
-      });
+      // Step 3: Try multiple methods to get location
+      let location = null;
 
+      // Method 1: Try last known position first
+      try {
+        const lastKnown = await Location.getLastKnownPositionAsync({});
+        if (lastKnown) {
+          location = lastKnown;
+          console.log("Using last known position");
+        }
+      } catch (error) {
+        console.log("Last known position not available:", error.message);
+      }
+
+      // Method 2: If no last known, try current position with low accuracy
+      if (!location) {
+        try {
+          location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Lowest,
+            maximumAge: 10000,
+          });
+          console.log("Got current position with low accuracy");
+        } catch (error) {
+          console.log("Low accuracy failed:", error.message);
+        }
+      }
+
+      // Method 3: Try with timeout
+      if (!location) {
+        try {
+          const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Timeout")), 15000)
+          );
+
+          const locationPromise = Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Low,
+          });
+
+          location = await Promise.race([locationPromise, timeoutPromise]);
+          console.log("Got position with timeout handler");
+        } catch (error) {
+          console.log("Timeout method failed:", error.message);
+        }
+      }
+
+      // If all methods fail, use default location
+      if (!location) {
+        console.log("All location methods failed, using default location");
+        const newLocation = {
+          latitude: initialRegion.latitude,
+          longitude: initialRegion.longitude,
+        };
+        setUserLocation(newLocation);
+        setCurrentLocationName("San Diego, California, US");
+
+        if (mapRef) {
+          mapRef.animateToRegion(initialRegion, 1000);
+        }
+        return;
+      }
+
+      // Step 4: Set the location
       const newLocation = {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       };
       setUserLocation(newLocation);
 
-      // Step 4: Get location name
+      // Step 5: Get location name
       try {
         const reverseGeocode = await Location.reverseGeocodeAsync({
           latitude: newLocation.latitude,
@@ -180,7 +188,7 @@ const MapScreen = () => {
         setCurrentLocationName("Current Location");
       }
 
-      // Step 5: Animate map to user location
+      // Step 6: Animate map to user location
       if (mapRef) {
         mapRef.animateToRegion(
           {
@@ -194,10 +202,18 @@ const MapScreen = () => {
       }
     } catch (error) {
       console.error("Error getting location:", error);
-      Alert.alert(
-        "Location Error",
-        "Unable to get your current location. Please ensure location services are enabled and try again."
-      );
+
+      // Fallback to default location without showing error
+      const newLocation = {
+        latitude: initialRegion.latitude,
+        longitude: initialRegion.longitude,
+      };
+      setUserLocation(newLocation);
+      setCurrentLocationName("San Diego, California, US");
+
+      if (mapRef) {
+        mapRef.animateToRegion(initialRegion, 1000);
+      }
     }
   };
   const searchLocation = async (query) => {

@@ -12,6 +12,7 @@ import { useState, useEffect, useRef } from "react";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import MapButton from "../../provider/map/MapButton";
 import { router } from "expo-router";
+import BotttomButtons from "../services/buttons/BottomButtons";
 export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
   const slideAnim = useRef(new Animated.Value(300)).current;
 
@@ -141,23 +142,37 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
             </View>
             {/* Buttons */}
             <View className="flex-row gap-[4%] mt-[4%] mb-[3=2%]">
-              <MapButton
+              <BotttomButtons
                 onPress={() => {
                   onClose();
-                  router.push("/provider/quote/updateQuote");
+                  router.back();
+                }}
+                backgroundColor="#fff"
+                color="#EF4444"
+                borderColor="#EF4444"
+                title="Cancel"
+              />
+
+              <MapButton
+                onPress={() => {
+                  router.push({
+                    pathname: "/provider/quote/provideUpdatedOffer",
+                    params: { jobId: selectedJob?._id },
+                  });
+                  onClose();
                 }}
                 title="Update Quote"
               />
-              <MapButton
+              {/* <MapButton
                 onPress={() => {
                   onClose();
                   router.replace("/provider/myJobs");
                 }}
                 borderColor="#175994"
                 backgroundColor="#fff"
-                title="Accept Offer"
+                title="Cancel"
                 color="#175994"
-              />
+              /> */}
             </View>
           </Animated.View>
         </View>
