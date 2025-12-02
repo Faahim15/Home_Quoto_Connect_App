@@ -9,8 +9,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 const { width } = Dimensions.get("window");
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
-import { ProvidersCategories } from "../../../data/shared/Categories";
-const cardWidth = width * 0.45;
 import { router } from "expo-router";
 import { useGetPopularProvidersQuery } from "../../../../../redux/features/apiSlices/user/createJobSlices";
 const ServiceCard = ({ item }) => {

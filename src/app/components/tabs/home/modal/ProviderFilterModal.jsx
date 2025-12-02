@@ -1,4 +1,6 @@
-import { View, Text, Modal, TouchableOpacity, TextInput } from "react-native";
+import { View, Text, Modal, TouchableOpacity } from "react-native";
+import DropdownMenu from "../../../provider/profile/DropdownMenu";
+import { useGetServiceCategoriesQuery } from "../../../../../redux/features/apiSlices/user/createJobSlices";
 
 export default function ProviderFilterModal({
   visible,
@@ -10,62 +12,50 @@ export default function ProviderFilterModal({
   const updateField = (key, value) => {
     onApply({ ...filters, [key]: value });
   };
+  const { data, isLoading } = useGetServiceCategoriesQuery();
+
+  // Rating options 1-5
+  const ratingOptions = [1, 2, 3, 4, 5];
 
   return (
     <Modal visible={visible} transparent animationType="fade">
       <View className="flex-1 bg-[rgba(0,0,0,0.4)] justify-center items-center">
         <View className="w-[80%] bg-white rounded-xl p-5">
+          {/* CLOSE BUTTON */}
+          <TouchableOpacity
+            onPress={onClose}
+            className="absolute top-2 right-2 p-2"
+          >
+            <Text className="text-lg font-bold">✕</Text>
+          </TouchableOpacity>
+
           <Text className="text-lg font-poppins-semibold text-center mb-4">
             Filter Providers
           </Text>
 
           {/* MIN RATING */}
-          <Text className="font-poppins-medium mb-1">Min Rating</Text>
-          <TextInput
-            placeholder="e.g. 4"
-            className="border p-3 rounded-md mb-3"
-            keyboardType="numeric"
-            value={filters.minRating?.toString()}
-            onChangeText={(val) => updateField("minRating", val)}
+          {/* <Text className="font-poppins-medium mb-1">Min Rating</Text> */}
+          <DropdownMenu
+            isLoading={false}
+            placeholder="Select Rating"
+            options={ratingOptions}
+            selectedValue={filters.minRating}
+            onSelect={(field, value) => updateField("minRating", value)}
+            field="minRating"
           />
 
-          {/* MAX DISTANCE */}
-          <Text className="font-poppins-medium mb-1">Max Distance (km)</Text>
-          <TextInput
-            placeholder="e.g. 10"
-            className="border p-3 rounded-md mb-3"
-            keyboardType="numeric"
-            value={filters.maxDistance?.toString()}
-            onChangeText={(val) => updateField("maxDistance", val)}
+          {/* CATEGORY DROPDOWN */}
+          <DropdownMenu
+            isLoading={isLoading}
+            placeholder="Select Your service"
+            options={data?.data?.categories}
+            selectedValue={filters.serviceCategory}
+            onSelect={(field, value) => updateField(field, value)}
+            field="serviceCategory"
           />
-
-          {/* SORT BY */}
-          <Text className="font-poppins-medium mb-1">Sort By</Text>
-          <TouchableOpacity
-            onPress={() =>
-              updateField("sortBy", filters.sortBy === "rating" ? "" : "rating")
-            }
-            className="border p-3 rounded-md mb-3"
-          >
-            <Text>{filters.sortBy || "Default"}</Text>
-          </TouchableOpacity>
-
-          {/* CATEGORY */}
-          <Text className="font-poppins-medium mb-1">Category</Text>
-          <TouchableOpacity
-            onPress={() =>
-              updateField(
-                "serviceCategory",
-                filters.serviceCategory ? "" : "Plumbing"
-              )
-            }
-            className="border p-3 rounded-md mb-4"
-          >
-            <Text>{filters.serviceCategory || "Any"}</Text>
-          </TouchableOpacity>
 
           {/* BUTTONS */}
-          <View className="flex-row justify-between">
+          <View className="flex-row justify-end mt-4">
             <TouchableOpacity
               onPress={onReset}
               className="bg-gray-300 px-4 py-2 rounded-md"
@@ -73,12 +63,12 @@ export default function ProviderFilterModal({
               <Text>Reset</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={onClose}
               className="bg-[#0054A5] px-4 py-2 rounded-md"
             >
               <Text className="text-white">Apply</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </View>

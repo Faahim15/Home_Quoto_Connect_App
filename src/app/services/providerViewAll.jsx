@@ -3,7 +3,10 @@ import { useState } from "react";
 import CustomHeader from "../components/tabs/home/services/CustomHeader";
 import SearchAndFilterBar from "../components/tabs/home/services/SearchAndFilterBar";
 import TopServiceProvider from "../components/tabs/home/services/TopServiceProviders";
-import { useSearchProvidersQuery } from "../../redux/features/apiSlices/user/createJobSlices";
+import {
+  useSearchProvidersQuery,
+  useGetServiceCategoriesQuery,
+} from "../../redux/features/apiSlices/user/createJobSlices";
 import ProviderFilterModal from "../components/tabs/home/modal/ProviderFilterModal";
 import ProviderSearchResults from "../components/tabs/home/services/ProviderSearchResult";
 
@@ -11,11 +14,19 @@ export default function ServiceProviderScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     minRating: "",
-    sortBy: "",
-    serviceCategory: "",
+    serviceCategory: "", // Still storing title here
   });
 
   const [filterModalVisible, setFilterModalVisible] = useState(false);
+
+  // Fetch categories (to map title -> ID)
+  const { data: categoryData } = useGetServiceCategoriesQuery();
+  const categories = categoryData?.data?.categories || [];
+
+  // Map category title → _id
+  const selectedCategoryId = filters.serviceCategory
+    ? categories.find((cat) => cat.title === filters.serviceCategory)?._id
+    : undefined;
 
   // Detect user intention
   const userSearched = searchQuery.trim().length > 0;
@@ -23,35 +34,28 @@ export default function ServiceProviderScreen() {
 
   const shouldRunSearchAPI = userSearched || userFiltered;
 
-  console.log("userSearch", searchQuery);
-
   const { data, isLoading } = useSearchProvidersQuery(
     {
-      search: searchQuery, // Changed from searchQuery to search
+      search: searchQuery,
       minRating: filters.minRating || undefined,
-      sortBy: filters.sortBy || undefined,
-      serviceCategory: filters.serviceCategory || undefined,
+      serviceCategory: selectedCategoryId, // 🔥 Send ID, not title
     },
     {
-      skip: !shouldRunSearchAPI, // Skip moved to options object
+      skip: !shouldRunSearchAPI,
     }
   );
 
   const providerList = data?.data?.providers || [];
 
-  console.log("providerListsss", providerList.length);
-
   return (
     <View className="flex-1 bg-[#F9F9F9]">
       <CustomHeader title="Service Providers" />
 
-      {/* SEARCH BAR */}
       <SearchAndFilterBar
         onSearch={(text) => setSearchQuery(text)}
         onFilterPress={() => setFilterModalVisible(true)}
       />
 
-      {/* MAIN CONTENT */}
       <View className="flex-1">
         {!shouldRunSearchAPI ? (
           <TopServiceProvider />
@@ -64,22 +68,20 @@ export default function ServiceProviderScreen() {
         )}
       </View>
 
-      {/* FILTER MODAL */}
       <ProviderFilterModal
         visible={filterModalVisible}
         filters={filters}
         onClose={() => setFilterModalVisible(false)}
         onApply={(updatedFilters) => {
           setFilters(updatedFilters);
-          setFilterModalVisible(false);
+          // setFilterModalVisible(false);
         }}
         onReset={() => {
           setFilters({
             minRating: "",
-            sortBy: "",
             serviceCategory: "",
           });
-          setFilterModalVisible(false);
+          // setFilterModalVisible(false);
         }}
       />
     </View>
