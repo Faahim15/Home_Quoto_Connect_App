@@ -34,16 +34,11 @@ export default function ProviderDetailsScreen() {
   // console.log("This is from Quote id", profileId);
 
   const { data, isLoading, error } = useGetProviderDetailsQuery(profileId);
-  const {
-    data: allProvidersData,
-    isLoading: providersLoader,
-    error: providersError,
-  } = useGetPopularProvidersQuery();
 
   const shouldShowButtons = showButtons === "true";
 
   // Add loading state check
-  if (providersLoader) {
+  if (isLoading) {
     return (
       <View className="flex-1 bg-white justify-center items-center">
         <ActivityIndicator size="large" color="#18649F" />
@@ -54,7 +49,7 @@ export default function ProviderDetailsScreen() {
     );
   }
   // Add error state check (optional)
-  if (error || providersError) {
+  if (error) {
     return (
       <View className="flex-1 bg-white justify-center items-center px-[6%]">
         <Text className="font-poppins-semiBold text-base text-[#EF4444] text-center">

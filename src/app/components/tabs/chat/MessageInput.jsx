@@ -6,9 +6,11 @@ import {
   Image,
   Modal,
   ScrollView,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const MessageInput = ({
   newMessage,
@@ -19,11 +21,12 @@ const MessageInput = ({
   setShowMediaModal,
   selectFromLibrary,
   takePhoto,
-  recordVideo,
   sendMessage,
   handleTypingStart,
   handleTypingStop,
 }) => {
+  const insets = useSafeAreaInsets();
+
   const MediaModal = () => (
     <Modal
       visible={showMediaModal}
@@ -32,7 +35,7 @@ const MessageInput = ({
       onRequestClose={() => setShowMediaModal(false)}
     >
       <TouchableOpacity
-        className="flex-1 bg-black bg-opacity-50 justify-end"
+        className="flex-1 bg-black/50 justify-end"
         activeOpacity={1}
         onPress={() => setShowMediaModal(false)}
       >
@@ -40,7 +43,7 @@ const MessageInput = ({
           <View className="w-12 h-1 bg-gray-300 rounded-full self-center mb-6" />
 
           <Text className="text-lg font-poppins-500medium text-gray-800 mb-4 text-center">
-            Select Media
+            Select Photo
           </Text>
 
           <View className="space-y-3">
@@ -52,8 +55,8 @@ const MessageInput = ({
                 <Ionicons name="images-outline" size={24} color="#319FCA" />
               </View>
               <View className="flex-1">
-                <Text className="text-gray-800 text-base font-poppins-500medium ">
-                  Photo & Video Library
+                <Text className="text-gray-800 text-base font-poppins-500medium">
+                  Photo Library
                 </Text>
                 <Text className="text-gray-500 font-poppins-400regular text-xs">
                   Choose from your gallery
@@ -69,28 +72,11 @@ const MessageInput = ({
                 <Ionicons name="camera-outline" size={24} color="#10B981" />
               </View>
               <View className="flex-1">
-                <Text className="text-gray-800 text-base font-poppins-500medium ">
+                <Text className="text-gray-800 text-base font-poppins-500medium">
                   Take Photo
                 </Text>
                 <Text className="text-gray-500 font-poppins-400regular text-xs">
                   Capture with camera
-                </Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={recordVideo}
-              className="flex-row items-center p-4 bg-gray-50 rounded-xl"
-            >
-              <View className="w-12 h-12 bg-red-100 rounded-full items-center justify-center mr-4">
-                <Ionicons name="videocam-outline" size={24} color="#EF4444" />
-              </View>
-              <View className="flex-1">
-                <Text className="text-gray-800 text-base font-poppins-500medium ">
-                  Record Video
-                </Text>
-                <Text className="text-gray-500 font-poppins-400regular text-xs">
-                  Record with camera
                 </Text>
               </View>
             </TouchableOpacity>
@@ -100,7 +86,7 @@ const MessageInput = ({
             onPress={() => setShowMediaModal(false)}
             className="mt-6 p-4 bg-gray-100 rounded-xl"
           >
-            <Text className="text-gray-600 text-center font-poppins-400regular ">
+            <Text className="text-gray-600 text-center font-poppins-400regular">
               Cancel
             </Text>
           </TouchableOpacity>
@@ -109,25 +95,15 @@ const MessageInput = ({
     </Modal>
   );
 
-  const showMediaOptions = () => {
-    setShowMediaModal(true);
-  };
-
   return (
-    <View
-      onLayout={(event) => {
-        // This helps parent component track height changes
-        const { height } = event.nativeEvent.layout;
-        // You can add a callback prop if needed: onHeightChange?.(height);
-      }}
-    >
+    <View style={{ paddingBottom: Platform.OS === "ios" ? insets.bottom : 15 }}>
       {/* Selected Media Preview */}
       {selectedMedia && selectedMedia.length > 0 && (
-        <View className="px-[4%] pb-2">
+        <View className="px-[4%] pb-2 bg-white">
           <View className="bg-gray-100 rounded-xl p-3">
             <View className="flex-row items-center justify-between mb-2">
               <Text className="text-gray-700 font-poppins-500medium">
-                Selected Media ({selectedMedia.length})
+                Selected Photos ({selectedMedia.length})
               </Text>
               <TouchableOpacity
                 onPress={() => removeSelectedMedia()}
@@ -148,18 +124,11 @@ const MessageInput = ({
                       <Ionicons name="close" size={12} color="white" />
                     </TouchableOpacity>
 
-                    {media.type === "image" ||
-                    !media.type?.includes("video") ? (
-                      <Image
-                        source={{ uri: media.uri }}
-                        className="w-16 h-16 rounded-lg"
-                        resizeMode="cover"
-                      />
-                    ) : (
-                      <View className="w-16 h-16 bg-gray-300 rounded-lg items-center justify-center">
-                        <Ionicons name="videocam" size={20} color="#666" />
-                      </View>
-                    )}
+                    <Image
+                      source={{ uri: media.uri }}
+                      className="w-16 h-16 rounded-lg"
+                      resizeMode="cover"
+                    />
                   </View>
                 ))}
               </View>
@@ -168,24 +137,21 @@ const MessageInput = ({
         </View>
       )}
 
-      {/* Media Selection Modal */}
       <MediaModal />
 
       {/* Message Input */}
-      <View
-        style={{ height: verticalScale(100) }}
-        className="bg-white px-[3.3%] py-[3%] flex-row items-center gap-[3%]"
-      >
+      <View className="bg-white px-[3.3%] py-[3%] flex-row items-center gap-[3%] border-t border-gray-100">
         <View className="flex-1 border bg-white border-[#C3DBFF] rounded-3xl flex-row items-center px-[4%] py-[2.5%]">
           <TextInput
             value={newMessage}
             onChangeText={(text) => {
               setNewMessage(text);
-              handleTypingStart(); // triggers each time user types
+              handleTypingStart();
             }}
             placeholder="Type something..."
             placeholderTextColor="#898989"
-            className="flex-1 items-center justify-center font-poppins-400regular px-[3%] py-[2%] text-black text-sm"
+            className="flex-1 font-poppins-400regular px-[3%] text-black text-sm"
+            style={{ minHeight: 40, maxHeight: 100 }}
             multiline
             maxLength={500}
             onSubmitEditing={sendMessage}
@@ -193,7 +159,7 @@ const MessageInput = ({
             onBlur={handleTypingStop}
           />
 
-          <TouchableOpacity onPress={showMediaOptions} className="">
+          <TouchableOpacity onPress={() => setShowMediaModal(true)}>
             <View
               style={{ width: scale(24), height: verticalScale(24) }}
               className="rounded items-center justify-center"

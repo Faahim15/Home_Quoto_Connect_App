@@ -133,7 +133,7 @@ export default function PromoCard() {
         </View>
 
         {/* Search Bar */}
-        <View className=" ">
+        {/* <View className=" ">
           <View
             style={[XStyle.lightShadow]}
             className="bg-white  flex-row rounded-md mt-[1%] items-center px-[3%] py-[3%]"
@@ -159,7 +159,7 @@ export default function PromoCard() {
               />
             </View>
           </View>
-        </View>
+        </View> */}
       </LinearGradient>
       {/* Recent Searches Dropdown */}
       {showRecentSearches && (

@@ -4,12 +4,12 @@ import {
   Text,
   FlatList,
   Image,
-  KeyboardAvoidingView,
   Platform,
   Dimensions,
-  SafeAreaView,
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  TouchableOpacity,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -25,11 +25,12 @@ import {
 } from "../../redux/features/apiSlices/chat/chatApiSlices";
 import { formatedDate } from "../util/helper-function";
 import { useSocket } from "../../hooks/useSokect";
+import { Modal } from "react-native";
 
 const ChatScreen = () => {
   const { providerId } = useLocalSearchParams();
   const { data, isLoading } = useGetProviderDetailsQuery(providerId);
-  const { width: screenWidth } = Dimensions.get("window");
+  const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
   const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
@@ -39,7 +40,6 @@ const ChatScreen = () => {
   const [showMediaModal, setShowMediaModal] = useState(false);
   const [chatId, setChatId] = useState("");
   const [currentUserId, setCurrentUserId] = useState(null);
-  // const [isConnected, setIsConnected] = useState(false);
   const flatListRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
@@ -56,15 +56,8 @@ const ChatScreen = () => {
     const joinRooms = async () => {
       if (!socket || !isConnected || !currentUserId || !chatId) return;
       console.log("sender User Id:", currentUserId);
-      // 1️⃣ Personal room
-      // console.log("💡 Joining personal socket room for user:", currentUserId);
       socket.emit("user-join", currentUserId);
-
-      // 2️⃣ Notifications room
-      // console.log("🔔 Joining notification room for user:", currentUserId);
       socket.emit("join-notifications", currentUserId);
-
-      // 3️⃣ Chat room
       console.log("🎯 Joining chat room:", chatId);
       socket.emit("join-chat", chatId);
     };
@@ -80,7 +73,6 @@ const ChatScreen = () => {
       );
 
       if (providerChat?._id) {
-        // console.log("💬 Found provider chat ID:", providerChat._id);
         setChatId(providerChat._id);
       } else {
         console.log("⚠️ No existing chat found for provider:", providerId);
@@ -115,10 +107,10 @@ const ChatScreen = () => {
   // Permissions
   const requestPermissions = async () => {
     try {
-      const [cameraPermission, mediaPermission] = await Promise.all([
-        ImagePicker.requestCameraPermissionsAsync(),
-        ImagePicker.requestMediaLibraryPermissionsAsync(),
-      ]);
+      const mediaPermission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const cameraPermission =
+        await ImagePicker.requestCameraPermissionsAsync();
 
       if (
         cameraPermission.status !== "granted" ||
@@ -126,7 +118,7 @@ const ChatScreen = () => {
       ) {
         Alert.alert(
           "Permission Required",
-          "Camera and media library permissions are needed to send media"
+          "Camera and media library permissions are needed to send photos"
         );
         return false;
       }
@@ -138,81 +130,48 @@ const ChatScreen = () => {
   };
 
   // Media handling functions
-
   const selectFromLibrary = async () => {
     setShowMediaModal(false);
     const hasPermission = await requestPermissions();
     if (!hasPermission) return;
 
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ["images"],
       allowsMultipleSelection: true,
       selectionLimit: 4,
       quality: 0.8,
     });
 
     if (!result.canceled && result.assets?.length > 0) {
-      const mediaArray = result.assets.map((media) => ({
-        uri: media.uri,
-        type: media.type,
-        width: media.width,
-        height: media.height,
-        fileName:
-          media.fileName ||
-          `media_${Date.now()}.${media.type === "video" ? "mp4" : "jpg"}`,
-        fileSize: media.fileSize,
+      const formatted = result.assets.map((img) => ({
+        uri: img.uri,
+        type: "image",
+        fileName: img.fileName || `photo_${Date.now()}.jpg`,
       }));
-      setSelectedMedia(mediaArray);
+
+      setSelectedMedia(formatted);
     }
   };
 
   const takePhoto = async () => {
+    setShowMediaModal(false);
     const hasPermission = await requestPermissions();
     if (!hasPermission) return;
 
     const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ["images"],
       allowsEditing: true,
       quality: 0.8,
     });
 
     if (!result.canceled && result.assets?.[0]) {
       const photo = result.assets[0];
-      setSelectedMedia([
+      setSelectedMedia((prev) => [
+        ...prev,
         {
           uri: photo.uri,
           type: "image",
-          width: photo.width,
-          height: photo.height,
-          fileName: `photo_${Date.now()}.jpg`,
-          fileSize: photo.fileSize,
-        },
-      ]);
-    }
-  };
-
-  const recordVideo = async () => {
-    const hasPermission = await requestPermissions();
-    if (!hasPermission) return;
-
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Videos,
-      allowsEditing: true,
-      videoMaxDuration: 120,
-      quality: 0.8,
-    });
-
-    if (!result.canceled && result.assets?.[0]) {
-      const video = result.assets[0];
-      setSelectedMedia([
-        {
-          uri: video.uri,
-          type: "video",
-          width: video.width,
-          height: video.height,
-          fileName: `video_${Date.now()}.mp4`,
-          fileSize: video.fileSize,
-          duration: video.duration,
+          fileName: photo.fileName || `photo_${Date.now()}.jpg`,
         },
       ]);
     }
@@ -239,12 +198,10 @@ const ChatScreen = () => {
     console.log("✍️ Typing started...");
     socket.emit("typing-start", { chatId });
 
-    // Clear the previous timeout
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
 
-    // Set a timeout to automatically stop typing after 3 seconds of inactivity
     typingTimeoutRef.current = setTimeout(() => {
       console.log("⌛ Typing stopped (auto)");
       socket.emit("typing-stop", { chatId });
@@ -264,21 +221,17 @@ const ChatScreen = () => {
   }, [socket, isConnected, chatId]);
 
   // Listen for new messages
-  const handleNewMessage = (data) => {
-    console.log("📩 New message received via wihting user room:", data);
-
-    // Option 1: Just refetch from backend for full sync
-    // refetchChatHistory();
-    // console.log("show all", messages);
-
-    // Option 2 (optional): Also append instantly for faster UI response
-    setMessages((prev) => [...prev, data]);
-
-    // Optionally scroll to bottom
+  const handleNewMessage = useCallback((data) => {
+    console.log("📩 New message received:", data);
+    setMessages((prev) => {
+      const exists = prev.some((m) => m._id === data._id);
+      if (exists) return prev;
+      return [...prev, data];
+    });
     scrollToBottom();
-  };
+  }, []);
 
-  // Listen for new messages
+  // Socket listener for new messages
   useEffect(() => {
     if (!socket || !isConnected) return;
 
@@ -287,50 +240,67 @@ const ChatScreen = () => {
     return () => {
       socket.off("new-message", handleNewMessage);
     };
-  }, [socket, isConnected, refetchChatHistory]);
+  }, [socket, isConnected]);
 
-  // Send message function
   const sendMessage = async () => {
-    if (!newMessage.trim() && selectedMedia.length === 0) return;
+    // don't send empty message + no media
+    const textTrimmed = (newMessage || "").trim();
+    if (!textTrimmed && (!selectedMedia || selectedMedia.length === 0)) return;
 
-    const token = await AsyncStorage.getItem("token");
-
-    const messagePayload = {
-      providerId,
-      content: newMessage.trim() || " ",
-      // media: selectedMedia.length > 0 ? selectedMedia : [],
-      messageType: "text",
+    // Build content object exactly as server expects
+    const media = selectedMedia.map((file) => ({
+      type: file.type, // "image"
+      filename: file.filename,
+      mimeType: "image/jpeg", // or derive from file.uri if needed
+      url: file.uri, // raw file path
+    }));
+    const content = {
+      text: textTrimmed,
+      media: Array.isArray(media) ? media : [],
     };
-    // console.log("content", typeof messagePayload.content);
-    const response = await fetch(`http://10.10.20.30:5000/api/chats/direct`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(messagePayload),
-    });
 
-    const data = await response.json();
+    const payload = {
+      chatId,
+      content,
+      messageType: selectedMedia && selectedMedia.length > 0 ? "image" : "text",
+    };
 
-    if (data.success) {
-      // setMessages((prev) => [...prev, data.data.message]);
+    console.log("Emitting send-message payload:", payload);
+
+    if (socket && isConnected) {
+      socket.emit("send-message", payload);
       setNewMessage("");
       setSelectedMedia([]);
-      setChatId(data?.data?.chat?._id);
-      console.log("message has successfully sent from display message");
-      // Socket emit
-      // if (socket && isConnected) {
-      //   socket.emit("send-message", {
-      //     ...data.data.message,
-      //     chatId,
-      //   });
-      //   console.log("messaged emitted", chatId);
-      // }
+      handleTypingStop && handleTypingStop();
+      scrollToBottom();
     } else {
-      Alert.alert("Error", data.message || "Failed to send message");
+      console.warn("Socket not connected — cannot send message");
     }
   };
+
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  const ImageModal = () => (
+    <Modal
+      visible={!!selectedImage}
+      transparent={true}
+      onRequestClose={() => setSelectedImage(null)}
+    >
+      <View className="flex-1 bg-black justify-center items-center">
+        <TouchableOpacity
+          className="absolute top-10 right-5 z-10"
+          onPress={() => setSelectedImage(null)}
+        >
+          <Ionicons name="close" size={30} color="white" />
+        </TouchableOpacity>
+        <Image
+          source={{ uri: selectedImage }}
+          style={{ width: "100%", height: "70%" }}
+          resizeMode="contain"
+        />
+      </View>
+    </Modal>
+  );
 
   const renderMessageItem = ({ item }) => {
     if (item?.content?.text === " ") {
@@ -338,59 +308,58 @@ const ChatScreen = () => {
     }
 
     const isOwn = item?.sender?.role === "client";
+    const messageMedia = item?.content?.media || [];
+    const messageText = item?.content?.text || "";
 
     return (
       <View className={`mb-[4%] ${isOwn ? "items-end" : "items-start"}`}>
         <View
-          className={`max-w-[75%] rounded-2xl overflow-hidden ${isOwn ? "bg-[#319FCA] rounded-br-md" : "bg-white rounded-bl-md shadow-sm"}`}
+          className={`max-w-[75%] flex-row rounded-2xl overflow-hidden ${
+            messageMedia.length > 0 && isOwn
+              ? "bg-white rounded-br-md"
+              : isOwn
+                ? "bg-[#319FCA] rounded-br-md"
+                : "bg-white rounded-bl-md shadow-sm"
+          }`}
         >
-          {item.media?.map((media, index) => (
-            <View key={index} className="relative" style={{ margin: scale(4) }}>
-              {media.type === "image" ? (
-                <Image
-                  source={{ uri: media.uri }}
-                  style={{
-                    width: screenWidth * (item.media.length === 1 ? 0.6 : 0.28),
-                    height:
-                      screenWidth *
-                      (item.media.length === 1
-                        ? 0.6 * (media.height / media.width)
-                        : 0.28),
-                    borderRadius: 8,
-                  }}
-                  resizeMode="cover"
-                />
-              ) : (
-                <View
-                  style={{
-                    width: screenWidth * (item.media.length === 1 ? 0.6 : 0.28),
-                    height: screenWidth * 0.28,
-                    backgroundColor: "#ccc",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderRadius: 8,
-                  }}
-                >
-                  <Ionicons name="play-circle" size={32} color="#319FCA" />
+          {messageMedia.length > 0 &&
+            messageMedia.map((media, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => setSelectedImage(media.url)}
+                activeOpacity={0.7}
+                className="flex-row"
+              >
+                <View className="relative" style={{ margin: scale(4) }}>
+                  <Image
+                    source={{ uri: media.url }}
+                    style={{
+                      width:
+                        screenWidth * (messageMedia.length === 1 ? 0.6 : 0.28),
+                      height: screenWidth * 0.4,
+                      borderRadius: 8,
+                    }}
+                    resizeMode="cover"
+                  />
                 </View>
-              )}
-            </View>
-          ))}
-          {item?.content?.text && item?.content?.text !== " " && (
+              </TouchableOpacity>
+            ))}
+          {/* Modal render */}
+          {selectedImage && <ImageModal />}
+          {messageText && messageText !== " " && (
             <View className="px-4 py-3">
               <Text
                 className={`text-base ${isOwn ? "text-white" : "text-gray-800"}`}
               >
-                {item?.content?.text}
+                {messageText}
               </Text>
             </View>
           )}
         </View>
-        {item?.content?.text && item?.content?.text !== " " && (
-          <Text className="text-xs text-gray-500 mt-1 mx-1">
-            {formatedDate(item?.createdAt)}
-          </Text>
-        )}
+
+        <Text className="text-xs text-gray-500 mt-1 mx-1">
+          {formatedDate(item?.createdAt)}
+        </Text>
       </View>
     );
   };
@@ -408,13 +377,17 @@ const ChatScreen = () => {
     data?.data?.provider || {};
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={
-          Platform.OS === "ios" ? (selectedMedia.length ? -30 : 0) : 20
-        }
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+    >
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "white",
+          paddingTop: Platform.OS === "android" ? 10 : 0,
+        }}
       >
         <ChatHeader
           userData={{
@@ -425,30 +398,36 @@ const ChatScreen = () => {
           }}
         />
 
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          renderItem={renderMessageItem}
-          keyExtractor={(item, index) => item._id || `message-${index}`}
-          contentContainerStyle={{
-            padding: scale(16),
-            paddingBottom: verticalScale(20),
-          }}
-          onContentSizeChange={scrollToBottom}
-          // onLayout={scrollToBottom}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        />
+        <View style={{ flex: 1 }}>
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            renderItem={renderMessageItem}
+            keyExtractor={(item, index) => item._id || `message-${index}`}
+            contentContainerStyle={{
+              padding: scale(16),
+              paddingBottom: verticalScale(20),
+            }}
+            onContentSizeChange={scrollToBottom}
+            showsVerticalScrollIndicator={false}
+            keyboardDismissMode="none"
+            keyboardShouldPersistTaps="always"
+            // contentInset={{ bottom: 200 }}
+            maintainVisibleContentPosition={{
+              minIndexForVisible: 0,
+            }}
+          />
 
-        {isTyping && (
-          <View className="px-4 pb-2">
-            <View className="bg-white rounded-2xl rounded-bl-md px-4 py-3 max-w-[75%] shadow-sm">
-              <Text className="text-gray-500 text-sm">
-                {fullName} is typing...
-              </Text>
+          {isTyping && (
+            <View className="px-4 pb-2">
+              <View className="bg-white rounded-2xl rounded-bl-md px-4 py-3 max-w-[75%] shadow-sm">
+                <Text className="text-gray-500 text-sm">
+                  {fullName} is typing...
+                </Text>
+              </View>
             </View>
-          </View>
-        )}
+          )}
+        </View>
 
         <MessageInput
           newMessage={newMessage}
@@ -459,13 +438,12 @@ const ChatScreen = () => {
           setShowMediaModal={setShowMediaModal}
           selectFromLibrary={selectFromLibrary}
           takePhoto={takePhoto}
-          recordVideo={recordVideo}
           sendMessage={sendMessage}
           handleTypingStart={handleTypingStart}
           handleTypingStop={handleTypingStop}
         />
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 

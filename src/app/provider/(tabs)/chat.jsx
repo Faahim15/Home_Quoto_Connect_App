@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,9 +6,10 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { verticalScale } from "../../components/adaptive/Adaptiveness";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useGetChatsQuery } from "../../../redux/features/apiSlices/chat/chatApiSlices";
 import { formatDateRelative } from "../../util/helper-function";
 import { useSocket } from "../../../hooks/useSokect";
@@ -16,7 +17,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MessagesScreen = () => {
   const [messages, setMessages] = useState([]);
-  const { data, isLoading } = useGetChatsQuery();
+  const [refreshing, setRefreshing] = useState(false);
+  const [typingUsers, setTypingUsers] = useState({});
+  const { data, isLoading, refetch } = useGetChatsQuery();
   const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
   const [userStatus, setUserStatus] = useState({});
 
@@ -26,6 +29,27 @@ const MessagesScreen = () => {
       setMessages(data.data.chats);
     }
   }, [isLoading, data]);
+
+  // Auto-refresh when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      console.log("📱 Provider Messages Screen focused - Refreshing chats...");
+      refetch();
+    }, [refetch])
+  );
+
+  // Pull-to-refresh handler
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+      console.log("🔄 Provider messages refresh completed");
+    } catch (error) {
+      console.error("❌ Provider messages refresh failed:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetch]);
 
   // Join personal, notification rooms and chat rooms
   useEffect(() => {
@@ -39,9 +63,8 @@ const MessagesScreen = () => {
       console.log("💡 Joining personal & notification rooms for user:", userId);
       socket.emit("user-join", userId);
       socket.emit("join-notifications", userId);
-      // socket.emit("join-chat", "690c4d68b8c0cb0f39efeaf3");
+
       messages.forEach((chat) => {
-        // console.log("🎯 Joining chat room:", );
         socket.emit("join-chat", chat._id);
       });
     };
@@ -50,7 +73,7 @@ const MessagesScreen = () => {
   }, [socket, isConnected, messages]);
 
   const handleNewMessage = (message) => {
-    console.log("📨 New message received within provider tabsg:", message);
+    console.log("📨 New message received within provider tabs:", message);
 
     setMessages((prev) => {
       const chatExists = prev.find((chat) => chat._id === message.chat);
@@ -84,21 +107,30 @@ const MessagesScreen = () => {
     }));
   };
 
+  // Handle typing indicator
+  const handleUserTyping = ({ userId, isTyping, chatId }) => {
+    console.log(`✍️ ${userId} is ${isTyping ? "typing..." : "not typing"}`);
+
+    setTypingUsers((prev) => ({
+      ...prev,
+      [chatId]: isTyping ? userId : null,
+    }));
+  };
+
   // Socket listeners
   useEffect(() => {
     if (!socket || !isConnected) return;
 
     socket.on("new-message", handleNewMessage);
     socket.on("user-status-changed", handleUserStatusChanged);
-    //     socket.on("user-typing", ({ userId, isTyping }) =>
-    //       console.log(`${userId}
-    //  is ${isTyping ? "typing..." : "not typing"}`)
-    //     );
+    socket.on("user-typing", handleUserTyping);
+
     return () => {
       socket.off("new-message", handleNewMessage);
       socket.off("user-status-changed", handleUserStatusChanged);
+      socket.off("user-typing", handleUserTyping);
     };
-  }, [messages, isConnected]);
+  }, [socket, isConnected, messages]);
 
   // Navigate to chat screen
   const markMessageAsRead = (chatId, providerId) => {
@@ -118,6 +150,7 @@ const MessagesScreen = () => {
     const providerId = clientParticipant?.user?._id;
     const isActive = clientParticipant?.user?.isOnline;
     const profilePhotoUrl = clientParticipant?.user?.profilePhoto?.url ?? null;
+    const isTyping = typingUsers[item._id] === providerId;
 
     return (
       <TouchableOpacity
@@ -151,13 +184,19 @@ const MessagesScreen = () => {
                 {formatDateRelative(item?.lastMessage?.updatedAt) || "N/A"}
               </Text>
             </View>
-            <Text
-              className={`font-poppins-400regular text-xs ${
-                isRead ? "text-[#767676]" : "text-[#111]"
-              }`}
-            >
-              {lastMessage || "N/A"}
-            </Text>
+            {isTyping ? (
+              <Text className="text-[#0066CC] font-poppins-400regular text-xs mt-1">
+                Typing...
+              </Text>
+            ) : (
+              <Text
+                className={`font-poppins-400regular text-xs ${
+                  isRead ? "text-[#767676]" : "text-[#111]"
+                }`}
+              >
+                {lastMessage || "N/A"}
+              </Text>
+            )}
           </View>
 
           {/* Read Status */}
@@ -185,7 +224,7 @@ const MessagesScreen = () => {
       </View>
 
       {/* Loading / Empty / List */}
-      {isLoading ? (
+      {isLoading && !refreshing ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#0066CC" />
           <Text className="text-[#767676] font-poppins-400regular text-sm mt-3">
@@ -209,6 +248,16 @@ const MessagesScreen = () => {
           keyExtractor={(item, index) => item?._id || index.toString()}
           contentContainerStyle={{ paddingVertical: verticalScale(16) }}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#0066CC"]}
+              tintColor="#0066CC"
+              title="Pull to refresh"
+              titleColor="#767676"
+            />
+          }
         />
       )}
     </View>

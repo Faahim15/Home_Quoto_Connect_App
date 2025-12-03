@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useLayoutEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -6,25 +6,50 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  RefreshControl,
 } from "react-native";
 import { verticalScale } from "../components/adaptive/Adaptiveness";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useGetChatsQuery } from "../../redux/features/apiSlices/chat/chatApiSlices";
 import { useSocket } from "../../hooks/useSokect";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatDateRelative } from "../util/helper-function";
+
 const MessagesScreen = () => {
   const [messages, setMessages] = useState([]);
-  const { data, isLoading } = useGetChatsQuery();
+  const [refreshing, setRefreshing] = useState(false);
+  const { data, isLoading, refetch } = useGetChatsQuery();
   const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
   const [userStatus, setUserStatus] = useState({});
   const [isTyping, setIsTyping] = useState(false);
+
   // Load initial chats
   useEffect(() => {
     if (!isLoading && data?.data?.chats) {
       setMessages(data.data.chats);
     }
   }, [isLoading, data]);
+
+  // Auto-refresh when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      console.log("📱 Screen focused - Refreshing chats...");
+      refetch();
+    }, [refetch])
+  );
+
+  // Pull-to-refresh handler
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await refetch();
+      console.log("🔄 Manual refresh completed");
+    } catch (error) {
+      console.error("❌ Refresh failed:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetch]);
 
   // Join personal, notification rooms and chat rooms
   useEffect(() => {
@@ -35,12 +60,9 @@ const MessagesScreen = () => {
 
       if (!userId) return;
 
-      console.log("💡 joining user from client chat:", userId);
       socket.emit("user-join", userId);
       socket.emit("join-notifications", userId);
-      // socket.emit("join-chat", "690c4d68b8c0cb0f39efeaf3");
       messages.forEach((chat) => {
-        // console.log("🎯 Joining chat room:", );
         socket.emit("join-chat", chat._id);
       });
     };
@@ -49,7 +71,7 @@ const MessagesScreen = () => {
   }, [socket, isConnected, messages]);
 
   const handleNewMessage = (message) => {
-    console.log("📨 New message received withing client tabs:", message);
+    console.log("📨 New message received within client tabs:", message);
 
     setMessages((prev) => {
       const chatExists = prev.find((chat) => chat._id === message.chat);
@@ -89,21 +111,19 @@ const MessagesScreen = () => {
 
     socket.on("new-message", handleNewMessage);
     socket.on("user-status-changed", handleUserStatusChanged);
-    socket.on("user-typing", ({ userId, isTyping }) =>
-      //         console.log(`${userId}
-      //  is ${isTyping ? `typing... ${isTyping}` : "not typing"}`)
-      setIsTyping(isTyping)
-    );
+    socket.on("user-typing", ({ userId, isTyping }) => setIsTyping(isTyping));
+
     return () => {
       socket.off("new-message", handleNewMessage);
       socket.off("user-status-changed", handleUserStatusChanged);
+      socket.off("user-typing");
     };
   }, [messages, isConnected]);
 
   // Navigate to chat screen
   const markMessageAsRead = (chatId, providerId) => {
     router.push({
-      pathname: "/chat/chatScreen",
+      pathname: "/chat/displayChat",
       params: { chatId: chatId, providerId: providerId },
     });
   };
@@ -193,7 +213,7 @@ const MessagesScreen = () => {
       </View>
 
       {/* Loading / Empty / List */}
-      {isLoading ? (
+      {isLoading && !refreshing ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color="#0066CC" />
           <Text className="text-[#767676] font-poppins-400regular text-sm mt-3">
@@ -217,6 +237,16 @@ const MessagesScreen = () => {
           keyExtractor={(item, index) => item?._id || index.toString()}
           contentContainerStyle={{ paddingVertical: verticalScale(16) }}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={["#0066CC"]}
+              tintColor="#0066CC"
+              title="Pull to refresh"
+              titleColor="#767676"
+            />
+          }
         />
       )}
     </View>

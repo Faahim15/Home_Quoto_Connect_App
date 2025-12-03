@@ -38,7 +38,7 @@ export default {
         backgroundColor: "#ffffff",
       },
 
-      softwareKeyboardLayoutMode: "adjustResize",
+      softwareKeyboardLayoutMode: "resize",
 
       edgeToEdgeEnabled: true,
     },
