@@ -129,6 +129,10 @@ const MessagesScreen = () => {
   };
 
   const renderMessageItem = ({ item }) => {
+    console.log("show last messages", item?.lastMessage);
+
+    if (!item?.lastMessage) return null;
+
     const clientParticipant = item?.participants?.find(
       (p) => p?.role === "provider"
     );

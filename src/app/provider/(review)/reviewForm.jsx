@@ -22,6 +22,8 @@ export default function ReviewFormScreen() {
     comment: "",
   });
 
+  console.log("from", formData);
+
   const { fullName } = data?.data?.job?.client || {};
 
   const providerName = data?.data?.job?.quotes[0]?.provider;
