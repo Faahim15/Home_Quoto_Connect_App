@@ -18,7 +18,7 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
         Authorization: token ? `Bearer ${token}` : "",
         // Don't set Content-Type for FormData
       };
-
+      // http://10.10.20.30:5000/api
       const response = await fetch(`http://10.10.20.30:5000/api${args.url}`, {
         method: args.method,
         headers: headers,

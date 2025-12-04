@@ -5,28 +5,45 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 const { width } = Dimensions.get("window");
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 import { useGetPopularProvidersQuery } from "../../../../../redux/features/apiSlices/user/createJobSlices";
+
 const ServiceCard = ({ item }) => {
+  const hasProfilePhoto = item?.profilePhoto?.url;
+
   return (
     <View
-      className="bg-white border border-[#D4E0EB] flex-1 justify-center items-center rounded-lg  mr-3"
+      className="bg-white border border-[#D4E0EB] flex-1 justify-center items-center rounded-lg mr-3"
       style={{ width: scale(149), height: verticalScale(210) }}
     >
-      <Image
-        source={{ uri: item?.profilePhoto?.url || null }}
-        resizeMode="cover"
-        style={{
-          width: scale(72),
-          height: verticalScale(110),
-        }}
-      />
-      <View className="flex-1 pb-[10%] justify-end ">
-        <Text className=" font-poppins-semiBold text-base text-[#565656]">
+      {hasProfilePhoto ? (
+        <Image
+          source={{ uri: item.profilePhoto.url }}
+          resizeMode="cover"
+          style={{
+            width: scale(72),
+            height: verticalScale(110),
+          }}
+        />
+      ) : (
+        <View
+          className="bg-gray-200 mt-[18%] rounded-full items-center justify-center"
+          style={{
+            width: scale(72),
+            height: scale(72),
+          }}
+        >
+          <Ionicons name="person" size={scale(40)} color="#9CA3AF" />
+        </View>
+      )}
+
+      <View className="flex-1 pb-[10%] justify-end">
+        <Text className="font-poppins-semiBold text-base text-[#565656]">
           {item?.fullName || "N/A"}
         </Text>
         <Text className="font-poppins-500medium text-xs text-[#565656] mb-[1%]">
@@ -39,9 +56,6 @@ const ServiceCard = ({ item }) => {
           <Text className="ml-1 font-poppins-500medium text-xs text-[#F59E0B]">
             {Number(item?.averageRating) / 10 || "N/A"}
           </Text>
-          {/* <Text className="ml-auto font-poppins-400regular text-base text-[#18649F]">
-            {item.price}
-          </Text> */}
         </View>
 
         <TouchableOpacity
@@ -66,8 +80,9 @@ const ServiceCard = ({ item }) => {
 export default function TopServiceProvider() {
   const { data, isLoading, error } = useGetPopularProvidersQuery();
   const providerData = data?.data?.providers || [];
+
   return (
-    <View className="flex-1 mb-[2%] mt-[3%]  mx-[6%] ">
+    <View className="flex-1 mb-[2%] mt-[3%] mx-[6%]">
       {isLoading ? (
         <View
           className="flex-1 items-center justify-center"

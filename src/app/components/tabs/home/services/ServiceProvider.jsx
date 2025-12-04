@@ -5,19 +5,34 @@ import { router } from "expo-router";
 
 export default function ServiceProvider({ providerData }) {
   const renderItem = ({ item }) => {
+    const hasProfilePhoto = item?.profilePhoto?.url;
+
     return (
       <View
-        className="bg-white border border-[#D4E0EB] flex-1 justify-center items-center rounded-lg mr-3"
+        className="bg-white  border border-[#D4E0EB] flex-1 justify-center items-center rounded-lg mr-3"
         style={{ width: scale(149), height: verticalScale(210) }}
       >
-        <Image
-          source={{ uri: item?.profilePhoto?.url || null }}
-          resizeMode="cover"
-          style={{
-            width: scale(72),
-            height: verticalScale(110),
-          }}
-        />
+        {hasProfilePhoto ? (
+          <Image
+            source={{ uri: item.profilePhoto.url }}
+            resizeMode="cover"
+            style={{
+              width: scale(72),
+              height: verticalScale(110),
+            }}
+          />
+        ) : (
+          <View
+            className=" bg-gray-200 mt-[17%] rounded-full items-center justify-center"
+            style={{
+              width: scale(72),
+              height: scale(72),
+            }}
+          >
+            <Ionicons name="person" size={scale(40)} color="#9CA3AF" />
+          </View>
+        )}
+
         <View className="flex-1 pb-[10%] justify-end">
           <Text className="font-poppins-semiBold text-base text-[#565656]">
             {item?.fullName || "N/A"}

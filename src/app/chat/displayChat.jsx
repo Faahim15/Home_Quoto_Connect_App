@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import ChatHeader from "../components/tabs/chat/ChatHeader";
 import MessageInput from "../components/tabs/chat/MessageInput";
@@ -20,6 +21,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useGetProviderDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
+  useDirectChatMutation,
   useGetChatsQuery,
   useGetSingleChatHistoryQuery,
 } from "../../redux/features/apiSlices/chat/chatApiSlices";
@@ -35,6 +37,10 @@ const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const { data: chatData, isLoading: allChatLoader } = useGetChatsQuery();
+
+  const [createDirectChat, { isLoading: directChatLoader }] =
+    useDirectChatMutation();
+
   const [isTyping, setIsTyping] = useState(false);
   const [selectedMedia, setSelectedMedia] = useState([]);
   const [showMediaModal, setShowMediaModal] = useState(false);
@@ -42,6 +48,8 @@ const ChatScreen = () => {
   const [currentUserId, setCurrentUserId] = useState(null);
   const flatListRef = useRef(null);
   const typingTimeoutRef = useRef(null);
+
+  console.log("provider", providerId);
 
   // Fetch userId from AsyncStorage
   useEffect(() => {
@@ -242,21 +250,99 @@ const ChatScreen = () => {
     };
   }, [socket, isConnected]);
 
+  // console.log("singleChat", singleChatHistory);
+
   const sendMessage = async () => {
     // don't send empty message + no media
     const textTrimmed = (newMessage || "").trim();
     if (!textTrimmed && (!selectedMedia || selectedMedia.length === 0)) return;
 
-    // Build content object exactly as server expects
-    const media = selectedMedia.map((file) => ({
-      type: file.type, // "image"
-      filename: file.filename,
-      mimeType: "image/jpeg", // or derive from file.uri if needed
-      url: file.uri, // raw file path
-    }));
+    // 🆕 If no chatId, create direct chat first
+    if (!chatId && providerId) {
+      try {
+        const formData = new FormData();
+
+        formData.append("providerId", providerId);
+        formData.append("content", textTrimmed);
+        formData.append(
+          "messageType",
+          selectedMedia && selectedMedia.length > 0 ? "image" : "text"
+        );
+
+        // Convert images to base64 and append
+        if (selectedMedia && selectedMedia.length > 0) {
+          for (const file of selectedMedia) {
+            try {
+              // Read file as base64
+              const base64 = await FileSystem.readAsStringAsync(file.uri, {
+                encoding: FileSystem.EncodingType.Base64,
+              });
+
+              // Append as file with base64 data
+              formData.append("media", {
+                uri: `data:image/jpeg;base64,${base64}`,
+                type: "image/jpeg",
+                name: file.fileName,
+              });
+            } catch (err) {
+              console.error("Error reading file:", err);
+            }
+          }
+        }
+
+        console.log("Creating direct chat with formData");
+        const response = await createDirectChat(formData).unwrap();
+
+        if (response?.data?.chat?._id) {
+          const newChatId = response.data.chat._id;
+          setChatId(newChatId);
+          console.log("✅ Direct chat created with ID:", newChatId);
+
+          // Add the new message to the messages array
+          if (response?.data?.message) {
+            setMessages((prev) => [...prev, response.data.message]);
+          }
+        }
+
+        setNewMessage("");
+        setSelectedMedia([]);
+        handleTypingStop && handleTypingStop();
+        scrollToBottom();
+        return;
+      } catch (error) {
+        console.error("❌ Failed to create direct chat:", error);
+        Alert.alert("Error", "Failed to send message. Please try again.");
+        return;
+      }
+    }
+
+    // Normal message sending with existing chatId
+    // Build media array with base64 data
+    const media = [];
+    if (selectedMedia && selectedMedia.length > 0) {
+      for (const file of selectedMedia) {
+        try {
+          // Read file as base64
+          const base64 = await FileSystem.readAsStringAsync(file.uri, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+
+          // Push media object with data URI format (like direct chat)
+          media.push({
+            type: file.type, // "image"
+            filename: file.fileName,
+            url: `data:image/jpeg;base64,${base64}`, // Send as data URI
+          });
+        } catch (err) {
+          console.error("Error reading file:", err);
+          Alert.alert("Error", `Failed to read file: ${file.fileName}`);
+        }
+      }
+    }
+
     const content = {
       text: textTrimmed,
-      media: Array.isArray(media) ? media : [],
+      media: media,
     };
 
     const payload = {
@@ -265,7 +351,10 @@ const ChatScreen = () => {
       messageType: selectedMedia && selectedMedia.length > 0 ? "image" : "text",
     };
 
-    console.log("Emitting send-message payload:", payload);
+    // console.log(
+    //   "Emitting send-message payload with media:",
+    //   media.length > 0 ? "has base64 data" : "no media"
+    // );
 
     if (socket && isConnected) {
       socket.emit("send-message", payload);
@@ -275,9 +364,9 @@ const ChatScreen = () => {
       scrollToBottom();
     } else {
       console.warn("Socket not connected — cannot send message");
+      Alert.alert("Error", "Connection lost. Please check your internet.");
     }
   };
-
   const [selectedImage, setSelectedImage] = useState(null);
 
   const ImageModal = () => (
@@ -311,45 +400,54 @@ const ChatScreen = () => {
     const messageMedia = item?.content?.media || [];
     const messageText = item?.content?.text || "";
 
+    // console.log("show", messageMedia, messageText);
+
     return (
       <View className={`mb-[4%] ${isOwn ? "items-end" : "items-start"}`}>
         <View
-          className={`max-w-[75%] flex-row rounded-2xl overflow-hidden ${
+          className={`max-w-[75%] rounded-2xl overflow-hidden ${
             messageMedia.length > 0 && isOwn
-              ? "bg-white rounded-br-md"
+              ? "bg-[#319FCA] rounded-br-md"
               : isOwn
                 ? "bg-[#319FCA] rounded-br-md"
                 : "bg-white rounded-bl-md shadow-sm"
           }`}
         >
-          {messageMedia.length > 0 &&
-            messageMedia.map((media, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => setSelectedImage(media.url)}
-                activeOpacity={0.7}
-                className="flex-row"
-              >
-                <View className="relative" style={{ margin: scale(4) }}>
-                  <Image
-                    source={{ uri: media.url }}
-                    style={{
-                      width:
-                        screenWidth * (messageMedia.length === 1 ? 0.6 : 0.28),
-                      height: screenWidth * 0.4,
-                      borderRadius: 8,
-                    }}
-                    resizeMode="cover"
-                  />
-                </View>
-              </TouchableOpacity>
-            ))}
+          {/* Media Section */}
+          {messageMedia.length > 0 && (
+            <View className="flex-row flex-wrap">
+              {messageMedia.map((media, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => setSelectedImage(media.url)}
+                  activeOpacity={0.7}
+                >
+                  <View className="relative" style={{ margin: scale(4) }}>
+                    <Image
+                      source={{ uri: media.url }}
+                      style={{
+                        width:
+                          screenWidth *
+                          (messageMedia.length === 1 ? 0.6 : 0.28),
+                        height: screenWidth * 0.4,
+                        borderRadius: 8,
+                      }}
+                      resizeMode="cover"
+                    />
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+
           {/* Modal render */}
           {selectedImage && <ImageModal />}
+
+          {/* Text Section */}
           {messageText && messageText !== " " && (
-            <View className="px-4 py-3">
+            <View className={`px-4 py-3 ${messageMedia.length > 0 ? "" : ""}`}>
               <Text
-                className={`text-base ${isOwn ? "text-white" : "text-gray-800"}`}
+                className={`text-base  ${isOwn ? "text-white" : "text-[#111]"} `}
               >
                 {messageText}
               </Text>
@@ -412,7 +510,6 @@ const ChatScreen = () => {
             showsVerticalScrollIndicator={false}
             keyboardDismissMode="none"
             keyboardShouldPersistTaps="always"
-            // contentInset={{ bottom: 200 }}
             maintainVisibleContentPosition={{
               minIndexForVisible: 0,
             }}

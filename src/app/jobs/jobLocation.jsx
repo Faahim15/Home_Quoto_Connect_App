@@ -34,15 +34,6 @@ export default function LocationDetailsScreen() {
         houseNumber: locationDetails.houseNumber || "",
         streetNumber: locationDetails.streetNumber || "",
         completeAddress: locationDetails.completeAddress || "",
-        // location: {
-        //   type: job.location?.type || "Point",
-        //   coordinates: job.location?.coordinates || [],
-        //   address: job.location?.address || "",
-        //   city: job.location?.city || "",
-        //   state: job.location?.state || "",
-        //   country: job.location?.country || "",
-        //   zipCode: job.location?.zipCode || "",
-        // },
         location: {
           type: job.location?.type || "Point",
           coordinates: job.location?.coordinates || [],

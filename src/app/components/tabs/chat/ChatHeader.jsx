@@ -5,24 +5,36 @@ import ReportModal from "./ReportModal";
 import { useState } from "react";
 import { router } from "expo-router";
 import { formatDateRelative } from "../../../util/helper-function";
+
 const ChatHeader = ({ userData }) => {
   const [modalVisible, setModalVisible] = useState(false);
+
+  console.log("show", userData);
 
   const handleSelectProvider = (providerId) => {
     console.log("Selected provider:", providerId);
   };
+
   return (
     <View className="bg-white pt-[3%] pb-[1%] px-[4%] shadow-sm flex-row items-center">
       <TouchableOpacity onPress={() => router.back()} className="mr-4">
         <Ionicons name="arrow-back" size={22} color="#000" />
       </TouchableOpacity>
 
-      <Image
-        source={{ uri: userData.profilePhoto || null }}
-        style={{ width: scale(38), height: verticalScale(38) }}
-        className="rounded-full mr-[3%]"
-        // defaultSource={{ uri: "https://via.placeholder.com/40" }}
-      />
+      {userData?.profilePhoto ? (
+        <Image
+          source={{ uri: userData.profilePhoto }}
+          style={{ width: scale(38), height: verticalScale(38) }}
+          className="rounded-full mr-[3%]"
+        />
+      ) : (
+        <View
+          style={{ width: scale(38), height: verticalScale(38) }}
+          className="rounded-full mr-[3%] bg-gray-300 items-center justify-center"
+        >
+          <Ionicons name="person" size={24} color="#6B7280" />
+        </View>
+      )}
 
       <View className="flex-1">
         <Text className="text-gray-800 text-base font-poppins-500medium ">

@@ -14,6 +14,7 @@ import { useGetChatsQuery } from "../../redux/features/apiSlices/chat/chatApiSli
 import { useSocket } from "../../hooks/useSokect";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatDateRelative } from "../util/helper-function";
+import { Ionicons } from "@expo/vector-icons";
 
 const MessagesScreen = () => {
   const [messages, setMessages] = useState([]);
@@ -129,8 +130,6 @@ const MessagesScreen = () => {
   };
 
   const renderMessageItem = ({ item }) => {
-    console.log("show last messages", item?.lastMessage);
-
     if (!item?.lastMessage) return null;
 
     const clientParticipant = item?.participants?.find(
@@ -145,6 +144,9 @@ const MessagesScreen = () => {
 
     const profilePhotoUrl = clientParticipant?.user?.profilePhoto?.url ?? null;
 
+    const isMediaExist = !!item?.lastMessage?.content?.media.length;
+    const mediaCount = item?.lastMessage?.content?.media.length || 0;
+
     return (
       <TouchableOpacity
         className="w-full mb-[4%] px-[4%]"
@@ -158,10 +160,16 @@ const MessagesScreen = () => {
         >
           {/* Avatar */}
           <View className="mr-3">
-            <Image
-              source={{ uri: profilePhotoUrl || undefined }}
-              className="w-10 h-10 rounded-full"
-            />
+            {profilePhotoUrl ? (
+              <Image
+                source={{ uri: profilePhotoUrl }}
+                className="w-10 h-10 rounded-full"
+              />
+            ) : (
+              <View className="w-10 h-10 rounded-full bg-gray-300 items-center justify-center">
+                <Ionicons name="person" size={24} color="#6B7280" />
+              </View>
+            )}
             {isActive && (
               <View className="absolute bottom-0 right-0 w-3 h-3 bg-[#44B700] rounded-full border-2 border-white" />
             )}
@@ -182,13 +190,26 @@ const MessagesScreen = () => {
                 Typing...
               </Text>
             ) : (
-              <Text
-                className={`font-poppins-400regular text-xs ${
-                  isRead ? "text-[#767676]" : "text-[#111]"
-                }`}
-              >
-                {lastMessage || "N/A"}
-              </Text>
+              <View className="flex-row items-center">
+                {isMediaExist && (
+                  <Ionicons
+                    name="attach"
+                    size={14}
+                    color={isRead ? "#767676" : "#111"}
+                    style={{ marginRight: 4 }}
+                  />
+                )}
+                <Text
+                  className={`font-poppins-400regular text-xs ${
+                    isRead ? "text-[#767676]" : "text-[#111]"
+                  }`}
+                  numberOfLines={1}
+                >
+                  {isMediaExist
+                    ? `${mediaCount} ${mediaCount === 1 ? "attachment" : "attachments"}${lastMessage ? ` • ${lastMessage}` : ""}`
+                    : lastMessage || "N/A"}
+                </Text>
+              </View>
             )}
           </View>
 

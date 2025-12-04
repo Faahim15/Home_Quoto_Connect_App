@@ -1,10 +1,9 @@
 import {
   View,
   Text,
-  Image,
   ScrollView,
   Pressable,
-  FlatList,
+  ActivityIndicator,
 } from "react-native";
 
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
@@ -13,10 +12,63 @@ import XStyle from "../util/styles";
 import ServiceCards from "../components/shared/services/ServiceCards";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import {
+  useGetActiveJobsQuery,
+  useGetTodaysJobsQuery,
+} from "../../redux/features/apiSlices/user/createJobSlices";
 export default function OnboardingHomeScreen() {
+  const {
+    data: todaysJobs,
+    isLoading: todaysJobsLoading,
+    refetch: refetchTodaysJobs,
+    error: todaysJobsError,
+  } = useGetTodaysJobsQuery();
+
+  const {
+    data: activeJobs,
+    isLoading: activeJobsLoading,
+    refetch: refetchActiveJobs,
+    error: activeJobsError,
+  } = useGetActiveJobsQuery();
+
+  // ********** Pull to Refresh **********
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([refetchTodaysJobs(), refetchActiveJobs()]);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
+  if (todaysJobsLoading || activeJobsLoading) {
+    return (
+      <View className="flex-1 bg-[#F9FAFB] justify-center items-center">
+        <ActivityIndicator size="large" color="#175994" />
+        <Text className="mt-2 text-[#565656] font-poppins-500medium">
+          Loading...
+        </Text>
+      </View>
+    );
+  }
+
+  // ********** Error UI **********
+  if (todaysJobsError || activeJobsError) {
+    return (
+      <View className="flex-1 bg-[#F9FAFB] justify-center items-center px-6">
+        <Text className="text-lg text-red-500 font-poppins-500medium">
+          Unable to Load Data
+        </Text>
+        <Text className="text-sm text-[#6B7280] text-center mt-2 font-poppins-400regular">
+          Please check your connection and try again.
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <View className="flex-1 bg-[#F9FAFB] ">
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header section */}
 
         <View className="justify-center mx-[6%] mt-[1%] ">
@@ -49,7 +101,12 @@ export default function OnboardingHomeScreen() {
           Today's Jobs
         </Text>
 
-        <ServiceCards />
+        <ServiceCards
+          jobs={todaysJobs?.data?.jobs || []}
+          showPrice
+          // showAddress
+          whichJob="todaysJob"
+        />
 
         {/* Today's Jobs ends here */}
 
@@ -58,7 +115,12 @@ export default function OnboardingHomeScreen() {
           Active Jobs
         </Text>
 
-        <ServiceCards />
+        <ServiceCards
+          jobs={activeJobs?.data?.jobs || []}
+          showPrice
+          // showAddress
+          whichJob="active job"
+        />
 
         {/* Active Jobs section ends here */}
 
@@ -67,7 +129,7 @@ export default function OnboardingHomeScreen() {
       {/* User Selection section starts here */}
       <View
         style={[XStyle.lightShadow, XStyle.borderStyle]}
-        className=" mt-[2%] justify-center items-center border border-[#D4E0EB] px-[6.4%] py-[9%]"
+        className=" mt-[2%] justify-center items-center border border-[#D4E0EB] px-[6%] py-[5%]"
       >
         <View className="flex-row gap-[4%]">
           <UserSelectionButtons
@@ -78,7 +140,7 @@ export default function OnboardingHomeScreen() {
           />
           <UserSelectionButtons
             title="Join as Provider"
-            onPress={() => router.push("/provider/auth/signUp")}
+            onPress={() => router.push("/provider/auth/signIn")}
             backgroundColor="#fff"
             textColor="#175994"
           />

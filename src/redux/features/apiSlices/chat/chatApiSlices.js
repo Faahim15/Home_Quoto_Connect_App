@@ -8,9 +8,9 @@ export const chatSlice = api.injectEndpoints(
         query: (formData) => ({
           url: `/chats/direct`,
           method: "POST",
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          // headers: {
+          //   "Content-Type": "multipart/form-data",
+          // },
           body: formData,
         }),
         invalidatesTags: ["chat"],

@@ -92,6 +92,7 @@ export default function SignUpScreen() {
       formsData.append("email", formData.email);
       formsData.append("password", formData.password);
       formsData.append("confirmPassword", formData.confirmPassword);
+      formsData.append("phoneNumber", formData.phone);
       formsData.append("location", JSON.stringify(location));
       // Step 3: Call API
       const res = await registerUser(formsData).unwrap();

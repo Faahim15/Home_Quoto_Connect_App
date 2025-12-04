@@ -1,4 +1,10 @@
-import { ScrollView, View, Text, RefreshControl } from "react-native";
+import {
+  ScrollView,
+  View,
+  Text,
+  RefreshControl,
+  ActivityIndicator,
+} from "react-native";
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import CustomTitle from "../components/shared/services/CustomTitle";
@@ -26,8 +32,6 @@ export default function ServiceDetails() {
 
   const quoteId = acceptedQuote?._id;
 
-  // console.log("from service details:", quoteId);
-
   // Auto-refetch when screen comes into focus
   useFocusEffect(
     useCallback(() => {
@@ -49,7 +53,8 @@ export default function ServiceDetails() {
   if (isLoading && !refreshing) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
-        <Text className="text-gray-500 text-base">
+        <ActivityIndicator size="large" color="#0066CC" />
+        <Text className="text-gray-500 text-base mt-[2%]">
           Loading service details...
         </Text>
       </View>
@@ -69,8 +74,6 @@ export default function ServiceDetails() {
   }
 
   const updatedOffer = isAccepted && service?.status === "in_progress";
-  // const shouldRenderUpdateButton =
-  //   (shouldShowButtons && updatedOffer) || service?.status === "pending";
   const shouldRenderUpdateButton =
     shouldShowButtons && (updatedOffer || service?.status === "pending");
 

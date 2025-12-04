@@ -1,4 +1,4 @@
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, ActivityIndicator } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import CustomTitle from "../components/shared/services/CustomTitle";
@@ -34,7 +34,10 @@ export default function ServiceDetails() {
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
-        <Text className="text-gray-500 text-base">Loading job details...</Text>
+        <ActivityIndicator size="large" color="#0066CC" />
+        <Text className="text-gray-500 text-base mt-[2%]">
+          Loading job details...
+        </Text>
       </View>
     );
   }

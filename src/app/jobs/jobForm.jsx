@@ -116,21 +116,7 @@ export default function JobFormScreen() {
     }
   }, [job, jobId, hasInitializedFromAPI, dispatch, jobData]);
 
-  // 🔍 Debug current state
-  // useEffect(() => {
-  //   // console.log("📊 Current Redux State - JobFormScreen:", {
-  //   //   title: jobData.title,
-  //   //   serviceCategory: jobData.serviceCategory,
-  //   //   specializations: jobData.specializations?.length,
-  //   //   photos: jobData.photos?.length,
-  //   //   urgency: jobData.urgency,
-  //   //   location: jobData.location,
-  //   //   hasInitializedFromAPI,
-  //   // });
-  // }, [jobData]);
-
   const handleInputChange = (field, value) => {
-    console.log(`🔄 Updating ${field}:`, value);
     dispatch(setJobField({ field, value }));
 
     if (errors[field]) {
