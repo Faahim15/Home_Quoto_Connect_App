@@ -140,6 +140,18 @@ export const paymentSlice = api.injectEndpoints({
       }),
       providesTags: ["Wallet", "Payments"],
     }),
+
+    // ----------------------------------------------------
+    // ⭐ GET Job Invoice
+    // GET: /jobs/{jobId}/invoice
+    // ----------------------------------------------------
+    getJobInvoice: builder.query({
+      query: (jobId) => ({
+        url: `/jobs/${jobId}/invoice`,
+        method: "GET",
+      }),
+      providesTags: ["Payments", "Jobs"],
+    }),
   }),
 
   overrideExisting: true,
@@ -158,4 +170,5 @@ export const {
   useGetCreditsActivityQuery,
   useGetCreditsPackagesQuery,
   useGetWalletQuery,
+  useGetJobInvoiceQuery,
 } = paymentSlice;

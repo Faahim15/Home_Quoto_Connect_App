@@ -23,11 +23,23 @@ export default {
         NSCameraUsageDescription: "This app uses the camera for video calls.",
         NSMicrophoneUsageDescription:
           "This app uses the microphone for audio calls.",
+        NSPhotoLibraryUsageDescription:
+          "This app needs access to save invoice PDFs.",
+        NSPhotoLibraryAddUsageDescription:
+          "This app needs access to save invoice PDFs to your photo library.",
       },
     },
     android: {
       package: "com.fahim.razahomequoto",
-      permissions: ["CAMERA", "RECORD_AUDIO"],
+      permissions: [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "WRITE_EXTERNAL_STORAGE",
+        "READ_EXTERNAL_STORAGE",
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO",
+        "ACCESS_MEDIA_LOCATION",
+      ],
       config: {
         googleMaps: {
           apiKey: process.env.GOOGLE_MAPS_API_KEY,
@@ -46,7 +58,20 @@ export default {
       favicon: "./assets/images/logo/logo.png",
       bundler: "metro",
     },
-    plugins: ["expo-router", "expo-font"],
+    plugins: [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-media-library",
+        {
+          photosPermission:
+            "Allow Raza Home Quoto to access your photos to save invoice PDFs.",
+          savePhotosPermission:
+            "Allow Raza Home Quoto to save invoice PDFs to your device.",
+          isAccessMediaLocationEnabled: true,
+        },
+      ],
+    ],
     extra: {
       router: {},
       eas: {
