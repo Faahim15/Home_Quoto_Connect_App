@@ -19,11 +19,14 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
         // Don't set Content-Type for FormData
       };
       // http://10.10.20.30:5000/api
-      const response = await fetch(`http://10.10.20.30:5000/api${args.url}`, {
-        method: args.method,
-        headers: headers,
-        body: args.body,
-      });
+      const response = await fetch(
+        `https://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net/api${args.url}`,
+        {
+          method: args.method,
+          headers: headers,
+          body: args.body,
+        }
+      );
 
       console.log("Fetch response status:", response.status);
 
@@ -44,7 +47,8 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
 
     // Use axios for non-FormData requests
     const result = await axios({
-      baseURL: "http://10.10.20.30:5000/api",
+      baseURL:
+        "https://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net/api",
       ...args,
       url: args.url,
       method: args.method,

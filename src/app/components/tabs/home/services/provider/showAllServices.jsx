@@ -97,7 +97,11 @@ const ServiceCard = ({ item }) => {
 };
 
 export default function ShowAllServiceCards({ jobs, horizontal }) {
-  const isEmpty = !jobs || jobs.length === 0;
+  const allJobs = jobs.filter((job) => !job.isDirectBooking);
+
+  const isEmpty = !allJobs || allJobs.length === 0;
+
+  // console.log("alljobs", allJobs);
 
   // ⭐ ADDED — Refresh state
   const [refreshing, setRefreshing] = useState(false);
@@ -121,7 +125,7 @@ export default function ShowAllServiceCards({ jobs, horizontal }) {
         </Text>
       ) : (
         <FlatList
-          data={jobs}
+          data={allJobs}
           renderItem={({ item }) => <ServiceCard item={item} />}
           keyExtractor={(item, index) => item._id || index.toString()}
           horizontal={horizontal}

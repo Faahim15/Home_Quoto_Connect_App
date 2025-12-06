@@ -32,9 +32,9 @@ const ServiceCard = () => {
   };
 
   return (
-    <View className="w-full px-[3%] bg-[#f9f9f9] rounded-lg shadow-lg overflow-hidden">
+    <View className="flex-1 w-full px-[3%] bg-[#f9f9f9] rounded-lg shadow-lg overflow-hidden">
       {/* Tab Navigation */}
-      <View className="border-b border-[#C8C8C8] bg-[#f9f9f9]">
+      <View className=" border-b border-[#C8C8C8] bg-[#f9f9f9]">
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {tabs.map((tab, index) => (
             <TouchableOpacity

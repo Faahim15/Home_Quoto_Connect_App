@@ -138,11 +138,6 @@ const ServiceCard = ({ item }) => {
           loading={cancelLoading}
         />
 
-        {/* router.push({
-        pathname: "/provider/quote/updateQuote",
-        params: { jobId: serviceId },
-      }); */}
-
         <BottomButtons
           onPress={() =>
             router.push({
@@ -240,7 +235,7 @@ export default function QuotesRequestScreen() {
       <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">
         <Ionicons name="document-text-outline" size={64} color="#9CA3AF" />
 
-        <Text className="font-poppins-600semiBold text-lg text-gray-900 mt-4 text-center">
+        <Text className="font-poppins-500medium text-lg text-gray-900 mt-4 text-center">
           No Quotes Available
         </Text>
 

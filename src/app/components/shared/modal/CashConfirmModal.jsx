@@ -2,7 +2,12 @@ import React from "react";
 import { Modal, View, Text, TouchableOpacity } from "react-native";
 import { scale } from "../../adaptive/Adaptiveness";
 
-export default function CashConfirmModal({ visible, onConfirm, onClose }) {
+export default function CashConfirmModal({
+  visible,
+  onConfirm,
+  onClose,
+  isLoading,
+}) {
   return (
     <Modal
       animationType="fade"
@@ -38,7 +43,7 @@ export default function CashConfirmModal({ visible, onConfirm, onClose }) {
               className="bg-[#10B981] py-3 px-5 rounded-xl w-[45%]"
             >
               <Text className="text-center font-poppins-500medium text-white">
-                Confirm
+                {isLoading ? "Confirming..." : "Confirm"}
               </Text>
             </TouchableOpacity>
           </View>

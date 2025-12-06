@@ -39,7 +39,7 @@ export default function ProviderJobSummary({
   } = quoteInfo?.job || {};
   const { profilePhoto, fullName } = quoteInfo?.job?.client || {};
   const { city, state } = quoteInfo?.job?.location?.details || {};
-  const statusColor = statusColorMap?.[quoteInfo?.status] ?? "#6B7280";
+  const statusColor = statusColorMap?.[quoteInfo?.job?.status] ?? "#6B7280";
 
   //   console.log("Job provider summary", quoteInfo?.job?.status);
   return (
@@ -91,7 +91,7 @@ export default function ProviderJobSummary({
               Service
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              {capitalizeFirstLetter(serviceCategory?.title) || "N/A"}
+              {capitalizeFirstLetter(title) || "N/A"}
             </Text>
           </View>
           {/* Specializations */}

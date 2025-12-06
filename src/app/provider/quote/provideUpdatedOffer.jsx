@@ -1,4 +1,13 @@
-import { View, Text, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import CustomTitle from "../../components/shared/services/CustomTitle";
 import QuoteForm from "../../components/provider/map/QuoteForm";
 import { Ionicons } from "@expo/vector-icons";
@@ -9,10 +18,7 @@ import Toast from "react-native-toast-message";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import * as Yup from "yup";
-import {
-  useSubmitQuoteMutation,
-  useUpdateQuoteMutation,
-} from "../../../redux/features/apiSlices/quote/quoteApiSlice";
+import { useUpdateQuoteMutation } from "../../../redux/features/apiSlices/quote/quoteApiSlice";
 import { useGetSingleJobQuery } from "../../../redux/features/apiSlices/user/createJobSlices";
 import { convertToThirdDay } from "../../util/helper-function";
 
@@ -40,14 +46,14 @@ export default function UpdateQuoteScreen() {
     (quote) => quote.status === "pending"
   );
 
-  // console.log("pending quotes", pendingQuote?._id);
-
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
   if (isLoading || singleJobLoader) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
+        <ActivityIndicator size="large" color="#175994" />
         <Text className="text-gray-500 text-base">
           Loading service details...
         </Text>
@@ -56,10 +62,7 @@ export default function UpdateQuoteScreen() {
   }
 
   const service = data?.data?.job;
-
   const preferredDate = convertToThirdDay(service?.preferredDate);
-
-  // console.log("indivaiudal job", convertToThirdDay(service?.preferredDate));
 
   const validationSchema = Yup.object({
     appointment: Yup.boolean()
@@ -114,11 +117,9 @@ export default function UpdateQuoteScreen() {
         warranty: {
           details: formData.warrantyDetails,
         },
-        // updateReason: formData.updateReason,
       };
 
       // Step 3: Call API
-      // Pass quoteId along with payload
       const res = await updateQuote({
         id: pendingQuote?._id,
         ...payload,
@@ -168,42 +169,54 @@ export default function UpdateQuoteScreen() {
   };
 
   return (
-    <View className="flex-1  bg-[#F9F9F9]">
+    <View className="flex-1 bg-[#F9F9F9]">
       <View className="px-[4%]">
         <CustomTitle title="Update Quote" />
       </View>
 
-      <ScrollView>
-        <View className="mt-[3%]">
-          <QuoteForm
-            job={service}
-            radioButtonChange={(value) =>
-              handleInputChange("appointment", value)
-            }
-            quoteDetailsChange={(text) =>
-              handleInputChange("quoteDetails", text)
-            }
-            onWarrantyChange={(text) =>
-              handleInputChange("warrantyDetails", text)
-            }
-            errors={errors}
-            onPriceChange={(value) => handleInputChange("price", value)}
-            price={formData.price}
-            formData={formData}
-          />
-        </View>
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView
+            contentContainerStyle={{ paddingBottom: 20 }}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+          >
+            <View className="mt-[3%]">
+              <QuoteForm
+                job={service}
+                radioButtonChange={(value) =>
+                  handleInputChange("appointment", value)
+                }
+                quoteDetailsChange={(text) =>
+                  handleInputChange("quoteDetails", text)
+                }
+                onWarrantyChange={(text) =>
+                  handleInputChange("warrantyDetails", text)
+                }
+                errors={errors}
+                onPriceChange={(value) => handleInputChange("price", value)}
+                price={formData.price}
+                formData={formData}
+              />
+            </View>
 
-        <View className="flex-row px-[4%] items-center mb-[2%]">
-          <Ionicons name="bulb-outline" size={18} color="#f59e0b" />
-          <Text className="font-poppins-400regular  text-justify w-[90%] text-xs text-[#1F2937] ml-[2%]">
-            Submitting this quote will cost 5 credits. Your current balance is
-            25 credits.
-          </Text>
-        </View>
-      </ScrollView>
+            <View className="flex-row px-[4%] items-center mb-[2%]">
+              <Ionicons name="bulb-outline" size={18} color="#f59e0b" />
+              <Text className="font-poppins-400regular text-justify w-[90%] text-xs text-[#1F2937] ml-[2%]">
+                Submitting this quote will cost 5 credits. Your current balance
+                is 25 credits.
+              </Text>
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
 
       <View
-        className="flex-row gap-[6%] h-[14%]   border border-[#D8DCE0] justify-center items-center "
+        className="flex-row gap-[6%] h-[14%] border border-[#D8DCE0] justify-center items-center"
         style={[
           XStyle.shadowBox,
           { borderTopRightRadius: scale(20), borderTopLeftRadius: scale(20) },
@@ -223,6 +236,7 @@ export default function UpdateQuoteScreen() {
           borderColor="#2583B6"
           title="Send Quote"
           disabled={isLoading}
+          loading={isLoading}
         />
       </View>
     </View>

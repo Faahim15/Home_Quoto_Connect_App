@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, ActivityIndicator } from "react-native";
 import CustomTitle from "../../components/shared/services/CustomTitle";
 import QuoteForm from "../../components/provider/map/QuoteForm";
 import { Ionicons } from "@expo/vector-icons";
@@ -174,6 +174,7 @@ export default function UpdateQuoteScreen() {
   if (isLoading || allQuoteLoader || singleJobLoader) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
+        <ActivityIndicator size="large" color="#175994" />
         <Text className="text-gray-500 text-base">
           Loading service details...
         </Text>

@@ -181,14 +181,15 @@ export default function AcceptJobsScreen() {
   if (acceptedJobs.length === 0) {
     return (
       <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">
-        <Ionicons name="document-text-outline" size={64} color="#9CA3AF" />
+        <Ionicons name="time-outline" size={64} color="#9CA3AF" />
 
-        <Text className="font-poppins-600semiBold text-lg text-gray-900 mt-4 text-center">
-          No Quotes Available
+        <Text className="font-poppins-500medium text-lg text-gray-900 mt-4 text-center">
+          No Quotes In Progress
         </Text>
 
         <Text className="font-poppins-400regular text-sm text-gray-600 mt-2 text-center">
-          You don't have any quote requests at the moment.
+          You don't have any quotes currently in progress. Check back later or
+          create a new job.
         </Text>
 
         <TouchableOpacity

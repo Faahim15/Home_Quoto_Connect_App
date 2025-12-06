@@ -7,17 +7,17 @@ export default function Service({ services }) {
       <View className="flex-row  gap-[2%]">
         <SvgXml xml={svgIcon} height={24} width={14} />
         <Text className="font-poppins-semiBold text-base text-[#1F2937] ">
-          {title}
+          {title || "N/A"}
         </Text>
       </View>
       <View className="pt-[1%] pb-[2%] ">
         {services.subtitle && (
           <Text className="font-poppins-500medium text-base text-[#111827] ">
-            {services.subtitle}
+            {services.subtitle || "N/A"}
           </Text>
         )}
         <Text className="font-poppins pt-[0.5%] text-sm text-[#4B5563]">
-          {description}
+          {description || "N/A"}
         </Text>
       </View>
     </View>

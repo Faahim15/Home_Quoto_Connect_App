@@ -3,7 +3,10 @@ import React from "react";
 import { priceIcon } from "../../../../../assets/svg/icons";
 import { SvgXml } from "react-native-svg";
 import BreakDown from "./BreakDown";
-export default function Pricing() {
+export default function Pricing({ pricing }) {
+  const { subtotal, platformCommission, platformCommissionRate, total } =
+    pricing || {};
+
   return (
     <View className="border-b border-[#E5E7EB] px-[6%] mt-[3%]">
       <View className="border-b border-[#E5E7EB] ">
@@ -17,9 +20,12 @@ export default function Pricing() {
 
         {/* pricing Breakdown */}
         <View className="gap-[2%] pt-[1%] ">
-          <BreakDown title="Plumbing Service" price="$150.00" />
-          <BreakDown title="Pipe Replacement" price="$50.00" />
-          <BreakDown title="HST (13%)" price="$26.00" />
+          <BreakDown title="Platform Commission" price={platformCommission} />
+          <BreakDown
+            title="Platform Commission Rate"
+            price={platformCommissionRate}
+          />
+          {/* <BreakDown title="HST (13%)" price="$26.00" /> */}
         </View>
       </View>
       {/* subtotal */}
@@ -28,7 +34,7 @@ export default function Pricing() {
           Subtotal
         </Text>
         <Text className="font-poppins-500medium  text-sm text-[#111827]">
-          $200.00
+          ${subtotal || ""}
         </Text>
       </View>
 
@@ -38,7 +44,7 @@ export default function Pricing() {
           Total Amount
         </Text>
         <Text className="font-poppins-bold text-xl text-[#1E3A8A] ">
-          $226.00
+          ${total || ""}
         </Text>
       </View>
     </View>

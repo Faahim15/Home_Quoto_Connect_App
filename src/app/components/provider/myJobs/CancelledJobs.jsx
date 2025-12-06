@@ -85,14 +85,14 @@ const ServiceCard = ({ item }) => {
 
       {/* Price section */}
 
-      <View className="flex-row mt-[2%] justify-between">
+      {/* <View className="flex-row mt-[2%] justify-between">
         <Text className="font-poppins-400regular text-base text-[#1F2937] ">
           Price
         </Text>
         <Text className="font-poppins-semiBold text-base text-[#F59E0B] ">
           {`$${item?.price}` || "N/A"}
         </Text>
-      </View>
+      </View> */}
       {/* Status section */}
 
       <View className="flex-row mt-[2%] justify-between">
@@ -186,14 +186,14 @@ export default function CancelledJobs() {
   if (cancelledJobs.length === 0) {
     return (
       <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">
-        <Ionicons name="document-text-outline" size={64} color="#9CA3AF" />
+        <Ionicons name="close-circle-outline" size={64} color="#9CA3AF" />
 
         <Text className="font-poppins-600semiBold text-lg text-gray-900 mt-4 text-center">
-          No Quotes Available
+          No Cancelled Quotes
         </Text>
 
         <Text className="font-poppins-400regular text-sm text-gray-600 mt-2 text-center">
-          You don't have any quote requests at the moment.
+          You don't have any cancelled quotes at the moment.
         </Text>
 
         <TouchableOpacity

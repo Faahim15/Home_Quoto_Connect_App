@@ -19,7 +19,7 @@ import CustomButton from "../../tabs/home/services/provider/details/CustomButton
 const ServiceCard = ({ item }) => {
   const { profilePhoto, fullName } = item?.job?.client || {};
   const { city, state } = item?.job?.location?.details || {};
-  const statusColor = statusColorMap?.[item?.status] ?? "#6B7280";
+  const statusColor = statusColorMap?.[item?.job?.status] ?? "#6B7280";
 
   // console.log("items", item?.reviews?.provider_to_client);
   const isAlreadyReviewed = !!item?.reviews?.provider_to_client;
@@ -195,14 +195,14 @@ export default function CompletedJobs() {
   if (completedJobs.length === 0) {
     return (
       <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">
-        <Ionicons name="document-text-outline" size={64} color="#9CA3AF" />
+        <Ionicons name="checkmark-done-outline" size={64} color="#9CA3AF" />
 
         <Text className="font-poppins-600semiBold text-lg text-gray-900 mt-4 text-center">
-          No Quotes Available
+          No Completed Quotes
         </Text>
 
         <Text className="font-poppins-400regular text-sm text-gray-600 mt-2 text-center">
-          You don't have any quote requests at the moment.
+          You don't have any completed quotes at the moment.
         </Text>
 
         <TouchableOpacity

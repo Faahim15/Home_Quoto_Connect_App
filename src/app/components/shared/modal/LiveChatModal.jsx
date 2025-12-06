@@ -25,7 +25,10 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
   const [inputText, setInputText] = useState("");
   const [attachments, setAttachments] = useState([]);
   const [showAttachModal, setShowAttachModal] = useState(false);
-  const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
+  const { socket, isConnected } = useSocket(
+    "wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
+  ); //"https://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net/api"
+
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const [containerHeight, setContainerHeight] = useState(0);
@@ -174,7 +177,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
 
     const text = inputText.trim();
 
-    console.log("live chat", text);
+    // console.log("live chat", text);
     setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
 
     const payload = {

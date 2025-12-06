@@ -23,9 +23,17 @@ const ServiceItem = ({ item }) => {
   const isAlreadyReviewed = !!item?.reviews?.client_to_provider;
 
   return (
-    <View className="mx-[4%] mb-[4%]">
+    <Pressable
+      onPress={() => {
+        router.push({
+          pathname: "/myJobs/completedQuote",
+          params: { jobId: item._id, quoteId: acceptedQuote?._id },
+        });
+      }}
+      className="mx-[4%] mb-[4%]"
+    >
       {/* Service Type Banner - Made clickable */}
-      <Pressable
+      <View
         style={{
           borderTopLeftRadius: scale(8),
           borderTopRightRadius: scale(8),
@@ -35,7 +43,7 @@ const ServiceItem = ({ item }) => {
         <Text className="text-white font-poppins-400regular text-base">
           {item?.serviceCategory?.title || "N/A"}
         </Text>
-      </Pressable>
+      </View>
 
       <View
         style={{
@@ -135,22 +143,22 @@ const ServiceItem = ({ item }) => {
               <TouchableOpacity
                 onPress={() => {
                   router.push({
-                    pathname: "/myJobs/completedQuote",
-                    params: { jobId: item._id, quoteId: acceptedQuote?._id },
+                    pathname: "/shared/pdfDownloader",
+                    params: { jobId: item._id },
                   });
                 }}
                 style={{ width: scale(120), height: verticalScale(30) }}
                 className="justify-center items-center  mt-[3%] rounded-md py-[2%] px-[2%] bg-[#0054A5]"
               >
                 <Text className="  text-[10px]  text-white text-sm font-poppins-semiBold">
-                  Details
+                  Invoice
                 </Text>
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

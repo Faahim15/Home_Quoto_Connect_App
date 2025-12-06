@@ -1,12 +1,10 @@
-import React from "react";
 import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
   Alert,
-  Platform,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import * as Print from "expo-print";
 import * as Sharing from "expo-sharing";
@@ -26,223 +24,205 @@ import {
   settingsIcon,
 } from "../../../assets/svg/icons";
 import { useGetJobInvoiceQuery } from "../../redux/features/apiSlices/payment/paymentApiSlice";
+import moment from "moment";
 
 const InvoiceScreen = () => {
   const { jobId } = useLocalSearchParams();
-  console.log(jobId);
 
   const { data: invoice, isLoading, error } = useGetJobInvoiceQuery(jobId);
 
-  console.log("invoice", invoice);
-  const invoiceData = {
-    invoiceNumber: "#INV-123456",
-    date: "March 16, 2024",
-    serviceProvider: {
-      name: "John Doe Plumbing Services",
-      address: "123 Main Street, Toronto, ON M5V 3T6",
-      phone: "(416) 555-0123",
-      email: "john@plumbingservices.com",
-    },
-    customer: {
-      name: "Jane Smith",
-      address: "456 Oak Avenue, Toronto, ON M6W 1A8",
-      phone: "(416) 555-0456",
-      email: "jane.smith@email.com",
-    },
-    serviceDetails: {
-      title: "Plumbing Service - Leak Fixing",
-      description:
-        "Fixed water leaking under the sink in the kitchen and replaced the old pipes with a new one. Tested all connections for proper sealing.",
-    },
-    location: "456 Oak Avenue, Toronto, ON M6W 1A8",
-    pricing: {
-      plumbingService: 150.0,
-      pipeReplacement: 50.0,
-      hst: 26.0,
-      subtotal: 200.0,
-      total: 226.0,
-    },
-    paymentInfo: {
-      status: "Paid",
-      amount: 226.0,
-      method: "Paid through app",
-      date: "March 16, 2024",
-    },
-  };
+  const { name, fullName, email, phoneNumber, address } =
+    invoice?.data?.serviceProvider || {};
+  const {
+    name: serviceName,
+    fullName: customerName,
+    email: customerEmail,
+    phoneNumber: customerPhone,
+    address: customerAdrress,
+  } = invoice?.data?.customer || {};
+  const { jobTitle, jobDescription, jobLocation, serviceCategory } =
+    invoice?.data?.jobDetails || {};
+  const { subtotal, platformCommission, platformCommissionRate, total } =
+    invoice?.data?.pricing || {};
+  const { paidAmount, paymentMethod, paymentStatus, paidAt } =
+    invoice?.data?.payment || {};
+  const formatted = moment(invoice?.data?.issuedDate).format("MMMM D, YYYY");
 
   const generateHTMLInvoice = () => {
     return `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <style>
-            * {
-              margin: 0;
-              padding: 0;
-              box-sizing: border-box;
-            }
-            body {
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-              padding: 20px;
-              background: #f5f5f5;
-            }
-            .invoice-container {
-              max-width: 800px;
-              margin: 0 auto;
-              background: white;
-              border-radius: 8px;
-              overflow: hidden;
-            }
-            .header {
-              background: #2196F3;
-              color: white;
-              padding: 30px 20px;
-              text-align: center;
-            }
-            .header h1 {
-              font-size: 32px;
-              margin-bottom: 10px;
-            }
-            .section {
-              padding: 20px;
-              border-bottom: 1px solid #eee;
-            }
-            .section-title {
-              font-size: 16px;
-              font-weight: bold;
-              margin-bottom: 10px;
-              color: #444;
-            }
-            .info-block p {
-              font-size: 14px;
-              line-height: 1.6;
-              color: #444;
-            }
-            .pricing-row {
-              display: flex;
-              justify-content: space-between;
-              padding: 8px 0;
-              font-size: 14px;
-            }
-            .pricing-row.total {
-              border-top: 2px solid #2196F3;
-              padding-top: 12px;
-              margin-top: 8px;
-              font-size: 18px;
-              font-weight: bold;
-              color: #2196F3;
-            }
-            .payment-status {
-              display: inline-block;
-              background: #4CAF50;
-              color: white;
-              padding: 6px 16px;
-              border-radius: 20px;
-              margin-top: 10px;
-              font-size: 12px;
-            }
-            .footer {
-              text-align: center;
-              padding: 20px;
-              font-size: 12px;
-              color: #777;
-              background: #f9f9f9;
-            }
-          </style>
-        </head>
-        <body>
-
-          <div class="invoice-container">
-
-            <div class="header">
-              <h1>INVOICE</h1>
-              <p>${invoiceData.invoiceNumber}</p>
-              <p>${invoiceData.date}</p>
-            </div>
-
-            <div class="section">
-              <div class="section-title">Service Provider</div>
-              <div class="info-block">
-                <p><strong>${invoiceData.serviceProvider.name}</strong></p>
-                <p>${invoiceData.serviceProvider.address}</p>
-                <p>📞 ${invoiceData.serviceProvider.phone}</p>
-                <p>📧 ${invoiceData.serviceProvider.email}</p>
-              </div>
-            </div>
-
-            <div class="section">
-              <div class="section-title">Customer</div>
-              <div class="info-block">
-                <p><strong>${invoiceData.customer.name}</strong></p>
-                <p>${invoiceData.customer.address}</p>
-                <p>📞 ${invoiceData.customer.phone}</p>
-                <p>📧 ${invoiceData.customer.email}</p>
-              </div>
-            </div>
-
-            <div class="section">
-              <div class="section-title">Service Details</div>
-              <div class="info-block">
-                <p><strong>${invoiceData.serviceDetails.title}</strong></p>
-                <p>${invoiceData.serviceDetails.description}</p>
-              </div>
-            </div>
-
-            <div class="section">
-              <div class="section-title">Work Location</div>
-              <div class="info-block">
-                <p>${invoiceData.location}</p>
-              </div>
-            </div>
-
-            <div class="section">
-              <div class="section-title">Pricing Breakdown</div>
-
-              <div class="pricing-row">
-                <span>Plumbing Service</span>
-                <span>$${invoiceData.pricing.plumbingService.toFixed(2)}</span>
-              </div>
-
-              <div class="pricing-row">
-                <span>Pipe Replacement</span>
-                <span>$${invoiceData.pricing.pipeReplacement.toFixed(2)}</span>
-              </div>
-
-              <div class="pricing-row">
-                <span>HST (13%)</span>
-                <span>$${invoiceData.pricing.hst.toFixed(2)}</span>
-              </div>
-
-              <div class="pricing-row">
-                <span>Subtotal</span>
-                <span>$${invoiceData.pricing.subtotal.toFixed(2)}</span>
-              </div>
-
-              <div class="pricing-row total">
-                <span>Total Amount</span>
-                <span>$${invoiceData.pricing.total.toFixed(2)}</span>
-              </div>
-            </div>
-
-            <div class="section">
-              <div class="section-title">Payment Information</div>
-              <div class="info-block">
-                <div class="payment-status">${invoiceData.paymentInfo.status}</div>
-                <p><strong>Payment Method:</strong> ${invoiceData.paymentInfo.method}</p>
-                <p><strong>Amount Paid:</strong> $${invoiceData.paymentInfo.amount.toFixed(2)}</p>
-              </div>
-            </div>
-
-            <div class="footer">
-              <p>For questions regarding this invoice, please contact support.</p>
-              <p>Thank you for your business!</p>
-            </div>
-
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+          @page {
+            size: A4;
+            margin: 0;
+          }
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            width: 210mm;
+            height: 297mm;
+            margin: 0;
+            padding: 0;
+          }
+          .invoice-container {
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: flex;
+            flex-direction: column;
+          }
+          .header {
+            background: #2196F3;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+          }
+          .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+          }
+          .header p {
+            font-size: 11px;
+            margin: 2px 0;
+          }
+          .section {
+            padding: 12px 20px;
+            border-bottom: 1px solid #eee;
+          }
+          .section-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #444;
+          }
+          .info-block p {
+            font-size: 11px;
+            line-height: 1.4;
+            color: #444;
+            margin: 2px 0;
+          }
+          .pricing-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 11px;
+          }
+          .pricing-row.total {
+            border-top: 2px solid #2196F3;
+            padding-top: 8px;
+            margin-top: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #2196F3;
+          }
+          .payment-status {
+            display: inline-block;
+            background: #4CAF50;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            font-size: 10px;
+          }
+          .footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 10px;
+            color: #777;
+            background: #f9f9f9;
+            margin-top: auto;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="invoice-container">
+          <div class="header">
+            <h1>INVOICE</h1>
+            <p>#INV-${invoice?.data?.invoiceId}</p>
+            <p>${formatted}</p>
           </div>
-        </body>
-      </html>
-    `;
+
+          <div class="section">
+            <div class="section-title">Service Provider</div>
+            <div class="info-block">
+              <p><strong>${fullName || ""}</strong></p>
+              <p>${address || ""}</p>
+              <p>📞 ${phoneNumber || ""}</p>
+              <p>📧 ${email || ""}</p>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Customer</div>
+            <div class="info-block">
+              <p><strong>${customerName || ""}</strong></p>
+              <p>${customerAdrress || ""}</p>
+              <p>📞 ${customerPhone || ""}</p>
+              <p>📧 ${customerEmail || ""}</p>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Service Details</div>
+            <div class="info-block">
+              <p><strong>${jobTitle || ""}</strong></p>
+              <p>${jobDescription || ""}</p>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Work Location</div>
+            <div class="info-block">
+              <p>${jobLocation || ""}</p>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Pricing Breakdown</div>
+            <div class="pricing-row">
+              <span>Platform Commission</span>
+              <span>$${platformCommission || ""}</span>
+            </div>
+            <div class="pricing-row">
+              <span>Platform Commission Rate</span>
+              <span>${platformCommissionRate || ""}</span>
+            </div>
+            <div class="pricing-row">
+              <span>Subtotal</span>
+              <span>$${subtotal || ""}</span>
+            </div>
+            <div class="pricing-row total">
+              <span>Total Amount</span>
+              <span>$${total || ""}</span>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="section-title">Payment Information</div>
+            <div class="info-block">
+              <div class="payment-status">${paymentStatus || ""}</div>
+              <p><strong>Payment Method:</strong> ${paymentMethod?.charAt(0).toUpperCase() + paymentMethod?.slice(1) || ""}</p>
+              <p><strong>Amount Paid:</strong> $${paidAmount || ""}</p>
+            </div>
+          </div>
+
+          <div class="footer">
+            <p>For questions regarding this invoice, please contact support.</p>
+            <p>Thank you for your business!</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
   };
 
   const downloadInvoicePDF = async () => {
@@ -253,7 +233,7 @@ const InvoiceScreen = () => {
         base64: false,
       });
 
-      const fileName = `Invoice_${invoiceData.invoiceNumber.replace(
+      const fileName = `Invoice_${invoice?.data?.invoiceId.replace(
         "#",
         ""
       )}_${Date.now()}.pdf`;
@@ -291,6 +271,28 @@ const InvoiceScreen = () => {
     }
   };
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2196F3" />
+        <Text style={styles.loadingText}>Loading Invoice...</Text>
+      </View>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorTitle}>Unable to Load Invoice</Text>
+        <Text style={styles.errorText}>
+          {error?.data?.message || "Something went wrong. Please try again."}
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <>
       <View className="flex-1 bg-[#F9FAFB]">
@@ -298,26 +300,29 @@ const InvoiceScreen = () => {
           contentContainerStyle={{ paddingBottom: verticalScale(80) }}
           showsVerticalScrollIndicator={false}
         >
-          <InvoiceHeader />
+          <InvoiceHeader
+            invoiceId={invoice?.data?.invoiceId}
+            issueDate={invoice?.data?.issuedDate}
+          />
           <ServiceInfo
             serviceDetails={{
               svgIcon: avatar1,
-              name: "John Doe",
+              name: fullName,
               role: "Service Provider",
-              serviceType: "Plumbing Services",
-              address: "123 Main Street, Toronto, ON M5V 2T6",
-              phone: "(416) 555-0123",
-              gmail: "john@doeplumbing.com",
+              serviceType: name,
+              address: address,
+              phone: phoneNumber,
+              gmail: email,
             }}
           />
           <ServiceInfo
             serviceDetails={{
               svgIcon: avatar2,
-              name: "Jane Smith",
+              name: serviceName,
               role: "Customer",
-              address: "456 Oak Avenue, Toronto, ON M4W 1A8",
-              phone: "(416) 555-0456",
-              gmail: "jane.smith@email.com",
+              address: customerAdrress,
+              phone: customerPhone,
+              gmail: customerEmail,
             }}
           />
 
@@ -327,9 +332,8 @@ const InvoiceScreen = () => {
             services={{
               svgIcon: settingsIcon,
               title: "Service Details",
-              subtitle: "Plumbing Service – Leak Fixing",
-              description:
-                "Fixed water leakage under the sink in the kitchen and replaced the old pipe with a new one. Tested all connections for proper sealing.",
+              subtitle: jobTitle,
+              description: jobDescription,
             }}
           />
           {/* location details */}
@@ -337,54 +341,54 @@ const InvoiceScreen = () => {
             services={{
               svgIcon: locationIcon,
               title: "Work Location",
-              description: "456 Oak Avenue, Toronto, ON M4W 1A8",
+              description: jobLocation,
             }}
           />
           {/* pricing breakdown */}
-          <Pricing />
+          <Pricing pricing={invoice?.data?.pricing} />
 
           {/* payment information */}
-          <PaymentInfo />
+          <PaymentInfo paymentInfo={invoice?.data?.payment} />
         </ScrollView>
         {/* button */}
-        <InvoiceButton onPress={downloadInvoicePDF} />
+        <InvoiceButton onPress={downloadInvoicePDF} isLoading={isLoading} />
       </View>
-
-      {/* <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.downloadButton}
-          onPress={downloadInvoicePDF}
-        >
-          <Text style={styles.downloadButtonText}>
-            📥 Download Invoice as PDF
-          </Text>
-        </TouchableOpacity>
-      </View> */}
     </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  loadingContainer: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  downloadButton: {
-    backgroundColor: "#2196F3",
-    padding: 16,
-    margin: 20,
-    borderRadius: 8,
+    justifyContent: "center",
     alignItems: "center",
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    backgroundColor: "#F9FAFB",
   },
-  downloadButtonText: {
-    color: "white",
+  loadingText: {
+    marginTop: 16,
     fontSize: 16,
-    fontWeight: "600",
+    color: "#6B7280",
+    fontWeight: "500",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F9FAFB",
+    paddingHorizontal: 32,
+  },
+  errorTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#1F2937",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  errorText: {
+    fontSize: 14,
+    color: "#6B7280",
+    textAlign: "center",
+    lineHeight: 20,
   },
 });
 

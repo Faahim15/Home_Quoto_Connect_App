@@ -3,7 +3,7 @@ import { View } from "react-native";
 
 // Error State Component
 const ErrorState = ({ error }) => (
-  <View className="flex-1 justify-center items-center py-[40%] px-[8%]">
+  <View className="flex-1 justify-center items-center  px-[8%]">
     <Text className="font-poppins-500medium text-red-600 text-xl mb-2">
       Something went wrong
     </Text>

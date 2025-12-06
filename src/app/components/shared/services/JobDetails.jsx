@@ -77,7 +77,7 @@ export default function ProviderInfo({ item, showPrice = false }) {
               Service
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              {item?.serviceCategory?.title || "N/A"}
+              {item?.title || "N/A"}
             </Text>
           </View>
           {/* Specializations */}

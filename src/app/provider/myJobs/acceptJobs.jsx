@@ -163,7 +163,7 @@ export default function AcceptJobDetailScreen() {
             backgroundColor="#10B981"
             color="#fff"
             borderColor="#10B981"
-            title={confirming ? "Confirming..." : "Confirm Payment"}
+            title="Confirm Payment"
             width={148}
             disabled={confirming}
           />
@@ -189,6 +189,7 @@ export default function AcceptJobDetailScreen() {
         visible={cashConfirmModalVisible}
         onClose={() => setCashConfirmModalVisible(false)}
         onConfirm={handleConfirmPayment}
+        isLoading={confirming}
       />
     </View>
   );

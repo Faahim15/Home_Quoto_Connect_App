@@ -1,8 +1,6 @@
 import { View, Text, Image, FlatList } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import XStyle from "../../../util/styles";
-import PaymentChecklist from "./PaymentCheckList";
-import imageData from "../../data/shared/Images";
 import {
   capitalizeFirstLetter,
   formatDateForCanada,
@@ -155,7 +153,7 @@ export default function JobSummary({
             </View>
           </View>
 
-          <View className="flex-row justify-between">
+          {/* <View className="flex-row justify-between">
             <Text className="font-poppins-semiBold text-sm text-[#6B7280] ">
               Price
             </Text>
@@ -164,7 +162,7 @@ export default function JobSummary({
                 ? "Request a personalized..."
                 : `$${priceRange?.from || null}-$${priceRange?.to || null}`}
             </Text>
-          </View>
+          </View> */}
 
           <View className="flex-row pt-[1%] justify-between">
             <Text className="font-poppins-semiBold text-sm text-[#6B7280]">

@@ -27,7 +27,17 @@ export default function BreakDown({
         ]}
         className="font-poppins text-sm text-[#111827]"
       >
-        {price}
+        {`${
+          price === "cash"
+            ? "Cash"
+            : price === "card"
+              ? "Card"
+              : price === "Paid in Full"
+                ? "Paid in Full"
+                : String(price).includes("%")
+                  ? price
+                  : `$${price}`
+        }` || ""}
       </Text>
     </View>
   );

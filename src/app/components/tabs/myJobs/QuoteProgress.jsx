@@ -14,9 +14,9 @@ import { useState, useCallback } from "react";
 import { useGetMyJobsQuery } from "../../../../redux/features/apiSlices/user/createJobSlices";
 import LoadingState from "../../ui/LoadingState";
 import ErrorState from "../../ui/ErrorState";
-import EmptyState from "../../ui/EmptyState";
 import { statusColorMap } from "../../../util/colors";
 import { getStatusLabel } from "../../../util/helper-function";
+import EmptyProgressState from "../../provider/myJobs/EmptyProgressState";
 
 // ----------------------
 // Service Item Component
@@ -30,14 +30,13 @@ const ServiceItem = ({ item }) => {
   if (
     !acceptedQuote ||
     acceptedQuote?.description === "Direct booking - quote to be provided"
-  )
+  ) {
     return null;
+  }
 
   const statusColor = statusColorMap?.[item?.status] ?? "#6B7280";
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     acceptedQuote?.provider || {};
-
-  // console.log("accepted", acceptedQuote?.description);
 
   return (
     <View className="mx-[4%] mb-[4%]">
@@ -196,11 +195,16 @@ export default function QuoteProgress() {
   });
 
   if (filteredQuotes.length === 0) {
-    return <EmptyState />;
+    return (
+      <EmptyProgressState
+        subtitle="You don't have any active quotes at the moment. Check back later or
+        create a new job to receive quotes from service providers."
+      />
+    );
   }
 
   return (
-    <View className="mb-[18%]">
+    <View className=" mb-[18%]">
       <FlatList
         data={filteredQuotes}
         renderItem={({ item }) => <ServiceItem item={item} />}

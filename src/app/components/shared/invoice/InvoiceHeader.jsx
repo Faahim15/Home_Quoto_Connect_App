@@ -1,31 +1,21 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { View, Text } from "react-native";
+import moment from "moment";
 
-const InvoiceHeader = () => {
+const InvoiceHeader = ({ invoiceId, issueDate }) => {
+  const formatted = moment(issueDate).format("MMMM D, YYYY");
+
   return (
-    <View className="bg-[#1A73E8]  pb-[8%] px-[6%]">
-      {/* Header with back button and title */}
-      <View className="flex-row  items-center  py-[3%]  w-full  gap-[3%]">
-        {/* <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text className="font-poppins-semiBold text-[#F9FAFB] text-xl">
-          Review
-        </Text> */}
-      </View>
-
+    <View className="bg-[#1A73E8] pt-[3%]  pb-[8%] px-[6%]">
       {/* Invoice content */}
       <View className="items-center">
         <Text className="text-white text-2xl font-poppins-bold mb-[2%]">
           INVOICE
         </Text>
         <Text className="text-white font-poppins text-sm mb-[1%] opacity-90">
-          #INV-123456
+          #INV-{invoiceId}
         </Text>
         <Text className="text-white font-poppins text-xs opacity-80">
-          Issued: March 15, 2024
+          Issued: {formatted}
         </Text>
       </View>
     </View>

@@ -3,7 +3,10 @@ import { SvgXml } from "react-native-svg";
 import { paymentIcon } from "../../../../../assets/svg/icons";
 import BreakDown from "./BreakDown";
 
-export default function PaymentInfo() {
+export default function PaymentInfo({ paymentInfo }) {
+  const { paidAmount, paymentMethod, paymentStatus, paidAt } =
+    paymentInfo || {};
+
   return (
     <View className="px-[6%]">
       <View className="flex-row pt-[2%]  justify-between">
@@ -13,8 +16,8 @@ export default function PaymentInfo() {
         </Text>
       </View>
       <View className="gap-[2%] pt-[1%]">
-        <BreakDown color="#16A34A" title="Amount Paid" price="$226.00" />
-        <BreakDown title="Payment Method" price="Paid through app" />
+        <BreakDown color="#16A34A" title="Amount Paid" price={paidAmount} />
+        <BreakDown title="Payment Method" price={paymentMethod} />
         <BreakDown
           color="#16A34A"
           bgColor="#DCFCE7"

@@ -4,6 +4,7 @@ import { scale } from "../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 import UpdatedOffer from "./UpdatedOffer";
 import { statusColorMap } from "../../../util/colors";
+import { getStatusLabel } from "../../../util/helper-function";
 export default function QuoteReqDetails({ item, quoteReq }) {
   const { quote, job } = item;
   const statusColor = statusColorMap?.[quote?.status] ?? "#6B7280";
@@ -102,7 +103,7 @@ export default function QuoteReqDetails({ item, quoteReq }) {
                 style={{ color: statusColor }}
                 className="font-poppins-400regular mt-[10%] text-center text-base" //text-[#D32F2F] use if for cancelled
               >
-                {quote?.status}
+                {getStatusLabel(quote?.status)}
               </Text>
             </View>
 

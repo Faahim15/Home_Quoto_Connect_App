@@ -175,7 +175,12 @@ export default function Services() {
 
   // Handle empty state
   if (filteredQuotes.length === 0) {
-    return <EmptyState />;
+    return (
+      <EmptyState
+        subtitle="You don't have any quotes yet. Check back later for new quotes from
+      service providers."
+      />
+    );
   }
 
   const quoteItems = filteredQuotes.flatMap((job) =>

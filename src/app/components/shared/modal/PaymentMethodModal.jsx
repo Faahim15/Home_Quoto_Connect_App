@@ -11,7 +11,9 @@ const PaymentMethodModal = ({ visible, onClose, jobId }) => {
   const [cashPayment, { isLoading }] = useCreatePaymentIntentMutation();
   useEffect(() => {
     if (showModal) {
-      const timer = setTimeout(() => {}, 1000);
+      const timer = setTimeout(() => {
+        router.replace("/shared/invoice");
+      }, 1000);
       return () => clearTimeout(timer);
     }
   }, [showModal]);
@@ -29,15 +31,13 @@ const PaymentMethodModal = ({ visible, onClose, jobId }) => {
       };
 
       const res = await cashPayment(payload).unwrap();
-      router.replace({
-        pathname: "/shared/pdfDownloader",
-        params: { jobId: jobId },
-      });
+
       Toast.show({
         type: "success",
         text1: "Payment Successful",
         text2: res?.message || "Cash payment has been recorded.",
       });
+      router.replace("/shared/wait");
     } catch (error) {
       // ❌ Error Toast
       Toast.show({
