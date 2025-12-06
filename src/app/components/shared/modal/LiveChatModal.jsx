@@ -12,6 +12,7 @@ import {
   StatusBar,
   SafeAreaView,
   Keyboard,
+  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSocket } from "../../../../hooks/useSokect";
@@ -19,15 +20,116 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useGetSupportTicketMessagesQuery } from "../../../../redux/features/apiSlices/user/userApiSlices";
 import * as ImagePicker from "expo-image-picker";
 import AttachOptionsModal from "./AttachOptionalModal";
-// import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system";
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+
+// Image Viewer Modal Component
+function ImageViewerModal({
+  visible,
+  onClose,
+  imageUrl,
+  images = [],
+  currentIndex = 0,
+}) {
+  const [activeIndex, setActiveIndex] = useState(currentIndex);
+
+  useEffect(() => {
+    setActiveIndex(currentIndex);
+  }, [currentIndex]);
+
+  const hasMultiple = images.length > 1;
+  const currentImage = hasMultiple ? images[activeIndex] : imageUrl;
+
+  const goToNext = () => {
+    if (activeIndex < images.length - 1) {
+      setActiveIndex(activeIndex + 1);
+    }
+  };
+
+  const goToPrevious = () => {
+    if (activeIndex > 0) {
+      setActiveIndex(activeIndex - 1);
+    }
+  };
+
+  return (
+    <Modal
+      visible={visible}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={onClose}
+    >
+      <View className="flex-1 bg-black">
+        {/* Header */}
+        <View
+          className="absolute top-0 left-0 right-0 z-10 flex-row items-center justify-between px-4 py-3 bg-black/50"
+          style={{
+            paddingTop:
+              Platform.OS === "android" ? StatusBar.currentHeight + 8 : 50,
+          }}
+        >
+          <TouchableOpacity onPress={onClose} className="p-2">
+            <Ionicons name="close" size={28} color="#FFF" />
+          </TouchableOpacity>
+          {hasMultiple && (
+            <Text className="text-white text-sm font-medium">
+              {activeIndex + 1} / {images.length}
+            </Text>
+          )}
+          <View className="w-10" />
+        </View>
+
+        {/* Image */}
+        <View className="flex-1 justify-center items-center">
+          <Image
+            source={{ uri: currentImage }}
+            style={{ width: SCREEN_WIDTH, height: SCREEN_HEIGHT }}
+            resizeMode="contain"
+          />
+        </View>
+
+        {/* Navigation Arrows */}
+        {hasMultiple && (
+          <>
+            {activeIndex > 0 && (
+              <TouchableOpacity
+                onPress={goToPrevious}
+                className="absolute left-4 top-1/2 bg-black/60 rounded-full p-3"
+                style={{ marginTop: -24 }}
+              >
+                <Ionicons name="chevron-back" size={24} color="#FFF" />
+              </TouchableOpacity>
+            )}
+            {activeIndex < images.length - 1 && (
+              <TouchableOpacity
+                onPress={goToNext}
+                className="absolute right-4 top-1/2 bg-black/60 rounded-full p-3"
+                style={{ marginTop: -24 }}
+              >
+                <Ionicons name="chevron-forward" size={24} color="#FFF" />
+              </TouchableOpacity>
+            )}
+          </>
+        )}
+      </View>
+    </Modal>
+  );
+}
+
 export default function LiveChatModal({ visible, onClose, ticketId }) {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
   const [attachments, setAttachments] = useState([]);
   const [showAttachModal, setShowAttachModal] = useState(false);
+  const [imageViewerVisible, setImageViewerVisible] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState(null);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
   const { socket, isConnected } = useSocket(
     "wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
-  ); //"https://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net/api"
+  );
 
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
@@ -177,19 +279,31 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
 
     const text = inputText.trim();
 
-    // console.log("live chat", text);
     setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+    const media = [];
+    if (attachments && attachments.length > 0) {
+      for (const file of attachments) {
+        try {
+          const base64 = await FileSystem.readAsStringAsync(file.uri, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
 
+          media.push({
+            type: file.type,
+            filename: file.fileName,
+            url: `data:image/jpeg;base64,${base64}`,
+          });
+        } catch (err) {
+          console.error("Error reading file:", err);
+          Alert.alert("Error", `Failed to read file: ${file.fileName}`);
+        }
+      }
+    }
     const payload = {
       ticketId,
       content: {
         text: text,
-        attachments: attachments.map((file) => ({
-          type: file.type, // "image"
-          filename: file.filename,
-          mimeType: "image/jpeg", // or derive from file.uri if needed
-          url: file.uri, // raw file path
-        })),
+        attachments: media,
       },
       messageType: attachments.length > 0 ? "image" : "text",
     };
@@ -201,13 +315,19 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
       refetch();
     } catch (error) {
       console.log("error", error);
-      // setMessages((prev) => prev.filter((msg) => msg._id !== localMessage._id));
     }
   };
 
   const handleTyping = () => {
     if (socket && isConnected)
       socket.emit("support-user-typing", { ticketId, userId: currentUserId });
+  };
+
+  const handleImagePress = (imageUrl, allImages, index) => {
+    setSelectedImageUrl(imageUrl);
+    setSelectedImages(allImages);
+    setSelectedImageIndex(index);
+    setImageViewerVisible(true);
   };
 
   const renderSystemMessage = (item) => {
@@ -286,33 +406,30 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
               </Text>
             )}
 
-            {/* Image attachments */}
+            {/* Image attachments - Row layout */}
             {hasAttachments && isImageMessage && (
-              <View className="space-y-2">
-                {item.content.attachments.map((attachment, index) => (
-                  <TouchableOpacity
-                    key={attachment._id || index}
-                    onPress={() => {
-                      // You can add image preview functionality here
-                      console.log("Image pressed:", attachment.url);
-                    }}
-                    activeOpacity={0.8}
-                  >
-                    <Image
-                      source={{ uri: attachment.url }}
-                      className="w-48 h-32 rounded-lg"
-                      resizeMode="cover"
-                    />
-                    {/* {attachment.filename && (
-                      <Text
-                        className={`text-xs mt-1 ${isMyMessage ? "text-white/70" : "text-gray-500"}`}
-                        numberOfLines={1}
-                      >
-                        {attachment.filename}
-                      </Text>
-                    )} */}
-                  </TouchableOpacity>
-                ))}
+              <View className="flex-row flex-wrap gap-2">
+                {item.content.attachments.map((attachment, index) => {
+                  const imageUrls = item.content.attachments.map(
+                    (att) => att.url
+                  );
+                  return (
+                    <TouchableOpacity
+                      key={attachment._id || index}
+                      onPress={() =>
+                        handleImagePress(attachment.url, imageUrls, index)
+                      }
+                      activeOpacity={0.8}
+                      className="rounded-lg overflow-hidden"
+                    >
+                      <Image
+                        source={{ uri: attachment.url }}
+                        className="w-32 h-32 rounded-lg"
+                        resizeMode="cover"
+                      />
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             )}
 
@@ -369,8 +486,6 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
           paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
         }}
       >
-        {/* <StatusBar barStyle="light-content" backgroundColor="#1d4ed8" /> */}
-
         {/* Header */}
         <View className="flex-row items-center px-4 py-3 bg-blue-700 border-b border-gray-200">
           <TouchableOpacity onPress={onClose} className="mr-3">
@@ -402,7 +517,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
           </TouchableOpacity>
         </View>
 
-        {/* Messages List - This is the key part */}
+        {/* Messages List */}
         <View className="flex-1" style={{ marginBottom: 0 }}>
           <FlatList
             ref={flatListRef}
@@ -436,13 +551,8 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
           />
         </View>
 
-        {/* Input - Fixed at bottom with absolute positioning */}
-        <View
-          className="absolute bottom-0 left-0 border right-0 border-t border-gray-200 bg-white"
-          // style={{
-          //   bottom: 0,
-          // }}
-        >
+        {/* Input */}
+        <View className="absolute bottom-0 left-0 border right-0 border-t border-gray-200 bg-white">
           {attachments.length > 0 && (
             <View className="px-4 py-2 flex-row flex-wrap bg-white">
               {attachments.map((file, index) => (
@@ -511,11 +621,21 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
             </TouchableOpacity>
           </View>
         </View>
+
         <AttachOptionsModal
           visible={showAttachModal}
           onClose={() => setShowAttachModal(false)}
           onCamera={takePhoto}
           onGallery={pickImages}
+        />
+
+        {/* Image Viewer Modal */}
+        <ImageViewerModal
+          visible={imageViewerVisible}
+          onClose={() => setImageViewerVisible(false)}
+          imageUrl={selectedImageUrl}
+          images={selectedImages}
+          currentIndex={selectedImageIndex}
         />
       </View>
     </Modal>

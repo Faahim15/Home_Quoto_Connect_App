@@ -51,8 +51,6 @@ const ChatScreen = () => {
   const flatListRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
-  console.log("provider", providerId);
-
   // Fetch userId from AsyncStorage
   useEffect(() => {
     const fetchUserId = async () => {
@@ -65,10 +63,8 @@ const ChatScreen = () => {
   useEffect(() => {
     const joinRooms = async () => {
       if (!socket || !isConnected || !currentUserId || !chatId) return;
-      console.log("sender User Id:", currentUserId);
       socket.emit("user-join", currentUserId);
       socket.emit("join-notifications", currentUserId);
-      console.log("🎯 Joining chat room:", chatId);
       socket.emit("join-chat", chatId);
     };
 
