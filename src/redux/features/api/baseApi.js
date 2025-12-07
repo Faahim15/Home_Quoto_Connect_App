@@ -1,96 +1,92 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Base query function using axios (with fetch for FormData)
+const BASE_URL = "http://10.10.20.30:5000/api";
+
+// Base query function using only fetch
 const baseQueryWithRath = async (args, api, extraOptions) => {
   try {
+    // Get token from AsyncStorage
     const token = await AsyncStorage.getItem("token");
+
+    console.log("Token retrieved:", token ? "Token exists" : "No token");
+    console.log("Request URL:", `${BASE_URL}${args.url}`);
+    console.log("Request method:", args.method);
 
     // Check if the body is FormData
     const isFormData = args.body instanceof FormData;
 
-    // Use fetch for FormData, axios for everything else
-    if (isFormData) {
-      console.log("Using fetch for FormData upload");
+    // Build headers
+    const headers = {
+      Accept: "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    };
 
-      const headers = {
-        Authorization: token ? `Bearer ${token}` : "",
-        // Don't set Content-Type for FormData
-      };
-      // http://10.10.20.30:5000/api
-      const response = await fetch(
-        `https://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net/api${args.url}`,
-        {
-          method: args.method,
-          headers: headers,
-          body: args.body,
-        }
-      );
-
-      console.log("Fetch response status:", response.status);
-
-      if (response.status === 403 || response.status === 401) {
-        await AsyncStorage.removeItem("token");
-        await AsyncStorage.removeItem("user");
-      }
-
-      const data = await response.json();
-      console.log("Fetch response data:", data);
-
-      if (!response.ok) {
-        return { error: data };
-      }
-
-      return { data };
+    // Only set Content-Type for non-FormData requests
+    if (!isFormData) {
+      headers["Content-Type"] = "application/json";
     }
 
-    // Use axios for non-FormData requests
-    const result = await axios({
-      baseURL:
-        "https://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net/api",
-      ...args,
-      url: args.url,
-      method: args.method,
-      data: args.body,
-      headers: {
-        ...args.headers,
-        Authorization: token ? `Bearer ${token}` : "",
-        "Content-Type": "application/json",
-      },
+    // Add any custom headers from args
+    if (args.headers) {
+      Object.assign(headers, args.headers);
+    }
+
+    console.log("Request headers:", JSON.stringify(headers, null, 2));
+
+    // Prepare request body
+    let body = args.body;
+    if (!isFormData && body && typeof body === "object") {
+      body = JSON.stringify(body);
+    }
+
+    // Make the fetch request
+    const response = await fetch(`${BASE_URL}${args.url}`, {
+      method: args.method || "GET",
+      headers: headers,
+      body: body,
     });
 
-    if (result?.status === 403 || result?.status === 401) {
+    console.log("Response status:", response.status);
+
+    // Handle unauthorized responses
+    if (response.status === 401 || response.status === 403) {
+      console.log("Unauthorized - removing token");
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("user");
     }
 
-    if (typeof result?.data === "string") {
-      const withCurly = (result.data += "}");
-      return { data: JSON.parse(withCurly) };
+    // Parse response
+    let data;
+    const contentType = response.headers.get("content-type");
+
+    if (contentType && contentType.includes("application/json")) {
+      data = await response.json();
+    } else {
+      data = await response.text();
     }
 
-    if (typeof result?.data === "object") {
-      return { data: result.data };
+    console.log("Response data:", data);
+
+    // Check if response is ok
+    if (!response.ok) {
+      return {
+        error: {
+          status: response.status,
+          data: data,
+        },
+      };
     }
 
-    return { data: result.data };
+    return { data };
   } catch (error) {
     console.error("API Error:", error);
-    console.error("Error response:", error.response);
+    console.error("Error message:", error.message);
 
-    if (error.response?.data) {
-      if (typeof error.response.data === "string") {
-        const withCurly = (error.response.data += "}");
-        return { error: JSON.parse(withCurly) };
-      } else {
-        return { error: error.response.data };
-      }
-    }
     return {
       error: {
-        status: error.response?.status || 500,
-        data: error.message || "Something went wrong",
+        status: error.status || 500,
+        data: error.message || "Network error occurred",
       },
     };
   }
@@ -125,5 +121,6 @@ export const api = createApi({
     "Subscriptions",
     "MySubscriptions",
     "Credits",
+    "notifications",
   ],
 });

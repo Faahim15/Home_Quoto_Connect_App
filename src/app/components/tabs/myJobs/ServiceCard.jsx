@@ -2,7 +2,6 @@ import { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import Services from "./Jobs";
 import QuoteProgressScreen from "./screens/QuoteProgressScreen";
-import QuoteUnpaidScreen from "./screens/QuoteUnpaidScreen";
 import AllQuoteScreen from "./screens/AllQuoteScreen";
 import CompletedQuote from "./screens/CompletedQuote";
 import CancelledQuote from "./screens/CancelledQuote";

@@ -15,7 +15,13 @@ export const chatSlice = api.injectEndpoints(
         }),
         invalidatesTags: ["chat"],
       }),
-
+      getNotifications: builder.query({
+        query: () => ({
+          url: `/notifications`,
+          method: "GET",
+        }),
+        providesTags: ["notifications"],
+      }),
       getChats: builder.query({
         query: () => ({
           url: `/chats`,
@@ -41,6 +47,7 @@ export const chatSlice = api.injectEndpoints(
 // Export hooks for usage in React components
 export const {
   useDirectChatMutation,
+  useGetNotificationsQuery,
   useGetChatsQuery,
   useGetSingleChatHistoryQuery,
 } = chatSlice;

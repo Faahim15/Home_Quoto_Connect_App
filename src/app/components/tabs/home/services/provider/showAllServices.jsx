@@ -97,7 +97,7 @@ const ServiceCard = ({ item }) => {
 };
 
 export default function ShowAllServiceCards({ jobs, horizontal }) {
-  const allJobs = jobs.filter((job) => !job.isDirectBooking);
+  const allJobs = jobs?.filter((job) => !job.isDirectBooking);
 
   const isEmpty = !allJobs || allJobs.length === 0;
 

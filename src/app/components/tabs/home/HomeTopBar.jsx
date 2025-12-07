@@ -1,20 +1,75 @@
-import { View, Text, Image, Pressable } from "react-native";
+import { View, Text, Image, Pressable, TouchableOpacity } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useSocket } from "../../../../hooks/useSokect";
+import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export default function HomeTopBar({ userData, mode }) {
-  const { fullName, location, profilePhoto } = userData;
+  const { fullName, location, profilePhoto } = userData || {};
+
+  const [currentUserId, setCurrentUserId] = useState(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  const { socket, isConnected } = useSocket("ws://10.10.20.30:5000");
+
+  // getting userId
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const userId = await AsyncStorage.getItem("userId");
+      if (userId) setCurrentUserId(userId);
+    };
+    fetchUserId();
+  }, []);
+
+  // join notification room
+  useEffect(() => {
+    if (!socket || !currentUserId) return;
+
+    socket.emit("join-notifications", { userId: currentUserId });
+  }, [socket, currentUserId]);
+
+  // get initial unread count
+  useEffect(() => {
+    if (!socket || !currentUserId) return;
+
+    socket.emit("get-unread-count", currentUserId);
+  }, [socket, currentUserId]);
+
+  //get unreadCount
+
+  const handleUnreadCount = ({ count }) => {
+    console.log("Unread count:", count);
+    setUnreadCount(count);
+  };
+
+  // listen for socket events
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("unread-count", handleUnreadCount);
+
+    return () => {
+      socket.off("unread-count", handleUnreadCount);
+    };
+  }, [socket]);
+
+  const handleNotificationPress = () => {
+    // Mark all notifications as read when opening the notification screen
+    if (socket && currentUserId) {
+      socket.emit("mark-all-notifications-read", { userId: currentUserId });
+    }
+
+    router.push("shared/notification");
+  };
 
   const handleEditProfile = () => {
-    if (mode === "user") {
-      router.push("/profile/editProfile");
-    } else {
-      router.push("/profile/editProfile");
-    }
+    router.push("/profile/editProfile");
   };
 
   return (
-    <View className="flex-row   pb-[1%] mx-[6.4%] mt-[2%] gap-[2%]">
+    <View className="flex-row pb-[1%] mx-[6.4%] mt-[2%] gap-[2%]">
       <View>
         <Pressable onPress={handleEditProfile}>
           <Image
@@ -30,7 +85,7 @@ export default function HomeTopBar({ userData, mode }) {
           />
         </Pressable>
       </View>
-      <View className="flex-row w-[90%] justify-between ">
+      <View className="flex-row w-[90%] justify-between">
         <View>
           <Text className="font-poppins-bold text-base">Welcome to Quoto!</Text>
           <Text className="font-poppins-400regular text-xs text-[#4D4D4D]">
@@ -38,17 +93,25 @@ export default function HomeTopBar({ userData, mode }) {
           </Text>
           <View className="flex-row gap-[1%] mt-[2%]">
             <Ionicons name="location-outline" size={14} color="#8891AA" />
-            <Text className="font-poppins-400regular text-xs text-[#8891AA] ">
+            <Text className="font-poppins-400regular text-xs text-[#8891AA]">
               {location?.city || "N/A"},{location?.state || "N/A"}
             </Text>
           </View>
         </View>
-        <View
+        <TouchableOpacity
+          onPress={handleNotificationPress}
           style={{ width: scale(30), height: verticalScale(30) }}
-          className="rounded-full items-center justify-center border border-[#175994] "
+          className="rounded-full items-center justify-center border border-[#175994]"
         >
           <Ionicons name="notifications-outline" size={20} color="#175994" />
-        </View>
+          {unreadCount > 0 && (
+            <View className="absolute -top-1 -right-1 bg-[#FF3B30] rounded-full min-w-[18px] h-[18px] px-1 items-center justify-center border-[1.5px] border-white">
+              <Text className="text-white text-[10px] font-poppins-semibold">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </View>
     </View>
   );

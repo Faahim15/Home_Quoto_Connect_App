@@ -16,6 +16,8 @@ import { convertToThirdDay } from "../../util/helper-function";
 export default function UpdateQuoteScreen() {
   const { jobId } = useLocalSearchParams();
 
+  console.log("job", jobId);
+
   const {
     data,
     isLoading: singleJobLoader,
