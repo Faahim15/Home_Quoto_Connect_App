@@ -21,9 +21,7 @@ const MessagesScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [typingUsers, setTypingUsers] = useState({});
   const { data, isLoading, refetch } = useGetChatsQuery();
-  const { socket, isConnected } = useSocket(
-    "wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
-  );
+  const { socket, isConnected } = useSocket("ws://10.10.20.30:5000");
   const [userStatus, setUserStatus] = useState({});
 
   // Load initial chats

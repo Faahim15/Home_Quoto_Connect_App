@@ -20,9 +20,9 @@ const MessagesScreen = () => {
   const [messages, setMessages] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const { data, isLoading, refetch } = useGetChatsQuery();
-  const { socket, isConnected } = useSocket(
-    "wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
-  );
+  const { socket, isConnected } = useSocket("ws://10.10.20.30:5000");
+
+  //wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
   const [userStatus, setUserStatus] = useState({});
   const [isTyping, setIsTyping] = useState(false);
 

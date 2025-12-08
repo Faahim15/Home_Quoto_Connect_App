@@ -29,9 +29,7 @@ const ProviderChatScreen = () => {
   const { chatId } = useLocalSearchParams();
 
   const { width: screenWidth } = Dimensions.get("window");
-  const { socket, isConnected } = useSocket(
-    "wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
-  );
+  const { socket, isConnected } = useSocket("ws://10.10.20.30:5000");
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -40,7 +38,7 @@ const ProviderChatScreen = () => {
   const flatListRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
-  console.log("chat", chatId);
+  // console.log("chat", chatId);
 
   // Get chat history when chatId is available
   const {
@@ -76,7 +74,7 @@ const ProviderChatScreen = () => {
 
       if (!userId) return;
 
-      console.log("💡 Joining  room for provider chat screens:", userId);
+      // console.log("💡 Joining  room for provider chat screens:", userId);
       socket.emit("user-join", userId);
       socket.emit("join-notifications", userId);
       socket.emit("join-chat", chatId);

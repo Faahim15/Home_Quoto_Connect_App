@@ -140,10 +140,9 @@ export default function UpdateQuoteScreen() {
         setErrors(validationErrors);
         console.log("validation error", validationErrors);
       } else {
-        console.log("API Error:", err);
         const errorMessage =
-          err?.message || "Network or server error. Please try again.";
-
+          err?.data?.message || "Network or server error. Please try again.";
+        console.log("API Errorsss:", err);
         Toast.show({
           type: "error",
           text1: "Error",

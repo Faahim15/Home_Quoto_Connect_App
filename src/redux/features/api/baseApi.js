@@ -1,92 +1,75 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
+import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const BASE_URL = "http://10.10.20.30:5000/api";
-
-// Base query function using only fetch
+// Base query function using axios (with fetch for FormData)
 const baseQueryWithRath = async (args, api, extraOptions) => {
   try {
-    // Get token from AsyncStorage
     const token = await AsyncStorage.getItem("token");
-
-    console.log("Token retrieved:", token ? "Token exists" : "No token");
-    console.log("Request URL:", `${BASE_URL}${args.url}`);
-    console.log("Request method:", args.method);
-
-    // Check if the body is FormData
     const isFormData = args.body instanceof FormData;
 
-    // Build headers
+    // Use fetch for FormData uploads
+    if (isFormData) {
+      const headers = {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        // Don't set Content-Type for FormData - let browser set it with boundary
+      };
+
+      const response = await fetch(`http://10.10.20.30:5000/api${args.url}`, {
+        method: args.method,
+        headers: headers,
+        body: args.body,
+      });
+
+      if (response.status === 403 || response.status === 401) {
+        await AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem("user");
+      }
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { error: data };
+      }
+
+      return { data };
+    }
+
+    // Use axios for non-FormData requests
     const headers = {
-      Accept: "application/json",
+      ...args.headers,
+      "Content-Type": "application/json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
-    // Only set Content-Type for non-FormData requests
-    if (!isFormData) {
-      headers["Content-Type"] = "application/json";
-    }
-
-    // Add any custom headers from args
-    if (args.headers) {
-      Object.assign(headers, args.headers);
-    }
-
-    console.log("Request headers:", JSON.stringify(headers, null, 2));
-
-    // Prepare request body
-    let body = args.body;
-    if (!isFormData && body && typeof body === "object") {
-      body = JSON.stringify(body);
-    }
-
-    // Make the fetch request
-    const response = await fetch(`${BASE_URL}${args.url}`, {
-      method: args.method || "GET",
+    const result = await axios({
+      baseURL: "http://10.10.20.30:5000/api",
+      url: args.url,
+      method: args.method,
+      data: args.body,
       headers: headers,
-      body: body,
     });
 
-    console.log("Response status:", response.status);
-
-    // Handle unauthorized responses
-    if (response.status === 401 || response.status === 403) {
-      console.log("Unauthorized - removing token");
+    if (result?.status === 403 || result?.status === 401) {
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("user");
     }
 
-    // Parse response
-    let data;
-    const contentType = response.headers.get("content-type");
-
-    if (contentType && contentType.includes("application/json")) {
-      data = await response.json();
-    } else {
-      data = await response.text();
-    }
-
-    console.log("Response data:", data);
-
-    // Check if response is ok
-    if (!response.ok) {
-      return {
-        error: {
-          status: response.status,
-          data: data,
-        },
-      };
-    }
-
-    return { data };
+    return { data: result.data };
   } catch (error) {
     console.error("API Error:", error);
-    console.error("Error message:", error.message);
+    console.error("Error response:", error.response);
+
+    // Handle auth errors in catch block
+    if (error.response?.status === 403 || error.response?.status === 401) {
+      await AsyncStorage.removeItem("token");
+      await AsyncStorage.removeItem("user");
+    }
 
     return {
       error: {
-        status: error.status || 500,
-        data: error.message || "Network error occurred",
+        status: error.response?.status || 500,
+        data: error.response?.data || error.message || "Something went wrong",
       },
     };
   }

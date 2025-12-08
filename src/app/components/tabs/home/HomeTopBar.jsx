@@ -1,65 +1,82 @@
 import { View, Text, Image, Pressable, TouchableOpacity } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { useSocket } from "../../../../hooks/useSokect";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useGetNotificationsQuery } from "../../../../redux/features/apiSlices/chat/chatApiSlices";
 
 export default function HomeTopBar({ userData, mode }) {
+  // const { socket, isConnected } = useSocket("ws://10.10.20.30:5000");
   const { fullName, location, profilePhoto } = userData || {};
+  const [notifications, setNotifications] = useState([]);
+  const { data, isLoading, isError, refetch } = useGetNotificationsQuery();
 
-  const [currentUserId, setCurrentUserId] = useState(null);
-  const [unreadCount, setUnreadCount] = useState(0);
+  // Refetch when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
-  const { socket, isConnected } = useSocket("ws://10.10.20.30:5000");
+  // Initialize notifications from API data
+  useEffect(() => {
+    if (data?.success && data?.data?.notifications) {
+      setNotifications(data.data.notifications);
+    }
+  }, [data]);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  // const [currentUserId, setCurrentUserId] = useState(null);
+  // const [unreadCount, setUnreadCount] = useState(0);
 
   // getting userId
-  useEffect(() => {
-    const fetchUserId = async () => {
-      const userId = await AsyncStorage.getItem("userId");
-      if (userId) setCurrentUserId(userId);
-    };
-    fetchUserId();
-  }, []);
+  // useEffect(() => {
+  //   const fetchUserId = async () => {
+  //     const userId = await AsyncStorage.getItem("userId");
+  //     if (userId) setCurrentUserId(userId);
+  //   };
+  //   fetchUserId();
+  // }, []);
 
   // join notification room
-  useEffect(() => {
-    if (!socket || !currentUserId) return;
+  // useEffect(() => {
+  //   if (!socket || !currentUserId) return;
 
-    socket.emit("join-notifications", { userId: currentUserId });
-  }, [socket, currentUserId]);
+  //   socket.emit("join-notifications", { userId: currentUserId });
+  // }, [socket, currentUserId]);
 
   // get initial unread count
-  useEffect(() => {
-    if (!socket || !currentUserId) return;
+  // useEffect(() => {
+  //   if (!socket || !currentUserId) return;
 
-    socket.emit("get-unread-count", currentUserId);
-  }, [socket, currentUserId]);
+  //   socket.emit("get-unread-count", currentUserId);
+  // }, [socket, currentUserId]);
 
   //get unreadCount
 
-  const handleUnreadCount = ({ count }) => {
-    console.log("Unread count:", count);
-    setUnreadCount(count);
-  };
+  // const handleUnreadCount = ({ count }) => {
+  //   console.log("Unread count:", count);
+  //   setUnreadCount(count);
+  // };
 
   // listen for socket events
-  useEffect(() => {
-    if (!socket) return;
+  // useEffect(() => {
+  //   if (!socket) return;
 
-    socket.on("unread-count", handleUnreadCount);
+  //   socket.on("unread-count", handleUnreadCount);
 
-    return () => {
-      socket.off("unread-count", handleUnreadCount);
-    };
-  }, [socket]);
+  //   return () => {
+  //     socket.off("unread-count", handleUnreadCount);
+  //   };
+  // }, [socket]);
 
   const handleNotificationPress = () => {
-    // Mark all notifications as read when opening the notification screen
-    if (socket && currentUserId) {
-      socket.emit("mark-all-notifications-read", { userId: currentUserId });
-    }
+    // if (socket && currentUserId) {
+    //   socket.emit("mark-all-notifications-read", { userId: currentUserId });
+    // }
 
     router.push("shared/notification");
   };

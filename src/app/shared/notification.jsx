@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   RefreshControl,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import { useSocket } from "../../hooks/useSokect";
 import { useGetNotificationsQuery } from "../../redux/features/apiSlices/chat/chatApiSlices";
 import CustomTitle from "../components/shared/services/CustomTitle";
@@ -20,6 +21,13 @@ export default function NotificationScreen() {
 
   const { socket } = useSocket("ws://10.10.20.30:5000");
   const { data, isLoading, isError, refetch } = useGetNotificationsQuery();
+
+  // Refetch when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   // Get userId from AsyncStorage
   useEffect(() => {
