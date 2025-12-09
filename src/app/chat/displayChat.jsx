@@ -349,11 +349,6 @@ const ChatScreen = () => {
       messageType: selectedMedia && selectedMedia.length > 0 ? "image" : "text",
     };
 
-    // console.log(
-    //   "Emitting send-message payload with media:",
-    //   media.length > 0 ? "has base64 data" : "no media"
-    // );
-
     if (socket && isConnected) {
       socket.emit("send-message", payload);
       setNewMessage("");

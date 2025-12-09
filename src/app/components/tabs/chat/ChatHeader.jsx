@@ -9,7 +9,7 @@ import { formatDateRelative } from "../../../util/helper-function";
 const ChatHeader = ({ userData }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
-  console.log("show", userData);
+  // console.log("show", userData);
 
   const handleSelectProvider = (providerId) => {
     console.log("Selected provider:", providerId);

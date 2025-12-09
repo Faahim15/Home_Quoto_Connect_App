@@ -44,7 +44,7 @@ export function formatDateForCanada(isoString) {
 }
 
 export function formatDateRelative(isoString) {
-  if (!isoString) return "Invalid date";
+  if (!isoString) return " ";
 
   const now = new Date();
   const date = new Date(isoString);

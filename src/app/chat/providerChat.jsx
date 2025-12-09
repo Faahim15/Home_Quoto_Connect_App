@@ -37,6 +37,7 @@ const ProviderChatScreen = () => {
   const [showMediaModal, setShowMediaModal] = useState(false);
   const flatListRef = useRef(null);
   const typingTimeoutRef = useRef(null);
+  const [userStatus, setUserStatus] = useState({});
 
   // console.log("chat", chatId);
 
@@ -156,14 +157,6 @@ const ProviderChatScreen = () => {
     }
   };
 
-  // const removeSelectedMedia = (index = null) => {
-  //   if (index !== null) {
-  //     setSelectedMedia((prev) => prev.filter((_, i) => i !== index));
-  //   } else {
-  //     setSelectedMedia([]);
-  //   }
-  // };
-
   const removeSelectedMedia = (index = null) => {
     if (index !== null) {
       setSelectedMedia((prev) => prev.filter((_, i) => i !== index));
@@ -220,12 +213,25 @@ const ProviderChatScreen = () => {
     scrollToBottom();
   }, []);
 
+  // 🟢 Handle user online/offline status
+  const handleUserStatusChanged = ({ userId, isOnline, lastActive }) => {
+    console.log(
+      `⚡ ${userId} is ${isOnline ? "online from provider chat" : "offline"} (lastActive: ${lastActive})`
+    );
+
+    // Update local state
+    setUserStatus((prev) => ({
+      ...prev,
+      [userId]: { isOnline, lastActive },
+    }));
+  };
+
   // Listen for new messages
   useEffect(() => {
     if (!socket || !isConnected) return;
 
     socket.on("new-message", handleNewMessage);
-
+    socket.on("user-status-changed", handleUserStatusChanged);
     return () => {
       socket.off("new-message", handleNewMessage);
     };
@@ -315,59 +321,6 @@ const ProviderChatScreen = () => {
 
     // console.log("mes", messageMedia[0]?.url);
     return (
-      // <View className={`mb-[4%] ${isOwn ? "items-end" : "items-start"}`}>
-      //   <View
-      //     className={`max-w-[75%] rounded-2xl overflow-hidden ${isOwn ? "bg-[#319FCA] rounded-br-md" : "bg-white rounded-bl-md shadow-sm"}`}
-      //   >
-      //     {item.media?.map((media, index) => (
-      //       <View key={index} className="relative" style={{ margin: scale(4) }}>
-      //         {media.type === "image" ? (
-      //           <Image
-      //             source={{ uri: media.uri }}
-      //             style={{
-      //               width: screenWidth * (item.media.length === 1 ? 0.6 : 0.28),
-      //               height:
-      //                 screenWidth *
-      //                 (item.media.length === 1
-      //                   ? 0.6 * (media.height / media.width)
-      //                   : 0.28),
-      //               borderRadius: 8,
-      //             }}
-      //             resizeMode="cover"
-      //           />
-      //         ) : (
-      //           <View
-      //             style={{
-      //               width: screenWidth * (item.media.length === 1 ? 0.6 : 0.28),
-      //               height: screenWidth * 0.28,
-      //               backgroundColor: "#ccc",
-      //               justifyContent: "center",
-      //               alignItems: "center",
-      //               borderRadius: 8,
-      //             }}
-      //           >
-      //             <Ionicons name="play-circle" size={32} color="#319FCA" />
-      //           </View>
-      //         )}
-      //       </View>
-      //     ))}
-      //     {item?.content?.text && item?.content?.text !== " " && (
-      //       <View className="px-4 py-3">
-      //         <Text
-      //           className={`text-base ${isOwn ? "text-white" : "text-gray-800"}`}
-      //         >
-      //           {item?.content?.text}
-      //         </Text>
-      //       </View>
-      //     )}
-      //   </View>
-      //   {item?.content?.text && item?.content?.text !== " " && (
-      //     <Text className="text-xs text-gray-500 mt-1 mx-1">
-      //       {formatedDate(item?.createdAt)}
-      //     </Text>
-      //   )}
-      // </View>
-
       <View className={`mb-[4%] ${isOwn ? "items-end" : "items-start"}`}>
         <View
           className={`max-w-[75%] rounded-2xl overflow-hidden ${
@@ -463,7 +416,7 @@ const ProviderChatScreen = () => {
 
         <View style={{ flex: 1 }}>
           <FlatList
-            ref={flatListRef}
+            // ref={flatListRef}
             data={messages}
             renderItem={renderMessageItem}
             keyExtractor={(item, index) => item._id || `message-${index}`}

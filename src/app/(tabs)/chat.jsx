@@ -108,6 +108,8 @@ const MessagesScreen = () => {
     }));
   };
 
+  // console.log("useStatus", userStatus);
+
   // Socket listeners
   useEffect(() => {
     if (!socket || !isConnected) return;
