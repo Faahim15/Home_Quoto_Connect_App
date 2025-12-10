@@ -19,7 +19,9 @@ export default function NotificationScreen() {
   const [filter, setFilter] = useState("all");
   const [currentUserId, setCurrentUserId] = useState(null);
 
-  const { socket } = useSocket("ws://10.10.20.30:5000");
+  const { socket } = useSocket(
+    "wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
+  );
   const { data, isLoading, isError, refetch } = useGetNotificationsQuery();
 
   // Refetch when screen comes into focus

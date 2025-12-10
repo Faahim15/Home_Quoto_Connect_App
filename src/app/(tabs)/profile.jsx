@@ -184,11 +184,11 @@ export default function UserProfileScreen() {
               label="Edit Profile"
               onPress={() => router.push("/profile/editProfile")}
             />
-            <ProfileMenuItem
+            {/* <ProfileMenuItem
               iconName={notification}
               label="Notification"
               onPress={() => router.push("/profile/notification")}
-            />
+            /> */}
             <ProfileMenuItem
               iconName={accountSettings}
               onPress={() => router.push("/profile/settings")}

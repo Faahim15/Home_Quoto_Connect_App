@@ -16,11 +16,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatDateRelative } from "../util/helper-function";
 import { Ionicons } from "@expo/vector-icons";
 
+// ws://10.10.20.30:5000
+
 const MessagesScreen = () => {
   const [messages, setMessages] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const { data, isLoading, refetch } = useGetChatsQuery();
-  const { socket, isConnected } = useSocket("ws://10.10.20.30:5000");
+  const { socket, isConnected } = useSocket(
+    "wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
+  );
 
   //wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
   const [userStatus, setUserStatus] = useState({});
@@ -189,32 +193,27 @@ const MessagesScreen = () => {
                 {formatDateRelative(item?.lastMessage?.updatedAt) || "N/A"}
               </Text>
             </View>
-            {isTyping ? (
-              <Text className="text-[#0066CC] font-poppins-400regular text-xs mt-1">
-                Typing...
+
+            <View className="flex-row items-center">
+              {isMediaExist && (
+                <Ionicons
+                  name="attach"
+                  size={14}
+                  color={isRead ? "#767676" : "#111"}
+                  style={{ marginRight: 4 }}
+                />
+              )}
+              <Text
+                className={`font-poppins-400regular text-xs ${
+                  isRead ? "text-[#767676]" : "text-[#111]"
+                }`}
+                numberOfLines={1}
+              >
+                {isMediaExist
+                  ? `${mediaCount} ${mediaCount === 1 ? "attachment" : "attachments"}${lastMessage ? ` • ${lastMessage}` : ""}`
+                  : lastMessage || "N/A"}
               </Text>
-            ) : (
-              <View className="flex-row items-center">
-                {isMediaExist && (
-                  <Ionicons
-                    name="attach"
-                    size={14}
-                    color={isRead ? "#767676" : "#111"}
-                    style={{ marginRight: 4 }}
-                  />
-                )}
-                <Text
-                  className={`font-poppins-400regular text-xs ${
-                    isRead ? "text-[#767676]" : "text-[#111]"
-                  }`}
-                  numberOfLines={1}
-                >
-                  {isMediaExist
-                    ? `${mediaCount} ${mediaCount === 1 ? "attachment" : "attachments"}${lastMessage ? ` • ${lastMessage}` : ""}`
-                    : lastMessage || "N/A"}
-                </Text>
-              </View>
-            )}
+            </View>
           </View>
 
           {/* Read Status */}

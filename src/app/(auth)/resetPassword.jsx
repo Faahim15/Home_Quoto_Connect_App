@@ -57,7 +57,7 @@ export default function ResetPasswordScreen() {
           visibilityTime: 2500,
         });
 
-        router.replace("/signIn");
+        router.replace("/onboarding/loginChoice");
       }
     } catch (err) {
       console.log("err", err);

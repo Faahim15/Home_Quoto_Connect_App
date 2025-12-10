@@ -9,11 +9,10 @@ import { verticalScale } from "../../../../adaptive/Adaptiveness";
 
 export default function InstructionField({ onChangeText, mode, value }) {
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
-    >
-      <View className="bg-[#f9f9f9] mt-[6%]">
+    <View>
+      <View
+        className={` mt-[6%] ${mode === "bio" ? " bg-[#f9f9f9]" : "bg-[#f9f9f9]"} `}
+      >
         <Text className="font-poppins-500medium text-base text-[#5C5F62]">
           {mode === "bio"
             ? "Describe the services you offerr"
@@ -31,6 +30,6 @@ export default function InstructionField({ onChangeText, mode, value }) {
           style={{ minHeight: verticalScale(100) }}
         />
       </View>
-    </KeyboardAvoidingView>
+    </View>
   );
 }

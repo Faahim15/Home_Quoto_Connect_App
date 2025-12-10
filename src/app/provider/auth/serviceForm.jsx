@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { View } from "react-native";
+import { View, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import CustomHeader from "../../components/auth/CustomHeader";
 import DropdownMenu from "../../components/provider/profile/DropdownMenu";
 import Specializations from "../../components/tabs/home/Specializations";
@@ -50,10 +52,7 @@ const ServicesOfferScreen = () => {
         ),
     });
 
-    // ✅ Transform jobData before validation
-    const transformedData = {
-      ...registrationData,
-    };
+    const transformedData = registrationData; // Declare the variable here
 
     try {
       currentPageSchema.validateSync(transformedData, { abortEarly: false });
@@ -76,49 +75,63 @@ const ServicesOfferScreen = () => {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-[#f9f9f9]">
       <CustomHeader title="Services you" nestedTitle="Offer" />
-      <View className="flex-1 px-[4%] mx-[3%] pt-[8%]">
-        <View className="w-full">
-          <DropdownMenu
-            isLoading={isLoading}
-            placeholder="Select Your service"
-            options={data?.data?.categories}
-            selectedValue={registrationData?.category}
-            onSelect={handleInputChange}
-            field="category"
-            error={errors?.category}
-          />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "padding"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 120 : 70}
+        className="flex-1"
+      >
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+          keyboardShouldPersistTaps="handled"
+          scrollEventThrottle={16}
+          className="flex-1  "
+        >
+          <View className="px-[4%] mx-[3%] ">
+            <View className="w-full">
+              <DropdownMenu
+                isLoading={isLoading}
+                placeholder="Select Your service"
+                options={data?.data?.categories}
+                selectedValue={registrationData?.category}
+                onSelect={handleInputChange}
+                field="category"
+                error={errors?.category}
+              />
 
-          <DropdownMenu
-            placeholder="Select Your Experience"
-            options={experienceOptions}
-            selectedValue={registrationData?.experience}
-            onSelect={handleInputChange}
-            field="experience"
-            error={errors?.experience}
-          />
-        </View>
+              <DropdownMenu
+                placeholder="Select Your Experience"
+                options={experienceOptions}
+                selectedValue={registrationData?.experience}
+                onSelect={handleInputChange}
+                field="experience"
+                error={errors?.experience}
+              />
+            </View>
 
-        <ServiceAreaSelector />
-        <Error error={errors?.serviceArea} />
+            <ServiceAreaSelector />
+            <Error error={errors?.serviceArea} />
 
-        <View className="px-[1%]">
-          <Specializations onChange={handleInputChange} />
-          <Error error={errors?.specializations} />
-        </View>
+            <View className="px-[1%]">
+              <Specializations onChange={handleInputChange} />
+              <Error error={errors?.specializations} />
+            </View>
 
-        {/* 📝 Instructions */}
-        <View className="mt-[3%]">
-          <InstructionField
-            value={registrationData?.bio}
-            mode="bio"
-            onChangeText={(value) => handleInputChange("bio", value)}
-          />
-          <Error error={errors?.bio} />
-        </View>
-      </View>
-      <View className="flex-1 px-[2%]">
+            {/* 📝 Instructions */}
+            <View className="mt-[3%]">
+              <InstructionField
+                value={registrationData?.bio}
+                mode="bio"
+                onChangeText={(value) => handleInputChange("bio", value)}
+              />
+              <Error error={errors?.bio} />
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+      <View className="flex-1 px-[2%] pb-[4%]">
         <FormButton onPress={handleNext} title="Next" />
       </View>
     </View>

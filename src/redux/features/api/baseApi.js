@@ -15,11 +15,14 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
         // Don't set Content-Type for FormData - let browser set it with boundary
       };
 
-      const response = await fetch(`http://10.10.20.30:5000/api${args.url}`, {
-        method: args.method,
-        headers: headers,
-        body: args.body,
-      });
+      const response = await fetch(
+        `https://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net/api${args.url}`,
+        {
+          method: args.method,
+          headers: headers,
+          body: args.body,
+        }
+      );
 
       if (response.status === 403 || response.status === 401) {
         await AsyncStorage.removeItem("token");
@@ -43,7 +46,8 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
     };
 
     const result = await axios({
-      baseURL: "http://10.10.20.30:5000/api",
+      baseURL:
+        "https://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net/api",
       url: args.url,
       method: args.method,
       data: args.body,

@@ -228,11 +228,11 @@ export default function ContractorProfileScreen() {
                 General Preferences
               </Text>
               <View className="mt-[3%]">
-                <ProfileMenuItem
+                {/* <ProfileMenuItem
                   iconName={notification}
                   label="Notification"
                   onPress={() => router.push("/profile/notification")}
-                />
+                /> */}
                 <ProfileMenuItem
                   iconName={accountSettings}
                   onPress={() => router.push("/profile/settings")}

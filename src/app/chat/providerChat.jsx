@@ -29,7 +29,9 @@ const ProviderChatScreen = () => {
   const { chatId } = useLocalSearchParams();
 
   const { width: screenWidth } = Dimensions.get("window");
-  const { socket, isConnected } = useSocket("ws://10.10.20.30:5000");
+  const { socket, isConnected } = useSocket(
+    "wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
+  );
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
