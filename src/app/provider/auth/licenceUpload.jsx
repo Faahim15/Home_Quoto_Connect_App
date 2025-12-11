@@ -9,6 +9,7 @@ import ImageSelector from "../../components/shared/imagePicker/ImagePicker";
 import CustomButton from "../../components/onboarding/CustomButton";
 import { router } from "expo-router";
 import { useUploadVerificationDocumentsMutation } from "../../../redux/features/apiSlices/auth/authApiSlices";
+import Toast from "react-native-toast-message";
 
 export default function LicenceUpload() {
   const [businessLicense, setBusinessLicense] = useState(null);
@@ -48,7 +49,7 @@ export default function LicenceUpload() {
       // Upload
       const result = await uploadDocuments(formData).unwrap();
 
-      console.log("result", result);
+      // console.log("result", result);
 
       Alert.alert("Success", "Documents uploaded successfully", [
         {
@@ -57,8 +58,12 @@ export default function LicenceUpload() {
         },
       ]);
     } catch (error) {
-      console.error("Upload error:", error);
-      Alert.alert("Error", "Failed to upload documents. Please try again.");
+      console.log("Upload error:", error);
+      Toast.show({
+        type: "error",
+        text1: error?.message,
+        text2: "Failed to upload documents. Please try again.",
+      });
     }
   };
 
@@ -75,7 +80,7 @@ export default function LicenceUpload() {
 
         <Uploader
           title="Upload Your Business License"
-          subtitle="Supported File Types: PDF, JPG, PNG"
+          subtitle="Supported File Types: PDF (Max size: 5MB)"
           selectedFile={businessLicense}
           onFileSelect={setBusinessLicense}
         />

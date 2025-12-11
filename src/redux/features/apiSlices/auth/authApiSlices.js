@@ -85,9 +85,7 @@ export const authSlice = api.injectEndpoints({
         return {
           url: `/profile/verification-documents`,
           method: "POST",
-          // headers: {
-          //   "Content-Type": "multipart/form-data",
-          // },
+
           body: formData,
         };
       },

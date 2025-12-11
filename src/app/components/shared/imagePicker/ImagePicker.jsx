@@ -3,6 +3,7 @@ import React from "react";
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 
 export default function ImageSelector({ selectedFile, onFileSelect }) {
   const handleUpload = async () => {
@@ -79,7 +80,10 @@ export default function ImageSelector({ selectedFile, onFileSelect }) {
           >
             {selectedFile ? (
               <View className="flex-row py-[5%] px-[3%] justify-between items-center">
-                <View className="flex-row h-[28px] gap-[4%]">
+                <View
+                  style={{ width: scale(122), height: verticalScale(55) }}
+                  className="flex-row  gap-[4%]"
+                >
                   <Ionicons
                     name="checkmark-circle"
                     size={26}
