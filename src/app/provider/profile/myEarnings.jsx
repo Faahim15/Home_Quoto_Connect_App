@@ -43,8 +43,43 @@ export default function MyEarnings() {
     );
   }
 
-  // console.log("data", data?.data?.statistics?.today);
+  // --------------------------------------------------
+  // ⭐ Empty State UI (No Data)
+  // --------------------------------------------------
+  const hasData =
+    data?.data?.statistics && Object.keys(data.data.statistics).length > 0;
 
+  if (!hasData) {
+    return (
+      <View className="flex-1 bg-[#f9f9f9]">
+        <View className="px-[6.4%]">
+          <CustomTitle title="My Earnings" />
+        </View>
+
+        <View className="flex-1 items-center justify-center px-8">
+          <View className="items-center">
+            <View className="w-20 h-20 rounded-full bg-gray-200 items-center justify-center mb-4">
+              <Text className="text-4xl">📊</Text>
+            </View>
+
+            <Text className="text-xl font-poppins-600semibold text-[#2C2C2C] text-center mb-2">
+              No Earnings Yet
+            </Text>
+
+            <Text className="text-[#5C5F62] text-center font-poppins-400regular leading-6">
+              Your earnings data will appear here once you start receiving
+              bookings. Complete your profile and offer your services to get
+              started.
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  // --------------------------------------------------
+  // ⭐ Main Content (With Data)
+  // --------------------------------------------------
   return (
     <View className="flex-1 px-[6.4%] bg-[#f9f9f9]">
       <CustomTitle title="My Earnings" />

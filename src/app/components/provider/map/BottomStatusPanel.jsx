@@ -39,12 +39,12 @@ const BottomStatusPanel = ({
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{ width: scale(40), height: verticalScale(40) }}
           className="rounded-full border border-[#666] items-center justify-center"
         >
           <Ionicons name="options-outline" size={24} color="#666" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

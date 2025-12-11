@@ -104,7 +104,7 @@ export default function TermsOfServices() {
           )}
 
           {/* Version and update info */}
-          {content?.version && (
+          {/* {content?.version && (
             <View className="mt-6 p-3 bg-gray-50 rounded-lg">
               <Text className="font-poppins-400regular text-xs text-[#666666]">
                 Version: {content.version}
@@ -112,7 +112,7 @@ export default function TermsOfServices() {
                   ` • Updated by: ${content.lastUpdatedBy.fullName}`}
               </Text>
             </View>
-          )}
+          )} */}
         </View>
       </ScrollView>
     </View>

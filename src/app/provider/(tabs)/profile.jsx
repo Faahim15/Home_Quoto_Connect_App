@@ -71,6 +71,8 @@ export default function ContractorProfileScreen() {
       await logout().unwrap();
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("userId");
+      await AsyncStorage.removeItem("role");
+      await AsyncStorage.removeItem("isVerified");
 
       setModalVisible(false);
 
@@ -102,8 +104,6 @@ export default function ContractorProfileScreen() {
   const handleNo = () => {
     setModalVisible(false);
   };
-
-  const { profilePhoto, fullName } = profile?.data?.user || {};
 
   // Professional loading state
   if (profileLoading && !profile) {

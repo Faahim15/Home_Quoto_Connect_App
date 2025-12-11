@@ -22,7 +22,7 @@ export default function ReviewFormScreen() {
     comment: "",
   });
 
-  console.log("from", formData);
+  // console.log("from", formData);
 
   const { fullName } = data?.data?.job?.client || {};
 
@@ -64,9 +64,14 @@ export default function ReviewFormScreen() {
         text2: "Your review has been submitted!",
       });
 
+      // Wait before navigation
       setTimeout(() => {
-        router.replace("/provider/myJobs");
-      }, 800);
+        if (findReviewType) {
+          router.replace("/myJobs");
+        } else {
+          router.replace("provider/myJobs");
+        }
+      }, 1500);
     } catch (err) {
       Toast.show({
         type: "error",

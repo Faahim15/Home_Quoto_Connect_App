@@ -21,6 +21,8 @@ export default function ServiceDetails() {
   const myQuotes = useMyQuotes(service?.quotes);
   const [refreshing, setRefreshing] = useState(false);
 
+  console.log("job id", serviceId);
+
   const shouldShowButtons = showButtons === "true";
   const shouldShowPrice = showPrice === "true";
   const isAccepted = myQuotes?.some(

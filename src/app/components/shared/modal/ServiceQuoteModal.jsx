@@ -9,14 +9,16 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import MapButton from "../../provider/map/MapButton";
 import { router } from "expo-router";
 import BotttomButtons from "../services/buttons/BottomButtons";
+
 export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
   const slideAnim = useRef(new Animated.Value(300)).current;
-
-  // console.log("showing selected job from map:", selectedJob?.location);
+  const [isVerified, setIsVerified] = useState(false);
+  const [isCheckingVerification, setIsCheckingVerification] = useState(true);
 
   const handleJobDetails = () => {
     onClose();
@@ -26,8 +28,42 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
     });
   };
 
+  const handleUpdateQuote = () => {
+    if (!isVerified) {
+      console.log("Provider is not verified");
+      return;
+    }
+
+    router.push({
+      pathname: "/provider/quote/provideUpdatedOffer",
+      params: { jobId: selectedJob?._id },
+    });
+    onClose();
+  };
+
   const { profilePhoto, fullName } = selectedJob?.client || {};
   const { city, state } = selectedJob?.location?.details || {};
+
+  // Check verification status
+  useEffect(() => {
+    const checkVerificationStatus = async () => {
+      try {
+        const verifiedStatus = await AsyncStorage.getItem("isVerified");
+        setIsVerified(verifiedStatus === "true");
+      } catch (error) {
+        console.error("Error reading verification status:", error);
+        setIsVerified(false);
+      } finally {
+        setIsCheckingVerification(false);
+      }
+    };
+
+    if (visible) {
+      checkVerificationStatus();
+    }
+  }, [visible]);
+
+  // Animation effect
   useEffect(() => {
     if (visible) {
       Animated.spring(slideAnim, {
@@ -55,7 +91,7 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
       <TouchableOpacity
         activeOpacity={1}
         onPress={handleJobDetails}
-        className="flex-1  bg-black/50 justify-center items-center "
+        className="flex-1 bg-black/50 justify-center items-center"
       >
         <View className="" activeOpacity={1}>
           <Animated.View
@@ -83,7 +119,7 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
               />
             </View>
 
-            <View className=" pt-[4%]">
+            <View className="pt-[4%]">
               {/* Title */}
               <Text
                 className="text-gray-900 font-poppins-500medium text-base mb-[2%]"
@@ -99,11 +135,11 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
                     uri: profilePhoto?.url || null,
                   }}
                   style={{ width: scale(16), height: verticalScale(16) }}
-                  className=" bg-gray-300 rounded-full mr-[2%]"
+                  className="bg-gray-300 rounded-full mr-[2%]"
                 />
                 <Text className="font-poppins-400regular text-sm">
                   by{" "}
-                  <Text className="font-poppins-400regular text-[#319FCA] text-sm ">
+                  <Text className="font-poppins-400regular text-[#319FCA] text-sm">
                     {fullName || "N/A"}
                   </Text>
                 </Text>
@@ -112,7 +148,7 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
               {/* Service Type */}
               <View className="flex-row gap-[2%] items-center mb-[2%]">
                 <Ionicons name="construct-outline" size={16} color="#6B7280" />
-                <Text className="font-poppins-400regular text-sm text-[#6B7280] ">
+                <Text className="font-poppins-400regular text-sm text-[#6B7280]">
                   {selectedJob?.serviceCategory?.title}
                 </Text>
               </View>
@@ -122,7 +158,7 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
                 <Ionicons name="location-outline" size={16} color="#319FCA" />
                 <Text className="text-gray-500 text-sm ml-[1%]"></Text>
 
-                <Text className="font-poppins-400regular text-sm text-[#319FCA] ">
+                <Text className="font-poppins-400regular text-sm text-[#319FCA]">
                   {city && state ? `${city}, ${state}` : "N/A"}
                   <Text className="text-[#6B7280]">
                     | {selectedJob?.timeAgo}
@@ -130,16 +166,18 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
                 </Text>
               </View>
             </View>
+
             <View className="flex-row justify-between">
-              <Text className="font-poppins-semiBold text-sm text-[#6B7280] ">
+              <Text className="font-poppins-semiBold text-sm text-[#6B7280]">
                 Price
               </Text>
-              <Text className="font-poppins-semiBold text-sm  text-[#F59E0B]">
+              <Text className="font-poppins-semiBold text-sm text-[#F59E0B]">
                 {selectedJob?.priceRange?.isPersonalized
                   ? "Request a personalized..."
                   : `$${selectedJob?.priceRange?.from || null}-$${selectedJob?.priceRange?.to || null}`}
               </Text>
             </View>
+
             {/* Buttons */}
             <View className="flex-row gap-[4%] mt-[4%] mb-[3=2%]">
               <BotttomButtons
@@ -154,25 +192,10 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
               />
 
               <MapButton
-                onPress={() => {
-                  router.push({
-                    pathname: "/provider/quote/provideUpdatedOffer",
-                    params: { jobId: selectedJob?._id },
-                  });
-                  onClose();
-                }}
+                onPress={handleUpdateQuote}
                 title="Update Quote"
+                disabled={isCheckingVerification || !isVerified}
               />
-              {/* <MapButton
-                onPress={() => {
-                  onClose();
-                  router.replace("/provider/myJobs");
-                }}
-                borderColor="#175994"
-                backgroundColor="#fff"
-                title="Cancel"
-                color="#175994"
-              /> */}
             </View>
           </Animated.View>
         </View>

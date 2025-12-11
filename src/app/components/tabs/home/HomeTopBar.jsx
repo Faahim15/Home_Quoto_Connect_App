@@ -9,9 +9,12 @@ import { useGetNotificationsQuery } from "../../../../redux/features/apiSlices/c
 
 export default function HomeTopBar({ userData, mode }) {
   // const { socket, isConnected } = useSocket("ws://10.10.20.30:5000");
-  const { fullName, location, profilePhoto } = userData || {};
+  const { fullName, location, profilePhoto, isVerified } = userData || {};
+
   const [notifications, setNotifications] = useState([]);
   const { data, isLoading, isError, refetch } = useGetNotificationsQuery();
+
+  // console.log("show", userData?.isVerified);
 
   // Refetch when screen comes into focus
   useFocusEffect(
@@ -105,9 +108,21 @@ export default function HomeTopBar({ userData, mode }) {
       <View className="flex-row w-[90%] justify-between">
         <View>
           <Text className="font-poppins-bold text-base">Welcome to Quoto!</Text>
-          <Text className="font-poppins-400regular text-xs text-[#4D4D4D]">
-            {fullName || "N/A"}
-          </Text>
+          <View className="flex-row items-center gap-[2%]">
+            <Text className="font-poppins-400regular text-xs text-[#4D4D4D]">
+              {fullName || "N/A"}
+            </Text>
+            {mode !== "user" &&
+              (isVerified ? (
+                <Ionicons name="checkmark-circle" size={14} color="#175994" />
+              ) : (
+                <View className="bg-gray-200 px-1.5 py-0.5 rounded">
+                  <Text className="font-poppins-400regular text-[8px] text-gray-600">
+                    Unverified
+                  </Text>
+                </View>
+              ))}
+          </View>
           <View className="flex-row gap-[1%] mt-[2%]">
             <Ionicons name="location-outline" size={14} color="#8891AA" />
             <Text className="font-poppins-400regular text-xs text-[#8891AA]">

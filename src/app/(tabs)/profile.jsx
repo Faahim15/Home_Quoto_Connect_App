@@ -64,6 +64,7 @@ export default function UserProfileScreen() {
       await logout().unwrap();
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("userId");
+      await AsyncStorage.removeItem("role");
 
       setModalVisible(false);
 

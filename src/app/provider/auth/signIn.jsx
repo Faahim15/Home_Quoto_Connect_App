@@ -19,6 +19,7 @@ import * as Yup from "yup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { scale } from "../../components/adaptive/Adaptiveness";
 import { useLoginUserMutation } from "../../../redux/features/apiSlices/auth/authApiSlices";
+
 export default function SignInScreen() {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [login, { isLoading }] = useLoginUserMutation();
@@ -27,12 +28,13 @@ export default function SignInScreen() {
     email: "",
     password: "",
   });
+
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
   const validationSchema = Yup.object({
     email: Yup.string().email("Invalid email").required("Email is required"),
-
     password: Yup.string()
       .required("Password is required")
       .min(8, "Password must be at least 8 characters"),
@@ -53,9 +55,18 @@ export default function SignInScreen() {
       // ✅ Send login request
       const res = await login(data).unwrap();
 
-      // ✅ Store the token
-      await AsyncStorage.setItem("token", res?.data?.token);
-      await AsyncStorage.setItem("userId", res?.data?.user?._id);
+      console.log("verified", res?.data?.user?.isVerified);
+
+      const isVerified = res?.data?.user?.isVerified;
+
+      // ✅ Store authentication data in parallel
+      await Promise.all([
+        AsyncStorage.setItem("token", res?.data?.token),
+        AsyncStorage.setItem("userId", res?.data?.user?._id),
+        AsyncStorage.setItem("role", res?.data?.user?.role),
+        AsyncStorage.setItem("isVerified", String(isVerified)),
+      ]);
+
       // ✅ Show success toast
       Toast.show({
         type: "success",
@@ -63,12 +74,16 @@ export default function SignInScreen() {
         text2: `Welcome back, ${res?.data?.user?.fullName || "User"}!`,
       });
 
-      // console.log("Login response:", res.data.user);
       console.log("show user", res?.data?.user?.role);
-      // ✅ Navigate to /home
-      if (res?.data?.user?.role === "provider")
-        router.push("/provider/auth/licenceVerify");
-      else {
+
+      // ✅ Navigate based on role and verification
+      if (res?.data?.user?.role === "provider") {
+        if (isVerified) {
+          router.push("/provider/home");
+        } else {
+          router.push("/provider/auth/licenceVerify");
+        }
+      } else {
         Toast.show({
           type: "info",
           text1: "Provider Account Required",
@@ -142,11 +157,11 @@ export default function SignInScreen() {
               />
             </TouchableOpacity>
             <View className="w-[88%] items-center flex-row justify-between">
-              <Text className="text-sm  font-poppins-400regular text-[#000000]">
+              <Text className="text-sm font-poppins-400regular text-[#000000]">
                 Remember me
               </Text>
               <TouchableOpacity onPress={() => router.push("/forgetPassword")}>
-                <Text className="text-base  font-poppins-bold text-[#175994] underline">
+                <Text className="text-base font-poppins-bold text-[#175994] underline">
                   Forget Password?
                 </Text>
               </TouchableOpacity>
@@ -156,7 +171,7 @@ export default function SignInScreen() {
           <TouchableOpacity
             className="bg-[#0054A5] mx-[6%] rounded-lg py-[4%]"
             onPress={handleSubmit}
-            disabled={isLoading} // Disable button while loading
+            disabled={isLoading}
           >
             <View className="flex-row items-center justify-center">
               {isLoading && (

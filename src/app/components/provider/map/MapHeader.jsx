@@ -41,9 +41,9 @@ const MapHeader = ({
           </Text>
         </View>
 
-        <TouchableOpacity className="w-10 h-10 items-center justify-center">
+        {/* <TouchableOpacity className="w-10 h-10 items-center justify-center">
           <Ionicons name="close" size={24} color="#C8C7CC" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <SearchBar

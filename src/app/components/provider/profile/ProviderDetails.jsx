@@ -1,7 +1,10 @@
 import { View, Image, Text } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
+
 export default function ContractorDetails({ userData }) {
+  const isVerified = userData?.isVerified;
+
   return (
     <View>
       <View>
@@ -11,19 +14,44 @@ export default function ContractorDetails({ userData }) {
       </View>
       <View className="flex-row justify-between">
         <View className="mt-[3%] flex-row gap-[4%] ">
-          <Image
-            source={{
-              uri: userData?.profilePhoto?.url || null,
-            }}
-            className="border border-[#fff] rounded-full"
-            style={{ width: scale(92), height: verticalScale(92) }}
-            resizeMode="cover"
-          />
+          <View>
+            <Image
+              source={{
+                uri: userData?.profilePhoto?.url || null,
+              }}
+              className="border border-[#fff] rounded-full"
+              style={{ width: scale(92), height: verticalScale(92) }}
+              resizeMode="cover"
+            />
+            {/* Verified Badge on Image */}
+            {/* {isVerified ? (
+              <View className="absolute bottom-0 right-0 bg-white rounded-full p-0.5">
+                <Ionicons name="checkmark-circle" size={24} color="#2B54A4" />
+              </View>
+            ) : (
+              <View className="absolute bottom-0 right-0 bg-white rounded-full p-0.5">
+                <Ionicons name="close-circle" size={24} color="#9CA3AF" />
+              </View>
+            )} */}
+          </View>
           {/* details */}
           <View className="flex-col gap-[1%] pt-[6%] ">
-            <Text className="font-poppins-semiBold text-lg text-[#565656] ">
-              {userData?.fullName || "N/A"}
-            </Text>
+            <View className="flex-row items-center gap-[2%]">
+              <Text className="font-poppins-semiBold text-lg text-[#565656] ">
+                {userData?.fullName
+                  ? userData.fullName.split(" ").slice(0, 2).join(" ")
+                  : "N/A"}
+              </Text>
+              {isVerified ? (
+                <Ionicons name="checkmark-circle" size={18} color="#2B54A4" />
+              ) : (
+                <View className="bg-gray-200 px-1.5 py-0.5 rounded">
+                  <Text className="font-poppins-400regular text-[8px] text-gray-600">
+                    Unverified
+                  </Text>
+                </View>
+              )}
+            </View>
             <Text className="font-poppins-500medium text-xs text-[#565656] ">
               {userData?.businessName}
             </Text>
