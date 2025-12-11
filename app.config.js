@@ -30,6 +30,7 @@ export default {
       },
     },
     android: {
+      softwareKeyboardLayoutMode: "pan",
       package: "com.fahim.razahomequoto",
       permissions: [
         "CAMERA",
@@ -50,7 +51,7 @@ export default {
         backgroundColor: "#ffffff",
       },
 
-      softwareKeyboardLayoutMode: "resize",
+      // softwareKeyboardLayoutMode: "resize",
 
       edgeToEdgeEnabled: true,
     },

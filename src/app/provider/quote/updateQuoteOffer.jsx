@@ -1,4 +1,10 @@
-import { View, Text, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import CustomTitle from "../../components/shared/services/CustomTitle";
 import QuoteForm from "../../components/provider/map/QuoteForm";
 import { Ionicons } from "@expo/vector-icons";
@@ -37,11 +43,10 @@ export default function UpdateQuoteScreen() {
     (quote) => quote.status === "accepted"
   );
 
-  console.log("direct booking quotes", pendingQuote?._id);
-
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
   if (isLoading || singleJobLoader) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
@@ -53,10 +58,7 @@ export default function UpdateQuoteScreen() {
   }
 
   const service = data?.data?.job;
-
   const preferredDate = convertToThirdDay(service?.preferredDate);
-
-  // console.log("indivaiudal job", convertToThirdDay(service?.preferredDate));
 
   const validationSchema = Yup.object({
     appointment: Yup.boolean()
@@ -97,11 +99,9 @@ export default function UpdateQuoteScreen() {
 
   const handleSubmit = async () => {
     try {
-      // Step 1: Validate user input
       await validationSchema.validate(formData, { abortEarly: false });
       setErrors({});
 
-      // Step 2: Prepare JSON payload
       const payload = {
         price: formData.price,
         description: formData.quoteDetails,
@@ -111,18 +111,13 @@ export default function UpdateQuoteScreen() {
         warranty: {
           details: formData.warrantyDetails,
         },
-        // updateReason: formData.updateReason,
       };
 
-      console.log("pending", payload);
-      // Step 3: Call API
-      // Pass quoteId along with payload
       const res = await updateQuote({
         id: pendingQuote?._id,
         ...payload,
       }).unwrap();
 
-      // Step 4: Handle success
       if (res?.success) {
         Toast.show({
           type: "success",
@@ -133,7 +128,6 @@ export default function UpdateQuoteScreen() {
         });
         router.push("/provider/home");
       } else {
-        // Step 5: Handle logical failure
         Toast.show({
           type: "error",
           text1: "Error",
@@ -142,16 +136,13 @@ export default function UpdateQuoteScreen() {
         });
       }
     } catch (err) {
-      // Step 6: Handle validation or network errors
       if (err.name === "ValidationError") {
         const validationErrors = {};
         err.inner.forEach((e) => {
           validationErrors[e.path] = e.message;
         });
         setErrors(validationErrors);
-        console.log("validation error", validationErrors);
       } else {
-        console.log("API Error:", err);
         const errorMessage =
           err?.message || "Network or server error. Please try again.";
 
@@ -166,63 +157,72 @@ export default function UpdateQuoteScreen() {
   };
 
   return (
-    <View className="flex-1  bg-[#F9F9F9]">
-      <View className="px-[4%]">
-        <CustomTitle title="Update Quote" />
-      </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "padding"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
+    >
+      <View className="flex-1 bg-[#F9F9F9]">
+        <View className="px-[4%]">
+          <CustomTitle title="Update Quote" />
+        </View>
 
-      <ScrollView>
-        <View className="mt-[3%]">
-          <QuoteForm
-            job={service}
-            radioButtonChange={(value) =>
-              handleInputChange("appointment", value)
-            }
-            quoteDetailsChange={(text) =>
-              handleInputChange("quoteDetails", text)
-            }
-            onWarrantyChange={(text) =>
-              handleInputChange("warrantyDetails", text)
-            }
-            errors={errors}
-            onPriceChange={(value) => handleInputChange("price", value)}
-            price={formData.price}
-            formData={formData}
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 120 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View className="mt-[3%]">
+            <QuoteForm
+              job={service}
+              radioButtonChange={(value) =>
+                handleInputChange("appointment", value)
+              }
+              quoteDetailsChange={(text) =>
+                handleInputChange("quoteDetails", text)
+              }
+              onWarrantyChange={(text) =>
+                handleInputChange("warrantyDetails", text)
+              }
+              errors={errors}
+              onPriceChange={(value) => handleInputChange("price", value)}
+              price={formData.price}
+              formData={formData}
+            />
+          </View>
+
+          <View className="flex-row px-[4%] items-center mb-[2%]">
+            <Ionicons name="bulb-outline" size={18} color="#f59e0b" />
+            <Text className="font-poppins-400regular text-justify w-[90%] text-xs text-[#1F2937] ml-[2%]">
+              Submitting this quote will cost 5 credits. Your current balance is
+              25 credits.
+            </Text>
+          </View>
+        </ScrollView>
+
+        <View
+          className="flex-row gap-[6%] h-[14%] border border-[#D8DCE0] justify-center items-center"
+          style={[
+            XStyle.shadowBox,
+            { borderTopRightRadius: scale(20), borderTopLeftRadius: scale(20) },
+          ]}
+        >
+          <BotttomButtons
+            onPress={() => router.back()}
+            backgroundColor="#fff"
+            color="#EF4444"
+            borderColor="#EF4444"
+            title="Cancel"
+          />
+          <BotttomButtons
+            onPress={handleSubmit}
+            backgroundColor="#2583B6"
+            color="#fff"
+            borderColor="#2583B6"
+            title="Send Quote"
+            disabled={isLoading}
           />
         </View>
-
-        <View className="flex-row px-[4%] items-center mb-[2%]">
-          <Ionicons name="bulb-outline" size={18} color="#f59e0b" />
-          <Text className="font-poppins-400regular  text-justify w-[90%] text-xs text-[#1F2937] ml-[2%]">
-            Submitting this quote will cost 5 credits. Your current balance is
-            25 credits.
-          </Text>
-        </View>
-      </ScrollView>
-
-      <View
-        className="flex-row gap-[6%] h-[14%]   border border-[#D8DCE0] justify-center items-center "
-        style={[
-          XStyle.shadowBox,
-          { borderTopRightRadius: scale(20), borderTopLeftRadius: scale(20) },
-        ]}
-      >
-        <BotttomButtons
-          onPress={() => router.back()}
-          backgroundColor="#fff"
-          color="#EF4444"
-          borderColor="#EF4444"
-          title="Cancel"
-        />
-        <BotttomButtons
-          onPress={handleSubmit}
-          backgroundColor="#2583B6"
-          color="#fff"
-          borderColor="#2583B6"
-          title="Send Quote"
-          disabled={isLoading}
-        />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }

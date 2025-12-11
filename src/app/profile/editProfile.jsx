@@ -1,5 +1,13 @@
 // EditProfileScreen
-import { View, Text, ActivityIndicator, Alert, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { useState, useEffect } from "react";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import AvatarImagePicker from "../components/tabs/profile/AvatarImagePicker";
@@ -58,7 +66,6 @@ export default function EditProfileScreen() {
   // Handle save/update
   const handleSave = async () => {
     try {
-      // Prepare the update payload
       const updatePayload = {
         fullName: formData.fullName,
         phoneNumber: formData.phoneNumber,
@@ -86,7 +93,7 @@ export default function EditProfileScreen() {
       console.error("❌ Update error:", error);
       Alert.alert(
         "Update Failed",
-        error?.data?.message || "Failed to update profile. Please try again."
+        error?.message || "Failed to update profile. Please try again."
       );
     }
   };
@@ -104,19 +111,20 @@ export default function EditProfileScreen() {
   const { profilePhoto } = profile?.data?.user || {};
 
   return (
-    <View className="flex-1 bg-[#F9F9F9]">
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: "#f9f9f9" }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
+    >
       <ScrollView
         className="px-[6%]"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: 120 }}
+        keyboardShouldPersistTaps="handled"
       >
-        <View>
-          <CustomTitle title="Edit Profile" />
-        </View>
+        <CustomTitle title="Edit Profile" />
 
-        <View>
-          <AvatarImagePicker photo={profilePhoto} />
-        </View>
+        <AvatarImagePicker photo={profilePhoto} />
 
         <View className="mt-[5%]">
           <InputField
@@ -157,6 +165,6 @@ export default function EditProfileScreen() {
           disabled={isUpdating}
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }

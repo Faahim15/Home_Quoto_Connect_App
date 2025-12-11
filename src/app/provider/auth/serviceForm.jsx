@@ -15,6 +15,8 @@ import { experienceOptions } from "../../components/data/provider/MapData";
 import Error from "../../components/shared/error/Error";
 import InstructionField from "../../components/tabs/home/services/provider/InstructionField";
 import ServiceAreaSelector from "../../components/auth/ServiceArea";
+import ServiceOfferButton from "../../components/shared/services/buttons/ServiceOfferButton";
+import { verticalScale } from "../../components/adaptive/Adaptiveness";
 
 const ServicesOfferScreen = () => {
   const [errors, setErrors] = useState({});
@@ -75,7 +77,7 @@ const ServicesOfferScreen = () => {
   };
 
   return (
-    <View className="flex-1 bg-[#f9f9f9]">
+    <View className="flex-1  bg-[#f9f9f9]">
       <CustomHeader title="Services you" nestedTitle="Offer" />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "padding"}
@@ -87,7 +89,8 @@ const ServicesOfferScreen = () => {
           bounces={false}
           keyboardShouldPersistTaps="handled"
           scrollEventThrottle={16}
-          className="flex-1  "
+          contentContainerStyle={{ paddingBottom: verticalScale(20) }}
+          className="flex-1 "
         >
           <View className="px-[4%] mx-[3%] ">
             <View className="w-full">
@@ -130,10 +133,10 @@ const ServicesOfferScreen = () => {
             </View>
           </View>
         </ScrollView>
+        <View className="pb-[2%]">
+          <ServiceOfferButton onPress={handleNext} title="Next" />
+        </View>
       </KeyboardAvoidingView>
-      <View className="flex-1 px-[2%] pb-[4%]">
-        <FormButton onPress={handleNext} title="Next" />
-      </View>
     </View>
   );
 };

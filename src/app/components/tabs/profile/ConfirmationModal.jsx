@@ -31,11 +31,11 @@ export default function ConfirmationModal({
               {title}
             </Text>
 
-            <View className="flex-row justify-between">
+            <View className="flex-row justify-center ">
               <TouchableOpacity
                 onPress={onYes}
                 disabled={isLoading}
-                style={{ width: scale(120), height: verticalScale(36) }}
+                style={{ width: scale(120), height: verticalScale(40) }}
                 className={`bg-white border justify-center items-center  border-[#EF4444] py-3 px-6 rounded-lg ${isLoading ? "opacity-50" : ""}`}
               >
                 {isLoading ? (
@@ -50,8 +50,8 @@ export default function ConfirmationModal({
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={onNo}
-                style={{ width: scale(120), height: verticalScale(36) }}
-                className="flex-1 ml-[3%] justify-center items-center  bg-[#0065FF] rounded-lg"
+                style={{ width: scale(120), height: verticalScale(40) }}
+                className="ml-[3%] justify-center items-center  bg-[#0065FF] rounded-lg"
               >
                 <Text className="text-white text-sm font-poppins-semiBold text-center">
                   {noText}
