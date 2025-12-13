@@ -23,6 +23,10 @@ const ServiceItem = ({ item, quote }) => {
 
   // console.log("quote", item?.isDirectBooking);
 
+  // console.log("price", quote?.price);
+
+  if (quote?.price === 0) return null;
+
   return (
     <View className="mx-[4%] mb-[4%]">
       {/* Service Type Banner - Made clickable */}

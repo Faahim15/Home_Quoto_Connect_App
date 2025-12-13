@@ -163,16 +163,13 @@ const AvatarImagePicker = ({ photo }) => {
             />
           ) : (
             <View className="w-full h-full items-center justify-center bg-gray-200">
-              <Image
-                source={{
-                  uri: "https://avatar.iran.liara.run/public/boy",
-                }}
-                className="w-full h-full"
-                resizeMode="cover"
+              <Ionicons
+                name="person-circle-outline"
+                size={48} // adjust size to fit your container
+                color="#555" // tweak color for contrast
               />
             </View>
           )}
-
           {/* Loading Overlay */}
           {isLoading && (
             <View className="absolute inset-0 bg-black/50 items-center justify-center">

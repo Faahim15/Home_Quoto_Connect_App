@@ -92,19 +92,25 @@ export default function HomeTopBar({ userData, mode }) {
     <View className="flex-row pb-[1%] mx-[6.4%] mt-[2%] gap-[2%]">
       <View>
         <Pressable onPress={handleEditProfile}>
-          <Image
-            style={{
-              width: scale(32),
-              height: verticalScale(32),
-              borderRadius: scale(16),
-            }}
-            source={{
-              uri:
-                profilePhoto?.url || "https://avatar.iran.liara.run/public/boy",
-            }}
-          />
+          {profilePhoto?.url ? (
+            <Image
+              style={{
+                width: scale(32),
+                height: verticalScale(32),
+                borderRadius: scale(16),
+              }}
+              source={{ uri: profilePhoto.url }}
+            />
+          ) : (
+            <Ionicons
+              name="person-circle-outline"
+              size={scale(32)}
+              color="#888" // you can adjust color
+            />
+          )}
         </Pressable>
       </View>
+
       <View className="flex-row w-[90%] justify-between">
         <View>
           <Text className="font-poppins-bold text-base">Welcome to Quoto!</Text>
