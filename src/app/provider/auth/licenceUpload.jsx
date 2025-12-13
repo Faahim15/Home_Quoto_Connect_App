@@ -79,7 +79,7 @@ export default function LicenceUpload() {
         </View>
 
         <Uploader
-          title="Upload Your Business License"
+          title="Upload a valid government-issued ID."
           subtitle="Supported File Types: PDF (Max size: 5MB)"
           selectedFile={businessLicense}
           onFileSelect={setBusinessLicense}
@@ -87,7 +87,7 @@ export default function LicenceUpload() {
 
         <View className="mt-[8%]">
           <LicenceHeader
-            title="Upload a clear photo"
+            title="Upload a clear photo of yourself"
             subtitle="Supported File Types: JPG, JPEG, PNG"
           />
           <View className="flex-1 mt-[2%]">

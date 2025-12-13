@@ -49,13 +49,13 @@ export default function Banner({ providerId, data }) {
           <View></View>
 
           {/* Call Button */}
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={handleCall}
             style={{ width: scale(44), height: verticalScale(44) }}
             className="rounded-full items-center justify-center bg-[#319FCA] "
           >
             <Ionicons name="call-outline" size={24} color="#fff" />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {/* Chat Button */}
           <TouchableOpacity

@@ -22,6 +22,7 @@ import {
   useCreateSupportTicketMutation,
   useGetSupportTicketsQuery,
 } from "../../redux/features/apiSlices/user/userApiSlices";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SupportScreen() {
   const [formData, setFormData] = useState({
@@ -35,8 +36,28 @@ export default function SupportScreen() {
 
   const [ticketId, setTicketId] = useState(null);
   const [showChatModal, setShowChatModal] = useState(false);
+  const [isVerified, setIsVerified] = useState(true);
+  const [role, setRole] = useState(null);
+  const [hasInProgressTicket, setHasInProgressTicket] = useState(false);
 
   const [createSupportTicket, { isLoading }] = useCreateSupportTicketMutation();
+
+  useEffect(() => {
+    const checkVerificationStatus = async () => {
+      try {
+        const verifiedStatus = await AsyncStorage.getItem("isVerified");
+        const userRole = await AsyncStorage.getItem("role");
+        // Convert string "true" to boolean true, everything else to false
+        setIsVerified(verifiedStatus === "true");
+        setRole(userRole);
+      } catch (error) {
+        console.error("Error reading verification status:", error);
+        setIsVerified(false);
+      }
+    };
+
+    checkVerificationStatus();
+  }, []);
 
   const {
     data,
@@ -74,11 +95,16 @@ export default function SupportScreen() {
 
       const activeTicket = inProgressTicket || openTicket;
 
+      console.log("showsticked", activeTicket);
+
       if (activeTicket) {
         setTicketId(activeTicket._id);
       } else {
         setTicketId(null);
       }
+
+      // Track if there's an in-progress ticket
+      setHasInProgressTicket(!!activeTicket);
     }
   }, [data]);
 
@@ -102,6 +128,24 @@ export default function SupportScreen() {
   const handleSubmit = async () => {
     // Dismiss keyboard before submission
     Keyboard.dismiss();
+
+    // Check if provider is not verified
+    if (role === "provider" && !isVerified) {
+      Alert.alert(
+        "Verification Required",
+        "Please verify your account before submitting a support ticket."
+      );
+      return;
+    }
+
+    // Check if there's an in-progress ticket
+    if (hasInProgressTicket) {
+      Alert.alert(
+        "Ticket In Progress",
+        "You already have a ticket being processed. Please wait for it to be resolved."
+      );
+      return;
+    }
 
     // Validation
     if (!formData.title.trim()) {
@@ -174,6 +218,12 @@ export default function SupportScreen() {
     }
     setShowChatModal(true);
   };
+
+  // Determine if Send button should be disabled
+  const isSendDisabled =
+    isLoading || (role === "provider" && !isVerified) || hasInProgressTicket;
+
+  // console.log("hasTicket inprogress", hasInProgressTicket);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -267,7 +317,8 @@ export default function SupportScreen() {
                 <ActionButton
                   title={isLoading ? "Sending..." : "Send"}
                   onPress={handleSubmit}
-                  disabled={isLoading}
+                  disabled={isSendDisabled}
+                  backgroundColor={isSendDisabled ? "#E0E0E0" : undefined}
                 />
                 {isLoading && (
                   <View

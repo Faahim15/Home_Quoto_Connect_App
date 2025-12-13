@@ -55,9 +55,11 @@ export default function SignInScreen() {
       // ✅ Send login request
       const res = await login(data).unwrap();
 
-      console.log("verified", res?.data?.user?.isVerified);
+      console.log("verified latest", res?.data?.user?.verificationStatus);
 
-      const isVerified = res?.data?.user?.isVerified;
+      const isVerified = res?.data?.user?.verificationStatus === "verified";
+
+      console.log("show verified lstest", isVerified);
 
       // ✅ Store authentication data in parallel
       await Promise.all([

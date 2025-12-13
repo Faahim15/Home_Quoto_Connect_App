@@ -8,18 +8,25 @@ export default function ActionButton({
   onPress,
   disabled = false,
 }) {
+  // Determine colors based on disabled state
+  const finalBackgroundColor = disabled ? "#E0E0E0" : backgroundColor;
+  const finalBorderColor = disabled ? "#CACACA" : borderColor;
+  const finalTextColor = disabled ? "#898989" : color;
+
   return (
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled}
       style={{
-        backgroundColor: backgroundColor,
-        borderColor: borderColor,
-        opacity: disabled ? 0.6 : 1,
+        backgroundColor: finalBackgroundColor,
+        borderColor: finalBorderColor,
       }}
       className="items-center border px-[4%] mb-[2%] py-[4%] rounded-md justify-center"
     >
-      <Text style={{ color: color }} className="font-poppins-bold text-base">
+      <Text
+        style={{ color: finalTextColor }}
+        className="font-poppins-bold text-base"
+      >
         {title}
       </Text>
     </TouchableOpacity>

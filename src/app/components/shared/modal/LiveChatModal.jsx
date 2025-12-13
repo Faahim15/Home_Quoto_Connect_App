@@ -181,7 +181,13 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
   };
 
   const handleSendMessage = async () => {
-    if (!inputText.trim() || !socket || !isConnected) return;
+    // Updated condition: Allow sending if there's either text OR attachments
+    if (
+      (!inputText.trim() && attachments.length === 0) ||
+      !socket ||
+      !isConnected
+    )
+      return;
 
     const text = inputText.trim();
 
@@ -208,7 +214,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
     const payload = {
       ticketId,
       content: {
-        text: text,
+        text: text, // This will be empty string if no text
         attachments: media,
       },
       messageType: attachments.length > 0 ? "image" : "text",
@@ -510,9 +516,13 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
 
             <TouchableOpacity
               onPress={handleSendMessage}
-              disabled={!inputText.trim() || !isConnected}
+              disabled={
+                (!inputText.trim() && attachments.length === 0) || !isConnected
+              }
               className={`w-11 h-11 rounded-full justify-center items-center ${
-                inputText.trim() && isConnected ? "bg-blue-700" : "bg-gray-200"
+                (inputText.trim() || attachments.length > 0) && isConnected
+                  ? "bg-blue-700"
+                  : "bg-gray-200"
               }`}
             >
               {messageLoader ? (
@@ -521,7 +531,11 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
                 <Ionicons
                   name="send"
                   size={20}
-                  color={inputText.trim() && isConnected ? "#FFF" : "#999"}
+                  color={
+                    (inputText.trim() || attachments.length > 0) && isConnected
+                      ? "#FFF"
+                      : "#999"
+                  }
                 />
               )}
             </TouchableOpacity>

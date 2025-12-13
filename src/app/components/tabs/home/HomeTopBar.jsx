@@ -9,10 +9,25 @@ import { useGetNotificationsQuery } from "../../../../redux/features/apiSlices/c
 
 export default function HomeTopBar({ userData, mode }) {
   // const { socket, isConnected } = useSocket("ws://10.10.20.30:5000");
-  const { fullName, location, profilePhoto, isVerified } = userData || {};
-
+  const { fullName, location, profilePhoto } = userData || {};
+  const [isVerified, setIsVerified] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const { data, isLoading, isError, refetch } = useGetNotificationsQuery();
+
+  useEffect(() => {
+    const checkVerificationStatus = async () => {
+      try {
+        const verifiedStatus = await AsyncStorage.getItem("isVerified");
+        // Convert string "true" to boolean true, everything else to false
+        setIsVerified(verifiedStatus === "true");
+      } catch (error) {
+        console.error("Error reading verification status:", error);
+        setIsVerified(false);
+      }
+    };
+
+    checkVerificationStatus();
+  }, []);
 
   // console.log("show", userData?.isVerified);
 

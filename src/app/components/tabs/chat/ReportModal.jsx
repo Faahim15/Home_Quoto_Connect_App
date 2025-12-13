@@ -7,11 +7,13 @@ import {
   Pressable,
   TextInput,
   ScrollView,
+  Image,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import IncidentTypeDropdown from "./IncidentType";
+import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 
-const ReportModal = ({ visible, onClose, onSelectProvider }) => {
+const ReportModal = ({ visible, onClose, onSelectProvider, userData }) => {
   const [showReportForm, setShowReportForm] = useState(false);
   const [selectedIncident, setSelectedIncident] = useState("");
   const [additionalNotes, setAdditionalNotes] = useState("");
@@ -82,12 +84,27 @@ const ReportModal = ({ visible, onClose, onSelectProvider }) => {
 
                 {/* Provider Info */}
                 <View className="flex-row items-center mb-[6%]">
-                  <View className="w-[15%] aspect-square bg-gray-300 rounded-full mr-[4%]" />
+                  <View className="w-[15%] aspect-square bg-gray-300 rounded-full mr-[4%]">
+                    {userData?.profilePhoto ? (
+                      <Image
+                        source={{ uri: userData.profilePhoto }}
+                        style={{ width: scale(38), height: verticalScale(38) }}
+                        className="rounded-full mr-[3%]"
+                      />
+                    ) : (
+                      <View
+                        style={{ width: scale(38), height: verticalScale(38) }}
+                        className="rounded-full mr-[3%] bg-gray-300 items-center justify-center"
+                      >
+                        <Ionicons name="person" size={24} color="#6B7280" />
+                      </View>
+                    )}
+                  </View>
                   <View>
                     <Text className="text-base font-semibold text-gray-800">
-                      Giring Furqon
+                      {userData?.name || "N/A"}
                     </Text>
-                    <Text className="text-sm text-gray-500">Electrician</Text>
+                    {/* <Text className="text-sm text-gray-500">Electrician</Text> */}
                   </View>
                 </View>
 
@@ -170,7 +187,7 @@ const ReportModal = ({ visible, onClose, onSelectProvider }) => {
                 </TouchableOpacity>
 
                 {/* Block Provider */}
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPress={() => handleProviderSelect("block")}
                   className="flex-row items-center p-[4%] rounded-xl bg-gray-50 active:bg-gray-100"
                 >
@@ -185,7 +202,7 @@ const ReportModal = ({ visible, onClose, onSelectProvider }) => {
                     Block Provider
                   </Text>
                   <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             </View>
           )}

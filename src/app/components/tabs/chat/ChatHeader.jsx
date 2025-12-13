@@ -11,6 +11,8 @@ const ChatHeader = ({ userData }) => {
 
   // console.log("show", userData);
 
+  // console.log("userData", userData);
+
   const handleSelectProvider = (providerId) => {
     console.log("Selected provider:", providerId);
   };
@@ -48,7 +50,7 @@ const ChatHeader = ({ userData }) => {
       </View>
 
       <View className="flex-row">
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => router.push("/chat/call")}
           className="mr-[8%]"
         >
@@ -58,11 +60,12 @@ const ChatHeader = ({ userData }) => {
           >
             <Ionicons name="call-outline" size={15} color="#fff" />
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <ReportModal
           visible={modalVisible}
           onClose={() => setModalVisible(false)}
           onSelectProvider={handleSelectProvider}
+          userData={userData}
         />
 
         <TouchableOpacity onPress={() => setModalVisible(true)}>

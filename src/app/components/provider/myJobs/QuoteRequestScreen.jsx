@@ -56,7 +56,7 @@ const ServiceCard = ({ item }) => {
 
   return (
     <TouchableOpacity
-      style={{ width: scale(327), height: verticalScale(200) }}
+      style={{ width: scale(327), height: verticalScale(230) }}
       className="bg-white flex-col border border-[#D4E0EB] px-[4.5%] rounded-xl shadow-sm overflow-hidden"
       onPress={() =>
         router.push({
@@ -127,7 +127,7 @@ const ServiceCard = ({ item }) => {
       </View>
 
       {/* Buttons */}
-      <View className="flex-row gap-[2%] mt-[4%]">
+      <View className="flex-row mb-[2%] gap-[2%] mt-[4%]">
         <BottomButtons
           onPress={() => setCancelModalVisible(true)}
           width={145}

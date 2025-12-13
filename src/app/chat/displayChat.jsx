@@ -466,8 +466,10 @@ const ChatScreen = () => {
     );
   }
 
-  const { profilePhoto, fullName, isOnline, lastActive } =
+  const { profilePhoto, fullName, isOnline, lastActive, _id } =
     data?.data?.provider || {};
+
+  // console.log("provider id", _id);
 
   return (
     <KeyboardAvoidingView
