@@ -68,7 +68,11 @@ export default function ContractorProfileScreen() {
 
   const handleYes = async () => {
     try {
-      await logout().unwrap();
+      // Capture the response
+      const response = await logout().unwrap();
+      console.log("Logout response:", response);
+
+      // Clear AsyncStorage
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("userId");
       await AsyncStorage.removeItem("role");
@@ -86,7 +90,7 @@ export default function ContractorProfileScreen() {
 
       setTimeout(() => {
         router.replace("/onboarding/loginChoice");
-      }, 500);
+      }, 3000);
     } catch (error) {
       console.error("Logout error:", error);
       setModalVisible(false);

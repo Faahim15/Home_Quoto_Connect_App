@@ -68,14 +68,14 @@ const ChatHeader = ({ userData }) => {
           userData={userData}
         />
 
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
+        {/* <TouchableOpacity onPress={() => setModalVisible(true)}>
           <View
             style={{ width: scale(32), height: verticalScale(29) }}
             className="] items-center justify-center"
           >
             <Text className="text-[#6B7280] font-poppins-bold text-3xl">⋯</Text>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

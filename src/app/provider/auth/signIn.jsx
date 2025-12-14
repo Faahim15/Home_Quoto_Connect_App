@@ -55,11 +55,7 @@ export default function SignInScreen() {
       // ✅ Send login request
       const res = await login(data).unwrap();
 
-      console.log("verified latest", res?.data?.user?.verificationStatus);
-
       const isVerified = res?.data?.user?.verificationStatus === "verified";
-
-      console.log("show verified lstest", isVerified);
 
       // ✅ Store authentication data in parallel
       await Promise.all([
@@ -75,8 +71,6 @@ export default function SignInScreen() {
         text1: "Login Successful",
         text2: `Welcome back, ${res?.data?.user?.fullName || "User"}!`,
       });
-
-      console.log("show user", res?.data?.user?.role);
 
       // ✅ Navigate based on role and verification
       if (res?.data?.user?.role === "provider") {
@@ -97,7 +91,8 @@ export default function SignInScreen() {
       Toast.show({
         type: "error",
         text1: "Login Failed",
-        text2: error?.message || "Something went wrong. Please try again.",
+        text2:
+          error?.data?.message || "Something went wrong. Please try again.",
       });
 
       // ✅ Optional: handle validation errors

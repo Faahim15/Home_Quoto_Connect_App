@@ -24,4 +24,5 @@ export default function Index() {
   if (!initialRoute) return null;
 
   return <Redirect href={initialRoute} />;
+  // return <Redirect href="/home" />;
 }

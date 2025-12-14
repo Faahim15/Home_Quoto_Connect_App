@@ -146,11 +146,11 @@ export const homeApiSlices = api.injectEndpoints({
           type: idBack.type || "image/png",
         });
 
-        formData.append("consentForm", {
-          uri: consentForm.uri,
-          name: consentForm.name || "consentForm.png",
-          type: consentForm.type || "image/png",
-        });
+        // formData.append("consentForm", {
+        //   uri: consentForm.uri,
+        //   name: consentForm.name || "consentForm.png",
+        //   type: consentForm.type || "image/png",
+        // });
 
         return {
           url: `/background-check/submit`,

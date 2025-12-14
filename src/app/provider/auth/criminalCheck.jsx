@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Alert } from "react-native";
+import { View, ScrollView, Alert } from "react-native";
 import { useState } from "react";
 import { router } from "expo-router";
 import CustomTitle from "../../components/shared/CustomTitle";
@@ -9,7 +9,6 @@ import CustomButton from "../../components/onboarding/CustomButton";
 import { useSubmitBackgroundCheckMutation } from "../../../redux/features/apiSlices/user/userApiSlices";
 
 export default function CriminalCheck() {
-  const [consentForm, setConsentForm] = useState(null);
   const [idFront, setIdFront] = useState(null);
   const [idBack, setIdBack] = useState(null);
 
@@ -17,13 +16,16 @@ export default function CriminalCheck() {
     useSubmitBackgroundCheckMutation();
 
   const handleSubmit = async () => {
-    if (!consentForm || !idFront || !idBack) {
-      Alert.alert("Missing Files", "Please upload all required documents.");
+    if (!idFront || !idBack) {
+      Alert.alert(
+        "Missing Files",
+        "Please upload both front and back of your ID."
+      );
       return;
     }
 
     try {
-      await submitBackgroundCheck({ idFront, idBack, consentForm }).unwrap();
+      await submitBackgroundCheck({ idFront, idBack }).unwrap();
       Alert.alert("Success", "Background check submitted successfully!");
       router.push("/provider/auth/validation");
     } catch (error) {
@@ -45,22 +47,11 @@ export default function CriminalCheck() {
         <View className="mt-[9%]">
           <VerifyHeader
             title="Criminal Background Check"
-            subTitle="To complete your verification, please upload a valid photo ID and signed consent form."
+            subTitle="To complete your verification, please upload a valid photo ID."
           />
         </View>
 
         <View className="mt-[8%]">
-          <LicenceHeader
-            title="Upload Signed Consent Form"
-            subtitle="Supported file types: JPG, PNG"
-          />
-          <View className="flex-1 mt-[2%]">
-            <ImageSelector
-              selectedFile={consentForm}
-              onFileSelect={setConsentForm}
-            />
-          </View>
-
           <View className="mt-[2%]">
             <LicenceHeader
               title="Please upload the front side of your ID card"

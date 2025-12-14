@@ -79,10 +79,14 @@ export default function SignInScreen() {
       }
     } catch (error) {
       // ❌ Show error toast
+
+      console.log("show", error);
+
       Toast.show({
         type: "error",
         text1: "Login Failed",
-        text2: error?.message || "Something went wrong. Please try again.",
+        text2:
+          error?.data?.message || "Something went wrong. Please try again.",
       });
 
       // ✅ Optional: handle validation errors

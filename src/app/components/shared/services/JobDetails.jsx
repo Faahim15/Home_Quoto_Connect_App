@@ -23,9 +23,6 @@ function showImages({ item }) {
 export default function ProviderInfo({ item, showPrice = false }) {
   const { city, state } = item?.location?.details || {};
   const statusColor = statusColorMap?.[item?.status] ?? "#6B7280";
-  // console.log("sevice", item);
-
-  // console.log("mainImage", item?.photos);
 
   return (
     <View

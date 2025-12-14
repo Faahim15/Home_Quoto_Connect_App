@@ -155,7 +155,10 @@ export default function TimeRangePicker() {
           text2: res?.message || "Registration successful!",
           visibilityTime: 2000,
         });
-        router.push("provider/auth/signIn");
+        router.replace({
+          pathname: "/provider/auth/verifyOtp",
+          params: { email: registrationData.email },
+        });
       } else {
         Toast.show({
           type: "error",

@@ -37,6 +37,22 @@ export const chatSlice = api.injectEndpoints(
         }),
         providesTags: ["chat"],
       }),
+
+      // NEW: Report a User API
+      reportUser: builder.mutation({
+        query: (reportData) => ({
+          url: `/reports`,
+          method: "POST",
+          body: reportData,
+          // Note: Based on the image, it seems to use form-data encoding
+          // You can uncomment headers if needed
+          // headers: {
+          //   "Content-Type": "application/x-www-form-urlencoded",
+          // },
+        }),
+        // Optionally invalidate tags if needed
+        // invalidatesTags: ["reports"],
+      }),
     }),
   },
   {
@@ -50,4 +66,5 @@ export const {
   useGetNotificationsQuery,
   useGetChatsQuery,
   useGetSingleChatHistoryQuery,
+  useReportUserMutation, // NEW: Export the report user hook
 } = chatSlice;

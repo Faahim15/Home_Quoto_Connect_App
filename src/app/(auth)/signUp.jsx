@@ -96,17 +96,22 @@ export default function SignUpScreen() {
       formsData.append("location", JSON.stringify(location));
       // Step 3: Call API
       const res = await registerUser(formsData).unwrap();
-      console.log("register from data:", res);
+      console.log("register from data:", res?.message);
 
       // Step 4: Handle success
       if (res?.success) {
         Toast.show({
           type: "success",
           text1: "Success",
-          text2: res?.message || "Registration successful!",
+          text2:
+            res?.message ||
+            "User registered successfully. Please check your email for verification code.!",
           visibilityTime: 2000,
         });
-        router.push("/signIn");
+        router.replace({
+          pathname: "/verifySignup",
+          params: { email: formData.email },
+        });
       } else {
         //  5: Handle logical failure (just in case)
         Toast.show({
