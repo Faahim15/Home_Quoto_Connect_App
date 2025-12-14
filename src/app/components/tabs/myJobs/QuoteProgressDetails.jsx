@@ -25,6 +25,8 @@ export default function QuoteProgressDetails({ quote, job }) {
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     quote?.provider;
 
+  // console.log("see the latest date", job?.preferredDate);
+
   const handleServicePress = () => {
     router.push({
       pathname: "/myJobs/jobDetails",
@@ -136,8 +138,8 @@ export default function QuoteProgressDetails({ quote, job }) {
               </Text>
 
               <Text className="font-poppins-400regular text-[#1F2937] text-xs pt-[2%] ">
-                Available on {formatDateWithOrdinal(quote?.proposedDate)} at{" "}
-                {quote?.proposedTime}.
+                Available on {formatDateWithOrdinal(job?.preferredDate)} at{" "}
+                {job?.preferredTime}.
               </Text>
             </View>
             {/* Quote Details */}
