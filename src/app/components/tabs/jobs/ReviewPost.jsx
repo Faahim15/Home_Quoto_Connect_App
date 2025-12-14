@@ -148,12 +148,12 @@ export default function ReviewPost({ jobData, isLoading }) {
             </Text>
           </View>
 
-          <View className="flex-row mt-[3%] w-[70%] gap-[25%] ">
+          <View className="flex-row mt-[3%] w-[70%] gap-[25%]">
             <Text className="font-poppins-semiBold text-xs text-[#6B7280]">
               Address
             </Text>
             <Text className="font-poppins-400regular text-justify overflow-hidden text-xs text-[#565656]">
-              {address || "N/A"}
+              {address ? address.split(",").slice(2).join(",").trim() : "N/A"}
             </Text>
           </View>
 

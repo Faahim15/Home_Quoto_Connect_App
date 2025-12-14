@@ -37,16 +37,20 @@ const ChatHeader = ({ userData }) => {
           <Ionicons name="person" size={24} color="#6B7280" />
         </View>
       )}
-
       <View className="flex-1">
-        <Text className="text-gray-800 text-base font-poppins-500medium ">
-          {userData?.name.split(" ").slice(0, 2).join(" ")}
+        <Text className="text-gray-800 text-base font-poppins-500medium">
+          {userData?.name?.split(" ").slice(0, 2).join(" ")}
         </Text>
-        <Text className="text-gray-500 font-poppins-400regular text-sm">
-          {userData?.isOnline
-            ? "Active now"
-            : formatDateRelative(userData?.lastActive)}
-        </Text>
+
+        {userData?.isOnline ? (
+          <Text className="text-gray-500 font-poppins-400regular text-sm">
+            Active now
+          </Text>
+        ) : userData?.lastActive ? (
+          <Text className="text-gray-500 font-poppins-400regular text-sm">
+            {formatDateRelative(userData.lastActive)}
+          </Text>
+        ) : null}
       </View>
 
       <View className="flex-row">
