@@ -217,11 +217,11 @@ export default function NotificationScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-[#f9f9f9]">
+    <View className="flex-1 bg-[#f9f9f9]">
       {/* Header */}
       <View className="bg-[#f9f9f9] border-b border-gray-200">
         <View className="mx-[6%] py-[4%]">
-          <View className="flex-row items-center justify-between mb-[4%]">
+          <View className="">
             {/* <Text className="text-2xl font-poppins-semiBold text-gray-900">
               Notifications
             </Text> */}
@@ -234,7 +234,7 @@ export default function NotificationScreen() {
               </TouchableOpacity>
             )} */}
 
-            <CustomTitle title="Notifications" />
+            {/* <CustomTitle title="Notifications" /> */}
           </View>
 
           {/* Filter Tabs */}
@@ -291,6 +291,6 @@ export default function NotificationScreen() {
           />
         }
       />
-    </SafeAreaView>
+    </View>
   );
 }

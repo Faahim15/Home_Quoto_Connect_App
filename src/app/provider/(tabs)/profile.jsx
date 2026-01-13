@@ -196,11 +196,6 @@ export default function ContractorProfileScreen() {
                   onPress={() => router.push("provider/profile/projectGallery")}
                   label="Project Gallery"
                 />
-                {/* <ProfileMenuItem
-                  iconName={verification}
-                  onPress={() => router.push("provider/profile/verification")}
-                  label="Verification"
-                /> */}
               </View>
             </View>
 
@@ -232,11 +227,6 @@ export default function ContractorProfileScreen() {
                 General Preferences
               </Text>
               <View className="mt-[3%]">
-                {/* <ProfileMenuItem
-                  iconName={notification}
-                  label="Notification"
-                  onPress={() => router.push("/profile/notification")}
-                /> */}
                 <ProfileMenuItem
                   iconName={accountSettings}
                   onPress={() => router.push("/profile/settings")}

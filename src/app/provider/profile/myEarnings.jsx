@@ -1,9 +1,7 @@
 import { View, ScrollView, Text, ActivityIndicator } from "react-native";
 import BookingStatsCard from "../../components/provider/profile/BookingStatCards";
 import CustomTitle from "../../components/shared/services/CustomTitle";
-import earningsOptions, {
-  periodOptions,
-} from "../../components/data/profile/EarningsData";
+import { periodOptions } from "../../components/data/profile/EarningsData";
 import EarningsTrendChart from "../../components/provider/profile/EarningTrendChart";
 import ChartHeader from "../../components/provider/profile/ChartHeader";
 import BookingsTrendChart from "../../components/provider/profile/BookingTrendChart";
@@ -81,9 +79,7 @@ export default function MyEarnings() {
   // ⭐ Main Content (With Data)
   // --------------------------------------------------
   return (
-    <View className="flex-1 px-[6.4%] bg-[#f9f9f9]">
-      <CustomTitle title="My Earnings" />
-
+    <View className="flex-1 px-[6.4%] mt-[3%] bg-[#f9f9f9]">
       <ScrollView
         contentContainerStyle={{ paddingBottom: verticalScale(40) }}
         showsVerticalScrollIndicator={false}

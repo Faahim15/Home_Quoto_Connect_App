@@ -32,24 +32,23 @@ export default function ContractorDetails({ userData }) {
       <View className="flex-row justify-between">
         <View className="mt-[3%] flex-row gap-[4%] ">
           <View>
-            <Image
-              source={{
-                uri: userData?.profilePhoto?.url || null,
-              }}
-              className="border border-[#fff] rounded-full"
-              style={{ width: scale(92), height: verticalScale(92) }}
-              resizeMode="cover"
-            />
-            {/* Verified Badge on Image */}
-            {/* {isVerified ? (
-              <View className="absolute bottom-0 right-0 bg-white rounded-full p-0.5">
-                <Ionicons name="checkmark-circle" size={24} color="#2B54A4" />
-              </View>
+            {userData?.profilePhoto?.url ? (
+              <Image
+                source={{
+                  uri: userData?.profilePhoto?.url,
+                }}
+                className="border border-[#fff] rounded-full"
+                style={{ width: scale(92), height: verticalScale(92) }}
+                resizeMode="cover"
+              />
             ) : (
-              <View className="absolute bottom-0 right-0 bg-white rounded-full p-0.5">
-                <Ionicons name="close-circle" size={24} color="#9CA3AF" />
+              <View
+                className="border border-[#E5E7EB] rounded-full bg-[#F3F4F6] justify-center items-center"
+                style={{ width: scale(92), height: verticalScale(92) }}
+              >
+                <Ionicons name="person" size={50} color="#9CA3AF" />
               </View>
-            )} */}
+            )}
           </View>
           {/* details */}
           <View className="flex-col gap-[1%] pt-[6%] ">

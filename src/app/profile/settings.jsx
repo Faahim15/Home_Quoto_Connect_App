@@ -47,9 +47,6 @@ export default function AccountSettingScreen() {
 
   return (
     <View className="flex-1 px-[6%] bg-[#F9F9F9]">
-      <View>
-        <CustomTitle title="Account Settings" />
-      </View>
       <View className="mt-[6%]">
         <AccountOptionItem
           onPress={() => router.push("/profile/changePassword")}

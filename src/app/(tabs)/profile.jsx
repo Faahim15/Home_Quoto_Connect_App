@@ -5,7 +5,9 @@ import {
   ScrollView,
   RefreshControl,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import ProfileMenuItem from "../components/tabs/profile/ProfileMenuItem";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import ConfirmationModal from "../components/tabs/profile/ConfirmationModal";
@@ -164,16 +166,26 @@ export default function UserProfileScreen() {
           </View>
 
           <View className="mt-[2%] items-center justify-center">
-            <Image
-              source={{
-                uri:
-                  profilePhoto?.url ||
-                  "https://avatar.iran.liara.run/public/boy",
-              }}
-              style={{ width: scale(96), height: verticalScale(96) }}
-              className="rounded-full border-2 border-white"
-              resizeMode="cover"
-            />
+            {profilePhoto?.url ? (
+              <Image
+                source={{
+                  uri: profilePhoto.url,
+                }}
+                style={{ width: scale(96), height: verticalScale(96) }}
+                className="rounded-full border-2 border-white"
+                resizeMode="cover"
+              />
+            ) : (
+              <View
+                style={{
+                  width: scale(96),
+                  height: verticalScale(96),
+                }}
+                className="rounded-full border-2 border-white bg-[#E5E7EB] items-center justify-center"
+              >
+                <Ionicons name="person" size={48} color="#6B7280" />
+              </View>
+            )}
             <Text className="font-poppins-semiBold text-lg text-[#565656] mt-2">
               {fullName || "N/A"}
             </Text>
@@ -185,11 +197,6 @@ export default function UserProfileScreen() {
               label="Edit Profile"
               onPress={() => router.push("/profile/editProfile")}
             />
-            {/* <ProfileMenuItem
-              iconName={notification}
-              label="Notification"
-              onPress={() => router.push("/profile/notification")}
-            /> */}
             <ProfileMenuItem
               iconName={accountSettings}
               onPress={() => router.push("/profile/settings")}

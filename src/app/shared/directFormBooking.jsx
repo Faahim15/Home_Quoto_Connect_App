@@ -1,4 +1,4 @@
-import { View, FlatList, Text } from "react-native";
+import { View, FlatList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { router } from "expo-router";
 import { useState } from "react";
@@ -124,16 +124,6 @@ export default function DirectFormBooking() {
 
   const handleContinue = () => {
     if (validateCurrentPage()) {
-      console.log("✅ Validation passed, proceeding to next step");
-      //   console.log("📊 Current job data:", {
-      //     title: jobData.title,
-      //     serviceCategory: jobData.serviceCategory,
-      //     specializations: jobData.specializations?.length,
-      //     photos: jobData.photos?.length,
-      //     urgency: jobData.urgency,
-      //     location: jobData.location,
-      //   });
-
       router.push("/shared/directJobLocation");
     } else {
       console.log("❌ Validation errors:", errors);
@@ -149,9 +139,6 @@ export default function DirectFormBooking() {
   return (
     <View className="bg-[#f9f9f9] flex-1">
       {/* Header */}
-      <View className="px-[6%]">
-        <CustomTitle title="Post a Job" />
-      </View>
 
       {/* Scrollable form */}
       <FlatList

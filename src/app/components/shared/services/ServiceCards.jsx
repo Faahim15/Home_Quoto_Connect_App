@@ -48,15 +48,22 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
 
         {/* Author */}
         <View className="flex-row items-center mb-[2%]">
-          <Image
-            source={{
-              uri:
-                item?.client?.profilePhoto?.url ||
-                "https://via.placeholder.com/300",
-            }}
-            style={{ width: scale(16), height: verticalScale(16) }}
-            className=" bg-gray-300 rounded-full mr-[2%]"
-          />
+          {item?.client?.profilePhoto?.url ? (
+            <Image
+              source={{
+                uri: item?.client?.profilePhoto?.url,
+              }}
+              style={{ width: scale(16), height: verticalScale(16) }}
+              className="bg-gray-300 rounded-full mr-[2%]"
+            />
+          ) : (
+            <View
+              style={{ width: scale(16), height: verticalScale(16) }}
+              className="bg-gray-300 rounded-full mr-[2%] items-center justify-center"
+            >
+              <Ionicons name="person" size={10} color="#6B7280" />
+            </View>
+          )}
           <Text className="font-poppins-400regular text-sm">
             by{" "}
             <Text className="font-poppins-400regular text-[#319FCA] text-sm ">

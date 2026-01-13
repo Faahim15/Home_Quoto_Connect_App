@@ -6,6 +6,7 @@ import {
   getStatusLabel,
 } from "../../../util/helper-function";
 import { statusColorMap } from "../../../util/colors";
+import { Ionicons } from "@expo/vector-icons";
 function showImages({ item }) {
   return (
     <View>
@@ -128,19 +129,30 @@ export default function ProviderInfo({ item, showPrice = false }) {
         </Text>
         <View>
           <View className="flex-row gap-[4%] pb-[2%] border-b border-[#CACACA] ">
-            <Image
-              style={{
-                width: scale(40),
-                height: verticalScale(40),
-                borderRadius: scale(20),
-              }}
-              source={{
-                uri:
-                  item?.client?.profilePhoto?.url ||
-                  "https://via.placeholder.com/300",
-              }}
-              className="mt-[2%]"
-            />
+            {item?.client?.profilePhoto?.url ? (
+              <Image
+                style={{
+                  width: scale(40),
+                  height: verticalScale(40),
+                  borderRadius: scale(20),
+                }}
+                source={{
+                  uri: item?.client?.profilePhoto?.url,
+                }}
+                className="mt-[2%]"
+              />
+            ) : (
+              <View
+                style={{
+                  width: scale(40),
+                  height: verticalScale(40),
+                  borderRadius: scale(20),
+                }}
+                className="mt-[2%] bg-[#E5E7EB] items-center justify-center"
+              >
+                <Ionicons name="person" size={24} color="#6B7280" />
+              </View>
+            )}
             <View className="mt-[2%]">
               <Text className="font-poppins-500medium text-xl text-[#1F2937]">
                 {item?.client?.fullName}

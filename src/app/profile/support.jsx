@@ -95,8 +95,6 @@ export default function SupportScreen() {
 
       const activeTicket = inProgressTicket || openTicket;
 
-      console.log("showsticked", activeTicket);
-
       if (activeTicket) {
         setTicketId(activeTicket._id);
       } else {
@@ -228,9 +226,7 @@ export default function SupportScreen() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
-        <View className="px-[6%] mb-[1%]">
-          <CustomTitle title="Help & support" />
-        </View>
+        <View className="px-[6%] mb-[1%]"></View>
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}

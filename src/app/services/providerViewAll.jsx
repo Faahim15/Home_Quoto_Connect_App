@@ -49,7 +49,7 @@ export default function ServiceProviderScreen() {
 
   return (
     <View className="flex-1 bg-[#F9F9F9]">
-      <CustomHeader title="Service Providers" />
+      {/* <CustomHeader title="Service Providers" /> */}
 
       <SearchAndFilterBar
         onSearch={(text) => setSearchQuery(text)}

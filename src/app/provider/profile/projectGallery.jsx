@@ -227,9 +227,9 @@ const ProjectGalleryScreen = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-[#f9f9f9]">
-      <View className="flex-row px-[3%]">
+      {/* <View className="flex-row px-[3%]">
         <CustomTitle title="Project Gallery" />
-      </View>
+      </View> */}
 
       <ScrollView
         contentContainerStyle={{ paddingBottom: verticalScale(180) }}

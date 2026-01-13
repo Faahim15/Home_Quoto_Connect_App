@@ -150,7 +150,7 @@ export default function ProjectGalleryForm() {
         showsVerticalScrollIndicator={false}
       >
         <View className="px-[6%] pb-6">
-          <CustomTitle title="Add project" />
+          {/* <CustomTitle title="Add project" /> */}
 
           <View className="mt-[3%]">
             <InputField

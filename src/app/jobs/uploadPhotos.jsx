@@ -213,9 +213,9 @@ export default function UploadPhotos() {
   return (
     <SafeAreaView className="flex-1 bg-[#F9F9F9]">
       {/* Header */}
-      <View className="px-[6%]">
+      {/* <View className="px-[6%]">
         <CustomTitle title={jobId ? "Edit Job Photos" : "Post a job"} />
-      </View>
+      </View> */}
 
       <ScrollView className="flex-1 px-[5%] py-[5%]">
         {/* Title */}
@@ -308,7 +308,7 @@ export default function UploadPhotos() {
       </ScrollView>
 
       {/* Continue Button */}
-      <View className="px-[5%] pb-[5%] pt-[3%]">
+      <View className="px-[5%] pb-[10%] pt-[3%]">
         <CustomButton
           onPress={handleContinue}
           title={jobId ? "Update & Continue" : "Continue"}

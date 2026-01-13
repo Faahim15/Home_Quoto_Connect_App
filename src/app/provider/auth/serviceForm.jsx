@@ -1,11 +1,8 @@
-"use client";
-
 import { useState } from "react";
 import { View, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import CustomHeader from "../../components/auth/CustomHeader";
 import DropdownMenu from "../../components/provider/profile/DropdownMenu";
 import Specializations from "../../components/tabs/home/Specializations";
-import FormButton from "../../components/auth/FormButton";
 import { router } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetServiceCategoriesQuery } from "../../../redux/features/apiSlices/user/createJobSlices";

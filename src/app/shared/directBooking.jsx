@@ -132,12 +132,7 @@ export default function DirectPostJobScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F9F9F9]">
-      {/* Header */}
-      <View className="px-[6%]">
-        <CustomTitle title="Post a job" />
-      </View>
-
+    <View className="flex-1 bg-[#F9F9F9]">
       <ScrollView className="flex-1 px-[5%] py-[5%]">
         {/* Title */}
         <Text className="text-base font-poppins-semiBold text-[#6B7280] mb-[5%]">
@@ -184,9 +179,9 @@ export default function DirectPostJobScreen() {
       </ScrollView>
 
       {/* Continue Button */}
-      <View className="px-[5%] pb-[5%] pt-[3%]">
+      <View className="px-[5%] pb-[10%] pt-[3%]">
         <CustomButton onPress={handleContinue} title="Continue" />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

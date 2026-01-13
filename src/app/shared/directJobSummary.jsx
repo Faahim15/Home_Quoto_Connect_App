@@ -171,9 +171,6 @@ export default function DirectJobSummaryScreen() {
   return (
     <View className="flex-1 px-[6%] bg-[#F9F9F9]">
       <View>
-        <CustomTitle title="Book Provider" />
-      </View>
-      <View>
         <Text className="font-poppins-500medium text-base">
           Review Booking Details
         </Text>

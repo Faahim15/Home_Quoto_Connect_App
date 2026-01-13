@@ -53,7 +53,7 @@ export default function HomeServiceScreen() {
 
   return (
     <View className="flex-1 bg-[#f9f9f9]">
-      <View className="px-[6%]">
+      <View className="px-[6%] mt-[5%]">
         <CustomTitle title={title} />
       </View>
       <ViewAllServiceCards

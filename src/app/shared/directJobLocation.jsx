@@ -81,9 +81,6 @@ export default function DirectJobLocation() {
       >
         <View className="flex-1 px-[6%] bg-[#F9F9F9]">
           <View>
-            <CustomTitle title="Post a Job" />
-          </View>
-          <View>
             <LocationDetails validationErrors={validationErrors} />
           </View>
           <View className="flex-1 mt-[90%]">

@@ -111,13 +111,6 @@ export default function BackgroundCheckPayment() {
       <Stripe />
 
       <View className="flex-1 mb-[20%] px-[6%] justify-end gap-3">
-        {/* {isProcessing && (
-          <View className="flex-row items-center justify-center gap-2 mb-2">
-            <ActivityIndicator size="small" color="#635BFF" />
-            <Text className="text-sm text-gray-600">Processing payment...</Text>
-          </View>
-        )} */}
-
         <CustomButton
           title="Proceed to Payment"
           onPress={handlePayment}

@@ -10,7 +10,9 @@ export default function licenceVerify() {
   return (
     <View className="flex-1 bg-[#F9F9F9]">
       <View className="flex-1 mx-[6%]">
-        <CustomTitle />
+        <View className="mt-[3%]">
+          <CustomTitle />
+        </View>
         <View className="flex-1 justify-center items-center mt-[11.20%]">
           <View
             style={{ width: scale(64), height: verticalScale(64) }}

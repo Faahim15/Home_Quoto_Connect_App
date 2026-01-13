@@ -207,7 +207,7 @@ export default function ServiceScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: verticalScale(40) }}
         >
-          <CustomTitle title="Service" />
+          {/* <CustomTitle title="Service" /> */}
 
           {/* Service Category */}
           <View className="mt-[3%]">

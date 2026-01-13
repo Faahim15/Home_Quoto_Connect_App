@@ -41,7 +41,9 @@ export default function CriminalCheck() {
         contentContainerStyle={{ paddingHorizontal: "6%", paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        <CustomTitle />
+        <View className="mt-[3%]">
+          <CustomTitle />
+        </View>
 
         <View className="mt-[9%]">
           <VerifyHeader

@@ -45,10 +45,6 @@ export default function CreditsDetailScreen() {
   const credit = data?.data?.user?.credits;
   return (
     <View className="flex-1 bg-[#f9f9f9] px-[6%] ">
-      <View>
-        <CustomTitle title="Credits" />
-      </View>
-
       <View className="mt-[7%] justify-center items-center ">
         <Text className="font-poppins-bold text-base text-black">
           You Have {credit || 0} Credits Left

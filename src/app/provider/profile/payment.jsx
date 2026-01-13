@@ -121,20 +121,6 @@ const StripePayment = () => {
         />
       }
     >
-      {/* Header */}
-      <View className="bg-[#f9f9f9] px-6 border-b border-gray-200">
-        {/* <Text className="text-2xl font-poppins-bold text-gray-900">
-          Stripe Payment
-        </Text>
-        <Text className="text-gray-600 font-poppins-400regular mt-2">
-          Manage your payments and earnings
-        </Text> */}
-        <CustomTitle title="Stripe Payment" />
-        {/* <Text className="text-gray-600 font-poppins-400regular mt-2">
-          Manage your payments and earnings
-        </Text> */}
-      </View>
-
       <View className="px-6 py-6">
         {/* Account Status Card */}
         <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">

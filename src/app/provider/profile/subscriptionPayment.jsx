@@ -9,8 +9,6 @@ export default function StripePayment() {
   const { subscriptionId } = useLocalSearchParams();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
-  //   console.log("id", subscriptionId);
-
   // ⬇️ Now isLoading comes from RTK Query
   const [purchaseSubscription, { isLoading }] =
     usePurchaseSubscriptionMutation();

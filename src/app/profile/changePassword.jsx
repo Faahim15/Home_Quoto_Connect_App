@@ -17,8 +17,6 @@ export default function ChangePasswordScreen() {
     confirmPassword: "",
   });
 
-  console.log("show", formData);
-
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -146,10 +144,6 @@ export default function ChangePasswordScreen() {
         contentContainerStyle={{}}
         showsVerticalScrollIndicator={false}
       >
-        <View>
-          <CustomTitle title="Change Password" />
-        </View>
-
         <View className="flex-1 mt-[6%]">
           <PasswordField
             value={formData.currentPassword} // Updated field name

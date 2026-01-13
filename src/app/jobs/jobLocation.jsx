@@ -124,9 +124,6 @@ export default function LocationDetailsScreen() {
       >
         <View className="flex-1  px-[6%] bg-[#F9F9F9]">
           <View className="">
-            <CustomTitle title={jobId ? "Edit Job Location" : "Post a Job"} />
-          </View>
-          <View className="">
             <LocationDetails
               validationErrors={validationErrors}
               jobId={jobId}

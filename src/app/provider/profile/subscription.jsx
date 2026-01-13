@@ -90,9 +90,9 @@ const SubscriptionScreen = () => {
 
   return (
     <View className="flex-1 bg-[#f9f9f9]">
-      <View className="px-[6%]">
+      {/* <View className="px-[6%]">
         <CustomTitle title="Subscription" />
-      </View>
+      </View> */}
       <ScrollView
         contentContainerStyle={{ paddingBottom: verticalScale(100) }}
         className="flex-1 px-[6%] py-[3%]"

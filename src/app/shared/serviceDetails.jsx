@@ -80,9 +80,6 @@ export default function ServiceDetails() {
   return (
     <View className="flex-1 bg-[#F9F9F9]">
       <View className="flex-1 mb-[2%] px-[6%] bg-[#F9F9F9]">
-        <CustomTitle
-          title={service?.serviceCategory?.title || "Service Details"}
-        />
         <ScrollView
           contentContainerStyle={{ paddingBottom: verticalScale(40) }}
           showsVerticalScrollIndicator={false}

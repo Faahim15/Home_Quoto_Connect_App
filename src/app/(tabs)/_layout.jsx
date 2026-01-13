@@ -1,14 +1,15 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { StatusBar, View } from "react-native";
+import { View } from "react-native";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TabsLayout() {
   return (
-    <View style={{ flex: 1, backgroundColor: "#fff" }}>
-      {/* StatusBar setup */}
-      {/* <StatusBar barStyle="dark-content" backgroundColor="#fff" /> */}
-
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "#fff" }}
+      edges={["top", "left", "right"]}
+    >
       <Tabs
         screenOptions={{
           headerShown: false,
@@ -100,6 +101,6 @@ export default function TabsLayout() {
           }}
         />
       </Tabs>
-    </View>
+    </SafeAreaView>
   );
 }

@@ -279,9 +279,6 @@ export default function JobFormScreen() {
   return (
     <View className="bg-[#f9f9f9] flex-1">
       {/* Header */}
-      <View className="px-[6%]">
-        <CustomTitle title={jobId ? "Edit Job" : "Post a Job"} />
-      </View>
 
       {/* Scrollable form */}
       <FlatList

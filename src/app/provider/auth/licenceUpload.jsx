@@ -88,7 +88,9 @@ export default function LicenceUpload() {
   return (
     <View className="flex-1 bg-[#F9F9F9]">
       <View className="mx-[6%]">
-        <CustomTitle />
+        <View className="mt-[3%]">
+          <CustomTitle />
+        </View>
 
         <View className="mt-[9%]">
           <VerifyHeader

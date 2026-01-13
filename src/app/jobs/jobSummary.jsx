@@ -169,15 +169,8 @@ export default function JobSummaryScreen() {
     return jobId ? "Update Job" : "Post your job";
   };
 
-  const getScreenTitle = () => {
-    return jobId ? "Update Job" : "Post a Job";
-  };
-
   return (
-    <View className="flex-1 px-[6%] bg-[#F9F9F9]">
-      <View>
-        <CustomTitle title={getScreenTitle()} />
-      </View>
+    <View className="flex-1 px-[6%] mt-[3%] bg-[#F9F9F9]">
       <View>
         <Text className="font-poppins-500medium text-base ">
           {jobId ? "Review Updates" : "Review Summary"}

@@ -1,4 +1,3 @@
-// EditProfileScreen
 import {
   View,
   Text,
@@ -117,12 +116,12 @@ export default function EditProfileScreen() {
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
     >
       <ScrollView
-        className="px-[6%]"
+        className="px-[6%] mt-[3%]"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
         keyboardShouldPersistTaps="handled"
       >
-        <CustomTitle title="Edit Profile" />
+        {/* <CustomTitle title="Edit Profile" /> */}
 
         <AvatarImagePicker photo={profilePhoto} />
 

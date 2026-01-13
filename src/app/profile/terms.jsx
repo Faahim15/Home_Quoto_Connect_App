@@ -34,14 +34,12 @@ export default function TermsOfServices() {
 
   const content = data?.data?.content;
 
-  console.log("show", content);
-
   const lastUpdated = new Date(content?.updatedAt).toLocaleDateString();
 
   return (
     <View className="flex-1 px-[6%] bg-[#F9F9F9]">
       <View>
-        <CustomTitle title={content?.title || "Terms and Conditions"} />
+        {/* <CustomTitle title={content?.title || "Terms and Conditions"} /> */}
 
         {/* Last updated info */}
         {content?.updatedAt && (

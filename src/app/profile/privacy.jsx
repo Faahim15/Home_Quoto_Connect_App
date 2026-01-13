@@ -38,8 +38,6 @@ export default function PrivacyScreen() {
   return (
     <View className="flex-1 px-[6%] bg-[#F9F9F9]">
       <View>
-        <CustomTitle title={content?.title || "Privacy Policy"} />
-
         {/* Last updated info */}
         {content?.updatedAt && (
           <Text className="font-poppins-400regular text-xs text-[#666666] mt-2">

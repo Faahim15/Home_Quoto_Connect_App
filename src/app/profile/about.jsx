@@ -38,8 +38,6 @@ export default function AboutUsScreen() {
   return (
     <View className="flex-1 px-[6%] bg-[#F9F9F9]">
       <View>
-        <CustomTitle title={content?.title || "About Us"} />
-
         {/* Last updated info */}
         {content?.updatedAt && (
           <Text className="font-poppins-400regular text-xs text-[#666666] mt-2">
@@ -99,17 +97,6 @@ export default function AboutUsScreen() {
               Please check back later or contact support.
             </Text>
           )}
-
-          {/* Version and update info */}
-          {/* {content?.version && (
-            <View className="mt-6 p-3 bg-gray-50 rounded-lg">
-              <Text className="font-poppins-400regular text-xs text-[#666666]">
-                Version: {content.version}
-                {content?.lastUpdatedBy &&
-                  ` • Updated by: ${content.lastUpdatedBy.fullName}`}
-              </Text>
-            </View>
-          )} */}
         </View>
       </ScrollView>
     </View>

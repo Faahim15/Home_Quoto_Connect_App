@@ -5,6 +5,7 @@ import {
   RefreshControl,
   Text,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState } from "react";
 
 // Components
@@ -26,6 +27,7 @@ import {
 
 export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
+  const insets = useSafeAreaInsets();
 
   // ********** Redux API Calls **********
   const {
@@ -85,7 +87,10 @@ export default function HomeScreen() {
 
   if (isGlobalLoading) {
     return (
-      <View className="flex-1 bg-[#F9FAFB] justify-center items-center">
+      <View
+        className="flex-1 bg-[#F9FAFB] justify-center items-center"
+        style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
+      >
         <ActivityIndicator size="large" color="#175994" />
         <Text className="mt-2 text-[#565656] font-poppins-500medium">
           Loading...
@@ -97,7 +102,10 @@ export default function HomeScreen() {
   // ********** Error UI **********
   if (profileError) {
     return (
-      <View className="flex-1 bg-[#F9FAFB] justify-center items-center px-6">
+      <View
+        className="flex-1 bg-[#F9FAFB] justify-center items-center px-6"
+        style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
+      >
         <Text className="text-lg text-red-500 font-poppins-500medium">
           Unable to Load Data
         </Text>

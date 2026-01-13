@@ -52,7 +52,7 @@ export default function PopularServicesView() {
 
   return (
     <View className="flex-1 bg-[#F9F9F9] py-[3%]">
-      <CustomHeader />
+      {/* <CustomHeader /> */}
 
       {/* Services List */}
       <View className="mx-[6%] mt-[1.6%]">
