@@ -1,21 +1,23 @@
 import { View, ScrollView, Alert } from "react-native";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { router } from "expo-router";
 import CustomTitle from "../../components/shared/CustomTitle";
 import VerifyHeader from "../../components/provider/auth/VerifyHeader";
 import ImageSelector from "../../components/shared/imagePicker/ImagePicker";
 import LicenceHeader from "../../components/provider/auth/LicenceHeader";
 import CustomButton from "../../components/onboarding/CustomButton";
-import { useSubmitBackgroundCheckMutation } from "../../../redux/features/apiSlices/user/userApiSlices";
+import {
+  setIdFront,
+  setIdBack,
+} from "../../../redux/features/provider/criminalCheckSlice";
 
 export default function CriminalCheck() {
-  const [idFront, setIdFront] = useState(null);
-  const [idBack, setIdBack] = useState(null);
+  const dispatch = useDispatch();
+  const { idFront, idBack } = useSelector((state) => state.criminalCheck);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [submitBackgroundCheck, { isLoading }] =
-    useSubmitBackgroundCheckMutation();
-
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!idFront || !idBack) {
       Alert.alert(
         "Missing Files",
@@ -24,16 +26,13 @@ export default function CriminalCheck() {
       return;
     }
 
-    try {
-      await submitBackgroundCheck({ idFront, idBack }).unwrap();
-      Alert.alert("Success", "Background check submitted successfully!");
-      router.push("/provider/auth/validation");
-    } catch (error) {
-      Alert.alert(
-        "Error",
-        error?.message || "Failed to submit. Please try again."
-      );
-    }
+    setIsLoading(true);
+    // Data is already stored in Redux
+    // You can now proceed to the next step
+    setTimeout(() => {
+      router.push("/provider/auth/backgroundCheck-Payment");
+      setIsLoading(false);
+    }, 1000);
   };
 
   return (
@@ -58,7 +57,10 @@ export default function CriminalCheck() {
               subtitle="Supported file types: JPG, PNG"
             />
             <View className="flex-1 mt-[2%]">
-              <ImageSelector selectedFile={idFront} onFileSelect={setIdFront} />
+              <ImageSelector
+                selectedFile={idFront}
+                onFileSelect={(file) => dispatch(setIdFront(file))}
+              />
             </View>
           </View>
 
@@ -68,7 +70,10 @@ export default function CriminalCheck() {
               subtitle="Supported file types: JPG, PNG"
             />
             <View className="flex-1 mt-[2%]">
-              <ImageSelector selectedFile={idBack} onFileSelect={setIdBack} />
+              <ImageSelector
+                selectedFile={idBack}
+                onFileSelect={(file) => dispatch(setIdBack(file))}
+              />
             </View>
           </View>
         </View>

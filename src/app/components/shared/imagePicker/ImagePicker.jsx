@@ -35,7 +35,7 @@ export default function ImageSelector({ selectedFile, onFileSelect }) {
               onFileSelect({
                 name: result.assets[0].fileName || "image.jpg",
                 uri: result.assets[0].uri,
-                type: result.assets[0].type || "image/jpeg",
+                type: result.assets[0].mimeType || "image/jpeg",
               });
             }
           },
@@ -49,11 +49,12 @@ export default function ImageSelector({ selectedFile, onFileSelect }) {
               quality: 1,
             });
 
+            // console.log("see the reulat", result);
             if (!result.canceled && result.assets.length > 0) {
               onFileSelect({
-                name: "camera_photo.jpg",
+                name: result.assets[0].fileName || "image.jpg",
                 uri: result.assets[0].uri,
-                type: "image/jpeg",
+                type: result.assets[0].mimeType || "image/jpeg",
               });
             }
           },

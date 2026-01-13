@@ -79,13 +79,32 @@ export const authSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+    createPaymentsIntents: builder.mutation({
+      query: (data) => ({
+        url: `/background-check/create-payment-intent`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["User"],
+    }),
+    // Submit Background Check with ID documents and payment intent
+    submitBackgroundCheck: builder.mutation({
+      query: (formData) => ({
+        url: `/background-check/submit`,
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      }),
+      invalidatesTags: ["User"],
+    }),
     // Upload verification documents (PDF for businessLicense, Image for certificate)
     uploadVerificationDocuments: builder.mutation({
       query: (formData) => {
         return {
           url: `/profile/verification-documents`,
           method: "POST",
-
           body: formData,
         };
       },
@@ -105,5 +124,7 @@ export const {
   useResendOtpMutation,
   useResetPasswordMutation,
   useChangePasswordMutation,
-  useUploadVerificationDocumentsMutation, // New export
+  useUploadVerificationDocumentsMutation,
+  useCreatePaymentsIntentsMutation,
+  useSubmitBackgroundCheckMutation,
 } = authSlice;

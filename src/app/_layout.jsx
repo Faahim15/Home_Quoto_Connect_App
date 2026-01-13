@@ -40,18 +40,18 @@ export default function RootLayout() {
   }
 
   return (
-    <StripeProvider
-      publishableKey={
-        "pk_test_51OEwyREeCzTfvWZ6ioncRP3dTECDFEvBBpMbMpd5X9exsOGlHQ309xRYcLlFgB7QTtdL5lrCjQSOfKcArnljr4bu008JbeZ9HL"
-      }
-    >
-      <Provider store={store}>
+    <Provider store={store}>
+      <StripeProvider
+        publishableKey={
+          "pk_test_51OEwyREeCzTfvWZ6ioncRP3dTECDFEvBBpMbMpd5X9exsOGlHQ309xRYcLlFgB7QTtdL5lrCjQSOfKcArnljr4bu008JbeZ9HL"
+        }
+      >
         <SafeAreaView className="flex-1 bg-[#F9FAFB]">
           <StatusBar backgroundColor="#FFFFFF" barStyle="dark-content" />
           <Stack screenOptions={{ headerShown: false }} />
           <Toast />
         </SafeAreaView>
-      </Provider>
-    </StripeProvider>
+      </StripeProvider>
+    </Provider>
   );
 }

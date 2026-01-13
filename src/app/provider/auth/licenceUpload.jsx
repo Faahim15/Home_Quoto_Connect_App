@@ -1,5 +1,5 @@
 // LicenceUpload.jsx
-import { View, Alert } from "react-native";
+import { View, Alert, Platform } from "react-native";
 import { useState } from "react";
 import CustomTitle from "../../components/shared/CustomTitle";
 import VerifyHeader from "../../components/provider/auth/VerifyHeader";
@@ -11,57 +11,75 @@ import { router } from "expo-router";
 import { useUploadVerificationDocumentsMutation } from "../../../redux/features/apiSlices/auth/authApiSlices";
 import Toast from "react-native-toast-message";
 
+/* ================= HELPERS ================= */
+
+const sanitizeFileName = (name = "file") =>
+  name.replace(/[^a-zA-Z0-9._-]/g, "_");
+
+const normalizeUri = (uri) =>
+  Platform.OS === "android" ? uri : uri.replace("file://", "");
+
+/* ================= COMPONENT ================= */
+
 export default function LicenceUpload() {
   const [businessLicense, setBusinessLicense] = useState(null);
   const [certificate, setCertificate] = useState(null);
+
   const [uploadDocuments, { isLoading }] =
     useUploadVerificationDocumentsMutation();
-
-  console.log("certificate", certificate);
 
   const handleContinue = async () => {
     // Validation
     if (!businessLicense) {
-      Alert.alert("Required", "Please upload your business license");
+      Toast.show({
+        type: "error",
+        text1: "Required",
+        text2: "Please upload your business license",
+      });
       return;
     }
+
     if (!certificate) {
-      Alert.alert("Required", "Please upload your ID photo");
+      Toast.show({
+        type: "error",
+        text1: "Required",
+        text2: "Please upload your ID photo",
+      });
       return;
     }
 
     try {
-      // Create FormData
       const formData = new FormData();
 
+      // Business License (PDF)
       formData.append("businessLicense", {
-        uri: businessLicense.uri,
-        type: businessLicense.type || "application/pdf",
-        name: businessLicense.name,
+        uri: normalizeUri(businessLicense.uri),
+        type: "application/pdf",
+        name: sanitizeFileName(businessLicense.name || "business_license.pdf"),
       });
 
+      // Certificate / ID Image
       formData.append("certificate", {
-        uri: certificate.uri,
-        type: certificate.type || "image/jpeg",
-        name: certificate.name,
+        uri: normalizeUri(certificate.uri),
+        type: "image/jpeg",
+        name: sanitizeFileName(certificate.name || "certificate.jpg"),
       });
 
-      // Upload
-      const result = await uploadDocuments(formData).unwrap();
+      await uploadDocuments(formData).unwrap();
 
-      // console.log("result", result);
+      Toast.show({
+        type: "success",
+        text1: "Success",
+        text2: "Documents uploaded successfully",
+      });
 
-      Alert.alert("Success", "Documents uploaded successfully", [
-        {
-          text: "OK",
-          onPress: () => router.push("/provider/auth/criminalCheck"),
-        },
-      ]);
+      router.push("/provider/auth/criminalCheck");
     } catch (error) {
       console.log("Upload error:", error);
+
       Toast.show({
         type: "error",
-        text1: error?.message,
+        text1: "Upload failed",
         text2: "Failed to upload documents. Please try again.",
       });
     }
@@ -71,6 +89,7 @@ export default function LicenceUpload() {
     <View className="flex-1 bg-[#F9F9F9]">
       <View className="mx-[6%]">
         <CustomTitle />
+
         <View className="mt-[9%]">
           <VerifyHeader
             title="Upload Your License and ID"
@@ -90,6 +109,7 @@ export default function LicenceUpload() {
             title="Upload a clear photo of yourself"
             subtitle="Supported File Types: JPG, JPEG, PNG"
           />
+
           <View className="flex-1 mt-[2%]">
             <ImageSelector
               selectedFile={certificate}
@@ -98,6 +118,7 @@ export default function LicenceUpload() {
           </View>
         </View>
       </View>
+
       <CustomButton
         onPress={handleContinue}
         title={isLoading ? "Uploading..." : "Continue"}
