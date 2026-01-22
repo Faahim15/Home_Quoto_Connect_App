@@ -1,4 +1,4 @@
-import { View, Text, ActivityIndicator } from "react-native";
+import { View } from "react-native";
 import { router } from "expo-router";
 import { useStripe } from "@stripe/stripe-react-native";
 import { useState } from "react";
