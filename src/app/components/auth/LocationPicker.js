@@ -155,7 +155,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
   };
 
   return (
-    <View className="w-full my-[3%]">
+    <View className="w-full my-[2%]">
       <Text
         className={`font-poppins-400regular   text-base  mb-[2%] ${mode === "edit" ? "text-[#5C5F62]" : "text-black"} `}
       >
@@ -192,7 +192,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
       )}
 
       <Modal visible={isMapVisible} animationType="slide">
-        <View className="flex-1 bg-white">
+        <View className="flex-1 mt-[10%] bg-white">
           <View className="bg-white p-[5%] border-b border-gray-200">
             <View className="flex-row justify-between items-center">
               <TouchableOpacity onPress={() => setIsMapVisible(false)}>

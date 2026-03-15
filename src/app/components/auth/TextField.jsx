@@ -12,7 +12,7 @@ export default function TextField({
   value,
 }) {
   return (
-    <View className="mb-[4%]">
+    <View className="mb-[2%]">
       <Text className="font-poppins-400regular text-base text-[#000] mb-[2%]">
         {label}
       </Text>
@@ -22,7 +22,7 @@ export default function TextField({
       >
         <Ionicons name={IconName} size={20} color="#9E9E9E" />
         <TextInput
-          style={{ backgroundColor: color, paddingTop: verticalScale(16) }}
+          style={{ backgroundColor: color, paddingVertical: verticalScale(12) }}
           className="flex-1 font-poppins-400regular ml-[3%] text-sm   text-black "
           placeholder={placeholder}
           placeholderTextColor="#6B7280"

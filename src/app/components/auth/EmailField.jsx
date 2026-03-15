@@ -10,18 +10,18 @@ export default function EmailField({
   value,
 }) {
   return (
-    <View className="mb-[4%]">
+    <View className="mb-[2%]">
       <Text className="font-poppins-400regular text-base text-[#000] mb-[2%]">
         {label}
       </Text>
       <KeyboardAvoidingView>
         <View
           style={{ backgroundColor: backgroundColor }}
-          className="flex-row items-center border border-[#DCDCDC] rounded-md px-[4%] py-[3%]"
+          className="flex-row  items-center  border border-[#DCDCDC] rounded-md px-[4%] py-[3%]"
         >
           <Ionicons name="mail-outline" size={20} color="#9CA3AF" />
           <TextInput
-            className="flex-1 font-poppins-400regular ml-[3%] text-sm   text-black "
+            className="flex-1 items-center justify-center  font-poppins-400regular ml-[3%] text-sm   text-black "
             placeholder="Email"
             placeholderTextColor="#898989"
             keyboardType="email-address"
@@ -30,7 +30,7 @@ export default function EmailField({
             value={value || ""}
             style={{
               color: "#000",
-              paddingTop: verticalScale(16),
+              paddingVertical: verticalScale(12),
               backgroundColor: backgroundColor,
             }}
           />

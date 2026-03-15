@@ -1,11 +1,12 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+// https://api.quoto.ca/api
 // Base query function using axios (with fetch for FormData)
 const baseQueryWithRath = async (args, api, extraOptions) => {
   try {
-    const token = await AsyncStorage.getItem("token");
+    const token = await AsyncStorage.getItem("token"); 
+    
     const isFormData = args.body instanceof FormData;
 
     // Use fetch for FormData uploads
@@ -16,7 +17,7 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
       };
 
       const response = await fetch(
-        `https://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net/api${args.url}`,
+        `http://10.10.20.73:8080/api${args.url}`,
         {
           method: args.method,
           headers: headers,
@@ -47,7 +48,7 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
 
     const result = await axios({
       baseURL:
-        "https://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net/api",
+        "https://api.quoto.ca/api",
       url: args.url,
       method: args.method,
       data: args.body,

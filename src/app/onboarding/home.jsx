@@ -11,11 +11,14 @@ import UserSelectionButtons from "../components/onboarding/ChoiceButton";
 import XStyle from "../util/styles";
 import ServiceCards from "../components/shared/services/ServiceCards";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router } from "expo-router"; 
+
 import {
   useGetActiveJobsQuery,
   useGetTodaysJobsQuery,
-} from "../../redux/features/apiSlices/user/createJobSlices";
+} from "../../redux/features/apiSlices/user/createJobSlices"; 
+
+
 export default function OnboardingHomeScreen() {
   const {
     data: todaysJobs,
@@ -67,7 +70,7 @@ export default function OnboardingHomeScreen() {
   }
 
   return (
-    <View className="flex-1 bg-[#F9FAFB] ">
+    <View  className="flex-1 bg-[#F9FAFB] ">
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header section */}
 

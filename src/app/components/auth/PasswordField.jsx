@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export default function PasswordField({
   label = "Password",
-  placeholder = "password",
+  placeholder = "Enter your password",
   error,
   onChangeText,
   value,
@@ -30,7 +30,7 @@ export default function PasswordField({
           secureTextEntry={!showPassword}
           onChangeText={onChangeText}
           value={value || ""}
-          style={{ color: "#000", paddingTop: verticalScale(16) }}
+          style={{ color: "#000", paddingVertical: verticalScale(12) }}
         />
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
@@ -40,7 +40,7 @@ export default function PasswordField({
             name={showPassword ? "eye-outline" : "eye-off-outline"}
             size={20}
             color="#9CA3AF"
-            style={{ paddingTop: verticalScale(15) }}
+            style={{ paddingVertical: verticalScale(12) }}
           />
         </TouchableOpacity>
       </View>

@@ -20,6 +20,7 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { setProviderRegister } from "../../../redux/features/provider/providerSlice";
 import PhoneInput from "../../components/auth/PhoneNumber";
+import AgreeWithTerms from "../../components/auth/AgreeWithTerms";
 export default function SignUp() {
   const [errors, setErrors] = useState({});
 
@@ -169,7 +170,7 @@ export default function SignUp() {
               </Text>
               <View className="flex-row  bg-[#F9F9F9] border border-[#DCDCDC] rounded-md px-[4%] py-[3%]">
                 <Ionicons
-                  style={{ marginTop: verticalScale(10) }}
+                  style={{ paddingVertical: verticalScale(10) }}
                   name="lock-closed-outline"
                   size={20}
                   color="#9CA3AF"
@@ -183,7 +184,7 @@ export default function SignUp() {
                   onChangeText={(text) =>
                     handleInputChange("confirmPassword", text)
                   }
-                  style={{ paddingTop: verticalScale(15) }}
+                  style={{ paddingVertical: verticalScale(12) }}
                 />
                 <TouchableOpacity
                   onPress={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -216,14 +217,12 @@ export default function SignUp() {
             >
               <Ionicons
                 name={agreeToTerms ? "checkbox" : "square-outline"}
-                size={20}
+                size={16}
                 color={agreeToTerms ? "#909090" : "#9CA3AF"}
               />
             </TouchableOpacity>
-            <Text className="text-sm font-poppins-400regular text-black">
-              Agree with
-              <Text className="text-[#909090]"> Terms and Conditions</Text>
-            </Text>
+        
+            <AgreeWithTerms/>
           </View>
           {/* Bottom Section */}
           <View className="mb-[4%] px-[6%] mt-[2%]  justify-center">

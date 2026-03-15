@@ -20,6 +20,7 @@ import * as Yup from "yup";
 import Toast from "react-native-toast-message";
 import { useRegisterUserMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
 import PhoneInput from "../components/auth/PhoneNumber";
+import AgreeWithTerms from "../components/auth/AgreeWithTerms";
 
 export default function SignUpScreen() {
   const [formData, setFormData] = useState({
@@ -217,9 +218,9 @@ export default function SignUpScreen() {
               <Text className="font-poppins-400regular text-base text-[#000] mb-[2%]">
                 Confirm Password
               </Text>
-              <View className="flex-row bg-[#F9F9F9] border border-[#DCDCDC] rounded-md px-[4%] py-[3%]">
+              <View className="flex-row items-center bg-[#F9F9F9] border border-[#DCDCDC] rounded-md px-[4%] py-[3%]">
                 <Ionicons
-                  style={{ marginTop: verticalScale(10) }}
+                  // style={{ marginTop: verticalScale(10) }}
                   name="lock-closed-outline"
                   size={20}
                   color="#9CA3AF"
@@ -233,7 +234,7 @@ export default function SignUpScreen() {
                   onChangeText={(text) =>
                     handleInputChange("confirmPassword", text)
                   }
-                  style={{ paddingTop: verticalScale(15) }}
+                  // style={{ paddingVertical: verticalScale(10) }}
                 />
                 <TouchableOpacity
                   onPress={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -245,7 +246,7 @@ export default function SignUpScreen() {
                     }
                     size={20}
                     color="#9CA3AF"
-                    style={{ paddingTop: verticalScale(12) }}
+                    style={{ paddingVertical: verticalScale(12) }}
                   />
                 </TouchableOpacity>
               </View>
@@ -264,23 +265,18 @@ export default function SignUpScreen() {
             <TouchableOpacity
               onPress={() => setAgreeToTerms(!agreeToTerms)}
               className="mr-[1%]"
-              // accessibilityLabel={
-              //   agreeToTerms ? "Unagree to terms" : "Agree to terms"
-              // }
+         
             >
               <Ionicons
                 name={agreeToTerms ? "checkbox" : "square-outline"}
-                size={20}
+                size={16}
                 color={agreeToTerms ? "#909090" : "#9CA3AF"}
               />
             </TouchableOpacity>
-            <Text className="text-sm font-poppins-400regular text-black">
-              Agree with
-              <Text className="text-[#909090]">Terms and Conditions</Text>
-            </Text>
+            <AgreeWithTerms/>
           </View>
 
-          <View className="mb-[4%] px-[6%] mt-[2%] justify-center">
+          <View className="mb-[6%] px-[6%] mt-[2%] justify-center">
             <TouchableOpacity
               className="bg-[#0054A5] rounded-lg justify-center items-center py-[4%]"
               disabled={!agreeToTerms}

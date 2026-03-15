@@ -15,7 +15,8 @@ export default {
       backgroundColor: "#ffffff",
     },
     ios: {
-      supportsTablet: true,
+      supportsTablet: true, 
+       bundleIdentifier: "com.fahim.razahomequoto",
       config: {
         googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
       },
@@ -26,7 +27,11 @@ export default {
         NSPhotoLibraryUsageDescription:
           "This app needs access to save invoice PDFs.",
         NSPhotoLibraryAddUsageDescription:
-          "This app needs access to save invoice PDFs to your photo library.",
+          "This app needs access to save invoice PDFs to your photo library.", 
+
+          // Add these 👇
+  NSLocationWhenInUseUsageDescription: "This app uses your location to provide location-based features.",
+  NSLocationAlwaysAndWhenInUseUsageDescription: "This app uses your location to provide location-based features.",
       },
     },
     android: {

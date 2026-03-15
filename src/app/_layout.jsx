@@ -1,6 +1,5 @@
 import { Stack } from "expo-router";
 import "../../global.css";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar, View } from "react-native";
 import Toast from "react-native-toast-message";
 import {
@@ -19,7 +18,7 @@ import { StripeProvider } from "@stripe/stripe-react-native";
 // Prevent the splash screen from auto-hiding before asset loading is complete
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+export default function RootLayout() { 
   const [fontsLoaded, fontError] = useFonts({
     Poppins_400Regular,
     Poppins_500Medium,
@@ -43,7 +42,7 @@ export default function RootLayout() {
     <Provider store={store}>
       <StripeProvider
         publishableKey={
-          "pk_test_51OEwyREeCzTfvWZ6ioncRP3dTECDFEvBBpMbMpd5X9exsOGlHQ309xRYcLlFgB7QTtdL5lrCjQSOfKcArnljr4bu008JbeZ9HL"
+          "pk_live_51SkvMt3z3vRnX5coWDFgACgRGodbVl3yVMtJ7P07PAC21Df21MkwRSmqlgHU4VvEBUTKif9ChmyQRbsMbDExHSRl00ZuRgfDRt"
         }
       >
         <View className="flex-1 bg-[#F9FAFB]">

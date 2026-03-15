@@ -174,13 +174,13 @@ export default function PhoneInput({ onChangeText, error, value }) {
   };
 
   return (
-    <View className="mb-[4%]">
+    <View className="mb-[2%]">
       <View className="w-full">
         <Text className="font-poppins-400regular text-base text-[#000] mb-[2%]">
           Phone number
         </Text>
 
-        <View className="flex-row bg-[#f9f9f9] items-center border border-[#DCDCDC] rounded-md px-[3%] py-[3%]">
+        <View className="flex-row bg-[#f9f9f9] items-center border border-[#DCDCDC] rounded-md px-[3%] py-[5%]">
           {/* Country Selector */}
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
