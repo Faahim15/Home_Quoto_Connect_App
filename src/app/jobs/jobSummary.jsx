@@ -22,20 +22,20 @@ export default function JobSummaryScreen() {
   const dispatch = useDispatch();
 
   const isLoading = createLoading || updateLoading;
-  console.log("address from jobSummary", jobData.location);
-  // Common form data preparation for both create and update
+
+ 
   const prepareFormData = () => {
     const formData = new FormData();
 
-    // 🧾 Append all simple fields
+
     formData.append("title", jobData.title);
     formData.append("description", jobData.specificInstructions);
     formData.append("serviceCategory", jobData?.serviceCategory?.id);
 
-    // specializations
+    
     formData.append("specializations", JSON.stringify(specializationIds));
 
-    // post location
+  
     formData.append("location[type]", "Point");
     formData.append("location[coordinates][0]", longitude);
     formData.append("location[coordinates][1]", latitude);
@@ -54,18 +54,18 @@ export default function JobSummaryScreen() {
     );
     formData.append("location[address]", jobData.location.address);
 
-    // posting date and time
+   
     formData.append("urgency", jobData.urgency);
     formData.append("preferredDate", jobData.preferredDate);
     formData.append("preferredTime", jobData.preferredTime);
     formData.append("specificInstructions", jobData.specificInstructions);
 
-    // posting photos
+   
     if (jobData.photos && jobData.photos.length > 0) {
       jobData.photos.forEach((photo, index) => {
-        // Check if photo is a new file (has uri) or existing (has url)
+    
         if (photo.uri) {
-          // New photo - append as file
+      
           formData.append("photos", {
             uri: photo.uri,
             type: photo.type || "image/jpeg",
@@ -75,7 +75,7 @@ export default function JobSummaryScreen() {
       });
     }
 
-    // posting price Range
+ 
     formData.append("priceRange[from]", jobData.priceRange.from);
     formData.append("priceRange[to]", jobData.priceRange.to);
     formData.append(
@@ -90,12 +90,12 @@ export default function JobSummaryScreen() {
     try {
       const formData = prepareFormData();
 
-      // 🚀 Send to backend
+   
       const response = await createJob(formData).unwrap();
       dispatch(resetJobPost());
       console.log("✅ Job posted successfully:", response);
 
-      // Show success toast
+     
       Toast.show({
         type: "success",
         text1: "Success!",
@@ -103,7 +103,7 @@ export default function JobSummaryScreen() {
         position: "top",
       });
 
-      // Go to home page
+  
       router.replace("/home");
     } catch (error) {
       console.error("❌ Job creation failed:", error);
@@ -121,17 +121,14 @@ export default function JobSummaryScreen() {
     try {
       const formData = prepareFormData();
 
-      // 🚀 Send update to backend
+      
       const response = await updateJob({
         jobId,
         formData,
       }).unwrap();
 
       dispatch(resetJobPost());
-      console.log(
-        "✅ Job updated successfully:",
-        response.data.job.photos.length
-      );
+
 
       // Show success toast
       Toast.show({
@@ -141,8 +138,8 @@ export default function JobSummaryScreen() {
         position: "top",
       });
 
-      // Go to home page or job details page
-      router.replace("/home");
+ 
+      router.replace("/myJobs");
     } catch (error) {
       console.error("❌ Job update failed:", error);
       Toast.show({

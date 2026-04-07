@@ -7,7 +7,16 @@ export const headerTitleStyle = {
 const stackScreenOptions = {
   headerTitleAlign: "center",
   headerTitleStyle,
-  headerShown: true,
-};
+  headerShown: true,   
+  headerBackVisible: true,
+  headerBackTitleVisible: false,
+  headerBackTitle: "Back",
 
+};
+  // headerTitleAlign: "center" as "center",
+  // headerTitleStyle,
+  // headerShown: true,
+  // headerBackVisible: true,
+  // headerBackTitleVisible: false,
+  // headerBackTitle: "Back",
 export default stackScreenOptions;

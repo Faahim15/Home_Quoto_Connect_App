@@ -22,7 +22,7 @@ const MessagesScreen = () => {
   const [typingUsers, setTypingUsers] = useState({});
   const { data, isLoading, refetch } = useGetChatsQuery();
   const { socket, isConnected } = useSocket(
-    "wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
+    "https://api.quoto.ca"
   );
   const [userStatus, setUserStatus] = useState({});
 

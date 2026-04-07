@@ -31,7 +31,7 @@ const ProjectGalleryScreen = () => {
   const [projects, setProjects] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Fetch userId from AsyncStorage
+ 
   useEffect(() => {
     const fetchUserId = async () => {
       try {
@@ -49,7 +49,6 @@ const ProjectGalleryScreen = () => {
     fetchUserId();
   }, []);
 
-  // API call
   const { data, isLoading, error, refetch } = useGetProviderProfileDetailsQuery(
     userId,
     {
@@ -74,7 +73,7 @@ const ProjectGalleryScreen = () => {
     }
   }, [data]);
 
-  // Refetch data when screen is focused
+ 
   useFocusEffect(
     useCallback(() => {
       if (userId) {
@@ -83,7 +82,7 @@ const ProjectGalleryScreen = () => {
     }, [userId])
   );
 
-  // Pull to refresh
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     refetch().finally(() => setRefreshing(false));
@@ -226,10 +225,8 @@ const ProjectGalleryScreen = () => {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-[#f9f9f9]">
-      {/* <View className="flex-row px-[3%]">
-        <CustomTitle title="Project Gallery" />
-      </View> */}
+    <View className="flex-1 bg-[#f9f9f9]">
+     <CustomTitle title="Project Gallery" withSafeTop={true} />
 
       <ScrollView
         contentContainerStyle={{ paddingBottom: verticalScale(180) }}
@@ -306,7 +303,7 @@ const ProjectGalleryScreen = () => {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 

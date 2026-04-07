@@ -34,7 +34,7 @@ const ChatScreen = () => {
   const { data, isLoading } = useGetProviderDetailsQuery(providerId);
   const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
   const { socket, isConnected } = useSocket(
-    "wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
+    "https://api.quoto.ca"
   );
 
   //wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net

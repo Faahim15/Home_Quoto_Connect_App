@@ -3,7 +3,7 @@ import { StyleSheet, Platform } from "react-native";
 import {
   scale,
   SCREEN_WIDTH,
-  verticalScale,
+
 } from "../components/adaptive/Adaptiveness";
 
 const XStyle = StyleSheet.create({
@@ -42,6 +42,58 @@ const XStyle = StyleSheet.create({
     width: SCREEN_WIDTH,
     borderTopLeftRadius: scale(20),
     borderTopRightRadius: scale(20),
+  },
+}); 
+
+
+
+
+export const styles = StyleSheet.create({
+  gradientContainer: {
+   
+    width: '100%',
+    paddingHorizontal: '6%',
+    paddingVertical: '3%',
+    
+    
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 15,
+    elevation: 5, 
+
+  
+    borderWidth: 1,
+    borderRadius: scale(8),
+    borderColor: "#319FCA",
+  }, 
+
+  gradientCard: {
+  
+    width: '100%',
+    paddingHorizontal: '6%',
+    paddingVertical: '5%',
+    
+ 
+    borderRadius: scale(20),
+    borderWidth: 1,
+    borderColor: "#319FCA",
+
+ 
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+      },
+      android: {
+        elevation: 8,
+      },
+    }),
   },
 });
 export default XStyle;

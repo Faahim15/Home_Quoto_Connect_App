@@ -23,7 +23,7 @@ const MessagesScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const { data, isLoading, refetch } = useGetChatsQuery();
   const { socket, isConnected } = useSocket(
-    "wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
+    "https://api.quoto.ca"
   );
 
   //wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"

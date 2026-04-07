@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -11,7 +11,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import CustomTitle from "../components/shared/services/CustomTitle";
+import CustomTitle from "../components/shared/CustomTitle";
 import LottieView from "lottie-react-native";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import InputField from "../components/tabs/profile/InputField";
@@ -47,7 +47,6 @@ export default function SupportScreen() {
       try {
         const verifiedStatus = await AsyncStorage.getItem("isVerified");
         const userRole = await AsyncStorage.getItem("role");
-        // Convert string "true" to boolean true, everything else to false
         setIsVerified(verifiedStatus === "true");
         setRole(userRole);
       } catch (error) {
@@ -81,7 +80,7 @@ export default function SupportScreen() {
     { value: "urgent", label: "Urgent" },
   ];
 
-  // Check for existing tickets and set the most recent open/in_progress ticket
+
   useEffect(() => {
     if (data?.data?.tickets && data.data.tickets.length > 0) {
       // Prioritize in_progress ticket over open ticket
@@ -106,7 +105,7 @@ export default function SupportScreen() {
     }
   }, [data]);
 
-  // Handle form field changes
+ 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -114,7 +113,7 @@ export default function SupportScreen() {
     }));
   };
 
-  // Handle dropdown selection
+ 
   const handleDropdownSelect = (field, value, label) => {
     setFormData((prev) => ({
       ...prev,
@@ -124,10 +123,10 @@ export default function SupportScreen() {
   };
 
   const handleSubmit = async () => {
-    // Dismiss keyboard before submission
+
     Keyboard.dismiss();
 
-    // Check if provider is not verified
+
     if (role === "provider" && !isVerified) {
       Alert.alert(
         "Verification Required",
@@ -136,7 +135,7 @@ export default function SupportScreen() {
       return;
     }
 
-    // Check if there's an in-progress ticket
+
     if (hasInProgressTicket) {
       Alert.alert(
         "Ticket In Progress",
@@ -145,7 +144,7 @@ export default function SupportScreen() {
       return;
     }
 
-    // Validation
+
     if (!formData.title.trim()) {
       Alert.alert("Error", "Please enter a title for your issue");
       return;
@@ -171,9 +170,9 @@ export default function SupportScreen() {
         priority: formData.priority,
       }).unwrap();
 
-      console.log("showing the result:", result);
+      
 
-      // Store the ticket ID
+ 
       if (result?.data?.ticket?._id) {
         setTicketId(result.data.ticket._id);
       }
@@ -217,16 +216,18 @@ export default function SupportScreen() {
     setShowChatModal(true);
   };
 
-  // Determine if Send button should be disabled
+
   const isSendDisabled =
     isLoading || (role === "provider" && !isVerified) || hasInProgressTicket;
 
-  // console.log("hasTicket inprogress", hasInProgressTicket);
+
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={{ flex: 1, backgroundColor: "#f9f9f9" }}>
-        <View className="px-[6%] mb-[1%]"></View>
+      <View style={{ flex: 1, backgroundColor: "#f9f9f9" }}> 
+
+        <CustomTitle title="Help & Support" withSafeTop={true} />
+   
 
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -243,7 +244,7 @@ export default function SupportScreen() {
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-            {/* Lottie Animation */}
+      
             <View
               style={{ alignItems: "center", marginTop: verticalScale(12) }}
             >
@@ -255,7 +256,6 @@ export default function SupportScreen() {
               />
             </View>
 
-            {/* Form Fields */}
             <Text className="font-poppins-500medium text-base text-[#5C5F62] text-center mb-[3%]">
               Hello, how can we assist you?
             </Text>
@@ -308,7 +308,7 @@ export default function SupportScreen() {
             </View>
 
             {/* Buttons */}
-            <View style={{ marginTop: verticalScale(20) }}>
+            <View style={{ marginTop: verticalScale(20), marginBottom: verticalScale(40) }}>
               <View style={{ position: "relative" }}>
                 <ActionButton
                   title={isLoading ? "Sending..." : "Send"}

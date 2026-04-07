@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import popularSeviceData from "../components/data/shared/PopularServiceData";
-import CustomHeader from "../components/tabs/home/services/CustomHeader";
+import CustomTitle from "../components/shared/CustomTitle";
 import { useGetServiceCategoriesQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 
 const screenWidth = Dimensions.get("window").width;
@@ -52,8 +52,8 @@ export default function PopularServicesView() {
 
   return (
     <View className="flex-1 bg-[#F9F9F9] py-[3%]">
-      {/* <CustomHeader /> */}
-
+    
+      <CustomTitle title="Popular Services" withSafeTop={true} />
       {/* Services List */}
       <View className="mx-[6%] mt-[1.6%]">
         {isLoading ? (

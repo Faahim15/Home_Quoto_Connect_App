@@ -5,7 +5,7 @@ import { LineChart } from "react-native-gifted-charts";
 import { LogBox } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { LinearGradient } from "expo-linear-gradient";
-
+import { styles } from "../../../util/styles";
 export default function BookingsTrendChart({ statistics }) {
   // Ignore specific warnings
   LogBox.ignoreLogs(["setLayoutAnimationEnabledExperimental"]);
@@ -89,8 +89,7 @@ export default function BookingsTrendChart({ statistics }) {
           colors={["#319FCA", "#18649F"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={{ borderRadius: scale(20) }}
-          className=" px-[6%] py-[5%] shadow-lg"
+               style={styles.gradientCard}
         >
           {/* Header */}
           <View className="flex-row justify-between items-center mb-[5%]">

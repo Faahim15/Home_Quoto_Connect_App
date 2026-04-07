@@ -9,13 +9,13 @@ import {
   RefreshControl,
 } from "react-native";
 import { useState } from "react";
-
+import CustomTitle from "../../components/shared/CustomTitle";
 import { Ionicons } from "@expo/vector-icons";
 import {
   useGetWalletQuery,
   useSetupStripeConnectMutation,
 } from "../../../redux/features/apiSlices/payment/paymentApiSlice";
-import CustomTitle from "../../components/shared/services/CustomTitle";
+
 
 const StripePayment = () => {
   const [setupStripeConnect, { isLoading: isSettingUp }] =
@@ -120,7 +120,10 @@ const StripePayment = () => {
           colors={["#4F46E5"]}
         />
       }
-    >
+    > 
+    
+    <CustomTitle title="Stripe Connect" withSafeTop={true} />
+
       <View className="px-6 py-6">
         {/* Account Status Card */}
         <View className="bg-white rounded-2xl p-6 mb-6 shadow-sm">

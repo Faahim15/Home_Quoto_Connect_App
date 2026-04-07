@@ -1,5 +1,5 @@
 import { Text, View, TouchableOpacity } from "react-native";
-import CustomTitle from "../components/shared/services/CustomTitle";
+import CustomTitle from "../components/shared/CustomTitle";
 import AccountOptionItem from "../components/tabs/profile/AccountOptions";
 import { useState } from "react";
 import XStyle from "../util/styles";
@@ -46,8 +46,9 @@ export default function AccountSettingScreen() {
   };
 
   return (
-    <View className="flex-1 px-[6%] bg-[#F9F9F9]">
-      <View className="mt-[6%]">
+    <View className="flex-1  bg-[#F9F9F9]">
+      <CustomTitle title="Account Settings" withSafeTop={true} />
+      <View className="mt-[6%] px-[6%]">
         <AccountOptionItem
           onPress={() => router.push("/profile/changePassword")}
           title="Change Password"

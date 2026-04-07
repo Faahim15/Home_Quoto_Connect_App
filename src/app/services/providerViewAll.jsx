@@ -9,26 +9,26 @@ import {
 } from "../../redux/features/apiSlices/user/createJobSlices";
 import ProviderFilterModal from "../components/tabs/home/modal/ProviderFilterModal";
 import ProviderSearchResults from "../components/tabs/home/services/ProviderSearchResult";
-
+import CustomTitle from "../components/shared/CustomTitle";
 export default function ServiceProviderScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     minRating: "",
-    serviceCategory: "", // Still storing title here
+    serviceCategory: "", 
   });
 
   const [filterModalVisible, setFilterModalVisible] = useState(false);
 
-  // Fetch categories (to map title -> ID)
+
   const { data: categoryData } = useGetServiceCategoriesQuery();
   const categories = categoryData?.data?.categories || [];
 
-  // Map category title → _id
+
   const selectedCategoryId = filters.serviceCategory
     ? categories.find((cat) => cat.title === filters.serviceCategory)?._id
     : undefined;
 
-  // Detect user intention
+
   const userSearched = searchQuery.trim().length > 0;
   const userFiltered = Object.values(filters).some((v) => v !== "");
 
@@ -38,7 +38,7 @@ export default function ServiceProviderScreen() {
     {
       search: searchQuery,
       minRating: filters.minRating || undefined,
-      serviceCategory: selectedCategoryId, // 🔥 Send ID, not title
+      serviceCategory: selectedCategoryId, 
     },
     {
       skip: !shouldRunSearchAPI,
@@ -49,7 +49,7 @@ export default function ServiceProviderScreen() {
 
   return (
     <View className="flex-1 bg-[#F9F9F9]">
-      {/* <CustomHeader title="Service Providers" /> */}
+<CustomTitle title="Service Providers" withSafeTop={true} />
 
       <SearchAndFilterBar
         onSearch={(text) => setSearchQuery(text)}

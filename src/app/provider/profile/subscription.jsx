@@ -6,7 +6,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import CustomTitle from "../../components/shared/services/CustomTitle";
+import CustomTitle from "../../components/shared/CustomTitle";
 import { verticalScale } from "../../components/adaptive/Adaptiveness";
 import { router } from "expo-router";
 import { useGetSubscriptionPackageQuery } from "../../../redux/features/apiSlices/payment/paymentApiSlice";
@@ -37,12 +37,17 @@ const SubscriptionScreen = () => {
   const subscriptions = data?.data?.subscriptions || [];
 
   if (subscriptions.length === 0) {
-    return (
+    return ( 
+
+      <> 
+          <CustomTitle title="Subscription" withSafeTop={true} />
       <View className="flex-1 bg-[#f9f9f9] items-center justify-center px-[6%]">
         <Text className="text-gray-500 text-base font-poppins-500medium text-center">
           No subscription packages available
         </Text>
       </View>
+      
+      </>
     );
   }
 
@@ -86,13 +91,14 @@ const SubscriptionScreen = () => {
     return plan || "";
   };
 
-  console.log("subscripito plan", getSelectedPlanName()?._id);
+ 
 
-  return (
+  return ( 
+    
+    <>
+     <CustomTitle title="Subscription" withSafeTop={true} />
     <View className="flex-1 bg-[#f9f9f9]">
-      {/* <View className="px-[6%]">
-        <CustomTitle title="Subscription" />
-      </View> */}
+     
       <ScrollView
         contentContainerStyle={{ paddingBottom: verticalScale(100) }}
         className="flex-1 px-[6%] py-[3%]"
@@ -225,6 +231,8 @@ const SubscriptionScreen = () => {
         </Text>
       </TouchableOpacity>
     </View>
+    </>
+
   );
 };
 

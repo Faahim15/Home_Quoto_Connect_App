@@ -30,7 +30,7 @@ const ChatScreen = () => {
   const { chatId, providerId } = useLocalSearchParams();
   const { data, isLoading } = useGetProviderDetailsQuery(providerId);
   const { width: screenWidth } = Dimensions.get("window");
-  const { socket, isConnected } = useSocket("http://10.10.20.30:5000");
+  const { socket, isConnected } = useSocket("https://api.quoto.ca");
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);

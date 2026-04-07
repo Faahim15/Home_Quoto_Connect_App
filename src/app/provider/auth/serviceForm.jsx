@@ -130,7 +130,7 @@ const ServicesOfferScreen = () => {
             </View>
           </View>
         </ScrollView>
-        <View className="pb-[2%]">
+        <View className="pb-[20%]">
           <ServiceOfferButton onPress={handleNext} title="Next" />
         </View>
       </KeyboardAvoidingView>

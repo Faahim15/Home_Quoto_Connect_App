@@ -7,15 +7,13 @@ export default function Layout() {
       <Stack.Screen
         name="editProfile"
         options={{
-          title: "Edit Profile",
-          ...stackScreenOptions,
+         headerShown: false,
         }}
       />
       <Stack.Screen
         name="settings"
         options={{
-          title: "Account Settings",
-          ...stackScreenOptions,
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -49,8 +47,9 @@ export default function Layout() {
       <Stack.Screen
         name="support"
         options={{
-          title: "Help & support",
-          ...stackScreenOptions,
+          // title: "Help & support",
+          // ...stackScreenOptions, 
+          headerShown: false,
         }}
       />
     </Stack>

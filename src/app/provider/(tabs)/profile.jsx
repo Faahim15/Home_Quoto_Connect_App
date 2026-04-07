@@ -18,11 +18,9 @@ import {
   editProfile,
   services,
   projectGallery,
-  verification,
   payment,
   subscription,
   buyCredits,
-  notification,
   accountSettings,
   support,
 } from "../../../../assets/svg/profile";
@@ -43,14 +41,14 @@ export default function ContractorProfileScreen() {
     refetch: refetchProfile,
   } = useUserProfileQuery();
 
-  // Refetch when screen comes into focus
+
   useFocusEffect(
     useCallback(() => {
       refetchProfile();
     }, [refetchProfile])
   );
 
-  // Pull to refresh handler
+ 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -68,11 +66,11 @@ export default function ContractorProfileScreen() {
 
   const handleYes = async () => {
     try {
-      // Capture the response
+  
       const response = await logout().unwrap();
       console.log("Logout response:", response);
 
-      // Clear AsyncStorage
+    
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("userId");
       await AsyncStorage.removeItem("role");
@@ -109,7 +107,7 @@ export default function ContractorProfileScreen() {
     setModalVisible(false);
   };
 
-  // Professional loading state
+ 
   if (profileLoading && !profile) {
     return (
       <View className="flex-1 bg-[#F9F9F9] items-center justify-center">
@@ -121,7 +119,7 @@ export default function ContractorProfileScreen() {
     );
   }
 
-  // Logout loading overlay
+
   if (logoutLoading) {
     return (
       <View className="flex-1 bg-[#F9F9F9] items-center justify-center">

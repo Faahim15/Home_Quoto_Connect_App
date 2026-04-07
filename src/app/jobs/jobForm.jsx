@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState, useEffect } from "react";
 // Components
-import CustomTitle from "../components/shared/CustomTitle";
+
 import TextField from "../components/tabs/jobs/TextField";
 import ServiceSearch from "../components/tabs/jobs/ServiceSearch";
 import TimePicker from "../components/tabs/home/services/provider/TimePicker";
@@ -23,6 +23,7 @@ import {
 } from "../../redux/features/jobPost/jobPostSlice";
 import Error from "../components/shared/error/Error";
 import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
+import CustomTitle from "../components/shared/CustomTitle";
 
 export default function JobFormScreen() {
   const { jobId } = useLocalSearchParams();
@@ -278,7 +279,9 @@ export default function JobFormScreen() {
 
   return (
     <View className="bg-[#f9f9f9] flex-1">
-      {/* Header */}
+      {/* Header */} 
+
+       <CustomTitle title='Post a Job' withSafeTop={true} />
 
       {/* Scrollable form */}
       <FlatList
@@ -288,7 +291,7 @@ export default function JobFormScreen() {
         contentContainerStyle={{ paddingBottom: verticalScale(70) }}
         ListHeaderComponent={
           <View className="pb-[10%]">
-            {/* 🧾 Job Title */}
+   
             <View className="px-[6%] mt-[3%]">
               <TextField
                 error={errors.title}
@@ -299,14 +302,13 @@ export default function JobFormScreen() {
               />
             </View>
 
-            {/* 🧰 Service Search */}
+       
             <ServiceSearch
               error={errors["serviceCategory.id"]}
               onSelectService={handleInputChange}
               initialService={jobData.serviceCategory}
             />
 
-            {/* 📍 Location */}
             <View className="px-[6%]">
               <LocationPicker
                 onLocationSelect={(loc) => handleInputChange("location", loc)}
@@ -315,7 +317,7 @@ export default function JobFormScreen() {
               />
             </View>
 
-            {/* 🕒 Time Picker */}
+  
             <View className="px-[6%]">
               <TimePicker
                 initialDate={jobData.preferredDate}
@@ -324,7 +326,7 @@ export default function JobFormScreen() {
               <Error error={errors.preferredDate} />
             </View>
 
-            {/* ⚙️ Job Type / Options */}
+          
             <View className="px-[6%]">
               <ButtonGroup
                 selectedOption={jobData.urgency}
@@ -333,7 +335,7 @@ export default function JobFormScreen() {
               <Error error={errors.urgency} />
             </View>
 
-            {/* 💰 Price and Request */}
+          
             <View className="px-[6%] mt-[3%]">
               <PriceSlider
                 initialFrom={jobData.priceRange?.from}
@@ -352,7 +354,7 @@ export default function JobFormScreen() {
               />
             </View>
 
-            {/* 📝 Instructions */}
+        
             <View className="mt-[3%] px-[6%]">
               <InstructionField
                 value={jobData.specificInstructions}
@@ -364,7 +366,7 @@ export default function JobFormScreen() {
               <Error error={errors.specificInstructions} />
             </View>
 
-            {/* 🧠 Specializations */}
+           
             <View className="px-[6%]">
               <Specializations
                 selected={jobData.specializations}
@@ -373,7 +375,7 @@ export default function JobFormScreen() {
               <Error error={errors.specializations} />
             </View>
 
-            {/* 🚀 Continue Button */}
+       
             <View className="px-[6%] mt-[5%]">
               <CustomButton
                 title={jobId ? "Update Job" : "Continue"}

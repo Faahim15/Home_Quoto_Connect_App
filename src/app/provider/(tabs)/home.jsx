@@ -24,7 +24,7 @@ export default function ContractorHomeScreen() {
   const [showModal, setShowModal] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Add at the top with other useState declarations
+ 
   const [filters, setFilters] = useState({
     serviceType: "",
     minPrice: undefined,
@@ -35,7 +35,7 @@ export default function ContractorHomeScreen() {
 
   const [searchText, setSearchText] = useState("");
 
-  // Track if user has applied any filters or search
+ 
   const [hasActiveFilters, setHasActiveFilters] = useState(false);
 
   const {
@@ -57,9 +57,9 @@ export default function ContractorHomeScreen() {
     refetch: refetchActiveJobs,
   } = useGetActiveJobsQuery();
 
-  // console.log("filters", filters);
 
-  // Update your getAllJobs query to use filters - only fetch when there are active filters
+
+
   const {
     data: allJobs,
     isLoading: allJobsLoading,
@@ -70,27 +70,27 @@ export default function ContractorHomeScreen() {
       ...filters,
     },
     {
-      skip: !hasActiveFilters, // Skip query if no active filters
+      skip: !hasActiveFilters, 
     }
   );
-  // Add search handler
+ 
   const handleSearchChange = (text) => {
     setSearchText(text);
 
-    // When search has 3 or more characters
+
     if (text.length >= 3) {
       const updatedFilters = {
         serviceType: "",
         minPrice: undefined,
         maxPrice: undefined,
         sortBy: "createdAt",
-        search: text, // only active filter
+        search: text, 
       };
 
       setFilters(updatedFilters);
-      setHasActiveFilters(true); // search is active
+      setHasActiveFilters(true); 
     } else {
-      // Reset everything when search is too short
+     
       const clearedFilters = {
         serviceType: "",
         minPrice: undefined,
@@ -100,11 +100,11 @@ export default function ContractorHomeScreen() {
       };
 
       setFilters(clearedFilters);
-      setHasActiveFilters(false); // no active filters
+      setHasActiveFilters(false); 
     }
   };
 
-  // Helper function to check if any filters are active
+
   const checkIfOtherFiltersActive = (filterObj) => {
     return (
       filterObj.serviceType !== "" ||
@@ -114,7 +114,7 @@ export default function ContractorHomeScreen() {
     );
   };
 
-  // Add filter apply handler
+
   const handleApplyFilters = (newFilters) => {
     const updatedFilters = {
       ...filters,
@@ -125,7 +125,7 @@ export default function ContractorHomeScreen() {
     setShowModal(false);
   };
 
-  // Add clear filters handler
+
   const handleClearFilters = () => {
     setFilters({
       serviceType: "",
@@ -134,12 +134,12 @@ export default function ContractorHomeScreen() {
       urgent: undefined,
       specializations: "",
       sortBy: "createdAt",
-      search: "", // Always clear search
+      search: "", 
     });
 
-    setSearchText(""); // Also clear UI input field
+    setSearchText(""); 
 
-    setHasActiveFilters(false); // No filters active
+    setHasActiveFilters(false); 
   };
 
   const handleSearchSubmit = () => {
@@ -156,7 +156,7 @@ export default function ContractorHomeScreen() {
 
       setHasActiveFilters(true);
     } else {
-      // If search less than 3 chars → reset filter
+
       setFilters({
         serviceType: "",
         minPrice: undefined,
@@ -169,7 +169,7 @@ export default function ContractorHomeScreen() {
     }
   };
 
-  // Update onRefresh to include allJobs refetch only if filters are active
+
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -179,7 +179,7 @@ export default function ContractorHomeScreen() {
         refetchActiveJobs(),
       ];
 
-      // Only refetch filtered jobs if filters are active
+     
       if (hasActiveFilters) {
         promises.push(refetchAllJobs());
       }
@@ -192,7 +192,7 @@ export default function ContractorHomeScreen() {
     }
   };
 
-  // Combined loading state
+
   if (profileLoading || todaysJobsLoading || activeJobsLoading) {
     return (
       <View className="flex-1 bg-[#F9FAFB] justify-center items-center">
@@ -216,8 +216,7 @@ export default function ContractorHomeScreen() {
     setShowModal(false);
   }
 
-  // console.log("show jobssssssssssss", allJobs?.data?.jobs?.length);
-  // console.log("hasActiveFilters", hasActiveFilters);
+
 
   return (
     <View className="flex-1 bg-[#f9f9f9]">
@@ -231,7 +230,7 @@ export default function ContractorHomeScreen() {
         onSubmitEditing={handleSearchSubmit}
       />
 
-      {/* Show filtered results only when filters are active */}
+ 
       {hasActiveFilters && (
         <>
           {/* <JobsHeader
@@ -280,13 +279,13 @@ export default function ContractorHomeScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            colors={["#175994"]} // Android
-            tintColor="#175994" // iOS
-            progressBackgroundColor="#ffffff" // Android
+            colors={["#175994"]}
+            tintColor="#175994" 
+            progressBackgroundColor="#ffffff" 
           />
         }
       >
-        {/* Show default sections only when no filters are active */}
+      
         {!hasActiveFilters && (
           <>
             <JobsHeader title="Today's Jobs" />

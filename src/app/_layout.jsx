@@ -15,7 +15,7 @@ import { Provider } from "react-redux";
 import store from "../redux/store/store";
 import { StripeProvider } from "@stripe/stripe-react-native";
 
-// Prevent the splash screen from auto-hiding before asset loading is complete
+
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() { 

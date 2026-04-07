@@ -104,18 +104,18 @@ export default function UploadPhotos() {
     }
   };
 
-  // 🖼️ Pick photo from gallery
+
   const pickFromGallery = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: false,
       allowsMultipleSelection: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.7,
     });
 
     if (!result.canceled) {
-      // ✅ Add new photos to existing array
+  
       result.assets.forEach((asset) => {
         const uniqueId =
           Date.now().toString() + Math.random().toString(36).substring(2, 9);
@@ -206,16 +206,16 @@ export default function UploadPhotos() {
     );
   }
 
-  // ✅ Count existing vs new photos
+
   const existingPhotosCount = photos.filter((photo) => photo.isExisting).length;
   const newPhotosCount = photos.filter((photo) => !photo.isExisting).length;
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F9F9F9]">
-      {/* Header */}
-      {/* <View className="px-[6%]">
-        <CustomTitle title={jobId ? "Edit Job Photos" : "Post a job"} />
-      </View> */}
+    <View className="flex-1 bg-[#F9F9F9]">
+
+     
+     <CustomTitle title={jobId ? "Edit Job Photos" : "Post a job"} withSafeTop={true} />
+     
 
       <ScrollView className="flex-1 px-[5%] py-[5%]">
         {/* Title */}
@@ -308,12 +308,12 @@ export default function UploadPhotos() {
       </ScrollView>
 
       {/* Continue Button */}
-      <View className="px-[5%] pb-[10%] pt-[3%]">
+      <View className="px-[5%] pb-[20%] pt-[3%]">
         <CustomButton
           onPress={handleContinue}
           title={jobId ? "Update & Continue" : "Continue"}
         />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }

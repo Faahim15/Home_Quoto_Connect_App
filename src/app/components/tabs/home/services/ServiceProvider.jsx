@@ -82,14 +82,26 @@ export default function ServiceProvider({ providerData }) {
           </Text>
         </TouchableOpacity>
       </View>
-      <View className="flex-1 mt-[1.5%]">
-        <FlatList
-          horizontal
-          data={providerData}
-          keyExtractor={(item, index) => item._id || index.toString()}
-          showsHorizontalScrollIndicator={false}
-          renderItem={renderItem}
-        />
+     <View className="flex-1 mt-[1.5%]">
+        {!providerData || providerData.length === 0 ? (
+          <View 
+            className=" items-center justify-center"
+            style={{ height: verticalScale(150), width: '100%' }}
+          >
+            <Ionicons name="people-outline" size={scale(40)} color="#D1D5DB" />
+            <Text className="font-poppins-500medium text-sm text-[#9CA3AF] mt-2">
+              No service providers found
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            horizontal
+            data={providerData}
+            keyExtractor={(item, index) => item._id || index.toString()}
+            showsHorizontalScrollIndicator={false}
+            renderItem={renderItem}
+          />
+        )}
       </View>
     </View>
   );

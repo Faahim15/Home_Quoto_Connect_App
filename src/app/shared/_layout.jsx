@@ -7,8 +7,7 @@ export default function _layout() {
       <Stack.Screen
         name="notification"
         options={{
-          title: "Notifications",
-          ...stackScreenOptions,
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -42,8 +41,7 @@ export default function _layout() {
       <Stack.Screen
         name="serviceDetails"
         options={{
-          title: "ServiceDetails",
-          ...stackScreenOptions,
+         headerShown: false,
         }}
       />
     </Stack>

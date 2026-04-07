@@ -6,11 +6,11 @@ import { useSelector } from "react-redux";
 export default function TimePicker({ initialDate, initialTime }) {
   const jobData = useSelector((state) => state.jobPost);
 
-  // Use Redux state (which includes initial values and any updates)
+  
   const selectedDate = jobData.preferredDate;
   const selectedTime = jobData.preferredTime;
 
-  // Format date for display (e.g., "2025-11-08" -> "Nov 8, 2025")
+
   const formatDate = (dateString) => {
     if (!dateString) return null;
     const date = new Date(dateString);
@@ -21,10 +21,10 @@ export default function TimePicker({ initialDate, initialTime }) {
     });
   };
 
-  // Format time for display in 24-hour format (e.g., "14:00" stays "14:00")
+
   const formatTime = (timeString) => {
     if (!timeString) return null;
-    // Time is already in 24-hour format, just return it
+   
     return timeString;
   };
 

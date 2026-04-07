@@ -1,5 +1,5 @@
 import { View, Text, ActivityIndicator } from "react-native";
-import CustomTitle from "../../components/shared/services/CustomTitle";
+import CustomTitle from "../../components/shared/CustomTitle";
 import AddMoreButton from "../../components/provider/profile/AddMoreButton";
 import RecentActivity from "../../components/provider/profile/Recent";
 import { router } from "expo-router";
@@ -19,6 +19,7 @@ export default function CreditsDetailScreen() {
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-[#f9f9f9]">
+          <CustomTitle title="Subscription" withSafeTop={true} />
         <ActivityIndicator size="large" color="#5C5F62" />
         <Text className="mt-3 text-[#5C5F62] font-poppins-500medium text-base">
           Loading credits...
@@ -43,7 +44,9 @@ export default function CreditsDetailScreen() {
     );
   }
   const credit = data?.data?.user?.credits;
-  return (
+  return ( 
+    <>
+      <CustomTitle title="Subscription" withSafeTop={true} />
     <View className="flex-1 bg-[#f9f9f9] px-[6%] ">
       <View className="mt-[7%] justify-center items-center ">
         <Text className="font-poppins-bold text-base text-black">
@@ -57,5 +60,6 @@ export default function CreditsDetailScreen() {
 
       <RecentActivity />
     </View>
+    </>
   );
 }

@@ -17,7 +17,7 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
       };
 
       const response = await fetch(
-        `http://10.10.20.73:8080/api${args.url}`,
+        `https://api.quoto.ca/api${args.url}`,
         {
           method: args.method,
           headers: headers,

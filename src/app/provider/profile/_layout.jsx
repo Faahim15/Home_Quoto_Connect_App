@@ -7,15 +7,13 @@ export default function Layout() {
       <Stack.Screen
         name="myEarnings"
         options={{
-          title: "My Earnings",
-          ...stackScreenOptions,
+        headerShown: false,
         }}
       />
       <Stack.Screen
         name="services"
         options={{
-          title: "Sevices",
-          ...stackScreenOptions,
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -28,36 +26,37 @@ export default function Layout() {
       <Stack.Screen
         name="projectGallery"
         options={{
-          title: "Project Gallery",
-          ...stackScreenOptions,
+          headerShown: false,
         }}
       />
       <Stack.Screen
         name="payment"
         options={{
-          title: "Stripe Payment",
-          ...stackScreenOptions,
+        headerShown: false,
         }}
       />
       <Stack.Screen
         name="subscription"
         options={{
-          title: "Subscription",
-          ...stackScreenOptions,
+         headerShown: false,
         }}
       />
       <Stack.Screen
         name="credits"
         options={{
-          title: "Credits",
-          ...stackScreenOptions,
+          headerShown: false,
         }}
       />
       <Stack.Screen
         name="buyCredits"
         options={{
-          title: "Buy Credits",
-          ...stackScreenOptions,
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="subscriptionPayment"
+        options={{
+          headerShown: false,
         }}
       />
     </Stack>

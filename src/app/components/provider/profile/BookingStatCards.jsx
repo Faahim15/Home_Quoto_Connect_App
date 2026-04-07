@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Modal, FlatList } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { scale } from "../../adaptive/Adaptiveness";
-
+import { styles } from "../../../util/styles";
 export default function BookingStatsCard({
   periodOptions,
   title,
@@ -18,7 +17,7 @@ export default function BookingStatsCard({
   );
   const { today, this_week, this_month, last_month, this_year, all_time } =
     statistics || {};
-  // Map labels to their corresponding data
+
   const periodMap = {
     Today: today,
     "This week": this_week,
@@ -28,7 +27,6 @@ export default function BookingStatsCard({
     "All time": all_time,
   };
 
-  // Pick choosenData directly from the map
   const choosenData = periodMap[selectedData?.label] || "";
 
   const handleSelectPeriod = (period) => {
@@ -37,13 +35,12 @@ export default function BookingStatsCard({
   };
 
   return (
-    <View className="justify-center  items-center ">
+    <View className="w-full justify-center  items-center ">
       <LinearGradient
         colors={["#319FCA", "#18649F"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={{ borderWidth: 1, borderRadius: scale(8) }}
-        className=" w-full px-[6%] border-[#319FCA]  py-[3%] shadow-lg"
+        style={styles.gradientContainer}
       >
         {/* Header Row */}
         <View className="flex-row justify-between items-start mb-[4%]">

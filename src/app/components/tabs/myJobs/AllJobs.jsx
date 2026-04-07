@@ -12,7 +12,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 import {
-  useGetAllJobsQuery,
   useGetMyJobsQuery,
 } from "../../../../redux/features/apiSlices/user/createJobSlices";
 
@@ -120,11 +119,11 @@ export default function AllJobs({ showAddress = true }) {
   const [refreshing, setRefreshing] = useState(false);
   const { data, isLoading, error, refetch } = useGetMyJobsQuery();
 
-  // Extract jobs data with fallback
+  
   const jobsData = data?.data?.jobs || data?.data || [];
   const displayData = jobsData.length > 0 ? jobsData : null;
 
-  // Handle pull-to-refresh
+
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -180,9 +179,9 @@ export default function AllJobs({ showAddress = true }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={["#175994"]} // Android
-              tintColor="#175994" // iOS
-              progressBackgroundColor="#ffffff" // Android
+              colors={["#175994"]} 
+              tintColor="#175994" 
+              progressBackgroundColor="#ffffff" 
             />
           }
           ListEmptyComponent={

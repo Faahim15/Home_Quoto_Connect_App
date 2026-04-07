@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useFocusEffect } from "expo-router";
 import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
-import CustomTitle from "../components/shared/services/CustomTitle";
+import CustomTitle from "../components/shared/CustomTitle";
 import ProviderInfo from "../components/shared/services/JobDetails";
 import UpdateQuoteButton from "../components/shared/services/buttons/UpdateQuoteButton";
 import { verticalScale } from "../components/adaptive/Adaptiveness";
@@ -32,7 +32,7 @@ export default function ServiceDetails() {
 
   const quoteId = acceptedQuote?._id;
 
-  // Auto-refetch when screen comes into focus
+
   useFocusEffect(
     useCallback(() => {
       refetch();
@@ -64,7 +64,7 @@ export default function ServiceDetails() {
   if (error || !service) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9] px-[6%]">
-        <CustomTitle title="Service not found" />
+        <CustomTitle title="Service not found" withSafeTop={true} />
         <Text className="text-gray-500 text-base mt-[2%]">
           We couldn't locate the service details. Please check the link or try
           again later.
@@ -78,7 +78,8 @@ export default function ServiceDetails() {
     shouldShowButtons && (updatedOffer || service?.status === "pending");
 
   return (
-    <View className="flex-1 bg-[#F9F9F9]">
+    <View className="flex-1 bg-[#F9F9F9]"> 
+       <CustomTitle title="Service Details" withSafeTop={true} />
       <View className="flex-1 mb-[2%] px-[6%] bg-[#F9F9F9]">
         <ScrollView
           contentContainerStyle={{ paddingBottom: verticalScale(40) }}
@@ -87,9 +88,9 @@ export default function ServiceDetails() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={["#007AFF"]} // Android
-              tintColor="#007AFF" // iOS
-              progressBackgroundColor="#FFFFFF" // Android
+              colors={["#007AFF"]} 
+              tintColor="#007AFF" 
+              progressBackgroundColor="#FFFFFF" 
             />
           }
         >

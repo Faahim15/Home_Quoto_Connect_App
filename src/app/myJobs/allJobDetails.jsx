@@ -24,7 +24,7 @@ export default function ServiceDetails() {
     isLoading: isDeleting,
   } = useDeleteJob();
 
-  // Auto-refresh when screen comes into focus
+ 
   useFocusEffect(
     useCallback(() => {
       refetch();
@@ -92,7 +92,7 @@ export default function ServiceDetails() {
         )}
       </View>
 
-      {/* Delete Confirmation Modal */}
+    
       <DeleteConfirmationModal
         visible={isModalVisible}
         onClose={hideDeleteModal}

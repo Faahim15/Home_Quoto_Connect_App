@@ -10,7 +10,6 @@ import { useSelector, useDispatch } from "react-redux";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Toast from "react-native-toast-message";
 import { router } from "expo-router";
-
 import CustomTitle from "../../components/shared/CustomTitle";
 import DropdownMenu from "../../components/provider/profile/DropdownMenu";
 import Specializations from "../../components/tabs/home/Specializations";
@@ -201,13 +200,16 @@ export default function ServiceScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "padding"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
     >
-      <View className="flex-1 bg-[#F9F9F9]">
+      <View className="flex-1 bg-[#F9F9F9]"> 
+     
+     <CustomTitle title="My Services" withSafeTop={true} />
+
         <ScrollView
           className="flex-1 px-[6%]"
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: verticalScale(40) }}
         >
-          {/* <CustomTitle title="Service" /> */}
+       
 
           {/* Service Category */}
           <View className="mt-[3%]">
@@ -296,7 +298,7 @@ export default function ServiceScreen() {
         </ScrollView>
 
         {/* Save Button */}
-        <View className="pb-[10%] ">
+        <View className="pb-[20%] ">
           <ProfileButton
             onPress={handleSave}
             title={isUpdating ? "Saving..." : "Save"}

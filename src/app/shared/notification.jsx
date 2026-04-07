@@ -12,7 +12,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { useSocket } from "../../hooks/useSokect";
 import { useGetNotificationsQuery } from "../../redux/features/apiSlices/chat/chatApiSlices";
-import CustomTitle from "../components/shared/services/CustomTitle";
+import CustomTitle from "../components/shared/CustomTitle";
 
 export default function NotificationScreen() {
   const [notifications, setNotifications] = useState([]);
@@ -20,18 +20,18 @@ export default function NotificationScreen() {
   const [currentUserId, setCurrentUserId] = useState(null);
 
   const { socket } = useSocket(
-    "wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
+    "https://api.quoto.ca"
   );
   const { data, isLoading, isError, refetch } = useGetNotificationsQuery();
 
-  // Refetch when screen comes into focus
+ 
   useFocusEffect(
     useCallback(() => {
       refetch();
     }, [refetch])
   );
 
-  // Get userId from AsyncStorage
+
   useEffect(() => {
     const fetchUserId = async () => {
       const userId = await AsyncStorage.getItem("userId");
@@ -40,14 +40,14 @@ export default function NotificationScreen() {
     fetchUserId();
   }, []);
 
-  // Initialize notifications from API data
+
   useEffect(() => {
     if (data?.success && data?.data?.notifications) {
       setNotifications(data.data.notifications);
     }
   }, [data]);
 
-  // Join notification room
+
   useEffect(() => {
     if (!socket || !currentUserId) return;
 
@@ -55,7 +55,7 @@ export default function NotificationScreen() {
     socket.emit("join-notifications", { userId: currentUserId });
   }, [socket, currentUserId]);
 
-  // Socket event handlers
+
   const handleNewNotification = (notification) => {
     console.log("New notification received:", notification);
     setNotifications((prev) => [notification, ...prev]);
@@ -70,10 +70,6 @@ export default function NotificationScreen() {
     );
   };
 
-  // const handleAllNotificationsRead = () => {
-  //   console.log("All notifications marked as read");
-  //   setNotifications((prev) => prev.map((notif) => ({ ...notif, read: true })));
-  // };
 
   // Listen for socket events
   useEffect(() => {
@@ -81,12 +77,10 @@ export default function NotificationScreen() {
 
     socket.on("new-notification", handleNewNotification);
     socket.on("notification-read", handleNotificationRead);
-    // socket.on("all-notifications-read", handleAllNotificationsRead);
 
     return () => {
       socket.off("new-notification", handleNewNotification);
       socket.off("notification-read", handleNotificationRead);
-      // socket.off("all-notifications-read", handleAllNotificationsRead);
     };
   }, [socket]);
 
@@ -95,10 +89,7 @@ export default function NotificationScreen() {
     socket.emit("mark-notification-read", { notificationId });
   };
 
-  // const markAllAsRead = () => {
-  //   if (!socket || !currentUserId) return;
-  //   socket.emit("mark-all-notifications-read", { userId: currentUserId });
-  // };
+
 
   const filteredNotifications =
     filter === "unread" ? notifications.filter((n) => !n.read) : notifications;
@@ -197,7 +188,8 @@ export default function NotificationScreen() {
 
   if (isError) {
     return (
-      <SafeAreaView className="flex-1 bg-[#f9f9f9]">
+      <View className="flex-1 bg-[#f9f9f9]"> 
+      <CustomTitle title="Notifications" withSafeTop={true} />
         <View className="items-center justify-center flex-1 px-[6%]">
           <Text className="text-lg font-semibold text-gray-900 mb-[2%]">
             Error loading notifications
@@ -212,30 +204,18 @@ export default function NotificationScreen() {
             <Text className="text-white font-medium">Retry</Text>
           </TouchableOpacity>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   return (
     <View className="flex-1 bg-[#f9f9f9]">
       {/* Header */}
-      <View className="bg-[#f9f9f9] border-b border-gray-200">
+      <View className="bg-[#f9f9f9] border-b border-gray-200"> 
+        <CustomTitle title="Notifications" withSafeTop={true} />
+
         <View className="mx-[6%] py-[4%]">
-          <View className="">
-            {/* <Text className="text-2xl font-poppins-semiBold text-gray-900">
-              Notifications
-            </Text> */}
-
-            {/* {unreadCount > 0 && (
-              <TouchableOpacity onPress={markAllAsRead}>
-                <Text className="text-sm text-blue-600 font-medium">
-                  Mark all read
-                </Text>
-              </TouchableOpacity>
-            )} */}
-
-            {/* <CustomTitle title="Notifications" /> */}
-          </View>
+ 
 
           {/* Filter Tabs */}
           <View className="flex-row gap-[6%]">
@@ -273,7 +253,7 @@ export default function NotificationScreen() {
         </View>
       </View>
 
-      {/* Notifications List */}
+     
       <FlatList
         data={filteredNotifications}
         renderItem={renderNotificationItem}

@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BarChart } from "react-native-gifted-charts";
-import { LogBox } from "react-native";
+import { styles } from "../../../util/styles";
 import { LinearGradient } from "expo-linear-gradient";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 
@@ -82,8 +82,7 @@ export default function EarningsTrendChart({ statistics }) {
           colors={["#319FCA", "#18649F"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={{ borderRadius: scale(20) }}
-          className=" px-[6%] py-[5%] shadow-lg"
+         style={styles.gradientCard}
         >
           {/* Header */}
           <View className="flex-row justify-between items-center mb-[5%]">

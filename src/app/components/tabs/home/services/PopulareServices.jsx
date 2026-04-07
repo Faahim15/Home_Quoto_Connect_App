@@ -10,13 +10,14 @@ import {
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
 import popularSeviceData from "../../../data/shared/PopularServiceData";
 import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+
 const screenWidth = Dimensions.get("window").width;
-const horizontalMargin = screenWidth * 0.12; // 6% left + 6% right
-const cardGap = scale(16); // total gap between cards (4% ~ 16px if scale = 4)
+const horizontalMargin = screenWidth * 0.12; 
+const cardGap = scale(16); 
 const cardWidth = (screenWidth - horizontalMargin - cardGap * 2) / 3.1;
 
 const ServiceItem = ({ item }) => {
-  // console.log("show", item?.title.split(" ").slice(0, 1).join(" "));
   return (
     <Pressable
       onPress={() => {}}
@@ -37,6 +38,9 @@ const ServiceItem = ({ item }) => {
 };
 
 export default function PopularServices({ categories }) {
+  const data = categories || popularSeviceData;
+  const hasData = data && data.length > 0;
+
   return (
     <View className="flex-1  mx-[6%] py-[3%]">
       {/* Header */}
@@ -44,30 +48,44 @@ export default function PopularServices({ categories }) {
         <Text className="font-poppins-semiBold text-base text-[#6B7280] ">
           Popular Services
         </Text>
-        <TouchableOpacity
-          onPress={() => router.push("/services/popularServicesView")}
-        >
-          <Text className="font-poppins-semiBold text-base text-[#18649F] ">
-            View all
-          </Text>
-        </TouchableOpacity>
+        {hasData && (
+          <TouchableOpacity
+            onPress={() => router.push("/services/popularServicesView")}
+          >
+            <Text className="font-poppins-semiBold text-base text-[#18649F] ">
+              View all
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Services List */}
       <View className="mt-[1.6%] ">
-        <FlatList
-          data={categories || popularSeviceData}
-          renderItem={({ item }) => <ServiceItem item={item} />}
-          keyExtractor={(item, index) => item.id || index.toString()}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          decelerationRate="fast"
-          snapToAlignment="start"
-          snapToInterval={264}
-          contentContainerStyle={{
-            paddingRight: scale(100),
-          }}
-        />
+        {!hasData ? (
+          <View 
+            className="bg-white border border-[#D4E0EB] rounded-lg items-center justify-center"
+            style={{ height: verticalScale(110), width: '100%' }}
+          >
+            <Ionicons name="grid-outline" size={scale(30)} color="#D1D5DB" />
+            <Text className="font-poppins-500medium text-sm text-[#9CA3AF] mt-1">
+              No services available
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            data={data}
+            renderItem={({ item }) => <ServiceItem item={item} />}
+            keyExtractor={(item, index) => item.id || index.toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            decelerationRate="fast"
+            snapToAlignment="start"
+            snapToInterval={264}
+            contentContainerStyle={{
+              paddingRight: scale(100),
+            }}
+          />
+        )}
       </View>
     </View>
   );

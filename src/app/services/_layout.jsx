@@ -7,8 +7,7 @@ export default function Layout() {
       <Stack.Screen
         name="calenderBooking"
         options={{
-          title: "Select Date & Time",
-          ...stackScreenOptions,
+         headerShown: false,
         }}
       />
       <Stack.Screen
@@ -20,15 +19,13 @@ export default function Layout() {
       <Stack.Screen
         name="popularServicesView"
         options={{
-          title: "Popular Services",
-          ...stackScreenOptions,
+          headerShown: false,
         }}
       />
       <Stack.Screen
         name="providerViewAll"
         options={{
-          title: "Service Providers",
-          ...stackScreenOptions,
+          headerShown: false,
         }}
       />
     </Stack>

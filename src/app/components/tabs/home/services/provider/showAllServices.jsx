@@ -101,16 +101,12 @@ export default function ShowAllServiceCards({ jobs, horizontal }) {
 
   const isEmpty = !allJobs || allJobs.length === 0;
 
-  // console.log("alljobs", allJobs);
 
-  // ⭐ ADDED — Refresh state
   const [refreshing, setRefreshing] = useState(false);
 
-  // ⭐ ADDED — Refresh handler
   const onRefresh = async () => {
     try {
       setRefreshing(true);
-      // If your parent passes a refresh function, call it
       await new Promise((resolve) => setTimeout(resolve, 1200));
     } finally {
       setRefreshing(false);
@@ -136,7 +132,7 @@ export default function ShowAllServiceCards({ jobs, horizontal }) {
               ? { paddingRight: verticalScale(100) }
               : { rowGap: verticalScale(12), paddingBottom: verticalScale(180) }
           }
-          // ⭐ Works ONLY if vertical
+        
           refreshControl={
             !horizontal ? (
               <RefreshControl

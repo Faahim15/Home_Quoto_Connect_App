@@ -38,14 +38,14 @@ export default function UserProfileScreen() {
     refetch: refetchProfile,
   } = useUserProfileQuery();
 
-  // Refetch when screen comes into focus
+
   useFocusEffect(
     useCallback(() => {
       refetchProfile();
     }, [refetchProfile])
   );
 
-  // Pull to refresh handler
+  
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -101,7 +101,7 @@ export default function UserProfileScreen() {
 
   const { profilePhoto, fullName } = profile?.data?.user || {};
 
-  // Professional loading state
+
   if (profileLoading && !profile) {
     return (
       <View className="flex-1 bg-[#F9F9F9] items-center justify-center">
@@ -113,7 +113,7 @@ export default function UserProfileScreen() {
     );
   }
 
-  // Logout loading overlay
+
   if (logoutLoading) {
     return (
       <View className="flex-1 bg-[#F9F9F9] items-center justify-center">
@@ -125,7 +125,7 @@ export default function UserProfileScreen() {
     );
   }
 
-  // Error state
+
   if (profileError && !profile) {
     return (
       <View className="flex-1 bg-[#F9F9F9] items-center justify-center px-[5%]">

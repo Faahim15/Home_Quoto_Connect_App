@@ -8,7 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useGetNotificationsQuery } from "../../../../redux/features/apiSlices/chat/chatApiSlices";
 
 export default function HomeTopBar({ userData, mode }) {
-  // const { socket, isConnected } = useSocket("ws://10.10.20.30:5000");
+  // const { socket, isConnected } = useSocket("https://api.quoto.ca");
   const { fullName, location, profilePhoto } = userData || {};
   const [isVerified, setIsVerified] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -18,7 +18,7 @@ export default function HomeTopBar({ userData, mode }) {
     const checkVerificationStatus = async () => {
       try {
         const verifiedStatus = await AsyncStorage.getItem("isVerified");
-        // Convert string "true" to boolean true, everything else to false
+     
         setIsVerified(verifiedStatus === "true");
       } catch (error) {
         console.error("Error reading verification status:", error);
@@ -29,16 +29,16 @@ export default function HomeTopBar({ userData, mode }) {
     checkVerificationStatus();
   }, []);
 
-  // console.log("show", userData?.isVerified);
 
-  // Refetch when screen comes into focus
+
+
   useFocusEffect(
     useCallback(() => {
       refetch();
     }, [refetch])
   );
 
-  // Initialize notifications from API data
+
   useEffect(() => {
     if (data?.success && data?.data?.notifications) {
       setNotifications(data.data.notifications);
@@ -47,54 +47,9 @@ export default function HomeTopBar({ userData, mode }) {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  // const [currentUserId, setCurrentUserId] = useState(null);
-  // const [unreadCount, setUnreadCount] = useState(0);
 
-  // getting userId
-  // useEffect(() => {
-  //   const fetchUserId = async () => {
-  //     const userId = await AsyncStorage.getItem("userId");
-  //     if (userId) setCurrentUserId(userId);
-  //   };
-  //   fetchUserId();
-  // }, []);
-
-  // join notification room
-  // useEffect(() => {
-  //   if (!socket || !currentUserId) return;
-
-  //   socket.emit("join-notifications", { userId: currentUserId });
-  // }, [socket, currentUserId]);
-
-  // get initial unread count
-  // useEffect(() => {
-  //   if (!socket || !currentUserId) return;
-
-  //   socket.emit("get-unread-count", currentUserId);
-  // }, [socket, currentUserId]);
-
-  //get unreadCount
-
-  // const handleUnreadCount = ({ count }) => {
-  //   console.log("Unread count:", count);
-  //   setUnreadCount(count);
-  // };
-
-  // listen for socket events
-  // useEffect(() => {
-  //   if (!socket) return;
-
-  //   socket.on("unread-count", handleUnreadCount);
-
-  //   return () => {
-  //     socket.off("unread-count", handleUnreadCount);
-  //   };
-  // }, [socket]);
 
   const handleNotificationPress = () => {
-    // if (socket && currentUserId) {
-    //   socket.emit("mark-all-notifications-read", { userId: currentUserId });
-    // }
 
     router.push("shared/notification");
   };

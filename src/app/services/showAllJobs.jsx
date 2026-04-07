@@ -27,7 +27,7 @@ export default function HomeServiceScreen() {
     refetch: refetchActiveJobs,
   } = useGetActiveJobsQuery();
 
-  // Determine which data to use based on title
+
   const isTodaysJob = title === "Today's Jobs";
   const serviceData = isTodaysJob
     ? todaysJobs?.data?.jobs
@@ -35,7 +35,7 @@ export default function HomeServiceScreen() {
   const isLoading = isTodaysJob ? todaysJobsLoading : activeJobsLoading;
   const error = isTodaysJob ? todaysJobsError : activeJobsError;
 
-  // Handle pull-to-refresh
+ 
   const onRefresh = async () => {
     setRefreshing(true);
     try {
@@ -53,9 +53,9 @@ export default function HomeServiceScreen() {
 
   return (
     <View className="flex-1 bg-[#f9f9f9]">
-      <View className="px-[6%] mt-[5%]">
-        <CustomTitle title={title} />
-      </View>
+   
+        <CustomTitle title={title} withSafeTop={true} />
+      
       <ViewAllServiceCards
         servicesData={serviceData}
         isLoading={isLoading}

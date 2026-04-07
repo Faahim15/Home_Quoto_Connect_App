@@ -34,7 +34,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
   const { socket, isConnected } = useSocket(
-    "wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
+    "https://api.quoto.ca"
   );
 
   const [currentUserId, setCurrentUserId] = useState(null);
@@ -43,7 +43,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
   const flatListRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
-  console.log("show attachments", attachments);
+
 
   const {
     data,
@@ -53,9 +53,8 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
     skip: !ticketId,
   });
 
-  console.log("tikced id", ticketId);
 
-  // Track keyboard height
+
   useEffect(() => {
     const showListener = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
@@ -109,7 +108,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
     joinRooms();
   }, [socket, ticketId]);
 
-  //  listening to new messages
+
   const handleNewMessage = (message) => {
     console.log("new messages", message);
     setMessages((prev) => [...prev, message?.data]);
@@ -135,28 +134,32 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
       socket.off("support-user-typing", handleUserTyping);
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     };
-  }, [socket, currentUserId]);
+  }, [socket, currentUserId]); 
 
-  const pickImages = async () => {
-    try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ["images"],
-        allowsMultipleSelection: true,
-        quality: 0.7,
-      });
+const pickImages = async () => {
+  try {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') return;
 
-      if (!result.canceled) {
-        const selected = result.assets.map((item) => ({
-          uri: item.uri,
-          type: "image",
-          filename: item.fileName || `image_${Date.now()}.jpg`,
-        }));
-        setAttachments((prev) => [...prev, ...selected]);
-      }
-    } catch (err) {
-      console.log("pick image error", err);
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'images',
+      allowsMultipleSelection: true, 
+      quality: 0.5, 
+      preferredAssetRepresentationMode: ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Current,
+    });
+
+    if (!result.canceled) {
+      const selected = result.assets.map((item) => ({
+        uri: item.uri,
+        type: "image",
+        filename: item.fileName || `image_${Date.now()}.jpg`,
+      }));
+      setAttachments((prev) => [...prev, ...selected]);
     }
-  };
+  } catch (err) {
+    console.log("pick image error", err);
+  }
+};
 
   const takePhoto = async () => {
     try {
@@ -181,7 +184,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
   };
 
   const handleSendMessage = async () => {
-    // Updated condition: Allow sending if there's either text OR attachments
+
     if (
       (!inputText.trim() && attachments.length === 0) ||
       !socket ||
@@ -214,7 +217,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
     const payload = {
       ticketId,
       content: {
-        text: text, // This will be empty string if no text
+        text: text, 
         attachments: media,
       },
       messageType: attachments.length > 0 ? "image" : "text",
@@ -395,7 +398,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
       <View
         className="flex-1 bg-white"
         style={{
-          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+          paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 40,
         }}
       >
         {/* Header */}
@@ -464,7 +467,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
         </View>
 
         {/* Input */}
-        <View className="absolute bottom-0 left-0 border right-0 border-t border-gray-200 bg-white">
+        <View className="absolute pb-[5%] bottom-0 left-0 border right-0 border-t border-gray-200 bg-white">
           {attachments.length > 0 && (
             <View className="px-4 py-2 flex-row flex-wrap bg-white">
               {attachments.map((file, index) => (
@@ -519,7 +522,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
               disabled={
                 (!inputText.trim() && attachments.length === 0) || !isConnected
               }
-              className={`w-11 h-11 rounded-full justify-center items-center ${
+              className={`w-11 h-11 rounded-full  justify-center items-center ${
                 (inputText.trim() || attachments.length > 0) && isConnected
                   ? "bg-blue-700"
                   : "bg-gray-200"

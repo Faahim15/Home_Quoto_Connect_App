@@ -8,7 +8,7 @@ import {
   Platform,
 } from "react-native";
 import { useState, useEffect } from "react";
-import CustomTitle from "../components/shared/services/CustomTitle";
+
 import AvatarImagePicker from "../components/tabs/profile/AvatarImagePicker";
 import InputField from "../components/tabs/profile/InputField";
 import ProfileFormInputs from "../components/tabs/profile/FormInputs";
@@ -19,6 +19,7 @@ import {
   useUpdateProfileDataMutation,
 } from "../../redux/features/apiSlices/user/userApiSlices";
 import LocationPicker from "../components/auth/LocationPicker";
+import CustomTitle from "../components/shared/CustomTitle";
 
 export default function EditProfileScreen() {
   const {
@@ -31,7 +32,7 @@ export default function EditProfileScreen() {
   const [updateProfileData, { isLoading: isUpdating }] =
     useUpdateProfileDataMutation();
 
-  // State for form fields
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -40,7 +41,7 @@ export default function EditProfileScreen() {
     location: null,
   });
 
-  // Load profile data into form state
+
   useEffect(() => {
     if (profile?.data?.user) {
       const user = profile.data.user;
@@ -54,7 +55,7 @@ export default function EditProfileScreen() {
     }
   }, [profile]);
 
-  // Handle form field changes
+  
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -62,7 +63,7 @@ export default function EditProfileScreen() {
     }));
   };
 
-  // Handle save/update
+  
   const handleSave = async () => {
     try {
       const updatePayload = {
@@ -97,7 +98,7 @@ export default function EditProfileScreen() {
     }
   };
 
-  // Show loading indicator when profile is being fetched
+
   if (profileLoading) {
     return (
       <View className="flex-1 bg-[#F9F9F9] justify-center items-center">
@@ -114,14 +115,16 @@ export default function EditProfileScreen() {
       style={{ flex: 1, backgroundColor: "#f9f9f9" }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
-    >
+    > 
+     <CustomTitle title="Edit Profile" withSafeTop={true} />
       <ScrollView
         className="px-[6%] mt-[3%]"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
         keyboardShouldPersistTaps="handled"
       >
-        {/* <CustomTitle title="Edit Profile" /> */}
+        
+       
 
         <AvatarImagePicker photo={profilePhoto} />
 
@@ -157,7 +160,7 @@ export default function EditProfileScreen() {
       </ScrollView>
 
       {/* Fixed Save Button at Bottom */}
-      <View className="absolute bottom-0 left-0 right-0 bg-[#F9F9F9] px-[6%] pb-[5%] pt-[3%] border-t border-gray-200">
+      <View className="absolute bottom-0 left-0 right-0 bg-[#F9F9F9] px-[6%] pb-[15%] pt-[3%] border-t border-gray-200">
         <CustomButton
           onPress={handleSave}
           title={isUpdating ? "Saving..." : "Save"}

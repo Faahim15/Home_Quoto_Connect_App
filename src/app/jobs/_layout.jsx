@@ -6,15 +6,16 @@ export default function Layout() {
       <Stack.Screen
         name="uploadPhotos"
         options={{
-          title: "Upload Job Photos",
-          ...stackScreenOptions,
+          // title: "Upload Job Photos",
+          // ...stackScreenOptions, 
+          headerShown: false,
         }}
       />
       <Stack.Screen
         name="jobForm"
         options={{
           title: "Post a Job",
-          ...stackScreenOptions,
+          headerShown: false,
         }}
       />
       <Stack.Screen

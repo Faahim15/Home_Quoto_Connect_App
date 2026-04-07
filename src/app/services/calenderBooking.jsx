@@ -18,21 +18,20 @@ const BookingCalendar = () => {
   const dispatch = useDispatch();
   const jobData = useSelector((state) => state.jobPost);
 
-  // ✅ Initialize with values from Redux store
+
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [isInitialized, setIsInitialized] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  // ✅ Load initial values from jobData
+ 
   useEffect(() => {
     if (!isInitialized) {
-      // Set initial date (if exists, otherwise use empty string)
+   
       if (jobData.preferredDate) {
         setSelectedDate(jobData.preferredDate);
       }
 
-      // Set initial time (if exists)
       if (jobData.preferredTime) {
         setSelectedTime(jobData.preferredTime);
       }
@@ -41,17 +40,17 @@ const BookingCalendar = () => {
     }
   }, [jobData.preferredDate, jobData.preferredTime, isInitialized]);
 
-  console.log("time", jobData);
+
 
   const handleInputChange = (field, value) => {
     dispatch(setJobField({ field, value }));
   };
 
-  // ✅ Handle pull-to-refresh
+
   const onRefresh = () => {
     setRefreshing(true);
 
-    // Reload data from Redux store
+  
     if (jobData.preferredDate) {
       setSelectedDate(jobData.preferredDate);
     }
@@ -59,21 +58,21 @@ const BookingCalendar = () => {
       setSelectedTime(jobData.preferredTime);
     }
 
-    // Simulate refresh delay
+
     setTimeout(() => {
       setRefreshing(false);
     }, 500);
   };
 
-  // 24-hour time slots
+
   const morningTimes = ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00"];
   const afternoonTimes = ["12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
   const eveningTimes = ["18:00", "19:00", "20:00", "21:00", "22:00"];
 
-  // Handle date selection
+  
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
-    setSelectedTime(""); // Reset time when date changes
+    setSelectedTime(""); 
   };
 
   // Handle save
@@ -118,7 +117,8 @@ const BookingCalendar = () => {
     : {};
 
   return (
-    <View className="flex-1 bg-[#F9F9F9]">
+    <View className="flex-1 bg-[#F9F9F9]"> 
+    <CustomTitle title="Select Date & Time" withSafeTop={true} />
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: verticalScale(100) }}
@@ -133,7 +133,7 @@ const BookingCalendar = () => {
         }
       >
         <View className="px-[6%]">
-          {/* Date Selection */}
+          
           <View
             style={{ width: scale(327), height: verticalScale(303) }}
             className=" bg-[#F9F9F9]  mt-[3%] "
@@ -271,7 +271,7 @@ const BookingCalendar = () => {
       </ScrollView>
 
       {/* Save Button - Fixed at bottom */}
-      <View className="px-[6%] pb-[5%] bg-[#F9F9F9]">
+      <View className="px-[6%] pb-[20%] bg-[#F9F9F9]">
         <TouchableOpacity
           className={`py-[3.5%] rounded-lg ${
             selectedDate && selectedTime ? "bg-[#175994]" : "bg-gray-400"

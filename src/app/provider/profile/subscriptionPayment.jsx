@@ -4,7 +4,7 @@ import { useStripe } from "@stripe/stripe-react-native";
 import { usePurchaseSubscriptionMutation } from "../../../redux/features/apiSlices/payment/paymentApiSlice";
 import CustomButton from "../../components/tabs/home/services/provider/details/CustomButton";
 import Stripe from "../../components/tabs/myJobs/Stripe";
-
+import CustomTitle from "../../components/shared/CustomTitle";
 export default function StripePayment() {
   const { subscriptionId } = useLocalSearchParams();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
@@ -56,7 +56,8 @@ export default function StripePayment() {
   };
 
   return (
-    <View className="flex-1 bg-[#f9f9f9]">
+    <View className="flex-1 bg-[#f9f9f9]"> 
+        <CustomTitle title="Subscription" withSafeTop={true} />
       <Stripe />
 
       <View className="flex-1 mb-[20%] px-[6%] justify-end">

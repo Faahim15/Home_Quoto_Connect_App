@@ -39,7 +39,7 @@ export default function PostJobScreen() {
     }, [dispatch])
   );
 
-  // 📸 Show camera or gallery options
+ 
   const showImageOptions = () => {
     Alert.alert("Select Photo", "Choose how you want to add a photo", [
       { text: "Camera", onPress: takePhoto },
@@ -48,7 +48,7 @@ export default function PostJobScreen() {
     ]);
   };
 
-  // 📷 Take photo using camera
+
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
@@ -73,38 +73,41 @@ export default function PostJobScreen() {
     }
   };
 
-  // 🖼️ Pick photo from gallery
-  const pickFromGallery = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: false,
-      allowsMultipleSelection: true,
-      aspect: [4, 3],
-      quality: 1,
+  
+const pickFromGallery = async () => {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ['images'],
+    allowsEditing: false, 
+    allowsMultipleSelection: true,
+    quality: 0.7, 
+  });
+
+  if (!result.canceled) {
+    result.assets.forEach((asset) => {
+      // কনসোলে চেক করুন URI ঠিক আছে কিনা
+      console.log("Selected Image URI:", asset.uri);
+      
+      const uniqueId = Date.now().toString() + Math.random().toString(36).substring(2, 9);
+      dispatch(addPhoto({ id: uniqueId, uri: asset.uri }));
     });
+  }
+};
 
-    if (!result.canceled) {
-      result.assets.forEach((asset) => {
-        const uniqueId =
-          Date.now().toString() + Math.random().toString(36).substring(2, 9);
-        dispatch(addPhoto({ id: uniqueId, uri: asset.uri }));
-      });
-    }
-  };
 
-  // 🗑️ Remove photo from Redux store
   const handleRemovePhoto = (photoId) => {
     dispatch(removePhotoFromStore(photoId));
   };
 
-  // ➡️ Continue button
+
   const handleContinue = () => {
     if (photos.length === 0) {
       Alert.alert("Please add at least one photo to continue");
       return;
     }
     router.push("/jobs/jobForm");
-  };
+  }; 
+
+  console.log('photos', photos);
 
   return (
     <SafeAreaView className="flex-1 bg-[#F9F9F9]">

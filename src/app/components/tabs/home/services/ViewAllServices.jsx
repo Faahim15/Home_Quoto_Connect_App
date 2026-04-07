@@ -156,27 +156,25 @@ export default function ViewAllServiceCards({
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingBottom: verticalScale(100),
-            rowGap: verticalScale(12),
+            rowGap: verticalScale(12), 
+            
           }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={["#175994"]} // Android
-              tintColor="#175994" // iOS
-              progressBackgroundColor="#ffffff" // Android
+              colors={["#175994"]} 
+              tintColor="#175994" 
+              progressBackgroundColor="#ffffff" 
             />
           }
           ListEmptyComponent={
-            <View
-              className="w-full items-center justify-center"
-              style={{ marginTop: verticalScale(100) }}
-            >
-              <Ionicons name="folder-open-outline" size={48} color="#9CA3AF" />
-              <Text className="mt-4 font-poppins-400regular text-gray-600">
-                No services available
-              </Text>
-            </View>
+              <View className="flex-1 mt-[50%] ml-[30%] items-center justify-center">
+            <Ionicons name="folder-open-outline" size={48} color="#9CA3AF" />
+            <Text className="mt-4 font-poppins-400regular text-gray-600 text-center">
+              No services available
+            </Text>
+          </View>
           }
         />
       )}

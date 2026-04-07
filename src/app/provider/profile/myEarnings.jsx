@@ -1,19 +1,16 @@
 import { View, ScrollView, Text, ActivityIndicator } from "react-native";
 import BookingStatsCard from "../../components/provider/profile/BookingStatCards";
-import CustomTitle from "../../components/shared/services/CustomTitle";
 import { periodOptions } from "../../components/data/profile/EarningsData";
 import EarningsTrendChart from "../../components/provider/profile/EarningTrendChart";
 import ChartHeader from "../../components/provider/profile/ChartHeader";
 import BookingsTrendChart from "../../components/provider/profile/BookingTrendChart";
 import { verticalScale } from "../../components/adaptive/Adaptiveness";
 import { useGetWalletQuery } from "../../../redux/features/apiSlices/payment/paymentApiSlice";
-
+import CustomTitle from "../../components/shared/CustomTitle";
 export default function MyEarnings() {
   const { data, isLoading, error } = useGetWalletQuery();
 
-  // --------------------------------------------------
-  // ⭐ Loading UI
-  // --------------------------------------------------
+
   if (isLoading) {
     return (
       <View className="flex-1 items-center justify-center bg-[#f9f9f9]">
@@ -25,9 +22,7 @@ export default function MyEarnings() {
     );
   }
 
-  // --------------------------------------------------
-  // ⭐ Error UI
-  // --------------------------------------------------
+
   if (error) {
     return (
       <View className="flex-1 items-center justify-center bg-[#f9f9f9] px-6">
@@ -41,9 +36,7 @@ export default function MyEarnings() {
     );
   }
 
-  // --------------------------------------------------
-  // ⭐ Empty State UI (No Data)
-  // --------------------------------------------------
+
   const hasData =
     data?.data?.statistics && Object.keys(data.data.statistics).length > 0;
 
@@ -75,10 +68,11 @@ export default function MyEarnings() {
     );
   }
 
-  // --------------------------------------------------
-  // ⭐ Main Content (With Data)
-  // --------------------------------------------------
-  return (
+
+  return ( 
+
+    <>
+    <CustomTitle title="My Earnings" withSafeTop={true} />
     <View className="flex-1 px-[6.4%] mt-[3%] bg-[#f9f9f9]">
       <ScrollView
         contentContainerStyle={{ paddingBottom: verticalScale(40) }}
@@ -106,5 +100,7 @@ export default function MyEarnings() {
         <BookingsTrendChart statistics={data?.data?.statistics} />
       </ScrollView>
     </View>
-  );
+  
+    </> 
+    );
 }

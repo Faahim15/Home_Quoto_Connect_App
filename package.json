@@ -60,7 +60,8 @@
     "expo-sharing": "~13.1.5",
     "expo-media-library": "~17.1.7",
     "expo-notifications": "~0.31.4",
-    "expo-device": "~7.1.4"
+    "expo-device": "~7.1.4",
+    "expo-haptics": "~14.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

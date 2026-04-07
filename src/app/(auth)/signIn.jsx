@@ -40,35 +40,34 @@ export default function SignInScreen() {
 
   const handleSubmit = async () => {
     try {
-      // ✅ Validate form data
+   
       await validationSchema.validate(formData, { abortEarly: false });
       setErrors({});
 
-      // ✅ Prepare login payload
+
       const data = {
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
       };
 
-      // ✅ Send login request
+   
       const res = await login(data).unwrap();
 
-      // console.log("login", res?.data?.user?._id);
-      console.log("role", res?.data?.user?.role);
-      // ✅ Store the token
+
+
       await AsyncStorage.setItem("token", res?.data?.token);
       await AsyncStorage.setItem("userId", res?.data?.user?._id);
       await AsyncStorage.setItem("role", res?.data?.user?.role);
-      // ✅ Show success toast
+
       Toast.show({
         type: "success",
         text1: "Login Successful",
         text2: `Welcome back, ${res?.data?.user?.fullName || "User"}!`,
       });
 
-      // console.log("Login response:", res.data.user);
+ 
 
-      // ✅ Navigate to /home
+    
       if (res?.data?.user?.role !== "provider") router.push("/home");
       else {
         Toast.show({
@@ -78,9 +77,9 @@ export default function SignInScreen() {
         });
       }
     } catch (error) {
-      // ❌ Show error toast
+     
 
-      console.log("show", error);
+    
 
       Toast.show({
         type: "error",
@@ -89,7 +88,7 @@ export default function SignInScreen() {
           error?.data?.message || "Something went wrong. Please try again.",
       });
 
-      // ✅ Optional: handle validation errors
+     
       if (error.name === "ValidationError") {
         const fieldErrors = {};
         error.inner.forEach((err) => {
