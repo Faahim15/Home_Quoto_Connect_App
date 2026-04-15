@@ -9,27 +9,27 @@
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		4D3A97DA5079671D10432385 /* libPods-razahomequotov2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C3171576B57BBAA272A7C4A8 /* libPods-razahomequotov2.a */; };
-		70E0EB374E1CF39776984208 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F950D2BA6C175EC7CB96B903 /* PrivacyInfo.xcprivacy */; };
+		8210EE17D5D8376305E35D4C /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 986E3D8CE4412D02725ECE6F /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		D18B6818CC1C6445E5EF6979 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67E0BF6AB864E2D3EA36F641 /* ExpoModulesProvider.swift */; };
+		D4F2378642B9DB8669D54AE7 /* libPods-RazaHomeQuote.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BEE718FF419D000AABD0834 /* libPods-RazaHomeQuote.a */; };
+		D8B97CC80CD134DD064F7AE2 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 726639092E2B73669A5CCC15 /* PrivacyInfo.xcprivacy */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		13B07F961A680F5B00A75B9A /* razahomequotov2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = razahomequotov2.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = razahomequotov2/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = razahomequotov2/Info.plist; sourceTree = "<group>"; };
-		5A3E9A09BD10D1DEFCA8A6FB /* Pods-razahomequotov2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-razahomequotov2.release.xcconfig"; path = "Target Support Files/Pods-razahomequotov2/Pods-razahomequotov2.release.xcconfig"; sourceTree = "<group>"; };
-		67E0BF6AB864E2D3EA36F641 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-razahomequotov2/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = razahomequotov2/SplashScreen.storyboard; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* RazaHomeQuote.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RazaHomeQuote.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = RazaHomeQuote/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RazaHomeQuote/Info.plist; sourceTree = "<group>"; };
+		2BEE718FF419D000AABD0834 /* libPods-RazaHomeQuote.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RazaHomeQuote.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		50997B3FE13E4228D9C11E18 /* Pods-RazaHomeQuote.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RazaHomeQuote.debug.xcconfig"; path = "Target Support Files/Pods-RazaHomeQuote/Pods-RazaHomeQuote.debug.xcconfig"; sourceTree = "<group>"; };
+		726639092E2B73669A5CCC15 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = RazaHomeQuote/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		986E3D8CE4412D02725ECE6F /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-RazaHomeQuote/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = RazaHomeQuote/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C3171576B57BBAA272A7C4A8 /* libPods-razahomequotov2.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-razahomequotov2.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D80AACA27B0338E95CA209A3 /* Pods-razahomequotov2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-razahomequotov2.debug.xcconfig"; path = "Target Support Files/Pods-razahomequotov2/Pods-razahomequotov2.debug.xcconfig"; sourceTree = "<group>"; };
+		E739D4755AFA10E2B6F23168 /* Pods-RazaHomeQuote.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RazaHomeQuote.release.xcconfig"; path = "Target Support Files/Pods-RazaHomeQuote/Pods-RazaHomeQuote.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = razahomequotov2/AppDelegate.swift; sourceTree = "<group>"; };
-		F11748442D0722820044C1D9 /* razahomequotov2-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "razahomequotov2-Bridging-Header.h"; path = "razahomequotov2/razahomequotov2-Bridging-Header.h"; sourceTree = "<group>"; };
-		F950D2BA6C175EC7CB96B903 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = razahomequotov2/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = RazaHomeQuote/AppDelegate.swift; sourceTree = "<group>"; };
+		F11748442D0722820044C1D9 /* RazaHomeQuote-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "RazaHomeQuote-Bridging-Header.h"; path = "RazaHomeQuote/RazaHomeQuote-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,42 +37,42 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D3A97DA5079671D10432385 /* libPods-razahomequotov2.a in Frameworks */,
+				D4F2378642B9DB8669D54AE7 /* libPods-RazaHomeQuote.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13B07FAE1A68108700A75B9A /* razahomequotov2 */ = {
+		13B07FAE1A68108700A75B9A /* RazaHomeQuote */ = {
 			isa = PBXGroup;
 			children = (
 				F11748412D0307B40044C1D9 /* AppDelegate.swift */,
-				F11748442D0722820044C1D9 /* razahomequotov2-Bridging-Header.h */,
+				F11748442D0722820044C1D9 /* RazaHomeQuote-Bridging-Header.h */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				F950D2BA6C175EC7CB96B903 /* PrivacyInfo.xcprivacy */,
+				726639092E2B73669A5CCC15 /* PrivacyInfo.xcprivacy */,
 			);
-			name = razahomequotov2;
+			name = RazaHomeQuote;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				C3171576B57BBAA272A7C4A8 /* libPods-razahomequotov2.a */,
+				2BEE718FF419D000AABD0834 /* libPods-RazaHomeQuote.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		651A0459812B6ECEE1BD53F4 /* razahomequotov2 */ = {
+		4763DF6AE4E18E6709ED9B82 /* ExpoModulesProviders */ = {
 			isa = PBXGroup;
 			children = (
-				67E0BF6AB864E2D3EA36F641 /* ExpoModulesProvider.swift */,
+				AB344CB4B210B25B9877E39E /* RazaHomeQuote */,
 			);
-			name = razahomequotov2;
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -85,12 +85,12 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				13B07FAE1A68108700A75B9A /* razahomequotov2 */,
+				13B07FAE1A68108700A75B9A /* RazaHomeQuote */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				BC4283B4141EDEA200B5E51B /* Pods */,
-				B65E9C4EF0C18131F07A736E /* ExpoModulesProviders */,
+				A3F244A82050FE144734524C /* Pods */,
+				4763DF6AE4E18E6709ED9B82 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -100,17 +100,27 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* razahomequotov2.app */,
+				13B07F961A680F5B00A75B9A /* RazaHomeQuote.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B65E9C4EF0C18131F07A736E /* ExpoModulesProviders */ = {
+		A3F244A82050FE144734524C /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				651A0459812B6ECEE1BD53F4 /* razahomequotov2 */,
+				50997B3FE13E4228D9C11E18 /* Pods-RazaHomeQuote.debug.xcconfig */,
+				E739D4755AFA10E2B6F23168 /* Pods-RazaHomeQuote.release.xcconfig */,
 			);
-			name = ExpoModulesProviders;
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		AB344CB4B210B25B9877E39E /* RazaHomeQuote */ = {
+			isa = PBXGroup;
+			children = (
+				986E3D8CE4412D02725ECE6F /* ExpoModulesProvider.swift */,
+			);
+			name = RazaHomeQuote;
 			sourceTree = "<group>";
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
@@ -119,42 +129,32 @@
 				BB2F792C24A3F905000567C9 /* Expo.plist */,
 			);
 			name = Supporting;
-			path = razahomequotov2/Supporting;
-			sourceTree = "<group>";
-		};
-		BC4283B4141EDEA200B5E51B /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				D80AACA27B0338E95CA209A3 /* Pods-razahomequotov2.debug.xcconfig */,
-				5A3E9A09BD10D1DEFCA8A6FB /* Pods-razahomequotov2.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
+			path = RazaHomeQuote/Supporting;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* razahomequotov2 */ = {
+		13B07F861A680F5B00A75B9A /* RazaHomeQuote */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "razahomequotov2" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RazaHomeQuote" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				3D9F881E1F42DBE9F5962D7C /* [Expo] Configure project */,
+				F92B7D0008DAB61929BA6590 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				76861CE5C2CD06B73509C6F4 /* [CP] Embed Pods Frameworks */,
+				0A5D7F687E34BFC20CAAF2A0 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = razahomequotov2;
-			productName = razahomequotov2;
-			productReference = 13B07F961A680F5B00A75B9A /* razahomequotov2.app */;
+			name = RazaHomeQuote;
+			productName = RazaHomeQuote;
+			productReference = 13B07F961A680F5B00A75B9A /* RazaHomeQuote.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -170,7 +170,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "razahomequotov2" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "RazaHomeQuote" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -183,7 +183,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* razahomequotov2 */,
+				13B07F861A680F5B00A75B9A /* RazaHomeQuote */,
 			);
 		};
 /* End PBXProject section */
@@ -196,7 +196,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				70E0EB374E1CF39776984208 /* PrivacyInfo.xcprivacy in Resources */,
+				D8B97CC80CD134DD064F7AE2 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -233,39 +233,20 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-razahomequotov2-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-RazaHomeQuote-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		3D9F881E1F42DBE9F5962D7C /* [Expo] Configure project */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "[Expo] Configure project";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-razahomequotov2/expo-configure-project.sh\"\n";
-		};
-		76861CE5C2CD06B73509C6F4 /* [CP] Embed Pods Frameworks */ = {
+		0A5D7F687E34BFC20CAAF2A0 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-razahomequotov2/Pods-razahomequotov2-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-RazaHomeQuote/Pods-RazaHomeQuote-frameworks.sh",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermes.framework/hermes",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -274,7 +255,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-razahomequotov2/Pods-razahomequotov2-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RazaHomeQuote/Pods-RazaHomeQuote-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */ = {
@@ -283,7 +264,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-razahomequotov2/Pods-razahomequotov2-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-RazaHomeQuote/Pods-RazaHomeQuote-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXApplication/ExpoApplication_privacy.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/ExpoConstants_privacy.bundle",
@@ -386,8 +367,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-razahomequotov2/Pods-razahomequotov2-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RazaHomeQuote/Pods-RazaHomeQuote-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		F92B7D0008DAB61929BA6590 /* [Expo] Configure project */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[Expo] Configure project";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# This script configures Expo modules and generates the modules provider file.\nbash -l -c \"./Pods/Target\\ Support\\ Files/Pods-RazaHomeQuote/expo-configure-project.sh\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -397,7 +397,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				D18B6818CC1C6445E5EF6979 /* ExpoModulesProvider.swift in Sources */,
+				8210EE17D5D8376305E35D4C /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -406,18 +406,18 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D80AACA27B0338E95CA209A3 /* Pods-razahomequotov2.debug.xcconfig */;
+			baseConfigurationReference = 50997B3FE13E4228D9C11E18 /* Pods-RazaHomeQuote.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = razahomequotov2/razahomequotov2.entitlements;
+				CODE_SIGN_ENTITLEMENTS = RazaHomeQuote/RazaHomeQuote.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
 				);
-				INFOPLIST_FILE = razahomequotov2/Info.plist;
+				INFOPLIST_FILE = RazaHomeQuote/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -431,8 +431,8 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fahim.razahomequoto;
-				PRODUCT_NAME = razahomequotov2;
-				SWIFT_OBJC_BRIDGING_HEADER = "razahomequotov2/razahomequotov2-Bridging-Header.h";
+				PRODUCT_NAME = RazaHomeQuote;
+				SWIFT_OBJC_BRIDGING_HEADER = "RazaHomeQuote/RazaHomeQuote-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -442,13 +442,13 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5A3E9A09BD10D1DEFCA8A6FB /* Pods-razahomequotov2.release.xcconfig */;
+			baseConfigurationReference = E739D4755AFA10E2B6F23168 /* Pods-RazaHomeQuote.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = razahomequotov2/razahomequotov2.entitlements;
+				CODE_SIGN_ENTITLEMENTS = RazaHomeQuote/RazaHomeQuote.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				INFOPLIST_FILE = razahomequotov2/Info.plist;
+				INFOPLIST_FILE = RazaHomeQuote/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -462,8 +462,8 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fahim.razahomequoto;
-				PRODUCT_NAME = razahomequotov2;
-				SWIFT_OBJC_BRIDGING_HEADER = "razahomequotov2/razahomequotov2-Bridging-Header.h";
+				PRODUCT_NAME = RazaHomeQuote;
+				SWIFT_OBJC_BRIDGING_HEADER = "RazaHomeQuote/RazaHomeQuote-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -597,7 +597,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "razahomequotov2" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RazaHomeQuote" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -606,7 +606,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "razahomequotov2" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "RazaHomeQuote" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>raza-home-quoto-v2</string>
+    <string>Raza Home Quote</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -39,7 +39,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>1</string>
+    <string>1.0.1</string>
     <key>GMSApiKey</key>
     <string>AIzaSyDkKgH8VeVwbmSXwVPz6NxQsYbU3C2N1tQ</string>
     <key>LSMinimumSystemVersion</key>
@@ -56,17 +56,15 @@
     <key>NSCameraUsageDescription</key>
     <string>This app uses the camera for video calls.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>This app uses your location to provide location-based features.</string>
-    <key>NSLocationAlwaysUsageDescription</key>
-    <string>Allow $(PRODUCT_NAME) to access your location</string>
+    <string>We use your location to enhance location-based features.</string>
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>This app uses your location to provide location-based features.</string>
+    <string>We use your location to show nearby services and improve your experience.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>This app uses the microphone for audio calls.</string>
     <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>Allow Raza Home Quoto to save invoice PDFs to your device.</string>
+    <string>Allow Raza Home Quote to save invoice PDFs to your device.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>Allow Raza Home Quoto to access your photos to save invoice PDFs.</string>
+    <string>Allow Raza Home Quote to access your photos to save invoice PDFs.</string>
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>

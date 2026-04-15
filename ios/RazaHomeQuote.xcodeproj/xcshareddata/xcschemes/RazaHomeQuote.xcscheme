@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "razahomequotov2.app"
-               BlueprintName = "razahomequotov2"
-               ReferencedContainer = "container:razahomequotov2.xcodeproj">
+               BuildableName = "RazaHomeQuote.app"
+               BlueprintName = "RazaHomeQuote"
+               ReferencedContainer = "container:RazaHomeQuote.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "razahomequotov2Tests.xctest"
-               BlueprintName = "razahomequotov2Tests"
-               ReferencedContainer = "container:razahomequotov2.xcodeproj">
+               BuildableName = "RazaHomeQuoteTests.xctest"
+               BlueprintName = "RazaHomeQuoteTests"
+               ReferencedContainer = "container:RazaHomeQuote.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "razahomequotov2.app"
-            BlueprintName = "razahomequotov2"
-            ReferencedContainer = "container:razahomequotov2.xcodeproj">
+            BuildableName = "RazaHomeQuote.app"
+            BlueprintName = "RazaHomeQuote"
+            ReferencedContainer = "container:RazaHomeQuote.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "razahomequotov2.app"
-            BlueprintName = "razahomequotov2"
-            ReferencedContainer = "container:razahomequotov2.xcodeproj">
+            BuildableName = "RazaHomeQuote.app"
+            BlueprintName = "RazaHomeQuote"
+            ReferencedContainer = "container:RazaHomeQuote.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
