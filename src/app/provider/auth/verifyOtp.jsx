@@ -22,7 +22,15 @@ export default function VerifyOtp() {
     const newOtp = [...otp];
     newOtp[index] = text;
     setOtp(newOtp);
-  };
+  }; 
+  // VerifyOtp.jsx এ এই function টা add করুন
+const handleOtpPaste = (digits) => {
+  const newOtp = [...otp];
+  for (let i = 0; i < 6; i++) {
+    newOtp[i] = digits[i] || "";
+  }
+  setOtp(newOtp); // ✅ একবারে পুরো array update
+};
 
   // ✅ Validation schema
   const validationSchema = Yup.object({
@@ -31,21 +39,22 @@ export default function VerifyOtp() {
       .required("OTP is required"),
   });
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (currentOtp = otp) => {
     try {
-      const fullOtp = otp.join("");
+    const fullOtp = currentOtp.join("");
 
       console.log("show emial and otp", email, otp);
 
-      const data = {
-        email,
-        otp: fullOtp,
-        purpose: "signup", // 🔑 changed for sign-up flow
-      };
+    const data = {
+      email,
+      otp: fullOtp,
+      purpose: "signup",
+    };
+
 
       // ✅ Validate OTP format
-      await validationSchema.validate({ otp: fullOtp }, { abortEarly: false });
-      setErrors({});
+  await validationSchema.validate({ otp: fullOtp }, { abortEarly: false });
+    setErrors({})
 
       // ✅ Send request to backend
       await otpVerification(data).unwrap();
@@ -105,12 +114,14 @@ export default function VerifyOtp() {
       <VerificationCodeField
         error={errors.otp}
         otp={otp}
-        handleOtpChange={handleOtpChange}
+        handleOtpChange={handleOtpChange}  
+         handleOtpPaste={handleOtpPaste}
+      
       />
 
       <View className="flex-1 justify-end pb-[20%]">
         <TouchableOpacity
-          onPress={handleSubmit}
+          onPress={() => handleSubmit()} 
           className="bg-[#0054A5] mx-[6%] rounded-lg py-[4%]"
         >
           <Text className="text-white text-center text-base font-poppins-semiBold">

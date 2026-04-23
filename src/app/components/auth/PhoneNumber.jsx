@@ -9,132 +9,24 @@ import {
 import { useState } from "react";
 
 const countries = [
-  {
-    code: "+1",
-    flag: "🇨🇦",
-    name: "Canada",
-    maxLength: 12,
-    format: "XXX XXX XXXX",
-  },
-  {
-    code: "+1",
-    flag: "🇺🇸",
-    name: "United States",
-    maxLength: 12,
-    format: "XXX XXX XXXX",
-  },
-  {
-    code: "+44",
-    flag: "🇬🇧",
-    name: "United Kingdom",
-    maxLength: 13,
-    format: "XXXX XXX XXXX",
-  },
-  {
-    code: "+33",
-    flag: "🇫🇷",
-    name: "France",
-    maxLength: 12,
-    format: "X XX XX XX XX",
-  },
-  {
-    code: "+49",
-    flag: "🇩🇪",
-    name: "Germany",
-    maxLength: 13,
-    format: "XXX XXXXXXXX",
-  },
-  {
-    code: "+39",
-    flag: "🇮🇹",
-    name: "Italy",
-    maxLength: 12,
-    format: "XXX XXX XXXX",
-  },
-  {
-    code: "+34",
-    flag: "🇪🇸",
-    name: "Spain",
-    maxLength: 11,
-    format: "XXX XX XX XX",
-  },
-  {
-    code: "+81",
-    flag: "🇯🇵",
-    name: "Japan",
-    maxLength: 13,
-    format: "XX XXXX XXXX",
-  },
-  {
-    code: "+82",
-    flag: "🇰🇷",
-    name: "South Korea",
-    maxLength: 13,
-    format: "XX XXXX XXXX",
-  },
-  {
-    code: "+61",
-    flag: "🇦🇺",
-    name: "Australia",
-    maxLength: 12,
-    format: "XXX XXX XXX",
-  },
-  {
-    code: "+64",
-    flag: "🇳🇿",
-    name: "New Zealand",
-    maxLength: 11,
-    format: "XX XXX XXXX",
-  },
-  {
-    code: "+31",
-    flag: "🇳🇱",
-    name: "Netherlands",
-    maxLength: 11,
-    format: "XX XXX XXXX",
-  },
-  {
-    code: "+32",
-    flag: "🇧🇪",
-    name: "Belgium",
-    maxLength: 11,
-    format: "XXX XX XX XX",
-  },
-  {
-    code: "+47",
-    flag: "🇳🇴",
-    name: "Norway",
-    maxLength: 10,
-    format: "XXX XX XXX",
-  },
-  {
-    code: "+46",
-    flag: "🇸🇪",
-    name: "Sweden",
-    maxLength: 11,
-    format: "XX XXX XX XX",
-  },
-  {
-    code: "+45",
-    flag: "🇩🇰",
-    name: "Denmark",
-    maxLength: 10,
-    format: "XX XX XX XX",
-  },
-  {
-    code: "+48",
-    flag: "🇵🇱",
-    name: "Poland",
-    maxLength: 11,
-    format: "XXX XXX XXX",
-  },
-  {
-    code: "+351",
-    flag: "🇵🇹",
-    name: "Portugal",
-    maxLength: 11,
-    format: "XXX XXX XXX",
-  },
+  { code: "+1", flag: "🇨🇦", name: "Canada", maxLength: 12, format: "XXX XXX XXXX" },
+  { code: "+1", flag: "🇺🇸", name: "United States", maxLength: 12, format: "XXX XXX XXXX" },
+  { code: "+44", flag: "🇬🇧", name: "United Kingdom", maxLength: 13, format: "XXXX XXX XXXX" },
+  { code: "+33", flag: "🇫🇷", name: "France", maxLength: 12, format: "X XX XX XX XX" },
+  { code: "+49", flag: "🇩🇪", name: "Germany", maxLength: 13, format: "XXX XXXXXXXX" },
+  { code: "+39", flag: "🇮🇹", name: "Italy", maxLength: 12, format: "XXX XXX XXXX" },
+  { code: "+34", flag: "🇪🇸", name: "Spain", maxLength: 11, format: "XXX XX XX XX" },
+  { code: "+81", flag: "🇯🇵", name: "Japan", maxLength: 13, format: "XX XXXX XXXX" },
+  { code: "+82", flag: "🇰🇷", name: "South Korea", maxLength: 13, format: "XX XXXX XXXX" },
+  { code: "+61", flag: "🇦🇺", name: "Australia", maxLength: 12, format: "XXX XXX XXX" },
+  { code: "+64", flag: "🇳🇿", name: "New Zealand", maxLength: 11, format: "XX XXX XXXX" },
+  { code: "+31", flag: "🇳🇱", name: "Netherlands", maxLength: 11, format: "XX XXX XXXX" },
+  { code: "+32", flag: "🇧🇪", name: "Belgium", maxLength: 11, format: "XXX XX XX XX" },
+  { code: "+47", flag: "🇳🇴", name: "Norway", maxLength: 10, format: "XXX XX XXX" },
+  { code: "+46", flag: "🇸🇪", name: "Sweden", maxLength: 11, format: "XX XXX XX XX" },
+  { code: "+45", flag: "🇩🇰", name: "Denmark", maxLength: 10, format: "XX XX XX XX" },
+  { code: "+48", flag: "🇵🇱", name: "Poland", maxLength: 11, format: "XXX XXX XXX" },
+  { code: "+351", flag: "🇵🇹", name: "Portugal", maxLength: 11, format: "XXX XXX XXX" },
 ];
 
 export default function PhoneInput({ onChangeText, error, value }) {
@@ -144,28 +36,20 @@ export default function PhoneInput({ onChangeText, error, value }) {
   const formatPhoneNumber = (text) => {
     const cleaned = text.replace(/\D/g, "");
     const limited = cleaned.slice(0, 10);
-
     let formatted = limited;
     if (limited.length > 3) {
       formatted = limited.slice(0, 3) + " " + limited.slice(3);
     }
     if (limited.length > 6) {
       formatted =
-        limited.slice(0, 3) +
-        " " +
-        limited.slice(3, 6) +
-        " " +
-        limited.slice(6);
+        limited.slice(0, 3) + " " + limited.slice(3, 6) + " " + limited.slice(6);
     }
-
     return formatted;
   };
 
   const handlePhoneChange = (text) => {
     const formatted = formatPhoneNumber(text);
-    if (onChangeText) {
-      onChangeText(formatted);
-    }
+    if (onChangeText) onChangeText(formatted);
   };
 
   const handleCountrySelect = (country) => {
@@ -180,36 +64,49 @@ export default function PhoneInput({ onChangeText, error, value }) {
           Phone number
         </Text>
 
-        <View className="flex-row bg-[#f9f9f9] items-center border border-[#DCDCDC] rounded-md px-[3%] py-[5%]">
-          {/* Country Selector */}
+        {/* Container: fixed height + alignItems center = সব কিছু vertically center */}
+        <View
+          className="flex-row bg-[#f9f9f9] border border-[#DCDCDC] rounded-md px-[3%]"
+          style={{ height: 52, alignItems: "center" }}
+        >
+          {/* Flag */}
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
-            className="flex-row items-center mr-2"
+            style={{ justifyContent: "center", alignItems: "center", marginRight: 8 }}
           >
-            <Text className="text-2xl">{selectedCountry.flag}</Text>
+            <Text style={{ fontSize: 22 }}>{selectedCountry.flag}</Text>
           </TouchableOpacity>
 
           {/* Separator */}
-          <View className="h-6 w-[1px] bg-gray-300 mr-3" />
+          <View style={{ width: 1, height: 20, backgroundColor: "#D1D5DB", marginRight: 8 }} />
 
           {/* Country Code */}
-          <Text className="text-gray-700 text-base mr-2">
+          <Text className="text-gray-700" style={{ fontSize: 15, marginRight: 4 }}>
             {selectedCountry.code}
           </Text>
 
-          {/* Phone Input */}
+          {/* 
+            ✅ Key Fix: iOS-এ TextInput এর default paddingVertical থাকে যেটা
+            input কে container এর উপরে push করে দেয়।
+            paddingVertical: 0 + height: 52 দিলে TextInput নিজেই center এ থাকে।
+          */}
           <TextInput
-            className="flex-1 text-gray-900 text-base"
+            className="flex-1 text-gray-900"
             value={value}
             onChangeText={handlePhoneChange}
             placeholder={selectedCountry.format}
             placeholderTextColor="#9CA3AF"
             keyboardType="phone-pad"
             maxLength={selectedCountry.maxLength}
+            style={{
+              fontSize: 15,
+              height: 52,
+              paddingVertical: 0,
+              textAlignVertical: "center", // Android এর জন্য
+            }}
           />
         </View>
 
-        {/* Error Message */}
         {error && (
           <Text className="text-red-700 font-poppins text-center mt-1">
             {error}
@@ -241,9 +138,7 @@ export default function PhoneInput({ onChangeText, error, value }) {
                   className="flex-row items-center p-4 border-b border-gray-100"
                 >
                   <Text className="text-2xl mr-3">{item.flag}</Text>
-                  <Text className="flex-1 text-base text-gray-900">
-                    {item.name}
-                  </Text>
+                  <Text className="flex-1 text-base text-gray-900">{item.name}</Text>
                   <Text className="text-base text-gray-600">{item.code}</Text>
                 </TouchableOpacity>
               )}

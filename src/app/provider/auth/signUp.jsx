@@ -49,7 +49,7 @@ export default function SignUp() {
           "Location coordinates are required",
           (value) => {
             return value?.coordinates && value.coordinates.length === 2;
-          }
+          },
         ),
       phone: Yup.string()
         .required("Phone number is required")
@@ -62,7 +62,7 @@ export default function SignUp() {
             const cleaned = value.replace(/\D/g, "");
             // Check if it's exactly 10 digits
             return cleaned.length === 10;
-          }
+          },
         ),
       password: Yup.string()
         .required("Password is required")
@@ -161,6 +161,8 @@ export default function SignUp() {
               onChangeText={(text) => handleInputChange("password", text)}
               error={errors.password}
               value={registrationData.password}
+              textContentType="newPassword" // ✅ add করো
+              autoComplete="new-password"
             />
 
             {/* Confirm Password */}
@@ -185,6 +187,10 @@ export default function SignUp() {
                     handleInputChange("confirmPassword", text)
                   }
                   style={{ paddingVertical: verticalScale(12) }}
+                  textContentType="newPassword"
+                  autoComplete="new-password"
+                  autoCorrect={false}
+                  autoCapitalize="none"
                 />
                 <TouchableOpacity
                   onPress={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -221,8 +227,8 @@ export default function SignUp() {
                 color={agreeToTerms ? "#909090" : "#9CA3AF"}
               />
             </TouchableOpacity>
-        
-            <AgreeWithTerms/>
+
+            <AgreeWithTerms />
           </View>
           {/* Bottom Section */}
           <View className="mb-[4%] px-[6%] mt-[2%]  justify-center">

@@ -19,6 +19,12 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "tss.sta.gpt@gmail.com",
+        "appleTeamId": "6WGWY296TH",
+        "companyName": "QUOTO INC."
+      }
+    }
   }
 }

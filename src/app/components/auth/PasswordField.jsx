@@ -24,13 +24,18 @@ export default function PasswordField({
           style={{ paddingTop: verticalScale(12) }}
         />
         <TextInput
-          className="flex-1 font-poppins-400regular ml-[3%] text-sm  bg-[#f9f9f9] text-black "
+          className="flex-1 font-poppins-400regular ml-[3%] text-sm bg-[#f9f9f9] text-black"
           placeholder={placeholder}
           placeholderTextColor="#898989"
           secureTextEntry={!showPassword}
           onChangeText={onChangeText}
           value={value || ""}
           style={{ color: "#000", paddingVertical: verticalScale(12) }}
+          // ✅ iOS Strong Password suggestion বন্ধ করার জন্য
+          textContentType="newPassword"
+          autoComplete="new-password"
+          autoCorrect={false}
+          autoCapitalize="none"
         />
         <TouchableOpacity
           onPress={() => setShowPassword(!showPassword)}
