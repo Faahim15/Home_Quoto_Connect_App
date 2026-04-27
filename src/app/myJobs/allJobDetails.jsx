@@ -1,7 +1,6 @@
 import { ScrollView, View, ActivityIndicator } from "react-native";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
-import CustomTitle from "../components/shared/services/CustomTitle";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import CustomButton from "../components/shared/services/buttons/ServiceButton";
 import { router, useLocalSearchParams } from "expo-router";
@@ -10,7 +9,7 @@ import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/create
 import { Text } from "react-native";
 import DeleteConfirmationModal from "../components/tabs/myJobs/modal/DeleteConfirmationModal";
 import { useDeleteJob } from "../../hooks/useDeleteJob";
-
+import CustomTitle from "../components/shared/CustomTitle";
 export default function ServiceDetails() {
   const { serviceId } = useLocalSearchParams();
   const { data, isLoading, error, refetch } = useGetSingleJobQuery(serviceId);
@@ -55,7 +54,8 @@ export default function ServiceDetails() {
   }
 
   return (
-    <View className="flex-1 bg-[#F9F9F9]">
+    <View className="flex-1 bg-[#F9F9F9]"> 
+         <CustomTitle title="Service Details" withSafeTop={true} />
       <View className="flex-1 mb-[2%] px-[6%] bg-[#F9F9F9]">
         <ScrollView
           contentContainerStyle={{ paddingBottom: verticalScale(40) }}

@@ -26,15 +26,13 @@ export default function Layout() {
       <Stack.Screen
         name="terms"
         options={{
-          title: "Terms and Conditions",
-          ...stackScreenOptions,
+         headerShown: false,
         }}
       />
       <Stack.Screen
         name="privacy"
         options={{
-          title: "Privacy Policy",
-          ...stackScreenOptions,
+         headerShown: false,
         }}
       />
       <Stack.Screen

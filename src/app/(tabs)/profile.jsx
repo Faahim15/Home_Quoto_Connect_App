@@ -24,13 +24,13 @@ import { useLogoutUserMutation } from "../../redux/features/apiSlices/auth/authA
 import Toast from "react-native-toast-message";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUserProfileQuery } from "../../redux/features/apiSlices/user/userApiSlices";
-
+import { useDispatch } from "react-redux";
 export default function UserProfileScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const [logout, { isLoading: logoutLoading }] = useLogoutUserMutation();
-
+const dispatch = useDispatch();
   const {
     data: profile,
     isLoading: profileLoading,
@@ -67,9 +67,9 @@ export default function UserProfileScreen() {
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("userId");
       await AsyncStorage.removeItem("role");
-
+     dispatch({ type: "RESET_STORE" }); 
       setModalVisible(false);
-
+ 
       Toast.show({
         type: "success",
         text1: "Logged Out Successfully",

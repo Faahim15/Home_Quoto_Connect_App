@@ -6,8 +6,7 @@ export default function Layout() {
       <Stack.Screen
         name="allJobDetails"
         options={{
-          title: "Service Details",
-          ...stackScreenOptions,
+     headerShown: false,
         }}
       />
     </Stack>

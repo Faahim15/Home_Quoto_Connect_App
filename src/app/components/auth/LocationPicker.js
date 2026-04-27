@@ -48,6 +48,12 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
   }, []);
 
   useEffect(() => {
+    if (isMapVisible) {
+      getCurrentLocation();
+    }
+  }, [isMapVisible]);
+
+  useEffect(() => {
     if (value !== undefined) setLocationText(value);
   }, [value]);
 
@@ -162,10 +168,8 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
     await reverseGeocode(latitude, longitude);
   };
 
-  const handleMapPress = async (event) => {
-    const { latitude, longitude } = event.nativeEvent.coordinate;
-    setSelectedCoordinate({ latitude, longitude });
-    await reverseGeocode(latitude, longitude);
+  const handleMapPress = async () => {
+    await getCurrentLocation();
   };
 
   const confirmLocation = () => {

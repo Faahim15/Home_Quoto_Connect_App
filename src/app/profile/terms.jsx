@@ -1,15 +1,14 @@
 import { ScrollView, Text, View, ActivityIndicator } from "react-native";
-import CustomTitle from "../components/shared/services/CustomTitle";
-// import { useGetContentQuery } from "../api/homeApiSlices"; // Adjust import path as needed
-import RenderHtml from "react-native-render-html"; // You'll need to install this package
+import CustomTitle from "../components/shared/CustomTitle";
+import RenderHtml from "react-native-render-html"; 
 import { useWindowDimensions } from "react-native";
 import { useGetContentQuery } from "../../redux/features/apiSlices/user/userApiSlices";
 
 export default function TermsOfServices() {
   const { width } = useWindowDimensions();
 
-  // Fetch terms and conditions content from API
-  const { data, isLoading, error } = useGetContentQuery("terms_conditions"); // Adjust content type as needed
+ 
+  const { data, isLoading, error } = useGetContentQuery("terms_conditions"); 
 
   if (isLoading) {
     return (
@@ -36,11 +35,14 @@ export default function TermsOfServices() {
 
   const lastUpdated = new Date(content?.updatedAt).toLocaleDateString();
 
-  return (
+  return ( 
+   
+    <>
+     <CustomTitle title="Terms and Conditions" withSafeTop={true} />
     <View className="flex-1 px-[6%] bg-[#F9F9F9]">
       <View>
-        {/* <CustomTitle title={content?.title || "Terms and Conditions"} /> */}
 
+    
         {/* Last updated info */}
         {content?.updatedAt && (
           <Text className="font-poppins-400regular text-xs text-[#666666] mt-2">
@@ -114,5 +116,7 @@ export default function TermsOfServices() {
         </View>
       </ScrollView>
     </View>
+    </>
+
   );
 }

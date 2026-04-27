@@ -1,5 +1,5 @@
 import { ScrollView, Text, View, ActivityIndicator } from "react-native";
-import CustomTitle from "../components/shared/services/CustomTitle";
+import CustomTitle from "../components/shared/CustomTitle";
 import RenderHtml from "react-native-render-html"; // You'll need to install this package
 import { useWindowDimensions } from "react-native";
 import { useGetContentQuery } from "../../redux/features/apiSlices/user/userApiSlices";
@@ -35,8 +35,13 @@ export default function PrivacyScreen() {
 
   const lastUpdated = new Date(content?.updatedAt).toLocaleDateString();
 
-  return (
-    <View className="flex-1 px-[6%] bg-[#F9F9F9]">
+  return ( 
+
+    <>
+        <CustomTitle title="Privacy Policy" withSafeTop={true} />
+    <View className="flex-1 px-[6%] bg-[#F9F9F9]"> 
+
+     
       <View>
         {/* Last updated info */}
         {content?.updatedAt && (
@@ -102,5 +107,6 @@ export default function PrivacyScreen() {
         </View>
       </ScrollView>
     </View>
+    </>
   );
 }

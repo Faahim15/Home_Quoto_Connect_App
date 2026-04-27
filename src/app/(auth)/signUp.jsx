@@ -114,16 +114,19 @@ export default function SignUpScreen() {
           params: { email: formData.email },
         });
       } else {
-        //  5: Handle logical failure (just in case)
+     
         Toast.show({
           type: "error",
-          text1: "Error",
+          text1: "Failed",
           text2: res?.message || "Registration failed",
           visibilityTime: 2000,
         });
       }
     } catch (err) {
-      // Step 6: Handle validation or network errors
+       
+      
+  
+
       if (err.name === "ValidationError") {
         const validationErrors = {};
         err.inner.forEach((e) => {
@@ -131,9 +134,9 @@ export default function SignUpScreen() {
         });
         setErrors(validationErrors);
       } else {
-        console.log("API Error:", err);
+        console.log("API Errora:", err);
         const errorMessage =
-          err?.data?.message ||
+          err?.message ||
           err?.data?.email?.[0] ||
           err?.error ||
           "Network or server error. Please try again.";
