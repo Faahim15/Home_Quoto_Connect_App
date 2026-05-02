@@ -1,5 +1,5 @@
 import { api } from "../../api/baseApi";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // authApiSlices.js
 export const authSlice = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -100,16 +100,33 @@ export const authSlice = api.injectEndpoints({
       invalidatesTags: ["User"],
     }),
     // Upload verification documents (PDF for businessLicense, Image for certificate)
-    uploadVerificationDocuments: builder.mutation({
-      query: (formData) => {
-        return {
-          url: `/profile/verification-documents`,
-          method: "POST",
-          body: formData,
-        };
-      },
-      invalidatesTags: ["User"],
-    }),
+// uploadVerificationDocuments: builder.mutation({
+//   query: async (formData) => {
+//     const token = await AsyncStorage.getItem("token"); 
+
+//     console.log('latest token',token );
+
+//     return {
+//       url: `/profile/verification-documents`,
+//       method: "POST",
+//       headers: {
+//         Authorization: `Bearer ${token}`, 
+
+        
+//       },
+//       body: formData,
+//     };
+//   },
+// }), 
+uploadVerificationDocuments: builder.mutation({
+  query: (formData) => ({
+    url: `/profile/verification-documents`,
+    method: "POST",
+    body: formData,
+  }),
+  invalidatesTags: ["User"],
+}),
+ 
   }),
   overrideExisting: true,
 });

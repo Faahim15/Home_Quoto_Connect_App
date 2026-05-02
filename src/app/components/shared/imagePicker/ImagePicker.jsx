@@ -82,7 +82,7 @@ export default function ImageSelector({ selectedFile, onFileSelect }) {
             {selectedFile ? (
               <View className="flex-row py-[5%] px-[3%] justify-between items-center">
                 <View
-                  style={{ width: scale(122), height: verticalScale(55) }}
+                  style={{ width: scale(122), height: verticalScale(20) }}
                   className="flex-row  gap-[4%]"
                 >
                   <Ionicons

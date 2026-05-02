@@ -8,11 +8,12 @@ import VerifyHeader from "../../components/provider/auth/VerifyHeader";
 
 export default function licenceVerify() {
   return (
-    <View className="flex-1 bg-[#F9F9F9]">
-      <View className="flex-1 mx-[6%]">
-        <View className="mt-[3%]">
+    <View className="flex-1 bg-[#F9F9F9]"> 
+       <View >
           <CustomTitle />
         </View>
+      <View className="flex-1 mx-[6%]">
+     
         <View className="flex-1 justify-center items-center mt-[11.20%]">
           <View
             style={{ width: scale(64), height: verticalScale(64) }}

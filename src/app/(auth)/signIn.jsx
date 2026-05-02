@@ -40,21 +40,16 @@ export default function SignInScreen() {
 
   const handleSubmit = async () => {
     try {
-   
       await validationSchema.validate(formData, { abortEarly: false });
       setErrors({});
 
+      const data = {
+        email: formData.email.trim(),
+        password: formData.password,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      };
 
-const data = {
-  email: formData.email.trim(),
-  password: formData.password,
-  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, 
-};
-
-   
       const res = await login(data).unwrap();
-
-
 
       await AsyncStorage.setItem("token", res?.data?.token);
       await AsyncStorage.setItem("userId", res?.data?.user?._id);
@@ -66,9 +61,6 @@ const data = {
         text2: `Welcome back, ${res?.data?.user?.fullName || "User"}!`,
       });
 
- 
-
-    
       if (res?.data?.user?.role !== "provider") router.push("/home");
       else {
         Toast.show({
@@ -78,10 +70,6 @@ const data = {
         });
       }
     } catch (error) {
-     
-
-    
-
       Toast.show({
         type: "error",
         text1: "Login Failed",
@@ -89,7 +77,6 @@ const data = {
           error?.data?.message || "Something went wrong. Please try again.",
       });
 
-     
       if (error.name === "ValidationError") {
         const fieldErrors = {};
         error.inner.forEach((err) => {

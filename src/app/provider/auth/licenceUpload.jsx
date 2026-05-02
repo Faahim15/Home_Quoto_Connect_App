@@ -1,7 +1,9 @@
 // LicenceUpload.jsx
 import { View, Alert, Platform } from "react-native";
 import { useState } from "react";
-import CustomTitle from "../../components/shared/CustomTitle";
+import CustomTitle from "../../components/shared/CustomTitle"; 
+import { useEffect } from "react"; 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import VerifyHeader from "../../components/provider/auth/VerifyHeader";
 import Uploader from "../../components/provider/auth/Uploader";
 import LicenceHeader from "../../components/provider/auth/LicenceHeader";
@@ -23,7 +25,25 @@ const normalizeUri = (uri) =>
 
 export default function LicenceUpload() {
   const [businessLicense, setBusinessLicense] = useState(null);
-  const [certificate, setCertificate] = useState(null);
+  const [certificate, setCertificate] = useState(null); 
+
+  const [token, setToken] = useState(null); 
+
+ useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        const value = await AsyncStorage.getItem('token');
+        if (value !== null) {
+          console.log("Token retrieved:", value);
+          setToken(value);
+        }
+      } catch (error) {
+        console.error("Error fetching token:", error);
+      }
+    };
+
+    fetchToken();
+  }, []);
 
   const [uploadDocuments, { isLoading }] =
     useUploadVerificationDocumentsMutation();
@@ -80,18 +100,19 @@ export default function LicenceUpload() {
       Toast.show({
         type: "error",
         text1: "Upload failed",
-        text2: "Failed to upload documents. Please try again.",
+        text2: error?.message || "Failed to upload documents. Please try again.",
       });
     }
   };
 
   return (
-    <View className="flex-1 bg-[#F9F9F9]">
-      <View className="mx-[6%]">
-        <View className="mt-[3%]">
+    <View className="flex-1 bg-[#F9F9F9]"> 
+          <View>
           <CustomTitle />
         </View>
 
+      <View className="mx-[6%]">
+  
         <View className="mt-[9%]">
           <VerifyHeader
             title="Upload Your License and ID"

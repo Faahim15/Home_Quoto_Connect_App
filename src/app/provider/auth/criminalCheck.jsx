@@ -36,15 +36,16 @@ export default function CriminalCheck() {
   };
 
   return (
-    <View className="flex-1 bg-[#F9F9F9]">
+    <View className="flex-1 bg-[#F9F9F9]"> 
+     <View >
+          <CustomTitle />
+        </View>
+
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: "6%", paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       >
-        <View className="mt-[3%]">
-          <CustomTitle />
-        </View>
-
+       
         <View className="mt-[9%]">
           <VerifyHeader
             title="Criminal Background Check"
