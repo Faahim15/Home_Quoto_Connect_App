@@ -5,14 +5,12 @@ import {
   Pressable,
   ActivityIndicator,
 } from "react-native";
-
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import UserSelectionButtons from "../components/onboarding/ChoiceButton";
 import XStyle from "../util/styles";
 import ServiceCards from "../components/shared/services/ServiceCards";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router"; 
-
 import {
   useGetActiveJobsQuery,
   useGetTodaysJobsQuery,
@@ -125,9 +123,9 @@ export default function OnboardingHomeScreen() {
           whichJob="active job"
         />
 
-        {/* Active Jobs section ends here */}
+    
 
-        {/* User Selection section ends here */}
+
       </ScrollView>
       {/* User Selection section starts here */}
       <View

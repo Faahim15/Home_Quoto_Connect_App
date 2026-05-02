@@ -45,10 +45,11 @@ export default function SignInScreen() {
       setErrors({});
 
 
-      const data = {
-        email: formData.email.trim(),
-        password: formData.password,
-      };
+const data = {
+  email: formData.email.trim(),
+  password: formData.password,
+  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, 
+};
 
    
       const res = await login(data).unwrap();
