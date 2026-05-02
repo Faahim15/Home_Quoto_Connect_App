@@ -22,10 +22,9 @@ export default function TimeRangePicker() {
 
   const [registerUser, { isLoading }] = useRegisterUserMutation();
   const specializationIds = registrationData?.specializations.map(
-    (spec) => spec.id
+    (spec) => spec.id,
   );
 
-  // Helper function to convert time to 24-hour format string
   const convertTo24Hour = (date) => {
     if (!date) return "";
     const hours = date.getHours().toString().padStart(2, "0");
@@ -43,7 +42,7 @@ export default function TimeRangePicker() {
           setProviderRegister({
             field: "from",
             value: convertTo24Hour(updatedTime),
-          })
+          }),
         );
       } else if (showPicker.type === "to") {
         setToTime(updatedTime);
@@ -51,7 +50,7 @@ export default function TimeRangePicker() {
           setProviderRegister({
             field: "to",
             value: convertTo24Hour(updatedTime),
-          })
+          }),
         );
       }
     }
@@ -69,7 +68,6 @@ export default function TimeRangePicker() {
           const { from } = this.parent;
           if (!from || !value) return true;
 
-          // Helper function to convert "HH:MM" to minutes
           const timeToMinutes = (timeStr) => {
             const [hours, minutes] = timeStr.split(":").map(Number);
             return hours * 60 + minutes;
@@ -79,7 +77,7 @@ export default function TimeRangePicker() {
           const toMinutes = timeToMinutes(value);
 
           return toMinutes > fromMinutes;
-        }
+        },
       )
       .test(
         "minimum-duration",
@@ -88,7 +86,6 @@ export default function TimeRangePicker() {
           const { from } = this.parent;
           if (!from || !value) return true;
 
-          // Helper function to convert "HH:MM" to minutes
           const timeToMinutes = (timeStr) => {
             const [hours, minutes] = timeStr.split(":").map(Number);
             return hours * 60 + minutes;
@@ -100,7 +97,7 @@ export default function TimeRangePicker() {
           const diffHours = diffMinutes / 60;
 
           return diffHours >= 1;
-        }
+        },
       ),
   });
 
@@ -114,7 +111,6 @@ export default function TimeRangePicker() {
         to: registrationData?.to,
       };
 
-      // Prepare serviceAreas array
       const serviceAreas =
         registrationData?.serviceArea?.map((area) => area.name) || [];
 
@@ -135,9 +131,8 @@ export default function TimeRangePicker() {
         specializations: specializationIds,
         serviceAreas: serviceAreas,
         workingHours: workingHours,
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       };
-
-      console.log("📤 Sending Payload:", JSON.stringify(payload, null, 2));
 
       const res = await registerUser(payload).unwrap();
       dispatch(resetProviderForm());
@@ -145,7 +140,6 @@ export default function TimeRangePicker() {
       // ⭐ IMPORTANT: Save token to AsyncStorage immediately
       if (res?.data?.token) {
         await AsyncStorage.setItem("token", res.data.token);
-        console.log("✅ Token saved to AsyncStorage");
       }
 
       if (res?.success) {
@@ -174,7 +168,6 @@ export default function TimeRangePicker() {
           validationErrors[e.path] = e.message;
         });
         setErrors(validationErrors);
-        console.log("🔴 Validation Errors:", validationErrors);
       } else {
         console.log("API Error:", err);
         const errorMessage =
@@ -242,6 +235,7 @@ export default function TimeRangePicker() {
             is24Hour={true}
             display={Platform.OS === "ios" ? "spinner" : "default"}
             onChange={handleTimeChange}
+            locale="en_GB" 
           />
         )}
       </View>

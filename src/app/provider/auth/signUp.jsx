@@ -31,7 +31,6 @@ export default function SignUp() {
   const handleInputChange = (field, value) => {
     dispatch(setProviderRegister({ field, value }));
 
-    // ✅ Clear errors when user interacts
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
@@ -58,9 +57,7 @@ export default function SignUp() {
           "Please enter a valid 10-digit phone number",
           (value) => {
             if (!value) return false;
-            // Remove all non-digits
             const cleaned = value.replace(/\D/g, "");
-            // Check if it's exactly 10 digits
             return cleaned.length === 10;
           },
         ),
@@ -72,13 +69,13 @@ export default function SignUp() {
         .required("Confirm Password is required"),
     });
 
-    // ✅ Transform jobData before validation
+  
     const transformedData = {
       ...registrationData,
     };
 
     try {
-      console.log("show", registrationData);
+
       currentPageSchema.validateSync(transformedData, { abortEarly: false });
       setErrors({});
       return true;

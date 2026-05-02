@@ -57,6 +57,8 @@
     <string>This app uses the camera for video calls.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>We use your location to enhance location-based features.</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your location</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>We use your location to show nearby services and improve your experience.</string>
     <key>NSMicrophoneUsageDescription</key>

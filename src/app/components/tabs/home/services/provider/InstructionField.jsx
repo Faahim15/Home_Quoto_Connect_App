@@ -15,7 +15,7 @@ export default function InstructionField({ onChangeText, mode, value }) {
       >
         <Text className="font-poppins-500medium text-base text-[#5C5F62]">
           {mode === "bio"
-            ? "Describe the services you offerr"
+            ? "Describe the services you offer"
             : "Provide Specific Instructions or Details"}
         </Text>
 

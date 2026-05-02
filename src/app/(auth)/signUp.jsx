@@ -29,7 +29,8 @@ export default function SignUpScreen() {
     phone: "",
     password: "",
     confirmPassword: "",
-    location: null,
+    location: null, 
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   });
   const location = {
     type: "Point",
@@ -63,9 +64,7 @@ export default function SignUpScreen() {
         "Please enter a valid 10-digit phone number",
         (value) => {
           if (!value) return false;
-          // Remove all non-digits
           const cleaned = value.replace(/\D/g, "");
-          // Check if it's exactly 10 digits
           return cleaned.length === 10;
         }
       ),
@@ -78,7 +77,9 @@ export default function SignUpScreen() {
       .test("has-coordinates", "Location coordinates are required", (value) => {
         return value?.coordinates && value.coordinates.length === 2;
       }),
-  });
+  }); 
+
+
 
   const handleSubmit = async () => {
     try {
@@ -94,10 +95,12 @@ export default function SignUpScreen() {
       formsData.append("password", formData.password);
       formsData.append("confirmPassword", formData.confirmPassword);
       formsData.append("phoneNumber", formData.phone);
-      formsData.append("location", JSON.stringify(location));
-      // Step 3: Call API
+      formsData.append("location", JSON.stringify(location)); 
+      formsData.append("timezone", formData.timezone); 
+   
       const res = await registerUser(formsData).unwrap();
-      console.log("register from data:", res?.message);
+    
+      console.log({res})
 
       // Step 4: Handle success
       if (res?.success) {
