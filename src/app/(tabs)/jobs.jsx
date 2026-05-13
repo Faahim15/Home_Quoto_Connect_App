@@ -1,11 +1,11 @@
 import {
   View,
   Text,
-  TouchableOpacity,
   Image,
   ScrollView,
   SafeAreaView,
   Alert,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -106,7 +106,7 @@ export default function PostJobScreen() {
         </Text>
 
         {/* Upload Area */}
-        <TouchableOpacity
+        <Pressable
           onPress={showImageOptions}
           className="w-full h-[40%] bg-gray-100 rounded-lg flex items-center justify-center mb-[5%] border-2 border-dashed border-gray-300"
         >
@@ -114,7 +114,7 @@ export default function PostJobScreen() {
             <Ionicons name="camera" size={24} color="white" />
           </View>
           <Text className="text-gray-600 text-center">Tap to add photos</Text>
-        </TouchableOpacity>
+        </Pressable>
 
         {/* Photo Grid */}
         <View className="flex-row flex-wrap justify-between mb-[5%]">
@@ -125,12 +125,12 @@ export default function PostJobScreen() {
                 className="w-full bg-gray-100 rounded-lg"
                 style={{ aspectRatio: 1 }}
               />
-              <TouchableOpacity
+              <Pressable
                 onPress={() => handleRemovePhoto(photo.id)}
                 className="absolute top-[5%] right-[5%] bg-white rounded-full p-1 shadow-md"
               >
                 <Ionicons name="close" size={16} color="#666" />
-              </TouchableOpacity>
+              </Pressable>
             </View>
           ))}
         </View>

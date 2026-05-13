@@ -1,9 +1,4 @@
-import {
-  View,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import CustomTitle from "../../components/shared/CustomTitle";
 import JobSummary from "../../components/tabs/jobs/JobSummary";
 import XStyle from "../../util/styles";
@@ -13,16 +8,16 @@ import { useLocalSearchParams } from "expo-router";
 import { router } from "expo-router";
 import CancelModal from "../../components/shared/modal/CancelModal";
 import { useState } from "react";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import {
   useAcceptOfferQuoteMutation,
   useGetAllQuotesQuery,
   useRemoveQuoteMutation,
 } from "../../../redux/features/apiSlices/quote/quoteApiSlice";
 import { Text } from "react-native";
-// import { capitalizeFirstLetter } from "../../util/helper-function";
 import { Ionicons } from "@expo/vector-icons";
 import { capitalizeFirstLetter } from "../../util/helper-function";
+
 export default function QuotesRequestDetailScreen() {
   const { quoteId, jobId } = useLocalSearchParams();
   const { data, isLoading, error, refetch } = useGetAllQuotesQuery();
@@ -56,15 +51,14 @@ export default function QuotesRequestDetailScreen() {
         <Text className="font-poppins-400regular text-sm text-gray-600 mt-2 text-center">
           {error?.message || "Something went wrong. Please try again."}
         </Text>
-
-        <TouchableOpacity
+        <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-500medium text-white text-base">
             Retry
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }
@@ -80,16 +74,12 @@ export default function QuotesRequestDetailScreen() {
       setCancelModalVisible(false);
       router.push("/provider/myJobs");
     } catch (err) {
-      Toast.show({
-        type: "error",
-        text1: "Cancellation Failed",
-        text2: err?.message || "Please try again.",
-      });
+      toast.error(err?.message || "Please try again.");
     }
   };
 
   return (
-    <View className="flex-1  bg-[#f9f9f9]">
+    <View className="flex-1 bg-[#f9f9f9]">
       <View className="px-[6%]">
         <CustomTitle
           title={
@@ -103,17 +93,16 @@ export default function QuotesRequestDetailScreen() {
       </ScrollView>
 
       <View
-        className="flex-col gap-[1%]   border border-[#D8DCE0]  "
+        className="flex-col gap-[1%] border border-[#D8DCE0]"
         style={[
           XStyle.shadowBox,
           {
             borderTopRightRadius: scale(20),
             borderTopLeftRadius: scale(20),
-            // height: verticalScale(140),
           },
         ]}
       >
-        <View className="flex-row gap-[6%]  justify-center overflow-hidden items-center ">
+        <View className="flex-row gap-[6%] justify-center overflow-hidden items-center">
           <BotttomButtons
             onPress={() => setCancelModalVisible(true)}
             width={145}
@@ -136,7 +125,6 @@ export default function QuotesRequestDetailScreen() {
             color="#175994"
             borderColor="#175994"
             title="Send Offer"
-            // loading={isAccepting}
           />
         </View>
       </View>

@@ -5,7 +5,7 @@ import CustomButton from "../components/tabs/home/services/provider/details/Cust
 import { router } from "expo-router";
 import { useSelector } from "react-redux";
 import * as Yup from "yup";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import { useState } from "react";
 
 export default function DirectJobLocation() {
@@ -60,12 +60,7 @@ export default function DirectJobLocation() {
 
         // Show first error in toast
         const firstError = validationError.inner[0].message;
-        Toast.show({
-          type: "error",
-          text1: "Validation Error",
-          text2: firstError,
-          position: "bottom",
-        });
+        toast.error(firstError);
 
         console.log("❌ Validation errors:", errors);
       }

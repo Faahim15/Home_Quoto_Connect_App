@@ -3,7 +3,7 @@ import {
   Text,
   ScrollView,
   ActivityIndicator,
-  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import { useState } from "react";
 import CustomTitle from "../../components/shared/CustomTitle";
@@ -14,17 +14,12 @@ import XStyle from "../../util/styles";
 import { scale, verticalScale } from "../../components/adaptive/Adaptiveness";
 import { useGetAllQuotesQuery } from "../../../redux/features/apiSlices/quote/quoteApiSlice";
 import { Ionicons } from "@expo/vector-icons";
-
 import CashConfirmModal from "../../components/shared/modal/CashConfirmModal";
-
-// Payment APIs
-
 import {
   useConfirmCashPaymentMutation,
   useGetTransactionByJobQuery,
 } from "../../../redux/features/apiSlices/payment/paymentApiSlice";
-
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 
 export default function AcceptJobDetailScreen() {
   const { quoteId, jobId } = useLocalSearchParams();
@@ -33,8 +28,6 @@ export default function AcceptJobDetailScreen() {
 
   // Fetch all quotes
   const { data, isLoading, error, refetch } = useGetAllQuotesQuery();
-
-  // console.log("job id", jobId, quoteId);
 
   // Fetch transaction by jobId
   const {
@@ -53,10 +46,7 @@ export default function AcceptJobDetailScreen() {
       const transactionId = transactionData?.data?.transaction?._id;
 
       if (!transactionId) {
-        Toast.show({
-          type: "error",
-          text1: "Transaction not found",
-        });
+        toast.error("Transaction not found.");
         return;
       }
 
@@ -65,10 +55,7 @@ export default function AcceptJobDetailScreen() {
         transactionData?.data?.transaction?.cashPayment?.confirmedByProvider;
 
       if (alreadyConfirmed) {
-        Toast.show({
-          type: "info",
-          text1: "Payment already confirmed",
-        });
+        toast.info("Payment already confirmed.");
         setCashConfirmModalVisible(false);
         return;
       }
@@ -76,19 +63,12 @@ export default function AcceptJobDetailScreen() {
       // 3️⃣ Confirm cash payment
       await confirmCashPayment(transactionId).unwrap();
 
-      Toast.show({
-        type: "success",
-        text1: "Payment confirmed",
-      });
+      toast.success("Payment confirmed.");
 
       setCashConfirmModalVisible(false);
       router.push("/provider/myJobs");
     } catch (err) {
-      Toast.show({
-        type: "error",
-        text1: "Payment confirmation failed",
-        text2: err?.message || "Please try again.",
-      });
+      toast.error(err?.message || "Please try again.");
     }
   };
 
@@ -112,14 +92,14 @@ export default function AcceptJobDetailScreen() {
         <Text className="font-poppins-600semiBold text-lg text-gray-900 mt-4 text-center">
           Failed to Load Information
         </Text>
-        <TouchableOpacity
+        <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-500medium text-white text-base">
             Retry
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }

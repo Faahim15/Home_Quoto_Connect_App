@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import XStyle from "../../../util/styles";
 export default function AccountOptionItem({
@@ -7,7 +7,7 @@ export default function AccountOptionItem({
   onPress,
 }) {
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       style={XStyle.shadowBox}
       className="flex-row mt-[3%] rounded-2xl border border-[#fff] justify-between"
@@ -19,6 +19,6 @@ export default function AccountOptionItem({
         {title}
       </Text>
       <Ionicons name="chevron-forward" size={18} color="#333333" />
-    </TouchableOpacity>
+    </Pressable>
   );
 }

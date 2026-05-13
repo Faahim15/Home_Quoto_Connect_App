@@ -6,7 +6,7 @@ import CustomButton from "../../components/tabs/home/services/provider/details/C
 import { router, useLocalSearchParams } from "expo-router";
 import { useGetSingleJobQuery } from "../../../redux/features/apiSlices/user/createJobSlices";
 import { useState } from "react";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import { useCreateReviewMutation } from "../../../redux/features/apiSlices/review/reviewApiSlice";
 
 export default function ReviewFormScreen() {
@@ -22,8 +22,6 @@ export default function ReviewFormScreen() {
     comment: "",
   });
 
-  // console.log("from", formData);
-
   const { fullName } = data?.data?.job?.client || {};
 
   const providerName = data?.data?.job?.quotes[0]?.provider;
@@ -31,20 +29,12 @@ export default function ReviewFormScreen() {
   // ⭐ handle submit
   const handleSubmit = async () => {
     if (!formData.rating) {
-      Toast.show({
-        type: "error",
-        text1: "Rating Required",
-        text2: "Please select a rating before submitting.",
-      });
+      toast.error("Please select a rating before submitting.");
       return;
     }
 
     if (!formData.comment.trim()) {
-      Toast.show({
-        type: "error",
-        text1: "Comment Required",
-        text2: "Please write a comment before submitting.",
-      });
+      toast.error("Please write a comment before submitting.");
       return;
     }
 
@@ -58,11 +48,7 @@ export default function ReviewFormScreen() {
           : "provider_to_client",
       }).unwrap();
 
-      Toast.show({
-        type: "success",
-        text1: "Success",
-        text2: "Your review has been submitted!",
-      });
+      toast.success("Your review has been submitted!");
 
       // Wait before navigation
       setTimeout(() => {
@@ -73,11 +59,7 @@ export default function ReviewFormScreen() {
         }
       }, 1500);
     } catch (err) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: err?.message || "Failed to submit review. Try again.",
-      });
+      toast.error(err?.message || "Failed to submit review. Try again.");
       console.log("Review submit error:", err?.message);
     }
   };
@@ -134,9 +116,6 @@ export default function ReviewFormScreen() {
           onPress={handleSubmit}
         />
       </View>
-
-      {/* Toast Component */}
-      <Toast />
     </View>
   );
 }

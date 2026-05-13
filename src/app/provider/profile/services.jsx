@@ -8,7 +8,7 @@ import {
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import { router } from "expo-router";
 import CustomTitle from "../../components/shared/CustomTitle";
 import DropdownMenu from "../../components/provider/profile/DropdownMenu";
@@ -41,7 +41,7 @@ export default function ServiceScreen() {
   const [showPicker, setShowPicker] = useState({ type: null, show: false });
 
   const serviceAreasFromRedux = useSelector(
-    (state) => state.providerRegister.serviceArea || []
+    (state) => state.providerRegister.serviceArea || [],
   );
 
   const { data, isLoading } = useGetServiceCategoriesQuery();
@@ -127,7 +127,7 @@ export default function ServiceScreen() {
         setProviderRegister({
           field: "serviceArea",
           value: transformedServiceAreas,
-        })
+        }),
       );
     }
   }, [profile]);
@@ -161,11 +161,27 @@ export default function ServiceScreen() {
   };
 
   const handleSave = async () => {
+    // Check if any changes were made
+    const user = profile?.data?.user;
+
+    const noChanges =
+      formData.category === (user?.businessName || "") &&
+      formData.bio === (user?.bio || "") &&
+      formData.experience.split(" ")[0].toLowerCase() ===
+        (user?.experienceLevel?.toLowerCase() || "") &&
+      formData.workingHours.from === (user?.workingHours?.from || "") &&
+      formData.workingHours.to === (user?.workingHours?.to || "");
+
+    if (noChanges) {
+      toast.info("No changes detected. Please update something before saving.");
+      return;
+    }
+
     try {
       const specializationIds = formData.specializations.map((s) => s.id);
 
       const categoryObj = data?.data?.categories?.find(
-        (c) => c.title === formData.category
+        (c) => c.title === formData.category,
       );
 
       await updateProfileData({
@@ -177,20 +193,15 @@ export default function ServiceScreen() {
         bio: formData.bio,
       }).unwrap();
 
-      Toast.show({
-        type: "success",
-        text1: "Success",
-        text2: "Service information updated successfully",
-      });
+      toast.success("Service information updated successfully.");
 
       refetchProfile();
       router.back();
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error?.data?.message || "Failed to update information",
-      });
+      toast.error(
+        error?.data?.message ||
+          "Failed to update service information. Please try again.",
+      );
     }
   };
 
@@ -200,17 +211,14 @@ export default function ServiceScreen() {
       behavior={Platform.OS === "ios" ? "padding" : "padding"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
     >
-      <View className="flex-1 bg-[#F9F9F9]"> 
-     
-     <CustomTitle title="My Services" withSafeTop={true} />
+      <View className="flex-1 bg-[#F9F9F9]">
+        <CustomTitle title="My Services" withSafeTop={true} />
 
         <ScrollView
           className="flex-1 px-[6%]"
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: verticalScale(40) }}
         >
-       
-
           {/* Service Category */}
           <View className="mt-[3%]">
             <Text className="font-poppins-semiBold text-base text-[#6B7280]">
@@ -298,7 +306,7 @@ export default function ServiceScreen() {
         </ScrollView>
 
         {/* Save Button */}
-        <View className="pb-[20%] ">
+        <View className="pb-[20%]">
           <ProfileButton
             onPress={handleSave}
             title={isUpdating ? "Saving..." : "Save"}

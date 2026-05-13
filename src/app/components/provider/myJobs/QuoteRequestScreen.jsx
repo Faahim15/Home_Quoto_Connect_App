@@ -13,7 +13,7 @@ import {
 } from "../../../components/adaptive/Adaptiveness";
 import BottomButtons from "../../shared/services/buttons/BottomButtons";
 import CancelModal from "../../../components/shared/modal/CancelModal";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { Image } from "expo-image";
@@ -43,11 +43,8 @@ const ServiceCard = ({ item }) => {
       setCancelModalVisible(false);
       router.push("/provider/myJobs");
     } catch (err) {
-      Toast.show({
-        type: "error",
-        text1: "Cancellation Failed",
-        text2: err?.message || "Please try again.",
-      });
+      // ✅ sonner-native instead of Toast
+      toast.error(err?.message || "Please try again.");
     }
   };
 
@@ -170,14 +167,12 @@ export default function QuotesRequestScreen() {
   const { data, isLoading, error, refetch } = useGetAllQuotesQuery();
   const [refreshing, setRefreshing] = useState(false);
 
-  // Refresh when screen focuses
   useFocusEffect(
     useCallback(() => {
       refetch();
     }, [refetch]),
   );
 
-  // Pull to Refresh
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await refetch();
@@ -211,7 +206,6 @@ export default function QuotesRequestScreen() {
         <Text className="font-poppins-400regular text-sm text-gray-600 mt-2 text-center">
           {error?.message || "Something went wrong. Please try again."}
         </Text>
-
         <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
@@ -236,15 +230,12 @@ export default function QuotesRequestScreen() {
     return (
       <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">
         <Ionicons name="document-text-outline" size={64} color="#9CA3AF" />
-
         <Text className="font-poppins-500medium text-lg text-gray-900 mt-4 text-center">
           No Quotes Available
         </Text>
-
         <Text className="font-poppins-400regular text-sm text-gray-600 mt-2 text-center">
           You don't have any quote requests at the moment.
         </Text>
-
         <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
@@ -261,7 +252,7 @@ export default function QuotesRequestScreen() {
   // Main List
   // ------------------------------------------
   return (
-    <View className=" bg-[#f9f9f9] mt-[4%] items-center">
+    <View className="bg-[#f9f9f9] mt-[4%] items-center">
       <FlatList
         data={pendingJobs}
         renderItem={({ item }) => <ServiceCard item={item} />}

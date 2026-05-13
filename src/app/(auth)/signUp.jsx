@@ -3,11 +3,10 @@ import {
   View,
   Text,
   TextInput,
-  TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
-  Platform, 
-  Pressable
+  Platform,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { verticalScale } from "../components/adaptive/Adaptiveness";
@@ -226,7 +225,7 @@ export default function SignUpScreen() {
                   }
                   // style={{ paddingVertical: verticalScale(10) }}
                 />
-                <TouchableOpacity
+                <Pressable
                   onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="ml-[2%]"
                 >
@@ -238,7 +237,7 @@ export default function SignUpScreen() {
                     color="#9CA3AF"
                     style={{ paddingVertical: verticalScale(12) }}
                   />
-                </TouchableOpacity>
+                </Pressable>
               </View>
               {errors.confirmPassword && (
                 <Text className="text-red-700 font-poppins text-center mt-1">
@@ -252,25 +251,25 @@ export default function SignUpScreen() {
         {/* Bottom Section */}
         <View className="border-t border-[#dcdcdc]">
           <View className="flex-row pl-[5.5%] mt-[1%] items-center">
-             <Pressable
-               onPress={() => setAgreeToTerms(!agreeToTerms)}
-               activeOpacity={0.7}
-               style={{
-                 width: 20,
-                 height: 20,
-                 borderRadius: 5,
-                 borderWidth: 1.5,
-                 borderColor: agreeToTerms ? "#0054A5" : "#D1D5DB",
-                 backgroundColor: agreeToTerms ? "#0054A5" : "#fff",
-                 alignItems: "center",
-                 justifyContent: "center",
-                 marginRight: 10,
-               }}
-             >
-               {agreeToTerms && (
-                 <Ionicons name="checkmark" size={13} color="#fff" />
-               )}
-             </Pressable>
+            <Pressable
+              onPress={() => setAgreeToTerms(!agreeToTerms)}
+              activeOpacity={0.7}
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: 5,
+                borderWidth: 1.5,
+                borderColor: agreeToTerms ? "#0054A5" : "#D1D5DB",
+                backgroundColor: agreeToTerms ? "#0054A5" : "#fff",
+                alignItems: "center",
+                justifyContent: "center",
+                marginRight: 10,
+              }}
+            >
+              {agreeToTerms && (
+                <Ionicons name="checkmark" size={13} color="#fff" />
+              )}
+            </Pressable>
             <AgreeWithTerms />
           </View>
 

@@ -14,9 +14,8 @@ import InputField from "../../components/tabs/profile/InputField";
 import PhotoUpload from "./PhotoUpload";
 import AddMoreButton from "../../components/provider/profile/AddMoreButton";
 import { useCreateProjectGalleryMutation } from "../../../redux/features/apiSlices/user/userApiSlices";
-
 import { router } from "expo-router";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 
 export default function ProjectGalleryForm() {
   const [formData, setFormData] = useState({
@@ -61,34 +60,28 @@ export default function ProjectGalleryForm() {
 
   const handleSubmit = async () => {
     if (!formData.title.trim()) {
-      return Toast.show({ type: "error", text1: "Title is required" });
+      return toast.error("Project title is required. Please enter a title.");
     }
 
     if (!formData.category) {
-      return Toast.show({ type: "error", text1: "Please select a category" });
+      return toast.error("Please select a service category to continue.");
     }
 
     if (!formData.projectDate) {
-      return Toast.show({ type: "error", text1: "Project date is required" });
+      return toast.error("Project date is required. Please pick a date.");
     }
 
     if (formData.images.length === 0) {
-      return Toast.show({
-        type: "error",
-        text1: "Please upload at least one photo",
-      });
+      return toast.error("Please upload at least one photo for your project.");
     }
 
     // 🔎 Find selected category object by title
     const selectedCategoryObj = data?.data?.categories?.find(
-      (item) => item.title === formData.category
+      (item) => item.title === formData.category,
     );
 
     if (!selectedCategoryObj) {
-      return Toast.show({
-        type: "error",
-        text1: "Selected category not found",
-      });
+      return toast.error("Selected category not found. Please try again.");
     }
 
     const serviceCategoryId = selectedCategoryObj._id;
@@ -123,20 +116,13 @@ export default function ProjectGalleryForm() {
       console.log("✅ API RESPONSE:", response);
 
       if (response?.success) {
-        Toast.show({
-          type: "success",
-          text1: "Project added successfully",
-        });
+        toast.success("Your project has been added successfully.");
         setFormData({});
         router.back();
       }
     } catch (error) {
       console.log("❌ API ERROR:", error);
-
-      Toast.show({
-        type: "error",
-        text1: error?.message || "Failed to add project",
-      });
+      toast.error(error?.message || "Failed to add project. Please try again.");
     }
   };
 
@@ -150,8 +136,6 @@ export default function ProjectGalleryForm() {
         showsVerticalScrollIndicator={false}
       >
         <View className="px-[6%] pb-6">
-          {/* <CustomTitle title="Add project" /> */}
-
           <View className="mt-[3%]">
             <InputField
               placeholder="Enter project title.."

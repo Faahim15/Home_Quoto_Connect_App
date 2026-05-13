@@ -6,7 +6,7 @@ import { router } from "expo-router";
 import { useChangePasswordMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
 import { useState } from "react";
 import * as Yup from "yup";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 
 export default function ChangePasswordScreen() {
   const [changePassword, { isLoading }] = useChangePasswordMutation();
@@ -22,7 +22,7 @@ export default function ChangePasswordScreen() {
   };
 
   const validationSchema = Yup.object({
-    currentPassword: Yup.string() // Updated field name
+    currentPassword: Yup.string()
       .required("Current password is required")
       .min(8, "Current password must be at least 8 characters"),
 
@@ -31,7 +31,7 @@ export default function ChangePasswordScreen() {
       .min(8, "New password must be at least 8 characters")
       .notOneOf(
         [Yup.ref("currentPassword")],
-        "New password cannot be the same as current password"
+        "New password cannot be the same as current password",
       ),
 
     confirmPassword: Yup.string()
@@ -60,13 +60,9 @@ export default function ChangePasswordScreen() {
 
       // Step 4: Handle success
       if (res?.success) {
-        Toast.show({
-          type: "success",
-          text1: "Password Updated Successfully 🔒",
-          text2:
-            "Your password has been changed successfully. Please use your new password for future logins.",
-          visibilityTime: 3000,
-        });
+        toast.success(
+          "Your password has been changed successfully. Please use your new password for future logins.",
+        );
 
         // Clear form and navigate back
         setFormData({
@@ -87,14 +83,9 @@ export default function ChangePasswordScreen() {
           validationErrors[e.path] = e.message;
         });
         setErrors(validationErrors);
-
-        // Show validation error toast
-        Toast.show({
-          type: "error",
-          text1: "Please Check Your Input",
-          text2: "There are errors in the form. Please review and try again.",
-          visibilityTime: 3000,
-        });
+        toast.error(
+          "There are errors in the form. Please review and try again.",
+        );
       }
       // Step 6: Handle API error - Incorrect current password
       else if (
@@ -102,33 +93,19 @@ export default function ChangePasswordScreen() {
         err?.message === "Current password is incorrect"
       ) {
         setErrors({ currentPassword: "Current password is incorrect" });
-
-        Toast.show({
-          type: "error",
-          text1: "Incorrect Current Password",
-          text2:
-            "The current password you entered is incorrect. Please check and try again.",
-          visibilityTime: 3000,
-        });
+        toast.error(
+          "The current password you entered is incorrect. Please check and try again.",
+        );
       }
       // Step 7: Handle other API errors
       else if (err?.message) {
-        Toast.show({
-          type: "error",
-          text1: "Unable to Change Password",
-          text2: err?.message,
-          visibilityTime: 3000,
-        });
+        toast.error(err?.message);
       }
       // Step 8: Handle generic/network errors
       else {
-        Toast.show({
-          type: "error",
-          text1: "Something Went Wrong",
-          text2:
-            "We encountered an issue while changing your password. Please check your connection and try again.",
-          visibilityTime: 3000,
-        });
+        toast.error(
+          "We encountered an issue while changing your password. Please check your connection and try again.",
+        );
       }
     }
   };
@@ -146,9 +123,9 @@ export default function ChangePasswordScreen() {
       >
         <View className="flex-1 mt-[6%]">
           <PasswordField
-            value={formData.currentPassword} // Updated field name
-            onChangeText={(text) => handleInputChange("currentPassword", text)} // Updated field name
-            error={errors.currentPassword} // Updated field name
+            value={formData.currentPassword}
+            onChangeText={(text) => handleInputChange("currentPassword", text)}
+            error={errors.currentPassword}
             placeholder="Enter current password"
             label="Current Password"
           />

@@ -2,13 +2,12 @@ import {
   View,
   Text,
   ActivityIndicator,
-  Alert,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
 import { useState, useEffect } from "react";
-
+import { toast } from "sonner-native";
 import AvatarImagePicker from "../components/tabs/profile/AvatarImagePicker";
 import InputField from "../components/tabs/profile/InputField";
 import ProfileFormInputs from "../components/tabs/profile/FormInputs";
@@ -32,7 +31,6 @@ export default function EditProfileScreen() {
   const [updateProfileData, { isLoading: isUpdating }] =
     useUpdateProfileDataMutation();
 
-
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -40,7 +38,6 @@ export default function EditProfileScreen() {
     dateOfBirth: "",
     location: null,
   });
-
 
   useEffect(() => {
     if (profile?.data?.user) {
@@ -55,7 +52,6 @@ export default function EditProfileScreen() {
     }
   }, [profile]);
 
-  
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -63,8 +59,21 @@ export default function EditProfileScreen() {
     }));
   };
 
-  
   const handleSave = async () => {
+    // Check if any changes were made
+    const user = profile?.data?.user;
+
+    const noChanges =
+      formData.fullName === (user?.fullName || "") &&
+      formData.phoneNumber === (user?.phoneNumber || "") &&
+      formData.dateOfBirth === (user?.dateOfBirth || "") &&
+      formData.location?.address === (user?.location?.address || "");
+
+    if (noChanges) {
+      toast.info("No changes detected. Please update something before saving.");
+      return;
+    }
+
     try {
       const updatePayload = {
         fullName: formData.fullName,
@@ -86,18 +95,16 @@ export default function EditProfileScreen() {
       const response = await updateProfileData(updatePayload).unwrap();
 
       if (response?.success) {
-        Alert.alert("Success", "Profile updated successfully!");
+        toast.success("Profile updated successfully.");
         router.back();
       }
     } catch (error) {
       console.error("❌ Update error:", error);
-      Alert.alert(
-        "Update Failed",
-        error?.message || "Failed to update profile. Please try again."
+      toast.error(
+        error?.message || "Failed to update profile. Please try again.",
       );
     }
   };
-
 
   if (profileLoading) {
     return (
@@ -115,17 +122,14 @@ export default function EditProfileScreen() {
       style={{ flex: 1, backgroundColor: "#f9f9f9" }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
-    > 
-     <CustomTitle title="Edit Profile" withSafeTop={true} />
+    >
+      <CustomTitle title="Edit Profile" withSafeTop={true} />
       <ScrollView
         className="px-[6%] mt-[3%]"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
         keyboardShouldPersistTaps="handled"
       >
-        
-       
-
         <AvatarImagePicker photo={profilePhoto} />
 
         <View className="mt-[5%]">
@@ -143,7 +147,7 @@ export default function EditProfileScreen() {
             keyboardType="email-address"
             value={formData.email}
             onChangeText={(text) => handleInputChange("email", text)}
-            editable={false} // Email usually shouldn't be editable
+            editable={false}
           />
 
           <LocationPicker

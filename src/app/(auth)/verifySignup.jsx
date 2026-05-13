@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator, Pressable } from "react-native";
 import CustomHeader from "../components/auth/CustomHeader";
 import VerificationCodeField from "../components/auth/VerificationCode";
 import { router, useLocalSearchParams } from "expo-router";
@@ -94,14 +94,14 @@ export default function VerificationScreen() {
       />
 
       <View className="flex-1 justify-end pb-[20%]">
-        <TouchableOpacity
+        <Pressable
           onPress={handleSubmit}
           className="bg-[#0054A5] mx-[6%] rounded-lg py-[4%]"
         >
           <Text className="text-white text-center text-base font-poppins-semiBold">
             {verifyOtpLoading ? <ActivityIndicator color="#fff" /> : "Verify"}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

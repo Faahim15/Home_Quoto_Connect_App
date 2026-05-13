@@ -5,7 +5,7 @@ import {
   ScrollView,
   RefreshControl,
   ActivityIndicator,
-  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import ProfileMenuItem from "../components/tabs/profile/ProfileMenuItem";
@@ -30,7 +30,7 @@ export default function UserProfileScreen() {
   const [refreshing, setRefreshing] = useState(false);
 
   const [logout, { isLoading: logoutLoading }] = useLogoutUserMutation();
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const {
     data: profile,
     isLoading: profileLoading,
@@ -38,14 +38,12 @@ const dispatch = useDispatch();
     refetch: refetchProfile,
   } = useUserProfileQuery();
 
-
   useFocusEffect(
     useCallback(() => {
       refetchProfile();
-    }, [refetchProfile])
+    }, [refetchProfile]),
   );
 
-  
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -67,9 +65,9 @@ const dispatch = useDispatch();
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("userId");
       await AsyncStorage.removeItem("role");
-     dispatch({ type: "RESET_STORE" }); 
+      dispatch({ type: "RESET_STORE" });
       setModalVisible(false);
-toast.success("See you soon! 👋");
+      toast.success("See you soon! 👋");
 
       setTimeout(() => {
         router.replace("/onboarding/loginChoice");
@@ -77,7 +75,7 @@ toast.success("See you soon! 👋");
     } catch (error) {
       console.error("Logout error:", error);
       setModalVisible(false);
-toast.error("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     }
   };
 
@@ -86,7 +84,6 @@ toast.error("Something went wrong. Please try again.");
   };
 
   const { profilePhoto, fullName } = profile?.data?.user || {};
-
 
   if (profileLoading && !profile) {
     return (
@@ -99,7 +96,6 @@ toast.error("Something went wrong. Please try again.");
     );
   }
 
-
   if (logoutLoading) {
     return (
       <View className="flex-1 bg-[#F9F9F9] items-center justify-center">
@@ -111,7 +107,6 @@ toast.error("Something went wrong. Please try again.");
     );
   }
 
-
   if (profileError && !profile) {
     return (
       <View className="flex-1 bg-[#F9F9F9] items-center justify-center px-[5%]">
@@ -121,12 +116,12 @@ toast.error("Something went wrong. Please try again.");
         <Text className="font-poppins-regular text-sm text-[#565656] text-center mb-4">
           Please check your connection and try again
         </Text>
-        <TouchableOpacity
+        <Pressable
           onPress={() => refetchProfile()}
           className="bg-[#007AFF] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-medium text-white">Retry</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }

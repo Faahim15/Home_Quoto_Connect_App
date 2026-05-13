@@ -1,11 +1,11 @@
 import {
   View,
   Text,
-  Image,
   ScrollView,
-  TouchableOpacity,
+  Pressable,
   ActivityIndicator,
 } from "react-native";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import ArrowBack from "../components/auth/ArrowBack";
@@ -21,7 +21,7 @@ import ReviewButton from "../components/tabs/home/services/provider/details/Revi
 import Biography from "../components/tabs/home/services/provider/details/Biography";
 import { router, useLocalSearchParams } from "expo-router";
 import XStyle from "../util/styles";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import { useGetProviderProfileDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 
 export default function ProviderDetailsScreen() {
@@ -51,12 +51,12 @@ export default function ProviderDetailsScreen() {
         <Text className="font-poppins-semiBold text-base text-[#EF4444] text-center">
           Failed to load provider details
         </Text>
-        <TouchableOpacity
+        <Pressable
           onPress={() => router.back()}
           className="mt-4 bg-[#18649F] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-500medium text-white">Go Back</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }
@@ -172,7 +172,7 @@ export default function ProviderDetailsScreen() {
             <Text className="font-poppins-semiBold text-base text-[#565656]">
               Gallery
             </Text>
-            <TouchableOpacity
+            <Pressable
               onPress={() =>
                 router.push({
                   pathname: "/services/showGallery",
@@ -183,7 +183,7 @@ export default function ProviderDetailsScreen() {
               <Text className="font-poppins-500medium text-base text-[#175994]">
                 View all
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
 
@@ -221,13 +221,7 @@ export default function ProviderDetailsScreen() {
         >
           <BotttomButtons
             onPress={() => {
-              Toast.show({
-                type: "info",
-                text1: "Request Declined",
-                text2: "The provider has been notified of your decision",
-                position: "top",
-                visibilityTime: 3000,
-              });
+              toast.info("The provider has been notified of your decision.");
               router.back();
             }}
             backgroundColor="#fff"

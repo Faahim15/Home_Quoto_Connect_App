@@ -5,10 +5,10 @@ import CustomButton from "../components/tabs/home/services/provider/details/Cust
 import { router, useLocalSearchParams } from "expo-router";
 import { useSelector, useDispatch } from "react-redux";
 import * as Yup from "yup";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import { useState, useEffect } from "react";
 import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
-import { setJobData } from "../../redux/features/jobPost/jobPostSlice"; // Import the action
+import { setJobData } from "../../redux/features/jobPost/jobPostSlice";
 
 export default function LocationDetailsScreen() {
   const jobData = useSelector((state) => state.jobPost);
@@ -16,7 +16,7 @@ export default function LocationDetailsScreen() {
   const dispatch = useDispatch();
   console.log("address from jobLocation", jobData.location);
   const { data, isLoading, error, refetch } = useGetSingleJobQuery(jobId, {
-    skip: !jobId, // Skip query if no jobId
+    skip: !jobId,
   });
 
   const [validationErrors, setValidationErrors] = useState({});
@@ -96,12 +96,7 @@ export default function LocationDetailsScreen() {
 
         // Show first error in toast
         const firstError = validationError.inner[0].message;
-        Toast.show({
-          type: "error",
-          text1: "Validation Error",
-          text2: firstError,
-          position: "bottom",
-        });
+        toast.error(firstError);
       }
     }
   };

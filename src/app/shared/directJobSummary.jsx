@@ -4,7 +4,7 @@ import CustomButton from "../components/tabs/home/services/provider/details/Cust
 import { router } from "expo-router";
 import { useSelector, useDispatch } from "react-redux";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import {
   resetJobPost,
   setJobField,
@@ -33,7 +33,7 @@ export default function DirectJobSummaryScreen() {
 
           if (!jobData.providerId) {
             dispatch(
-              setJobField({ field: "providerId", value: storedProviderId })
+              setJobField({ field: "providerId", value: storedProviderId }),
             );
           }
         } else {
@@ -42,7 +42,7 @@ export default function DirectJobSummaryScreen() {
       } catch (error) {
         console.error(
           "❌ Error retrieving providerId from AsyncStorage:",
-          error
+          error,
         );
       }
     };
@@ -56,7 +56,6 @@ export default function DirectJobSummaryScreen() {
 
     // 🧾 Append all fields
     formData.append("title", jobData.title);
-    // formData.append("description", jobData.specificInstructions);
     formData.append("serviceCategory", jobData?.serviceCategory?.id);
 
     // Specializations
@@ -70,14 +69,14 @@ export default function DirectJobSummaryScreen() {
     formData.append("location[details][streetNumber]", jobData.streetNumber);
     formData.append(
       "location[details][completeAddress]",
-      jobData.completeAddress
+      jobData.completeAddress,
     );
     formData.append("location[details][city]", jobData.location.city);
     formData.append("location[details][state]", jobData.location.state);
     formData.append("location[details][country]", jobData.location.country);
     formData.append(
       "location[details][zipCode]",
-      jobData?.location?.zipCode || "N/A"
+      jobData?.location?.zipCode || "N/A",
     );
     formData.append("location[address]", jobData.location.address);
 
@@ -105,7 +104,7 @@ export default function DirectJobSummaryScreen() {
     formData.append("priceRange[to]", jobData.priceRange.to);
     formData.append(
       "priceRange[isPersonalized]",
-      jobData.priceRange.isPersonalized
+      jobData.priceRange.isPersonalized,
     );
 
     return formData;
@@ -117,19 +116,12 @@ export default function DirectJobSummaryScreen() {
 
     // Validate providerId exists
     if (!finalProviderId) {
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: "Provider ID is missing. Please try again.",
-        position: "bottom",
-      });
+      toast.error("Provider ID is missing. Please try again.");
       return;
     }
 
     try {
       const bookingData = prepareBookingData();
-
-      //   console.log("🚀 Booking provider with ID:", finalProviderId);
 
       // 🚀 Send booking request to backend
       const response = await bookProvider({
@@ -146,25 +138,15 @@ export default function DirectJobSummaryScreen() {
 
       console.log("✅ Provider booked successfully:", response);
 
-      // Show success toast
-      Toast.show({
-        type: "success",
-        text1: "Success!",
-        text2: "Provider booked successfully!",
-        position: "top",
-      });
+      toast.success("Provider booked successfully!");
 
       // Navigate to home page
       router.replace("/home");
     } catch (error) {
       console.error("❌ Booking failed:", error);
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2:
-          error?.data?.message || "Something went wrong. Please try again.",
-        position: "bottom",
-      });
+      toast.error(
+        error?.data?.message || "Something went wrong. Please try again.",
+      );
     }
   };
 

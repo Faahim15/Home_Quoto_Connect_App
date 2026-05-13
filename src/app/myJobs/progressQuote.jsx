@@ -1,4 +1,10 @@
-import { View, ScrollView, Text, ActivityIndicator } from "react-native";
+import {
+  View,
+  ScrollView,
+  Text,
+  ActivityIndicator,
+  Pressable,
+} from "react-native";
 import { scale } from "../components/adaptive/Adaptiveness";
 import XStyle from "../util/styles";
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
@@ -13,7 +19,8 @@ import {
   useGetSingleJobQuery,
 } from "../../redux/features/apiSlices/user/createJobSlices";
 import { useQuoteById } from "../../hooks/useQuoteById";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
+import { Image } from "expo-image";
 
 export default function ProgressQuote() {
   const { jobId, quoteId } = useLocalSearchParams();
@@ -28,7 +35,7 @@ export default function ProgressQuote() {
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
 
   if (isLoading || cancelLoading) {
@@ -61,24 +68,13 @@ export default function ProgressQuote() {
         reason,
       }).unwrap();
 
-      Toast.show({
-        type: "success",
-        text1: "Booking Cancelled",
-        text2: "Your service has been cancelled successfully",
-        position: "top",
-        topOffset: 60,
-      });
+      toast.success("Your service has been cancelled successfully.");
 
       setCancelModalVisible(false);
       router.back();
     } catch (err) {
       console.log("api error", err);
-
-      Toast.show({
-        type: "error",
-        text1: "Cancellation Failed",
-        text2: err?.message || "Please try again",
-      });
+      toast.error(err?.message || "Please try again.");
     }
   };
 
@@ -100,6 +96,7 @@ export default function ProgressQuote() {
       />
     </>
   );
+
   return (
     <View className="flex-1 bg-[#f9f9f9]">
       <View className="px-[4%]">
@@ -111,7 +108,7 @@ export default function ProgressQuote() {
 
       {quote?.status !== "updated" && (
         <View
-          className="flex-row w-full gap-[6%] h-[10%]  border border-[#D8DCE0] justify-center items-center "
+          className="flex-row w-full gap-[6%] h-[10%] border border-[#D8DCE0] justify-center items-center"
           style={[
             XStyle.shadowBox,
             {

@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, Pressable } from "react-native";
 import CustomTitle from "../components/shared/CustomTitle";
 import AccountOptionItem from "../components/tabs/profile/AccountOptions";
 import { useState } from "react";
@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import DeleteAccountModal from "../components/tabs/profile/DeleteModal";
 import { useDeleteAccountMutation } from "../../redux/features/apiSlices/user/userApiSlices";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 
 export default function AccountSettingScreen() {
   const [deleteAccount, { isLoading }] = useDeleteAccountMutation();
@@ -23,30 +23,19 @@ export default function AccountSettingScreen() {
 
       console.log("Account deleted successfully:", result);
 
-      Toast.show({
-        type: "success",
-        text1: "Account Deleted Successfully",
-        text2: "Your account has been permanently deleted.",
-        visibilityTime: 3000,
-      });
+      toast.success("Your account has been permanently deleted.");
 
       setModalVisible(false);
       router.replace("onboarding/loginChoice");
     } catch (err) {
       console.log("Error deleting account:", err);
 
-      // Show toast for incorrect password or other errors
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: err?.message || "Something went wrong. Please try again.",
-        visibilityTime: 3000,
-      });
+      toast.error(err?.message || "Something went wrong. Please try again.");
     }
   };
 
   return (
-    <View className="flex-1  bg-[#F9F9F9]">
+    <View className="flex-1 bg-[#F9F9F9]">
       <CustomTitle title="Account Settings" withSafeTop={true} />
       <View className="mt-[6%] px-[6%]">
         <AccountOptionItem
@@ -66,7 +55,7 @@ export default function AccountSettingScreen() {
           title="About us"
         />
 
-        <TouchableOpacity
+        <Pressable
           onPress={deleteAccountHandler}
           style={XStyle.shadowBox}
           className="flex-row mt-[3%] rounded-2xl border border-[#fff] justify-between"
@@ -78,7 +67,7 @@ export default function AccountSettingScreen() {
             Delete Account
           </Text>
           <Ionicons name="chevron-forward" size={18} color="#333333" />
-        </TouchableOpacity>
+        </Pressable>
 
         <DeleteAccountModal
           visible={modalVisible}

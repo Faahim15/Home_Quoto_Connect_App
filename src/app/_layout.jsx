@@ -1,7 +1,6 @@
 import { Stack } from "expo-router";
 import "../../global.css";
 import { StatusBar, View } from "react-native";
-import Toast from "react-native-toast-message";
 import { Toaster } from "sonner-native";
 import {
   Poppins_400Regular,
@@ -50,7 +49,6 @@ export default function RootLayout() {
             <Stack screenOptions={{ headerShown: false }} />
           </View>
           <Toaster />
-          <Toast />
         </StripeProvider>
       </Provider>
     </GestureHandlerRootView>

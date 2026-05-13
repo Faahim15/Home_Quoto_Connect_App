@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { verticalScale } from "../../adaptive/Adaptiveness";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import { router } from "expo-router";
 export default function CancelModal({ visible, onClose, onConfirm }) {
   const [selectedReason, setSelectedReason] = useState(null);
@@ -30,14 +30,7 @@ export default function CancelModal({ visible, onClose, onConfirm }) {
       onConfirm(reason);
     }
     // Show success toast
-    Toast.show({
-      type: "success",
-      text1: "Booking Cancelled",
-      text2: "Your booking has been successfully cancelled",
-      position: "top",
-      topOffset: 60,
-      visibilityTime: 3000,
-    });
+    toast.success("Your booking has been successfully cancelled.");
 
     // Reset state
     setSelectedReason(null);

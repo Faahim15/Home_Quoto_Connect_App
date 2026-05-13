@@ -4,7 +4,7 @@ import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import SuccessModal from "./SuccessModal";
 import { useCreatePaymentIntentMutation } from "../../../../redux/features/apiSlices/payment/paymentApiSlice";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 
 const PaymentMethodModal = ({ visible, onClose, jobId }) => {
   const [showModal, setShowModal] = useState(false);
@@ -32,19 +32,10 @@ const PaymentMethodModal = ({ visible, onClose, jobId }) => {
 
       const res = await cashPayment(payload).unwrap();
 
-      Toast.show({
-        type: "success",
-        text1: "Payment Successful",
-        text2: res?.message || "Cash payment has been recorded.",
-      });
+      toast.success(res?.message || "Cash payment has been recorded.");
       router.replace("/shared/wait");
     } catch (error) {
-      // ❌ Error Toast
-      Toast.show({
-        type: "error",
-        text1: "Payment Failed",
-        text2: error?.message || "Something went wrong.",
-      });
+      toast.error(error?.message || "Something went wrong.");
     }
   };
 

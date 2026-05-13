@@ -5,7 +5,7 @@ import BotttomButtons from "../components/shared/services/buttons/BottomButtons"
 import { router, useLocalSearchParams } from "expo-router";
 import CustomTitle from "../components/shared/services/CustomTitle";
 import QuoteReqDetails from "../components/tabs/myJobs/QuoteReqDetails";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import {
   useAcceptQuoteMutation,
   useCancelQuoteMutation,
@@ -35,7 +35,7 @@ export default function QuoteDetails() {
   // Filter jobs that have quotes
   const filteredQuotes = Array.isArray(quoteData)
     ? quoteData.filter(
-        (job) => Array.isArray(job.quotes) && job.quotes.length > 0
+        (job) => Array.isArray(job.quotes) && job.quotes.length > 0,
       )
     : [];
 
@@ -47,11 +47,11 @@ export default function QuoteDetails() {
     job.quotes.map((quote) => ({
       quote,
       job, // preserve job context
-    }))
+    })),
   );
 
   const selectedQuoteItem = quoteItems.find(
-    (item) => item.quote._id === quoteId
+    (item) => item.quote._id === quoteId,
   );
   const { quote } = selectedQuoteItem;
 
@@ -62,45 +62,25 @@ export default function QuoteDetails() {
   const handleAcceptQuote = async () => {
     try {
       await acceptQuote({ id: quoteId }).unwrap();
-
-      Toast.show({
-        type: "success",
-        text1: "Job Accepted",
-        text2: "You've successfully accepted the job.",
-      });
-
+      toast.success("You've successfully accepted the job.");
       router.back();
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Failed to Accept",
-        text2: "Something went wrong. Please try again.",
-      });
+      toast.error("Something went wrong. Please try again.");
       console.error("Accept error:", error);
     }
   };
+
   const handleDeclineQuote = async () => {
     try {
       await cancelQuote({ id: quoteId }).unwrap();
-
-      Toast.show({
-        type: "error",
-        text1: "Request Declined",
-        text2: "The provider has been notified of your decision",
-        position: "top",
-        visibilityTime: 3000,
-      });
-
+      toast.success("The provider has been notified of your decision.");
       router.back();
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Failed to Decline",
-        text2: "Something went wrong. Please try again.",
-      });
+      toast.error("Something went wrong. Please try again.");
       console.error("Decline error:", error);
     }
   };
+
   return (
     <View className="flex-1 bg-[#f9f9f9]">
       <View className="px-[4%]">

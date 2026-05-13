@@ -1,11 +1,11 @@
 import {
   View,
   Text,
-  Image,
   ScrollView,
-  TouchableOpacity,
+  Pressable,
   ActivityIndicator,
 } from "react-native";
+import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import ArrowBack from "../components/auth/ArrowBack";
@@ -21,21 +21,16 @@ import ReviewButton from "../components/tabs/home/services/provider/details/Revi
 import Biography from "../components/tabs/home/services/provider/details/Biography";
 import { router, useLocalSearchParams } from "expo-router";
 import XStyle from "../util/styles";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import {
   useGetPopularProvidersQuery,
   useGetProviderDetailsQuery,
 } from "../../redux/features/apiSlices/user/createJobSlices";
+
 export default function ProviderDetailsScreen() {
   const { showButtons, profileId } = useLocalSearchParams();
 
-  // console.log("provider Id", profileId);
-
-  // console.log("This is from Quote id", profileId);
-
   const { data, isLoading, error } = useGetProviderDetailsQuery(profileId);
-
-  // console.log("data", data?.data?.phoneNumber);
 
   const shouldShowButtons = showButtons === "true";
 
@@ -50,6 +45,7 @@ export default function ProviderDetailsScreen() {
       </View>
     );
   }
+
   // Add error state check (optional)
   if (error) {
     return (
@@ -57,12 +53,12 @@ export default function ProviderDetailsScreen() {
         <Text className="font-poppins-semiBold text-base text-[#EF4444] text-center">
           Failed to load provider details
         </Text>
-        <TouchableOpacity
+        <Pressable
           onPress={() => router.back()}
           className="mt-4 bg-[#18649F] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-500medium text-white">Go Back</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }
@@ -84,10 +80,9 @@ export default function ProviderDetailsScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: verticalScale(40) }}
-        className="flex-1 "
+        className="flex-1"
       >
         {/* Banner */}
-
         <LinearGradient
           colors={["#319FCA", "#18649F"]}
           start={{ x: 0, y: 0 }}
@@ -99,10 +94,10 @@ export default function ProviderDetailsScreen() {
             borderBottomRightRadius: scale(16),
           }}
         >
-          <View className="w-10 h-10 mx-[6%] mt-[6%] rounded-[20px] bg-white ">
+          <View className="w-10 h-10 mx-[6%] mt-[6%] rounded-[20px] bg-white">
             <ArrowBack />
           </View>
-          <View className="flex-1 justify-center items-center ">
+          <View className="flex-1 justify-center items-center">
             <Image
               source={{ uri: profilePhoto?.url }}
               style={{
@@ -111,7 +106,7 @@ export default function ProviderDetailsScreen() {
                 marginTop: verticalScale(0),
                 marginLeft: scale(30),
               }}
-              resizeMode="cover"
+              contentFit="cover"
             />
           </View>
         </LinearGradient>
@@ -122,7 +117,6 @@ export default function ProviderDetailsScreen() {
         />
 
         {/* PerfomanceMetrics */}
-
         <PerfomanceMetrics
           performanceData={{
             avgRating: averageRating,
@@ -132,11 +126,9 @@ export default function ProviderDetailsScreen() {
         />
 
         {/* Skills */}
-
         <Skills specializations={specializations} />
 
         {/* Book button */}
-
         {!shouldShowButtons && (
           <View className="px-[6%]">
             <CustomButton
@@ -151,32 +143,32 @@ export default function ProviderDetailsScreen() {
           </View>
         )}
 
-        {/* Time Solt */}
-        <View className="mx-[6%] mt-[3%] ">
+        {/* Time Slot */}
+        <View className="mx-[6%] mt-[3%]">
           <Text className="font-poppins-semiBold text-base text-[#565656]">
             Available
           </Text>
         </View>
-        <View className="flex-row justify-start gap-[3%] mx-[6%] mt-[3%] ">
+        <View className="flex-row justify-start gap-[3%] mx-[6%] mt-[3%]">
           <TimeSlot time={workingHours?.from} />
           <View>
-            <Text className="font-poppins-semiBold pt-[2%] text-base text-[#919191] ">
+            <Text className="font-poppins-semiBold pt-[2%] text-base text-[#919191]">
               To
             </Text>
           </View>
           <TimeSlot time={workingHours?.to} />
         </View>
 
-        {/* Bio  */}
+        {/* Bio */}
         <Biography bio={bio} />
 
         {/* Gallery Section */}
         <View>
-          <View className="flex-row justify-between mx-[6%] mt-[3%] ">
+          <View className="flex-row justify-between mx-[6%] mt-[3%]">
             <Text className="font-poppins-semiBold text-base text-[#565656]">
               Gallery
             </Text>
-            <TouchableOpacity
+            <Pressable
               onPress={() =>
                 router.push({
                   pathname: "/services/showGallery",
@@ -187,7 +179,7 @@ export default function ProviderDetailsScreen() {
               <Text className="font-poppins-500medium text-base text-[#175994]">
                 View all
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
 
@@ -203,9 +195,10 @@ export default function ProviderDetailsScreen() {
           totalReviews={data?.data?.reviews.length}
         />
       </ScrollView>
+
       {shouldShowButtons && (
         <View
-          className="flex-row gap-[6%] h-[14%]  border border-[#D8DCE0] justify-center items-center "
+          className="flex-row gap-[6%] h-[14%] border border-[#D8DCE0] justify-center items-center"
           style={[
             XStyle.shadowBox,
             { borderTopRightRadius: scale(20), borderTopLeftRadius: scale(20) },
@@ -213,13 +206,7 @@ export default function ProviderDetailsScreen() {
         >
           <BotttomButtons
             onPress={() => {
-              Toast.show({
-                type: "info",
-                text1: "Request Declined",
-                text2: "The provider has been notified of your decision",
-                position: "top",
-                visibilityTime: 3000,
-              });
+              toast.info("The provider has been notified of your decision.");
               router.back();
             }}
             backgroundColor="#fff"

@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -135,7 +134,7 @@ export default function SignInScreen() {
           </View>
 
           <View className="flex-row pl-[5.5%] pb-[6%] items-center">
-            <TouchableOpacity
+            <Pressable
               onPress={() => setAgreeToTerms(!agreeToTerms)}
               className="mr-[1%]"
             >
@@ -144,16 +143,16 @@ export default function SignInScreen() {
                 size={16}
                 color={agreeToTerms ? "#909090" : "#9CA3AF"}
               />
-            </TouchableOpacity>
+            </Pressable>
             <View className="w-[88%] items-center flex-row justify-between">
               <Text className="text-sm  font-poppins-400regular text-[#000000]">
                 Remember me
               </Text>
-              <TouchableOpacity onPress={() => router.push("/forgetPassword")}>
+              <Pressable onPress={() => router.push("/forgetPassword")}>
                 <Text className="text-base  font-poppins-bold text-[#175994] underline">
                   Forget Password?
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
 
