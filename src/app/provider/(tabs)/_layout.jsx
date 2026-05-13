@@ -49,6 +49,7 @@ export default function TabsLayout() {
           name="map"
           options={{
             title: "Map",
+
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="navigate-outline" size={size} color={color} />
             ),

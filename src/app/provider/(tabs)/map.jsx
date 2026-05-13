@@ -11,16 +11,15 @@ import ServiceQuoteModal from "../../components/shared/modal/ServiceQuoteModal";
 const MapScreen = () => {
   const [isOnline, setIsOnline] = useState(false);
   const [userLocation, setUserLocation] = useState(null);
-  const [mapRef, setMapRef] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [currentLocationName, setCurrentLocationName] = useState(
-    "San Diego, California, US"
-  );
+  const [currentLocationName, setCurrentLocationName] = useState("");
 
+  // ✅ useRef instead of useState so mapRef is always current
+  const mapRef = useRef(null);
   const searchTimeoutRef = useRef(null);
 
   const {
@@ -37,7 +36,7 @@ const MapScreen = () => {
     },
     {
       skip: !userLocation,
-    }
+    },
   );
 
   const nearbyJobs =
@@ -56,11 +55,9 @@ const MapScreen = () => {
 
   useEffect(() => {
     return () => {
-      // Cleanup: dismiss any open alerts when component unmounts
       if (Alert.dismissAll) {
         Alert.dismissAll();
       }
-
       if (searchTimeoutRef.current) {
         clearTimeout(searchTimeoutRef.current);
       }
@@ -75,32 +72,29 @@ const MapScreen = () => {
 
   const getCurrentLocation = async () => {
     try {
-      // Step 1: Check if location services are enabled
       const isEnabled = await Location.hasServicesEnabledAsync();
       if (!isEnabled) {
         Alert.alert(
           "Location Services Disabled",
           "Please enable location services in your device settings to use this feature.",
-          [{ text: "OK" }]
+          [{ text: "OK" }],
         );
         return;
       }
 
-      // Step 2: Request permissions
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         Alert.alert(
           "Permission Denied",
           "Location permission is required to show your position on the map.",
-          [{ text: "OK" }]
+          [{ text: "OK" }],
         );
         return;
       }
 
-      // Step 3: Try multiple methods to get location
       let location = null;
 
-      // Method 1: Try last known position first
+      // Method 1: Last known position
       try {
         const lastKnown = await Location.getLastKnownPositionAsync({});
         if (lastKnown) {
@@ -111,7 +105,7 @@ const MapScreen = () => {
         console.log("Last known position not available:", error.message);
       }
 
-      // Method 2: If no last known, try current position with low accuracy
+      // Method 2: Low accuracy current position
       if (!location) {
         try {
           location = await Location.getCurrentPositionAsync({
@@ -124,17 +118,15 @@ const MapScreen = () => {
         }
       }
 
-      // Method 3: Try with timeout
+      // Method 3: With timeout
       if (!location) {
         try {
           const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Timeout")), 15000)
+            setTimeout(() => reject(new Error("Timeout")), 15000),
           );
-
           const locationPromise = Location.getCurrentPositionAsync({
             accuracy: Location.Accuracy.Low,
           });
-
           location = await Promise.race([locationPromise, timeoutPromise]);
           console.log("Got position with timeout handler");
         } catch (error) {
@@ -142,7 +134,7 @@ const MapScreen = () => {
         }
       }
 
-      // If all methods fail, use default location
+      // ✅ Fallback to default ONLY if all methods fail
       if (!location) {
         console.log("All location methods failed, using default location");
         const newLocation = {
@@ -151,21 +143,20 @@ const MapScreen = () => {
         };
         setUserLocation(newLocation);
         setCurrentLocationName("San Diego, California, US");
-
-        if (mapRef) {
-          mapRef.animateToRegion(initialRegion, 1000);
+        if (mapRef.current) {
+          mapRef.current.animateToRegion(initialRegion, 1000);
         }
         return;
       }
 
-      // Step 4: Set the location
+      // ✅ Use real user location
       const newLocation = {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       };
       setUserLocation(newLocation);
 
-      // Step 5: Get location name
+      // Get location name
       try {
         const reverseGeocode = await Location.reverseGeocodeAsync({
           latitude: newLocation.latitude,
@@ -175,11 +166,9 @@ const MapScreen = () => {
         if (reverseGeocode.length > 0) {
           const place = reverseGeocode[0];
           const locationParts = [];
-
           if (place.city) locationParts.push(place.city);
           if (place.region) locationParts.push(place.region);
           if (place.country) locationParts.push(place.country);
-
           const locationName = locationParts.join(", ") || "Current Location";
           setCurrentLocationName(locationName);
         }
@@ -188,34 +177,32 @@ const MapScreen = () => {
         setCurrentLocationName("Current Location");
       }
 
-      // Step 6: Animate map to user location
-      if (mapRef) {
-        mapRef.animateToRegion(
+      // ✅ Animate map to user's real location
+      if (mapRef.current) {
+        mapRef.current.animateToRegion(
           {
             latitude: newLocation.latitude,
             longitude: newLocation.longitude,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
           },
-          1000
+          1000,
         );
       }
     } catch (error) {
       console.error("Error getting location:", error);
-
-      // Fallback to default location without showing error
       const newLocation = {
         latitude: initialRegion.latitude,
         longitude: initialRegion.longitude,
       };
       setUserLocation(newLocation);
       setCurrentLocationName("San Diego, California, US");
-
-      if (mapRef) {
-        mapRef.animateToRegion(initialRegion, 1000);
+      if (mapRef.current) {
+        mapRef.current.animateToRegion(initialRegion, 1000);
       }
     }
   };
+
   const searchLocation = async (query) => {
     if (!query || query.trim().length < 3) {
       setSearchResults([]);
@@ -224,7 +211,6 @@ const MapScreen = () => {
 
     try {
       setIsSearching(true);
-
       const results = await Location.geocodeAsync(query);
 
       if (results.length > 0) {
@@ -241,9 +227,7 @@ const MapScreen = () => {
 
               if (reverseGeocode.length > 0) {
                 const place = reverseGeocode[0];
-
                 const nameParts = [];
-
                 if (place.name) nameParts.push(place.name);
                 if (place.city) nameParts.push(place.city);
                 if (place.region) nameParts.push(place.region);
@@ -284,9 +268,8 @@ const MapScreen = () => {
                 fullAddress: null,
               };
             }
-          })
+          }),
         );
-
         setSearchResults(formattedResults);
       } else {
         setSearchResults([]);
@@ -301,11 +284,9 @@ const MapScreen = () => {
 
   const handleSearchChange = (text) => {
     setSearchQuery(text);
-
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
     }
-
     if (text.length >= 3) {
       searchTimeoutRef.current = setTimeout(() => {
         searchLocation(text);
@@ -317,15 +298,15 @@ const MapScreen = () => {
   };
 
   const handleLocationSelect = (location) => {
-    if (mapRef) {
-      mapRef.animateToRegion(
+    if (mapRef.current) {
+      mapRef.current.animateToRegion(
         {
           latitude: location.latitude,
           longitude: location.longitude,
           latitudeDelta: 0.05,
           longitudeDelta: 0.05,
         },
-        1000
+        1000,
       );
     }
 
@@ -360,7 +341,7 @@ const MapScreen = () => {
     const status = !isOnline ? "online" : "offline";
     Alert.alert(
       "Status Updated",
-      `You are now ${status} and ${!isOnline ? "visible" : "not visible"} to others!`
+      `You are now ${status} and ${!isOnline ? "visible" : "not visible"} to others!`,
     );
   };
 
@@ -383,8 +364,11 @@ const MapScreen = () => {
         onLocationSelect={handleLocationSelect}
       />
 
+      {/* ✅ Pass ref setter correctly */}
       <MapContainer
-        mapRef={setMapRef}
+        mapRef={(ref) => {
+          mapRef.current = ref;
+        }}
         initialRegion={initialRegion}
         nearbyJobs={nearbyJobs}
         userLocation={userLocation}

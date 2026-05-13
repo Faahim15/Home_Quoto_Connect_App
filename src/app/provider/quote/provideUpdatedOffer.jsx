@@ -8,13 +8,13 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import CustomTitle from "../../components/shared/services/CustomTitle";
+import CustomTitle from "../../components/shared/CustomTitle";
 import QuoteForm from "../../components/provider/map/QuoteForm";
 import { Ionicons } from "@expo/vector-icons";
 import BotttomButtons from "../../components/shared/services/buttons/BottomButtons";
 import XStyle from "../../util/styles";
 import { scale } from "../../components/adaptive/Adaptiveness";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import * as Yup from "yup";
@@ -43,11 +43,13 @@ export default function UpdateQuoteScreen() {
   });
 
   const pendingQuote = data?.data?.job?.quotes?.find(
-    (quote) => quote.status === "pending"
+    (quote) => quote.status === "pending",
   );
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+
+    setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
   if (isLoading || singleJobLoader) {
@@ -65,13 +67,13 @@ export default function UpdateQuoteScreen() {
   const preferredDate = convertToThirdDay(service?.preferredDate);
 
   const validationSchema = Yup.object({
-    appointment: Yup.boolean()
+    // ✅ Fixed: use Yup.mixed to properly handle boolean true/false
+    appointment: Yup.mixed()
       .nullable()
-      .required("Please select whether an appointment is needed")
       .test(
         "is-selected",
         "Please select whether an appointment is needed",
-        (value) => value !== null
+        (value) => value === true || value === false,
       ),
 
     quoteDetails: Yup.string()
@@ -97,17 +99,15 @@ export default function UpdateQuoteScreen() {
         (value) => {
           if (value === undefined) return true;
           return /^\d+(\.\d{1,2})?$/.test(value.toString());
-        }
+        },
       ),
   });
 
   const handleSubmit = async () => {
     try {
-      // Step 1: Validate user input
       await validationSchema.validate(formData, { abortEarly: false });
       setErrors({});
 
-      // Step 2: Prepare JSON payload
       const payload = {
         price: formData.price,
         description: formData.quoteDetails,
@@ -119,33 +119,18 @@ export default function UpdateQuoteScreen() {
         },
       };
 
-      // Step 3: Call API
       const res = await updateQuote({
         id: pendingQuote?._id,
         ...payload,
       }).unwrap();
 
-      // Step 4: Handle success
       if (res?.success) {
-        Toast.show({
-          type: "success",
-          text1: "Quote Submitted Successfully ✅",
-          text2: "Your submitted quote has been sent to the customer.",
-          position: "top",
-          visibilityTime: 2500,
-        });
+        toast.success("Your submitted quote has been sent to the customer.");
         router.push("/provider/home");
       } else {
-        // Step 5: Handle logical failure
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: res?.message || "Quote submission failed",
-          visibilityTime: 2000,
-        });
+        toast.error(res?.message || "Quote submission failed");
       }
     } catch (err) {
-      // Step 6: Handle validation or network errors
       if (err.name === "ValidationError") {
         const validationErrors = {};
         err.inner.forEach((e) => {
@@ -157,21 +142,15 @@ export default function UpdateQuoteScreen() {
         console.log("API Error:", err);
         const errorMessage =
           err?.message || "Network or server error. Please try again.";
-
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: errorMessage,
-          visibilityTime: 2000,
-        });
+        toast.error(errorMessage);
       }
     }
   };
 
   return (
     <View className="flex-1 bg-[#F9F9F9]">
-      <View className="px-[4%]">
-        <CustomTitle title="Update Quote" />
+      <View className="">
+        <CustomTitle title="Update Quote" withSafeTop={true} />
       </View>
 
       <KeyboardAvoidingView

@@ -26,7 +26,7 @@ const BottomStatusPanel = ({
 
       <View className="flex-row items-center justify-between px-[3%] pb-[3%]">
         <View className="w-[10%]"></View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{ height: verticalScale(44) }}
           onPress={onToggleOnline}
           className={`flex-1 mx-[3%] rounded-full items-center justify-center ${
@@ -37,7 +37,7 @@ const BottomStatusPanel = ({
           <Text className="text-white font-poppins-500medium text-base">
             {isOnline ? "Go Offline" : "Go Online"}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* <TouchableOpacity
           style={{ width: scale(40), height: verticalScale(40) }}

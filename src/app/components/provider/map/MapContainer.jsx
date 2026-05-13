@@ -1,4 +1,4 @@
-import { View, TouchableOpacity } from "react-native";
+import { View, Pressable } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
 import JobMarker from "./JobMarker";
@@ -47,12 +47,12 @@ const MapContainer = ({
         <UserLocationMarker userLocation={userLocation} />
       </MapView>
 
-      <TouchableOpacity
+      <Pressable
         onPress={onGetLocation}
         className="absolute top-4 right-4 w-12 h-12 bg-white rounded-full shadow-lg items-center justify-center"
       >
         <Ionicons name="locate" size={20} color="#0066CC" />
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 };

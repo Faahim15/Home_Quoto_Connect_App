@@ -4,20 +4,22 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native";
-import CustomTitle from "../../components/shared/services/CustomTitle";
+import CustomTitle from "../../components/shared/CustomTitle";
 import QuoteForm from "../../components/provider/map/QuoteForm";
 import { Ionicons } from "@expo/vector-icons";
 import BotttomButtons from "../../components/shared/services/buttons/BottomButtons";
 import XStyle from "../../util/styles";
 import { scale } from "../../components/adaptive/Adaptiveness";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import * as Yup from "yup";
 import { useUpdateQuoteMutation } from "../../../redux/features/apiSlices/quote/quoteApiSlice";
 import { useGetSingleJobQuery } from "../../../redux/features/apiSlices/user/createJobSlices";
 import { convertToThirdDay } from "../../util/helper-function";
+import { useUserProfileQuery } from "../../../redux/features/apiSlices/user/userApiSlices";
 
 export default function UpdateQuoteScreen() {
   const { jobId } = useLocalSearchParams();
@@ -27,7 +29,12 @@ export default function UpdateQuoteScreen() {
     isLoading: singleJobLoader,
     error,
   } = useGetSingleJobQuery(jobId);
+
   const [updateQuote, { isLoading }] = useUpdateQuoteMutation();
+
+  // ✅ Dynamic credits
+  const { data: profile } = useUserProfileQuery();
+  const credits = profile?.data?.user?.credits;
 
   console.log("job id", jobId);
 
@@ -40,16 +47,19 @@ export default function UpdateQuoteScreen() {
   });
 
   const pendingQuote = data?.data?.job?.quotes?.find(
-    (quote) => quote.status === "accepted"
+    (quote) => quote.status === "accepted",
   );
 
+  // ✅ Clear field error immediately on change
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
   if (isLoading || singleJobLoader) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9]">
+        <ActivityIndicator size="large" color="#175994" />
         <Text className="text-gray-500 text-base">
           Loading service details...
         </Text>
@@ -61,13 +71,13 @@ export default function UpdateQuoteScreen() {
   const preferredDate = convertToThirdDay(service?.preferredDate);
 
   const validationSchema = Yup.object({
-    appointment: Yup.boolean()
+    // ✅ Fixed: Yup.mixed with explicit boolean check
+    appointment: Yup.mixed()
       .nullable()
-      .required("Please select whether an appointment is needed")
       .test(
         "is-selected",
         "Please select whether an appointment is needed",
-        (value) => value !== null
+        (value) => value === true || value === false,
       ),
 
     quoteDetails: Yup.string()
@@ -93,7 +103,7 @@ export default function UpdateQuoteScreen() {
         (value) => {
           if (value === undefined) return true;
           return /^\d+(\.\d{1,2})?$/.test(value.toString());
-        }
+        },
       ),
   });
 
@@ -119,21 +129,10 @@ export default function UpdateQuoteScreen() {
       }).unwrap();
 
       if (res?.success) {
-        Toast.show({
-          type: "success",
-          text1: "Quote Submitted Successfully ✅",
-          text2: "Your submitted quote has been sent to the customer.",
-          position: "top",
-          visibilityTime: 2500,
-        });
+        toast.success("Your submitted quote has been sent to the customer.");
         router.push("/provider/home");
       } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: res?.message || "Quote submission failed",
-          visibilityTime: 2000,
-        });
+        toast.error(res?.message || "Quote submission failed");
       }
     } catch (err) {
       if (err.name === "ValidationError") {
@@ -145,13 +144,7 @@ export default function UpdateQuoteScreen() {
       } else {
         const errorMessage =
           err?.message || "Network or server error. Please try again.";
-
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: errorMessage,
-          visibilityTime: 2000,
-        });
+        toast.error(errorMessage);
       }
     }
   };
@@ -164,7 +157,7 @@ export default function UpdateQuoteScreen() {
     >
       <View className="flex-1 bg-[#F9F9F9]">
         <View className="px-[4%]">
-          <CustomTitle title="Update Quote" />
+          <CustomTitle title="Update Quote" withSafeTop={true} />
         </View>
 
         <ScrollView
@@ -193,8 +186,8 @@ export default function UpdateQuoteScreen() {
           <View className="flex-row px-[4%] items-center mb-[2%]">
             <Ionicons name="bulb-outline" size={18} color="#f59e0b" />
             <Text className="font-poppins-400regular text-justify w-[90%] text-xs text-[#1F2937] ml-[2%]">
-              Submitting this quote will cost 5 credits. Your current balance is
-              25 credits.
+              Submitting this quote will cost 5 credits. Your current balance is{" "}
+              {credits ?? "N/A"} credits.
             </Text>
           </View>
         </ScrollView>
@@ -220,6 +213,7 @@ export default function UpdateQuoteScreen() {
             borderColor="#2583B6"
             title="Send Quote"
             disabled={isLoading}
+            loading={isLoading}
           />
         </View>
       </View>

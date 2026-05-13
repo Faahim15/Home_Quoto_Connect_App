@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  RefreshControl,
-  Pressable,
-} from "react-native";
+import { View, Text, FlatList, RefreshControl, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../../../adaptive/Adaptiveness";
 import { router } from "expo-router";
@@ -47,16 +40,17 @@ const ServiceCard = ({ item }) => {
         </Text>
 
         <View className="flex-row items-center mb-[2%]">
-          <Image
-            source={{
-              uri:
-                item?.client?.profilePhoto?.url ||
-                "https://via.placeholder.com/300",
-            }}
-            style={{ width: scale(16), height: verticalScale(16) }}
-            className="bg-gray-300 rounded-full mr-[2%]"
-          />
+          {item?.client?.profilePhoto?.url ? (
+            <Image
+              source={{ uri: item?.client?.profilePhoto?.url }}
+              style={{ width: scale(16), height: verticalScale(16) }}
+              className="bg-gray-300 rounded-full mr-[2%]"
+            />
+          ) : (
+            <Ionicons name="person-circle-outline" size={18} color="#319FCA" />
+          )}
           <Text className="font-poppins-400regular text-sm">
+            {" "}
             by{" "}
             <Text className="font-poppins-400regular text-[#319FCA] text-sm ">
               {fullName || "N/A"}
@@ -68,6 +62,7 @@ const ServiceCard = ({ item }) => {
           <View className="flex-row gap-[2%] items-center">
             <Ionicons name="construct-outline" size={16} color="#6B7280" />
             <Text className="font-poppins-400regular text-sm text-[#6B7280] ">
+              {" "}
               {(item?.serviceCategory?.title || "N/A")
                 .split(" ")
                 .slice(0, 2)

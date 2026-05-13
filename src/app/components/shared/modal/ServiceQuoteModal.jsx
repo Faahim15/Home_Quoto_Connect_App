@@ -1,24 +1,18 @@
-// ServiceQuoteModal.js
-import {
-  View,
-  Text,
-  Image,
-  Modal,
-  TouchableOpacity,
-  Animated,
-} from "react-native";
+import { View, Text, Modal, Animated, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import MapButton from "../../provider/map/MapButton";
 import { router } from "expo-router";
+import { Image } from "expo-image";
 import BotttomButtons from "../services/buttons/BottomButtons";
+import { useUserProfileQuery } from "../../../../redux/features/apiSlices/user/userApiSlices";
 
 export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
-  const slideAnim = useRef(new Animated.Value(300)).current;
-  const [isVerified, setIsVerified] = useState(false);
-  const [isCheckingVerification, setIsCheckingVerification] = useState(true);
+  const slideAnim = useRef(new Animated.Value(0)).current;
+  const { data: profile, isLoading: profileLoading } = useUserProfileQuery();
+
+  const isVerified = profile?.data?.user?.verificationStatus === "verified";
 
   const handleJobDetails = () => {
     onClose();
@@ -33,7 +27,6 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
       console.log("Provider is not verified");
       return;
     }
-
     router.push({
       pathname: "/provider/quote/provideUpdatedOffer",
       params: { jobId: selectedJob?._id },
@@ -43,27 +36,9 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
 
   const { profilePhoto, fullName } = selectedJob?.client || {};
   const { city, state } = selectedJob?.location?.details || {};
+  const hasImage = !!selectedJob?.serviceCategory?.image?.url;
+  const hasProfilePhoto = !!profilePhoto?.url;
 
-  // Check verification status
-  useEffect(() => {
-    const checkVerificationStatus = async () => {
-      try {
-        const verifiedStatus = await AsyncStorage.getItem("isVerified");
-        setIsVerified(verifiedStatus === "true");
-      } catch (error) {
-        console.error("Error reading verification status:", error);
-        setIsVerified(false);
-      } finally {
-        setIsCheckingVerification(false);
-      }
-    };
-
-    if (visible) {
-      checkVerificationStatus();
-    }
-  }, [visible]);
-
-  // Animation effect
   useEffect(() => {
     if (visible) {
       Animated.spring(slideAnim, {
@@ -88,55 +63,73 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
       animationType="fade"
       onRequestClose={onClose}
     >
-      <TouchableOpacity
-        activeOpacity={1}
-        onPress={handleJobDetails}
-        className="flex-1 bg-black/50 justify-center items-center"
+      {/* ✅ Centered backdrop — tapping backdrop closes modal */}
+      <Pressable
+        onPress={onClose}
+        className="flex-1 bg-black/50 justify-center items-center px-[4%]"
       >
-        <View className="" activeOpacity={1}>
+        {/* ✅ Stop propagation so tapping card doesn't close modal */}
+        <Pressable onPress={handleJobDetails} className="w-full">
           <Animated.View
-            style={{
-              transform: [{ translateY: slideAnim }],
-            }}
-            className="bg-white border border-[#319FCA] rounded-md px-[5%] pt-[5%]"
+            // style={{ transform: [{ translateY: slideAnim }] }}
+            className="bg-white rounded-2xl overflow-hidden"
           >
-            {/* Close Button */}
-            <TouchableOpacity
+            {/* ── Image / Placeholder ── */}
+            {hasImage ? (
+              <View style={{ height: verticalScale(180) }} className="w-full">
+                <Image
+                  source={{ uri: selectedJob?.serviceCategory?.image?.url }}
+                  className="w-full h-full"
+                  contentFit="cover"
+                />
+              </View>
+            ) : (
+              // ✅ Fallback placeholder when no image
+              <View
+                style={{ height: verticalScale(130) }}
+                className="w-full bg-[#EBF5FB] justify-center items-center"
+              >
+                <Ionicons name="briefcase-outline" size={48} color="#319FCA" />
+                <Text className="font-poppins-400regular text-xs text-[#319FCA] mt-[2%]">
+                  No image available
+                </Text>
+              </View>
+            )}
+
+            {/* ── Close Button ── */}
+            <Pressable
               onPress={onClose}
-              className="absolute top-[4%] right-[4%] z-10 bg-white rounded-full p-[2%] shadow-lg"
+              className="absolute top-[3%] right-[3%] z-10 bg-white/90 rounded-full p-[1.5%] shadow"
             >
-              <Ionicons name="close" size={24} color="#333" />
-            </TouchableOpacity>
+              <Ionicons name="close" size={22} color="#333" />
+            </Pressable>
 
-            {/* Image */}
-            <View className="w-full h-[180px] rounded-[16px] overflow-hidden mb-[2%]">
-              <Image
-                source={{
-                  uri: selectedJob?.serviceCategory?.image?.url || null,
-                }}
-                className="w-full h-full"
-                resizeMode="cover"
-              />
-            </View>
-
-            <View className="pt-[4%]">
+            {/* ── Content ── */}
+            <View className="px-[5%] pt-[4%] pb-[4%]">
               {/* Title */}
               <Text
-                className="text-gray-900 font-poppins-500medium text-base mb-[2%]"
+                className="text-gray-900 font-poppins-500medium text-base mb-[3%]"
                 numberOfLines={2}
               >
                 {selectedJob?.title || "N/A"}
               </Text>
 
               {/* Author */}
-              <View className="flex-row items-center mb-[2%]">
-                <Image
-                  source={{
-                    uri: profilePhoto?.url || null,
-                  }}
-                  style={{ width: scale(16), height: verticalScale(16) }}
-                  className="bg-gray-300 rounded-full mr-[2%]"
-                />
+              <View className="flex-row items-center mb-[3%]">
+                {hasProfilePhoto ? (
+                  <Image
+                    source={{ uri: profilePhoto?.url }}
+                    style={{ width: scale(18), height: verticalScale(18) }}
+                    className="bg-gray-300 rounded-full mr-[2%]"
+                  />
+                ) : (
+                  <Ionicons
+                    name="person-circle-outline"
+                    size={18}
+                    color="#319FCA"
+                    style={{ marginRight: 4 }}
+                  />
+                )}
                 <Text className="font-poppins-400regular text-sm">
                   by{" "}
                   <Text className="font-poppins-400regular text-[#319FCA] text-sm">
@@ -146,60 +139,59 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
               </View>
 
               {/* Service Type */}
-              <View className="flex-row gap-[2%] items-center mb-[2%]">
+              <View className="flex-row gap-[2%] items-center mb-[3%]">
                 <Ionicons name="construct-outline" size={16} color="#6B7280" />
                 <Text className="font-poppins-400regular text-sm text-[#6B7280]">
-                  {selectedJob?.serviceCategory?.title}
+                  {selectedJob?.serviceCategory?.title || "N/A"}
                 </Text>
               </View>
 
               {/* Location and Time */}
-              <View className="flex-row items-center">
+              <View className="flex-row items-center mb-[3%]">
                 <Ionicons name="location-outline" size={16} color="#319FCA" />
-                <Text className="text-gray-500 text-sm ml-[1%]"></Text>
-
-                <Text className="font-poppins-400regular text-sm text-[#319FCA]">
+                <Text className="font-poppins-400regular text-sm text-[#319FCA] ml-[1%]">
                   {city && state ? `${city}, ${state}` : "N/A"}
                   <Text className="text-[#6B7280]">
-                    | {selectedJob?.timeAgo}
+                    {" "}
+                    | {selectedJob?.timeAgo || "N/A"}
                   </Text>
                 </Text>
               </View>
-            </View>
 
-            <View className="flex-row justify-between">
-              <Text className="font-poppins-semiBold text-sm text-[#6B7280]">
-                Price
-              </Text>
-              <Text className="font-poppins-semiBold text-sm text-[#F59E0B]">
-                {selectedJob?.priceRange?.isPersonalized
-                  ? "Request a personalized..."
-                  : `$${selectedJob?.priceRange?.from || null}-$${selectedJob?.priceRange?.to || null}`}
-              </Text>
-            </View>
+              {/* Price */}
+              <View className="flex-row justify-between items-center mb-[4%]">
+                <Text className="font-poppins-semiBold text-sm text-[#6B7280]">
+                  Price
+                </Text>
+                <Text className="font-poppins-semiBold text-sm text-[#F59E0B]">
+                  {selectedJob?.priceRange?.isPersonalized
+                    ? "Request a personalized..."
+                    : `$${selectedJob?.priceRange?.from || 0}-$${selectedJob?.priceRange?.to || 0}`}
+                </Text>
+              </View>
 
-            {/* Buttons */}
-            <View className="flex-row gap-[4%] mt-[4%] mb-[3=2%]">
-              <BotttomButtons
-                onPress={() => {
-                  onClose();
-                  router.back();
-                }}
-                backgroundColor="#fff"
-                color="#EF4444"
-                borderColor="#EF4444"
-                title="Cancel"
-              />
-
-              <MapButton
-                onPress={handleUpdateQuote}
-                title="Update Quote"
-                disabled={isCheckingVerification || !isVerified}
-              />
+              {/* Buttons */}
+              <View className="flex-row gap-[4%]">
+                <BotttomButtons
+                  onPress={() => {
+                    onClose();
+                    router.back();
+                  }}
+                  backgroundColor="#fff"
+                  color="#EF4444"
+                  borderColor="#EF4444"
+                  title="Cancel"
+                />
+                <MapButton
+                  onPress={handleUpdateQuote}
+                  title="Update Quote"
+                  disabled={profileLoading || !isVerified}
+                />
+              </View>
             </View>
           </Animated.View>
-        </View>
-      </TouchableOpacity>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
 }

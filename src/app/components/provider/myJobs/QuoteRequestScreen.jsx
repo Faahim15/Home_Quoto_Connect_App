@@ -245,14 +245,14 @@ export default function QuotesRequestScreen() {
           You don't have any quote requests at the moment.
         </Text>
 
-        <TouchableOpacity
+        <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-500medium text-white text-base">
             Refresh
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }

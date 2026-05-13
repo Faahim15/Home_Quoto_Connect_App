@@ -6,7 +6,13 @@ export default function Layout() {
       <Stack.Screen
         name="allJobDetails"
         options={{
-     headerShown: false,
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="mapJobDetails"
+        options={{
+          headerShown: false,
         }}
       />
     </Stack>

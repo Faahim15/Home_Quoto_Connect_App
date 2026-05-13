@@ -1,31 +1,14 @@
 import { View } from "react-native";
-import { useState, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomButton from "./ServiceButton";
 import { router } from "expo-router";
 import XStyle from "../../../../util/styles";
 import { scale } from "../../../adaptive/Adaptiveness";
+import { useUserProfileQuery } from "../../../../../redux/features/apiSlices/user/userApiSlices";
 
 export default function UpdateQuoteButton({ title, serviceId, quoteId }) {
-  const [isVerified, setIsVerified] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data: profile, isLoading: profileLoading } = useUserProfileQuery();
 
-  useEffect(() => {
-    const checkVerificationStatus = async () => {
-      try {
-        const verifiedStatus = await AsyncStorage.getItem("isVerified");
-        // Convert string "true" to boolean true, everything else to false
-        setIsVerified(verifiedStatus === "true");
-      } catch (error) {
-        console.error("Error reading verification status:", error);
-        setIsVerified(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkVerificationStatus();
-  }, []);
+  const isVerified = profile?.data?.user?.verificationStatus === "verified";
 
   const handleUpdateOfferButton = () => {
     if (!isVerified) {
@@ -62,7 +45,7 @@ export default function UpdateQuoteButton({ title, serviceId, quoteId }) {
         <CustomButton
           onPress={handleUpdateOfferButton}
           title={title}
-          disabled={isLoading || !isVerified}
+          disabled={profileLoading || !isVerified}
         />
       </View>
     </View>
