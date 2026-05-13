@@ -1,25 +1,24 @@
 import {
   View,
   Text,
-  Image,
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
+  Pressable,
 } from "react-native";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { router } from "expo-router";
-import {
-  useGetMyJobsQuery,
-} from "../../../../redux/features/apiSlices/user/createJobSlices";
+import { Image } from "expo-image";
+import { useGetMyJobsQuery } from "../../../../redux/features/apiSlices/user/createJobSlices";
 
 const ServiceCard = ({ item, showAddress }) => {
   const { city, state } = item?.location?.details || {};
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={() => {
         router.push({
           pathname: "/myJobs/allJobDetails",
@@ -37,7 +36,7 @@ const ServiceCard = ({ item, showAddress }) => {
           }}
           className="rounded-xl"
           style={{ height: verticalScale(170) }}
-          resizeMode="cover"
+          contentFit="cover"
         />
       </View>
 
@@ -111,7 +110,7 @@ const ServiceCard = ({ item, showAddress }) => {
           </View>
         )}
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -119,10 +118,8 @@ export default function AllJobs({ showAddress = true }) {
   const [refreshing, setRefreshing] = useState(false);
   const { data, isLoading, error, refetch } = useGetMyJobsQuery();
 
-  
   const jobsData = data?.data?.jobs || data?.data || [];
   const displayData = jobsData.length > 0 ? jobsData : null;
-
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -179,9 +176,9 @@ export default function AllJobs({ showAddress = true }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={["#175994"]} 
-              tintColor="#175994" 
-              progressBackgroundColor="#ffffff" 
+              colors={["#175994"]}
+              tintColor="#175994"
+              progressBackgroundColor="#ffffff"
             />
           }
           ListEmptyComponent={

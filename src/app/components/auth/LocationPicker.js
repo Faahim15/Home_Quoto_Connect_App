@@ -6,7 +6,6 @@ import {
   Alert,
   Modal,
   Text,
-  Dimensions,
   ActivityIndicator,
   FlatList,
   Platform,
@@ -14,8 +13,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
-
-
 
 const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
   const [locationText, setLocationText] = useState(value || "");
@@ -35,6 +32,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
   const mapRef = useRef(null);
   const searchTimeout = useRef(null);
 
+  // On mount: permission নাও এবং silently current location দিয়ে mapRegion set করো
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -43,15 +41,28 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
           "Permission Required",
           "Please enable location access in your settings to use this feature."
         );
+        return;
+      }
+
+      try {
+        const isEnabled = await Location.hasServicesEnabledAsync();
+        if (!isEnabled) return;
+
+        const location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced,
+        });
+        const { latitude, longitude } = location.coords;
+        setMapRegion({
+          latitude,
+          longitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        });
+      } catch (e) {
+        // silently fail — default region থাকবে
       }
     })();
   }, []);
-
-  useEffect(() => {
-    if (isMapVisible) {
-      getCurrentLocation();
-    }
-  }, [isMapVisible]);
 
   useEffect(() => {
     if (value !== undefined) setLocationText(value);
@@ -90,7 +101,12 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
         accuracy: Location.Accuracy.Highest,
       });
       const { latitude, longitude } = location.coords;
-      const newRegion = { latitude, longitude, latitudeDelta: 0.005, longitudeDelta: 0.005 };
+      const newRegion = {
+        latitude,
+        longitude,
+        latitudeDelta: 0.005,
+        longitudeDelta: 0.005,
+      };
       setMapRegion(newRegion);
       setSelectedCoordinate({ latitude, longitude });
       await reverseGeocode(latitude, longitude);
@@ -107,13 +123,22 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
       const { status } = await Location.getForegroundPermissionsAsync();
       if (status !== "granted") return;
 
-      const addressResponse = await Location.reverseGeocodeAsync({ latitude, longitude });
+      const addressResponse = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
       if (addressResponse.length > 0) {
         const address = addressResponse[0];
         const formattedAddress = [
-          address.name, address.street, address.district,
-          address.city, address.region, address.country,
-        ].filter(Boolean).join(", ");
+          address.name,
+          address.street,
+          address.district,
+          address.city,
+          address.region,
+          address.country,
+        ]
+          .filter(Boolean)
+          .join(", ");
 
         setLocationText(formattedAddress);
         setSearchQuery(formattedAddress);
@@ -136,7 +161,10 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
   const handleSearch = (text) => {
     setSearchQuery(text);
     if (searchTimeout.current) clearTimeout(searchTimeout.current);
-    if (!text.trim()) { setSearchResults([]); return; }
+    if (!text.trim()) {
+      setSearchResults([]);
+      return;
+    }
 
     searchTimeout.current = setTimeout(async () => {
       try {
@@ -158,7 +186,12 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
   const handleSearchResultSelect = async (item) => {
     const latitude = parseFloat(item.lat);
     const longitude = parseFloat(item.lon);
-    const newRegion = { latitude, longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 };
+    const newRegion = {
+      latitude,
+      longitude,
+      latitudeDelta: 0.01,
+      longitudeDelta: 0.01,
+    };
 
     setMapRegion(newRegion);
     setSelectedCoordinate({ latitude, longitude });
@@ -168,8 +201,10 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
     await reverseGeocode(latitude, longitude);
   };
 
-  const handleMapPress = async () => {
-    await getCurrentLocation();
+  const handleMapPress = async (e) => {
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    setSelectedCoordinate({ latitude, longitude });
+    await reverseGeocode(latitude, longitude);
   };
 
   const confirmLocation = () => {
@@ -235,7 +270,6 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
       {/* Map Modal */}
       <Modal visible={isMapVisible} animationType="slide" statusBarTranslucent>
         <View className="flex-1 bg-white">
-
           {/* Header */}
           <View
             className={`flex-row items-center justify-between px-4 pb-3 bg-white border-b border-gray-100 ${
@@ -243,7 +277,10 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
             }`}
           >
             <TouchableOpacity
-              onPress={() => { setIsMapVisible(false); setSearchResults([]); }}
+              onPress={() => {
+                setIsMapVisible(false);
+                setSearchResults([]);
+              }}
               className="w-9 h-9 rounded-xl bg-gray-100 items-center justify-center"
             >
               <Ionicons name="arrow-back" size={22} color="#111" />
@@ -257,7 +294,9 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
               onPress={confirmLocation}
               className="bg-[#0054A5] px-5 py-2 rounded-full"
             >
-              <Text className="text-white font-poppins-semiBold text-sm">Done</Text>
+              <Text className="text-white font-poppins-semiBold text-sm">
+                Done
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -274,7 +313,12 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
                 autoCorrect={false}
               />
               {searchQuery.length > 0 && (
-                <TouchableOpacity onPress={() => { setSearchQuery(""); setSearchResults([]); }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setSearchQuery("");
+                    setSearchResults([]);
+                  }}
+                >
                   <Ionicons name="close-circle" size={18} color="#9CA3AF" />
                 </TouchableOpacity>
               )}
@@ -377,7 +421,6 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
               <Ionicons name="locate" size={22} color="#0054A5" />
             )}
           </TouchableOpacity>
-
         </View>
       </Modal>
     </View>

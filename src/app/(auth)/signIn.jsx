@@ -6,6 +6,7 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
 import ArrowBack from "../components/auth/ArrowBack";
 import EmailField from "../components/auth/EmailField";
@@ -15,7 +16,7 @@ import { Ionicons } from "@expo/vector-icons";
 import ShortMessage from "../components/auth/ShortMessage";
 import { router } from "expo-router";
 import { useLoginUserMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import * as Yup from "yup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { scale } from "../components/adaptive/Adaptiveness";
@@ -31,7 +32,10 @@ export default function SignInScreen() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
   const validationSchema = Yup.object({
-    email: Yup.string().email("Invalid email").required("Email is required"),
+    email: Yup.string()
+      .trim()
+      .email("Invalid email")
+      .required("Email is required"),
 
     password: Yup.string()
       .required("Password is required")
@@ -46,7 +50,6 @@ export default function SignInScreen() {
       const data = {
         email: formData.email.trim(),
         password: formData.password,
-        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       };
 
       const res = await login(data).unwrap();
@@ -55,27 +58,14 @@ export default function SignInScreen() {
       await AsyncStorage.setItem("userId", res?.data?.user?._id);
       await AsyncStorage.setItem("role", res?.data?.user?.role);
 
-      Toast.show({
-        type: "success",
-        text1: "Login Successful",
-        text2: `Welcome back, ${res?.data?.user?.fullName || "User"}!`,
-      });
+      toast.success(`Welcome back, ${res?.data?.user?.fullName || "User"}!`);
 
       if (res?.data?.user?.role !== "provider") router.push("/home");
       else {
-        Toast.show({
-          type: "info",
-          text1: "User Account Required",
-          text2: "Please log in using your user credentials to continue.",
-        });
+        toast.info("Please log in using your user credentials to continue.");
       }
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Login Failed",
-        text2:
-          error?.data?.message || "Something went wrong. Please try again.",
-      });
+      console.log({ error });
 
       if (error.name === "ValidationError") {
         const fieldErrors = {};
@@ -83,6 +73,27 @@ export default function SignInScreen() {
           fieldErrors[err.path] = err.message;
         });
         setErrors(fieldErrors);
+      } else {
+        const status = error?.data?.status || error?.status;
+        const errorMessage =
+          error?.data?.message || error.message || "Something went wrong!";
+        let errorTitle = "Sign In Failed";
+
+        if (status === 401) {
+          errorTitle = "Invalid Credentials";
+        } else if (status === 403) {
+          errorTitle = "Access Denied";
+        } else if (status === 404) {
+          errorTitle = "Not Found";
+        } else if (status >= 500) {
+          errorTitle = "Server Problem";
+        } else if (!status && error.message === "Network Error") {
+          errorTitle = "No Internet Connection";
+        }
+
+        toast.error(errorTitle, {
+          description: errorMessage,
+        });
       }
     }
   };
@@ -146,7 +157,7 @@ export default function SignInScreen() {
             </View>
           </View>
 
-          <TouchableOpacity
+          <Pressable
             className="bg-[#0054A5] mx-[6%] rounded-lg py-[4%]"
             onPress={handleSubmit}
             disabled={isLoading} // Disable button while loading
@@ -163,7 +174,7 @@ export default function SignInScreen() {
                 {isLoading ? "Processing..." : "Sign In"}
               </Text>
             </View>
-          </TouchableOpacity>
+          </Pressable>
 
           <ShortMessage
             title="Don't you have an account?"

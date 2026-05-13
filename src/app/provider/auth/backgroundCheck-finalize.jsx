@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import CustomTitle from "../../components/shared/CustomTitle";
 import VerifyHeader from "../../components/provider/auth/VerifyHeader";
 import CustomButton from "../../components/onboarding/CustomButton";
@@ -54,34 +54,13 @@ export default function BackgroundCheckFinalize() {
       const res = await submitBackgroundCheck(formData);
 
       if (res?.success || res?.data?._id) {
-        Toast.show({
-          type: "success",
-          position: "top",
-          text1: "Success ✓",
-          text2: "Background check submitted successfully!",
-          text2Style: {
-            fontSize: 12,
-          },
-          topOffset: 50,
-          visibilityTime: 3000,
-          autoHide: true,
-          onHide: () => {
-            dispatch(clearCriminalCheckData());
-            router.push("/provider/auth/validation");
-          },
-        });
+        toast.success("Background check submitted successfully!");
+        dispatch(clearCriminalCheckData());
+        router.push("/provider/auth/validation");
       } else {
-        Toast.show({
-          type: "success",
-          position: "top",
-          text1: "Submitted",
-          text2: res?.message || "Background check submitted successfully!",
-          text2Style: {
-            fontSize: 12,
-          },
-          topOffset: 50,
-          visibilityTime: 3000,
-        });
+        toast.success(
+          res?.message || "Background check submitted successfully!",
+        );
       }
     } catch (err) {
       console.log("Submission error:", err?.message);
@@ -105,17 +84,7 @@ export default function BackgroundCheckFinalize() {
           "Invalid submission. Please ensure all files are valid JPG or PNG.";
       }
 
-      Toast.show({
-        type: "error",
-        position: "top",
-        text1: "Submission Failed",
-        text2: errorMessage,
-        text2Style: {
-          fontSize: 12,
-        },
-        topOffset: 50,
-        visibilityTime: 4000,
-      });
+      toast.error(errorMessage);
     }
   };
 

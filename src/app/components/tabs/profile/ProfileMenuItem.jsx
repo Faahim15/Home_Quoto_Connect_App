@@ -1,11 +1,11 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import XStyle from "../../../util/styles";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { SvgXml } from "react-native-svg";
 const ProfileMenuItem = ({ iconName, label, onPress, color = "#565656" }) => {
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       className="border mb-[3%] flex-row justify-between rounded-md border-[#D4E0EB]"
       style={[
@@ -32,7 +32,7 @@ const ProfileMenuItem = ({ iconName, label, onPress, color = "#565656" }) => {
       >
         <Ionicons name="chevron-forward" size={24} color="#fff" />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

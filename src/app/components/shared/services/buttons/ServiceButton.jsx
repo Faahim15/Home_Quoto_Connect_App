@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, Pressable } from "react-native";
 
 export default function CustomButton({
   title,
@@ -18,14 +18,14 @@ export default function CustomButton({
       }}
       className="mt-[3%] border rounded-md px-[3%] py-[3%]"
     >
-      <TouchableOpacity onPress={onPress} disabled={disabled}>
+      <Pressable onPress={onPress} disabled={disabled}>
         <Text
           style={{ color: disabled ? "#6B7280" : "#FFFFFF" }}
           className="font-poppins-bold text-center"
         >
           {title}
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }

@@ -47,7 +47,7 @@ const ServicesOfferScreen = () => {
           "Instructions cannot be only whitespace",
           (value) => {
             return value && value.trim().length > 0;
-          }
+          },
         ),
     });
 
@@ -69,7 +69,7 @@ const ServicesOfferScreen = () => {
 
   const handleNext = () => {
     if (validateCurrentPage()) {
-      router.push("/provider/auth/timePicker");
+      router.replace("/provider/auth/timePicker");
     } else console.log("errors", errors);
   };
 

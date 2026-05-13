@@ -1,4 +1,4 @@
-import { View, Text, Image, FlatList } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import XStyle from "../../../util/styles";
 import {
@@ -7,6 +7,7 @@ import {
 } from "../../../util/helper-function";
 import { statusColorMap } from "../../../util/colors";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 function showImages({ item }) {
   return (
     <View>
@@ -38,7 +39,7 @@ export default function ProviderInfo({ item, showPrice = false }) {
           <Image
             style={{ width: scale(310), height: verticalScale(177) }}
             className="rounded-md  mb-[2%] "
-            source={{ uri: item?.serviceCategory?.image?.url || null }}
+            source={{ uri: item?.photos[0]?.url || null }}
           />
         </View>
 

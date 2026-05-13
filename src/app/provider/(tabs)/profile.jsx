@@ -4,7 +4,7 @@ import {
   ScrollView,
   RefreshControl,
   ActivityIndicator,
-  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import ContractorDetails from "../../components/provider/profile/ProviderDetails";
 import ProfileMenuItem from "../../components/tabs/profile/ProfileMenuItem";
@@ -12,7 +12,7 @@ import LogoutItem from "../../components/tabs/profile/LogoutItem";
 import { useState, useCallback } from "react";
 import ConfirmationModal from "../../components/tabs/profile/ConfirmationModal";
 import { router, useFocusEffect } from "expo-router";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import {
   myEarnings,
   editProfile,
@@ -41,14 +41,12 @@ export default function ContractorProfileScreen() {
     refetch: refetchProfile,
   } = useUserProfileQuery();
 
-
   useFocusEffect(
     useCallback(() => {
       refetchProfile();
-    }, [refetchProfile])
+    }, [refetchProfile]),
   );
 
- 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
@@ -66,40 +64,22 @@ export default function ContractorProfileScreen() {
 
   const handleYes = async () => {
     try {
-  
       const response = await logout().unwrap();
       console.log("Logout response:", response);
 
-    
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("userId");
       await AsyncStorage.removeItem("role");
       await AsyncStorage.removeItem("isVerified");
 
+      toast.success("Logged Out Successfully");
       setModalVisible(false);
-
-      Toast.show({
-        type: "success",
-        text1: "Logged Out Successfully",
-        text2: "See you soon! 👋",
-        position: "top",
-        visibilityTime: 2000,
-      });
-
-      setTimeout(() => {
-        router.replace("/onboarding/loginChoice");
-      }, 3000);
+      router.replace("/onboarding/loginChoice");
     } catch (error) {
       console.error("Logout error:", error);
       setModalVisible(false);
 
-      Toast.show({
-        type: "error",
-        text1: "Logout Failed",
-        text2: "Something went wrong. Please try again.",
-        position: "top",
-        visibilityTime: 3000,
-      });
+      toast.error("Logout Failed. Please try again.");
     }
   };
 
@@ -107,7 +87,6 @@ export default function ContractorProfileScreen() {
     setModalVisible(false);
   };
 
- 
   if (profileLoading && !profile) {
     return (
       <View className="flex-1 bg-[#F9F9F9] items-center justify-center">
@@ -118,7 +97,6 @@ export default function ContractorProfileScreen() {
       </View>
     );
   }
-
 
   if (logoutLoading) {
     return (
@@ -141,12 +119,12 @@ export default function ContractorProfileScreen() {
         <Text className="font-poppins-regular text-sm text-[#565656] text-center mb-4">
           Please check your connection and try again
         </Text>
-        <TouchableOpacity
+        <Pressable
           onPress={() => refetchProfile()}
           className="bg-[#007AFF] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-medium text-white">Retry</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }

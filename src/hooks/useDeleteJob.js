@@ -18,14 +18,12 @@ export const useDeleteJob = () => {
       Alert.alert("Success", "Job deleted successfully");
       hideDeleteModal();
 
-      // Navigate back to previous screen
-      // You might need to adjust this based on your navigation structure
       router.back();
     } catch (error) {
       console.error("Failed to delete job:", error);
       Alert.alert(
         "Error",
-        error?.data?.message || "Failed to delete job. Please try again."
+        error?.data?.message || "Failed to delete job. Please try again.",
       );
     }
   };

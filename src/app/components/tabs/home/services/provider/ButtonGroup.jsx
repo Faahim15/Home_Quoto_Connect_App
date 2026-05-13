@@ -7,7 +7,7 @@ export default function ButtonGroup({ handleInputChange, selectedOption }) {
   const [activeIndex, setActiveIndex] = useState(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // ✅ Initialize active index from selectedOption prop
+  //  Initialize active index from selectedOption prop
   useEffect(() => {
     if (selectedOption && !isInitialized) {
       const index = titles.indexOf(selectedOption);

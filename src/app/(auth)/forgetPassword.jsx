@@ -4,7 +4,7 @@ import CustomHeader from "../components/auth/CustomHeader";
 import FormButton from "../components/auth/FormButton";
 import { useForgotPasswordMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
 import { router } from "expo-router";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import * as Yup from "yup";
 import { useState } from "react";
 export default function ForgetPasswordScreen() {
@@ -35,13 +35,9 @@ export default function ForgetPasswordScreen() {
       const res = await forgotPassword(data).unwrap();
       console.log("forgetPassword response:", res);
       // ✅ Show success toast for verification code sent
-      Toast.show({
-        type: "success",
-        text1: "Verification Code Sent",
-        text2: "A code has been sent to your email. Please check your inbox.",
-        autoHide: true,
-        visibilityTime: 3000,
-      });
+      toast.success(
+        "A code has been sent to your email. Please check your inbox.",
+      );
 
       // ✅ Navigate to /verification page
       router.push({
@@ -50,12 +46,9 @@ export default function ForgetPasswordScreen() {
       });
     } catch (error) {
       // ❌ Show error toast
-      Toast.show({
-        type: "error",
-        text1: "Email Verification Failed",
-        text2:
-          error?.data?.message || "Something went wrong. Please try again.",
-      });
+      toast.error(
+        error?.data?.message || "Something went wrong. Please try again.",
+      );
 
       console.error("Login error:", error);
 

@@ -21,7 +21,7 @@ import {
   support,
 } from "../../../assets/svg/profile";
 import { useLogoutUserMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUserProfileQuery } from "../../redux/features/apiSlices/user/userApiSlices";
 import { useDispatch } from "react-redux";
@@ -69,14 +69,7 @@ const dispatch = useDispatch();
       await AsyncStorage.removeItem("role");
      dispatch({ type: "RESET_STORE" }); 
       setModalVisible(false);
- 
-      Toast.show({
-        type: "success",
-        text1: "Logged Out Successfully",
-        text2: "See you soon! 👋",
-        position: "top",
-        visibilityTime: 2000,
-      });
+toast.success("See you soon! 👋");
 
       setTimeout(() => {
         router.replace("/onboarding/loginChoice");
@@ -84,14 +77,7 @@ const dispatch = useDispatch();
     } catch (error) {
       console.error("Logout error:", error);
       setModalVisible(false);
-
-      Toast.show({
-        type: "error",
-        text1: "Logout Failed",
-        text2: "Something went wrong. Please try again.",
-        position: "top",
-        visibilityTime: 3000,
-      });
+toast.error("Something went wrong. Please try again.");
     }
   };
 

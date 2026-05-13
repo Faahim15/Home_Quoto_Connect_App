@@ -1,4 +1,4 @@
-import { View, Modal, Text, TouchableOpacity } from "react-native";
+import { View, Modal, Text, TouchableOpacity, Pressable } from "react-native";
 
 const DeleteConfirmationModal = ({
   visible,
@@ -25,7 +25,7 @@ const DeleteConfirmationModal = ({
           </Text>
 
           <View className="flex-row justify-between gap-x-3">
-            <TouchableOpacity
+            <Pressable
               className="flex-1 bg-gray-200 rounded-xl py-3 px-4"
               onPress={onClose}
               disabled={isLoading}
@@ -33,9 +33,9 @@ const DeleteConfirmationModal = ({
               <Text className="text-gray-700 text-base font-poppins-500medium text-center">
                 Cancel
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               className="flex-1 bg-red-500 rounded-xl py-3 px-4"
               onPress={onConfirm}
               disabled={isLoading}
@@ -43,7 +43,7 @@ const DeleteConfirmationModal = ({
               <Text className="text-white text-base font-poppins-500medium text-center">
                 {isLoading ? "Deleting..." : "Delete"}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </View>

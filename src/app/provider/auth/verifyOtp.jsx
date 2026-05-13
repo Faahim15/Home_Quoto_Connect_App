@@ -1,20 +1,18 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import * as Yup from "yup";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import CustomHeader from "../../components/auth/CustomHeader";
 import VerificationCodeField from "../../components/auth/VerificationCode";
 import { useVerifyOtpMutation } from "../../../redux/features/apiSlices/auth/authApiSlices";
+import FormButton from "../../components/auth/FormButton";
 
 export default function VerifyOtp() {
   const [otpVerification, { isLoading: verifyOtpLoading }] =
     useVerifyOtpMutation();
   const { email } = useLocalSearchParams();
 
-  console.log("email from provider sign up", email);
-
-  // OTP state (6 digits)
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [errors, setErrors] = useState({});
 
@@ -22,53 +20,40 @@ export default function VerifyOtp() {
     const newOtp = [...otp];
     newOtp[index] = text;
     setOtp(newOtp);
-  }; 
-  // VerifyOtp.jsx এ এই function টা add করুন
-const handleOtpPaste = (digits) => {
-  const newOtp = [...otp];
-  for (let i = 0; i < 6; i++) {
-    newOtp[i] = digits[i] || "";
-  }
-  setOtp(newOtp); // ✅ একবারে পুরো array update
-};
+  };
 
-  // ✅ Validation schema
+  const handleOtpPaste = (digits) => {
+    const newOtp = [...otp];
+    for (let i = 0; i < 6; i++) {
+      newOtp[i] = digits[i] || "";
+    }
+    setOtp(newOtp);
+  };
+
   const validationSchema = Yup.object({
     otp: Yup.string()
       .matches(/^\d{6}$/, "OTP must be exactly 6 digits")
       .required("OTP is required"),
   });
 
-  const handleSubmit = async (currentOtp = otp) => {
+  const handleSubmit = async () => {
     try {
-    const fullOtp = currentOtp.join("");
+      const fullOtp = otp.join("");
 
-      console.log("show emial and otp", email, otp);
+      const data = {
+        email,
+        otp: fullOtp,
+        purpose: "signup",
+      };
 
-    const data = {
-      email,
-      otp: fullOtp,
-      purpose: "signup",
-    };
+      await validationSchema.validate({ otp: fullOtp }, { abortEarly: false });
+      setErrors({});
 
-
-      // ✅ Validate OTP format
-  await validationSchema.validate({ otp: fullOtp }, { abortEarly: false });
-    setErrors({})
-
-      // ✅ Send request to backend
       await otpVerification(data).unwrap();
 
-      // ✅ Success
-      Toast.show({
-        type: "success",
-        text1: "Account Verified",
-        text2: "Your account has been verified successfully.",
-        visibilityTime: 2500,
-      });
-
-      // 🔑 Navigate to next step after sign-up verification
-      router.replace("provider/auth/signIn"); // adjust to your actual route
+      toast.success("Your account has been verified successfully.");
+      // router.dismissAll();
+      router.replace("provider/auth/signIn");
     } catch (error) {
       if (error.name === "ValidationError") {
         const fieldErrors = {};
@@ -76,13 +61,7 @@ const handleOtpPaste = (digits) => {
           fieldErrors[err.path] = err.message;
         });
         setErrors(fieldErrors);
-
-        Toast.show({
-          type: "error",
-          text1: "Invalid OTP Format",
-          text2: "Please enter a valid 6-digit OTP.",
-          visibilityTime: 2500,
-        });
+        toast.error("Please enter a valid 6-digit OTP.");
       } else {
         console.log("error", error);
         const message =
@@ -90,14 +69,7 @@ const handleOtpPaste = (digits) => {
             ? "The OTP you entered is incorrect. Please try again."
             : error?.data?.message ||
               "Something went wrong. Please try again later.";
-
-        Toast.show({
-          type: "error",
-          text1: "OTP Verification Failed",
-          text2: message,
-          visibilityTime: 3000,
-        });
-
+        toast.error(message);
         setOtp(["", "", "", "", "", ""]);
       }
     }
@@ -107,27 +79,23 @@ const handleOtpPaste = (digits) => {
     <View className="flex-1 bg-white">
       <CustomHeader
         title="Verify Your Account"
-        nestedTitle="Code"
+        nestedTitle="Cod"
         subtitle="Enter the code sent to your email to complete sign-up."
       />
 
       <VerificationCodeField
         error={errors.otp}
         otp={otp}
-        handleOtpChange={handleOtpChange}  
-         handleOtpPaste={handleOtpPaste}
-      
+        handleOtpChange={handleOtpChange}
+        handleOtpPaste={handleOtpPaste}
       />
 
       <View className="flex-1 justify-end pb-[20%]">
-        <TouchableOpacity
-          onPress={() => handleSubmit()} 
-          className="bg-[#0054A5] mx-[6%] rounded-lg py-[4%]"
-        >
-          <Text className="text-white text-center text-base font-poppins-semiBold">
-            {verifyOtpLoading ? <ActivityIndicator color="#fff" /> : "Verify"}
-          </Text>
-        </TouchableOpacity>
+        <FormButton
+          onPress={handleSubmit}
+          title="Verify"
+          isLoading={verifyOtpLoading}
+        />
       </View>
     </View>
   );

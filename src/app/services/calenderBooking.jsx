@@ -6,6 +6,7 @@ import {
   Alert,
   ScrollView,
   RefreshControl,
+  Pressable,
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
@@ -18,16 +19,13 @@ const BookingCalendar = () => {
   const dispatch = useDispatch();
   const jobData = useSelector((state) => state.jobPost);
 
-
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [isInitialized, setIsInitialized] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
- 
   useEffect(() => {
     if (!isInitialized) {
-   
       if (jobData.preferredDate) {
         setSelectedDate(jobData.preferredDate);
       }
@@ -40,17 +38,13 @@ const BookingCalendar = () => {
     }
   }, [jobData.preferredDate, jobData.preferredTime, isInitialized]);
 
-
-
   const handleInputChange = (field, value) => {
     dispatch(setJobField({ field, value }));
   };
 
-
   const onRefresh = () => {
     setRefreshing(true);
 
-  
     if (jobData.preferredDate) {
       setSelectedDate(jobData.preferredDate);
     }
@@ -58,21 +52,31 @@ const BookingCalendar = () => {
       setSelectedTime(jobData.preferredTime);
     }
 
-
     setTimeout(() => {
       setRefreshing(false);
     }, 500);
   };
 
-
   const morningTimes = ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00"];
   const afternoonTimes = ["12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
-  const eveningTimes = ["18:00", "19:00", "20:00", "21:00", "22:00"];
+  const eveningTimes = [
+    "18:00",
+    "19:00",
+    "20:00",
+    "21:00",
+    "22:00",
+    "23:00",
+    "00:00",
+    "01:00",
+    "02:00",
+    "03:00",
+    "04:00",
+    "05:00",
+  ];
 
-  
   const onDayPress = (day) => {
     setSelectedDate(day.dateString);
-    setSelectedTime(""); 
+    setSelectedTime("");
   };
 
   // Handle save
@@ -117,8 +121,8 @@ const BookingCalendar = () => {
     : {};
 
   return (
-    <View className="flex-1 bg-[#F9F9F9]"> 
-    <CustomTitle title="Select Date & Time" withSafeTop={true} />
+    <View className="flex-1 bg-[#F9F9F9]">
+      <CustomTitle title="Select Date & Time" withSafeTop={true} />
       <ScrollView
         className="flex-1"
         contentContainerStyle={{ paddingBottom: verticalScale(100) }}
@@ -133,7 +137,6 @@ const BookingCalendar = () => {
         }
       >
         <View className="px-[6%]">
-          
           <View
             style={{ width: scale(327), height: verticalScale(303) }}
             className=" bg-[#F9F9F9]  mt-[3%] "
@@ -183,7 +186,7 @@ const BookingCalendar = () => {
                 </Text>
                 <View className="flex-row flex-wrap gap-[2%]">
                   {morningTimes.map((time) => (
-                    <TouchableOpacity
+                    <Pressable
                       key={time}
                       onPress={() => setSelectedTime(time)}
                       className={`px-[3%] py-[3%] rounded-lg border ${
@@ -201,7 +204,7 @@ const BookingCalendar = () => {
                       >
                         {time}
                       </Text>
-                    </TouchableOpacity>
+                    </Pressable>
                   ))}
                 </View>
               </View>
@@ -213,7 +216,7 @@ const BookingCalendar = () => {
                 </Text>
                 <View className="flex-row flex-wrap gap-2">
                   {afternoonTimes.map((time) => (
-                    <TouchableOpacity
+                    <Pressable
                       key={time}
                       onPress={() => setSelectedTime(time)}
                       className={`px-4 py-3 rounded-lg border ${
@@ -231,7 +234,7 @@ const BookingCalendar = () => {
                       >
                         {time}
                       </Text>
-                    </TouchableOpacity>
+                    </Pressable>
                   ))}
                 </View>
               </View>
@@ -239,11 +242,11 @@ const BookingCalendar = () => {
               {/* Evening Times */}
               <View className="bg-[#F9F9F9]">
                 <Text className="text-sm font-poppins-400regular text-[#565656] mb-[1.5%]">
-                  Evening (18:00 - 22:00)
+                  Evening (18:00 - 05:00)
                 </Text>
                 <View className="flex-row flex-wrap gap-2">
                   {eveningTimes.map((time) => (
-                    <TouchableOpacity
+                    <Pressable
                       key={time}
                       onPress={() => setSelectedTime(time)}
                       className={`px-4 py-3 rounded-lg border ${
@@ -261,7 +264,7 @@ const BookingCalendar = () => {
                       >
                         {time}
                       </Text>
-                    </TouchableOpacity>
+                    </Pressable>
                   ))}
                 </View>
               </View>
@@ -272,7 +275,7 @@ const BookingCalendar = () => {
 
       {/* Save Button - Fixed at bottom */}
       <View className="px-[6%] pb-[20%] bg-[#F9F9F9]">
-        <TouchableOpacity
+        <Pressable
           className={`py-[3.5%] rounded-lg ${
             selectedDate && selectedTime ? "bg-[#175994]" : "bg-gray-400"
           }`}
@@ -281,7 +284,7 @@ const BookingCalendar = () => {
           <Text className="text-white text-center font-poppins-bold text-base">
             Save
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

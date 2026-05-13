@@ -14,7 +14,7 @@ import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import ShortMessage from "../../components/auth/ShortMessage";
 import { router } from "expo-router";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import * as Yup from "yup";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { scale } from "../../components/adaptive/Adaptiveness";
@@ -34,7 +34,10 @@ export default function SignInScreen() {
   };
 
   const validationSchema = Yup.object({
-    email: Yup.string().email("Invalid email").required("Email is required"),
+    email: Yup.string()
+      .trim() // ইমেইল ট্রিম করা হলো
+      .email("Invalid email")
+      .required("Email is required"),
     password: Yup.string()
       .required("Password is required")
       .min(8, "Password must be at least 8 characters"),
@@ -42,66 +45,67 @@ export default function SignInScreen() {
 
   const handleSubmit = async () => {
     try {
-      // ✅ Validate form data
       await validationSchema.validate(formData, { abortEarly: false });
       setErrors({});
 
-      // ✅ Prepare login payload
       const data = {
-        email: formData.email,
+        email: formData.email.trim(),
         password: formData.password,
       };
 
-      // ✅ Send login request
       const res = await login(data).unwrap();
 
       const isVerified = res?.data?.user?.verificationStatus === "verified";
 
-      // ✅ Store authentication data in parallel
       await Promise.all([
         AsyncStorage.setItem("token", res?.data?.token),
         AsyncStorage.setItem("userId", res?.data?.user?._id),
         AsyncStorage.setItem("role", res?.data?.user?.role),
-        AsyncStorage.setItem("isVerified", String(isVerified)),
+        // AsyncStorage.setItem("isVerified", String(isVerified)),
       ]);
 
-      // ✅ Show success toast
-      Toast.show({
-        type: "success",
-        text1: "Login Successful",
-        text2: `Welcome back, ${res?.data?.user?.fullName || "User"}!`,
-      });
+      toast.success(`Welcome back, ${res?.data?.user?.fullName || "User"}!`);
 
-      // ✅ Navigate based on role and verification
       if (res?.data?.user?.role === "provider") {
         if (isVerified) {
-          router.push("/provider/home");
+          router.replace("/provider/home");
         } else {
-          router.push("/provider/auth/licenceVerify");
+          router.replace("/provider/auth/licenceVerify");
         }
       } else {
-        Toast.show({
-          type: "info",
-          text1: "Provider Account Required",
-          text2: "Please log in using your provider credentials to continue.",
-        });
+        toast.info(
+          "Please log in using your provider credentials to continue.",
+        );
       }
     } catch (error) {
-      // ❌ Show error toast
-      Toast.show({
-        type: "error",
-        text1: "Login Failed",
-        text2:
-          error?.data?.message || "Something went wrong. Please try again.",
-      });
-
-      // ✅ Optional: handle validation errors
       if (error.name === "ValidationError") {
         const fieldErrors = {};
         error.inner.forEach((err) => {
           fieldErrors[err.path] = err.message;
         });
         setErrors(fieldErrors);
+      } else {
+        const status = error.status || error?.data?.status;
+        const errorMessage =
+          error?.data?.message || error?.message || "Something went wrong";
+        let errorTitle = "Sign In Failed";
+
+        if (status === 401) {
+          errorTitle = "Invalid Credentials";
+        } else if (status === 403) {
+          errorTitle = "Access Denied";
+        } else if (status === 404) {
+          errorTitle = "Service Not Found";
+        } else if (status >= 500) {
+          errorTitle = "Server Error";
+        } else if (error.error?.includes("FETCH_ERROR")) {
+          errorTitle = "Network Error";
+          errorMessage = "Please check your internet connection.";
+        }
+
+        toast.error(errorTitle, {
+          description: errorMessage,
+        });
       }
     }
   };

@@ -1,6 +1,7 @@
-import { View, Text, Image, FlatList, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
+import { Image } from "expo-image";
 import servicesData from "../../data/shared/ServicesData";
 import { router } from "expo-router";
 const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
@@ -32,7 +33,7 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
           }}
           className="rounded-xl"
           style={{ height: verticalScale(170) }}
-          resizeMode="cover"
+          contentFit="cover"
         />
       </View>
 

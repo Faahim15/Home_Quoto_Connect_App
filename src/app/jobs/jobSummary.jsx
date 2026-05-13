@@ -7,7 +7,7 @@ import {
   useCreateJobMutation,
   useUpdateJobMutation,
 } from "../../redux/features/apiSlices/user/createJobSlices";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import { resetJobPost } from "../../redux/features/jobPost/jobPostSlice";
 import ReviewPost from "../components/tabs/jobs/ReviewPost";
 
@@ -23,19 +23,15 @@ export default function JobSummaryScreen() {
 
   const isLoading = createLoading || updateLoading;
 
- 
   const prepareFormData = () => {
     const formData = new FormData();
-
 
     formData.append("title", jobData.title);
     formData.append("description", jobData.specificInstructions);
     formData.append("serviceCategory", jobData?.serviceCategory?.id);
 
-    
     formData.append("specializations", JSON.stringify(specializationIds));
 
-  
     formData.append("location[type]", "Point");
     formData.append("location[coordinates][0]", longitude);
     formData.append("location[coordinates][1]", latitude);
@@ -43,29 +39,25 @@ export default function JobSummaryScreen() {
     formData.append("location[details][streetNumber]", jobData.streetNumber);
     formData.append(
       "location[details][completeAddress]",
-      jobData.completeAddress
+      jobData.completeAddress,
     );
     formData.append("location[details][city]", jobData.location.city);
     formData.append("location[details][state]", jobData.location.state);
     formData.append("location[details][country]", jobData.location.country);
     formData.append(
       "location[details][zipCode]",
-      jobData?.location?.zipCode || "N/A"
+      jobData?.location?.zipCode || "N/A",
     );
     formData.append("location[address]", jobData.location.address);
 
-   
     formData.append("urgency", jobData.urgency);
     formData.append("preferredDate", jobData.preferredDate);
     formData.append("preferredTime", jobData.preferredTime);
     formData.append("specificInstructions", jobData.specificInstructions);
 
-   
     if (jobData.photos && jobData.photos.length > 0) {
       jobData.photos.forEach((photo, index) => {
-    
         if (photo.uri) {
-      
           formData.append("photos", {
             uri: photo.uri,
             type: photo.type || "image/jpeg",
@@ -75,12 +67,11 @@ export default function JobSummaryScreen() {
       });
     }
 
- 
     formData.append("priceRange[from]", jobData.priceRange.from);
     formData.append("priceRange[to]", jobData.priceRange.to);
     formData.append(
       "priceRange[isPersonalized]",
-      jobData.priceRange.isPersonalized
+      jobData.priceRange.isPersonalized,
     );
 
     return formData;
@@ -90,30 +81,18 @@ export default function JobSummaryScreen() {
     try {
       const formData = prepareFormData();
 
-   
       const response = await createJob(formData).unwrap();
       dispatch(resetJobPost());
       console.log("✅ Job posted successfully:", response);
 
-     
-      Toast.show({
-        type: "success",
-        text1: "Success!",
-        text2: "Job created successfully!",
-        position: "top",
-      });
+      toast.success("Job created successfully!");
 
-  
       router.replace("/home");
     } catch (error) {
       console.error("❌ Job creation failed:", error);
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2:
-          error?.data?.message || "Something went wrong. Please try again.",
-        position: "bottom",
-      });
+      toast.error(
+        error?.data?.message || "Something went wrong. Please try again.",
+      );
     }
   };
 
@@ -121,7 +100,6 @@ export default function JobSummaryScreen() {
     try {
       const formData = prepareFormData();
 
-      
       const response = await updateJob({
         jobId,
         formData,
@@ -129,25 +107,13 @@ export default function JobSummaryScreen() {
 
       dispatch(resetJobPost());
 
-
       // Show success toast
-      Toast.show({
-        type: "success",
-        text1: "Success!",
-        text2: "Job updated successfully!",
-        position: "top",
-      });
+      toast.success("Job updated successfully!");
 
- 
       router.replace("/myJobs");
     } catch (error) {
       console.error("❌ Job update failed:", error);
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: error?.message || "Failed to update job. Please try again.",
-        position: "bottom",
-      });
+      toast.error(error?.message || "Failed to update job. Please try again.");
     }
   };
 

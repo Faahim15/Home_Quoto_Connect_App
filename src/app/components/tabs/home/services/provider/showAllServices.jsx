@@ -1,22 +1,23 @@
 import {
   View,
   Text,
-  Image,
   FlatList,
   TouchableOpacity,
   RefreshControl,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 import { useState } from "react";
+import { Image } from "expo-image";
 
 const ServiceCard = ({ item }) => {
   const { fullName } = item?.client;
   const { city, state } = item?.location?.details || {};
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={() => {
         router.push({
           pathname: "/shared/serviceDetails",
@@ -33,7 +34,7 @@ const ServiceCard = ({ item }) => {
           }}
           className="rounded-xl"
           style={{ height: verticalScale(170) }}
-          resizeMode="cover"
+          contentFit="cover"
         />
       </View>
 
@@ -92,7 +93,7 @@ const ServiceCard = ({ item }) => {
           </Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -100,7 +101,6 @@ export default function ShowAllServiceCards({ jobs, horizontal }) {
   const allJobs = jobs?.filter((job) => !job.isDirectBooking);
 
   const isEmpty = !allJobs || allJobs.length === 0;
-
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -132,7 +132,6 @@ export default function ShowAllServiceCards({ jobs, horizontal }) {
               ? { paddingRight: verticalScale(100) }
               : { rowGap: verticalScale(12), paddingBottom: verticalScale(180) }
           }
-        
           refreshControl={
             !horizontal ? (
               <RefreshControl

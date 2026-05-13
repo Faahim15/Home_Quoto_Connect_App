@@ -1,7 +1,8 @@
 import { View, FlatList, ActivityIndicator, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "expo-router";
 // Components
 
 import TextField from "../components/tabs/jobs/TextField";
@@ -24,6 +25,10 @@ import {
 import Error from "../components/shared/error/Error";
 import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import CustomTitle from "../components/shared/CustomTitle";
+import {
+  formatDateForDisplay,
+  formatDateFromAPI,
+} from "../components/utils/dateUtils";
 
 export default function JobFormScreen() {
   const { jobId } = useLocalSearchParams();
@@ -38,7 +43,7 @@ export default function JobFormScreen() {
 
   const job = data?.data?.job;
 
-  // ✅ SMART INITIALIZATION: Only initialize OTHER fields if they are empty
+  // SMART INITIALIZATION: Only initialize OTHER fields if they are empty
   useEffect(() => {
     if (job && jobId && !hasInitializedFromAPI) {
       // Check if other fields are empty (not photos since they come from upload screen)
@@ -48,10 +53,6 @@ export default function JobFormScreen() {
         jobData.specializations?.length > 0;
 
       if (!hasOtherDataInRedux) {
-        console.log(
-          "🔄 Initializing other fields from API (photos already exist)..."
-        );
-
         const formatDate = (dateString) => {
           if (!dateString) return "";
           const date = new Date(dateString);
@@ -85,7 +86,7 @@ export default function JobFormScreen() {
           urgency: job.urgency || "",
           specificInstructions: job.description || "",
           specializations: transformedSpecializations,
-          preferredDate: formatDate(job.preferredDate),
+          preferredDate: formatDateFromAPI(job.preferredDate),
           preferredTime: job.preferredTime || "",
           priceRange: {
             from: job.priceRange?.from || 0,
@@ -97,17 +98,7 @@ export default function JobFormScreen() {
           completeAddress: job.location?.details?.completeAddress || "",
         };
 
-        console.log("📝 Form Data to Initialize (excluding photos):", {
-          title: formData.title,
-          serviceCategory: formData.serviceCategory,
-          specializations: formData.specializations?.length,
-          photosInRedux: jobData.photos?.length, // Show existing photos count
-          urgency: formData.urgency,
-          location: formData.location,
-        });
-
         dispatch(setJobData(formData));
-        console.log("✅ Other fields initialized from API, photos preserved");
       } else {
         console.log("🚫 Skipping API initialization - Redux already has data");
         console.log("📸 Current photos in Redux:", jobData.photos?.length);
@@ -120,10 +111,35 @@ export default function JobFormScreen() {
   const handleInputChange = (field, value) => {
     dispatch(setJobField({ field, value }));
 
-    if (errors[field]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
-    }
+    setErrors((prev) => {
+      const updated = { ...prev };
+
+      if (field === "priceRange") {
+        delete updated.priceRange;
+      } else if (field === "preferredDate" || field === "preferredTime") {
+        delete updated.preferredDate;
+      } else if (field === "serviceCategory") {
+        delete updated["serviceCategory.id"];
+      } else {
+        delete updated[field];
+      }
+
+      return updated;
+    });
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      // screen এ focus আসলে date error clear করো
+      if (jobData.preferredDate) {
+        setErrors((prev) => {
+          const updated = { ...prev };
+          delete updated.preferredDate;
+          return updated;
+        });
+      }
+    }, [jobData.preferredDate]),
+  );
 
   const validateCurrentPage = () => {
     const currentPageSchema = Yup.object({
@@ -142,15 +158,16 @@ export default function JobFormScreen() {
           "Location coordinates are required",
           (value) => {
             return value?.coordinates && value.coordinates.length === 2;
-          }
+          },
         ),
       preferredDate: Yup.string()
         .required("Preferred date is required")
         .matches(/^\d{4}-\d{2}-\d{2}$/, "Date must be in YYYY-MM-DD format")
         .test("future-date", "Date must be today or in the future", (value) => {
-          const inputDate = new Date(value);
+          if (!value) return false;
+          const [year, month, day] = value.split("-").map(Number); // ✅ timezone safe
+          const inputDate = new Date(year, month - 1, day);
           const today = new Date();
-          inputDate.setHours(0, 0, 0, 0);
           today.setHours(0, 0, 0, 0);
           return inputDate >= today;
         }),
@@ -160,30 +177,38 @@ export default function JobFormScreen() {
         "Either set a fixed price range or mark as negotiable",
         function (value) {
           const { from, to, isPersonalized } = value || {};
-          const hasAnyPriceValue = from > 0 || to > 0;
           const isNegotiable = isPersonalized === true;
-          if (!hasAnyPriceValue && !isNegotiable) {
+
+          if (isNegotiable) return true; // ✅ negotiable হলে pass
+
+          const fromNum = Number(from);
+          const toNum = Number(to);
+          const hasAnyPriceValue = fromNum > 0 || toNum > 0; // ✅ Number() দিয়ে compare
+
+          if (!hasAnyPriceValue) {
             return this.createError({
               path: this.path,
               message: "Either set a fixed price range or mark as negotiable",
             });
           }
-          if (from > 0 && to > 0) {
-            if (from > to) {
+
+          if (fromNum > 0 && toNum > 0) {
+            if (fromNum > toNum) {
               return this.createError({
                 path: this.path,
                 message: "Minimum price cannot be greater than maximum price",
               });
             }
-            if (from === to) {
+            if (fromNum === toNum) {
               return this.createError({
                 path: this.path,
                 message: "Minimum and maximum price cannot be the same",
               });
             }
           }
+
           return true;
-        }
+        },
       ),
       specificInstructions: Yup.string()
         .required("Specific instructions are required")
@@ -194,7 +219,7 @@ export default function JobFormScreen() {
           "Instructions cannot be only whitespace",
           (value) => {
             return value && value.trim().length > 0;
-          }
+          },
         ),
       specializations: Yup.array().min(1, "Select at least one specialization"),
     });
@@ -219,15 +244,6 @@ export default function JobFormScreen() {
       if (jobData.photos && jobData.photos.length > 0) {
         const existingPhotos = jobData.photos.filter((p) => p.isExisting);
         const newPhotos = jobData.photos.filter((p) => !p.isExisting);
-
-        console.log("✅ Final state before continuing:", {
-          totalPhotos: jobData.photos.length,
-          existingPhotos: existingPhotos.length,
-          newPhotos: newPhotos.length,
-          title: jobData.title,
-          serviceCategory: jobData.serviceCategory,
-          specializations: jobData.specializations?.length,
-        });
       }
 
       if (jobId) {
@@ -243,7 +259,7 @@ export default function JobFormScreen() {
     }
   };
 
-  // ✅ Price conditions
+  //  Price conditions
   const hasAnyPriceValue =
     jobData.priceRange?.from > 0 || jobData.priceRange?.to > 0;
 
@@ -279,9 +295,9 @@ export default function JobFormScreen() {
 
   return (
     <View className="bg-[#f9f9f9] flex-1">
-      {/* Header */} 
+      {/* Header */}
 
-       <CustomTitle title='Post a Job' withSafeTop={true} />
+      <CustomTitle title="Post a Job" withSafeTop={true} />
 
       {/* Scrollable form */}
       <FlatList
@@ -291,7 +307,6 @@ export default function JobFormScreen() {
         contentContainerStyle={{ paddingBottom: verticalScale(70) }}
         ListHeaderComponent={
           <View className="pb-[10%]">
-   
             <View className="px-[6%] mt-[3%]">
               <TextField
                 error={errors.title}
@@ -302,7 +317,6 @@ export default function JobFormScreen() {
               />
             </View>
 
-       
             <ServiceSearch
               error={errors["serviceCategory.id"]}
               onSelectService={handleInputChange}
@@ -317,16 +331,15 @@ export default function JobFormScreen() {
               />
             </View>
 
-  
             <View className="px-[6%]">
               <TimePicker
                 initialDate={jobData.preferredDate}
                 initialTime={jobData.preferredTime}
+                onDateTimeChange={handleInputChange}
               />
               <Error error={errors.preferredDate} />
             </View>
 
-          
             <View className="px-[6%]">
               <ButtonGroup
                 selectedOption={jobData.urgency}
@@ -335,12 +348,8 @@ export default function JobFormScreen() {
               <Error error={errors.urgency} />
             </View>
 
-          
             <View className="px-[6%] mt-[3%]">
-              <PriceSlider
-                initialFrom={jobData.priceRange?.from}
-                initialTo={jobData.priceRange?.to}
-              />
+              <PriceSlider onPriceChange={handleInputChange} />
               <Error error={errors.priceRange} />
               <RequestButton
                 urgent={isNegotiable}
@@ -354,7 +363,6 @@ export default function JobFormScreen() {
               />
             </View>
 
-        
             <View className="mt-[3%] px-[6%]">
               <InstructionField
                 value={jobData.specificInstructions}
@@ -366,7 +374,6 @@ export default function JobFormScreen() {
               <Error error={errors.specificInstructions} />
             </View>
 
-           
             <View className="px-[6%]">
               <Specializations
                 selected={jobData.specializations}
@@ -375,7 +382,6 @@ export default function JobFormScreen() {
               <Error error={errors.specializations} />
             </View>
 
-       
             <View className="px-[6%] mt-[5%]">
               <CustomButton
                 title={jobId ? "Update Job" : "Continue"}

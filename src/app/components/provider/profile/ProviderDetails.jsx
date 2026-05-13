@@ -1,26 +1,10 @@
 import { View, Image, Text } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState } from "react";
 
 export default function ContractorDetails({ userData }) {
-  // const isVerified = userData?.isVerified;
-  const [isVerified, setIsVerified] = useState(false);
-  useEffect(() => {
-    const checkVerificationStatus = async () => {
-      try {
-        const verifiedStatus = await AsyncStorage.getItem("isVerified");
-        // Convert string "true" to boolean true, everything else to false
-        setIsVerified(verifiedStatus === "true");
-      } catch (error) {
-        console.error("Error reading verification status:", error);
-        setIsVerified(false);
-      }
-    };
-
-    checkVerificationStatus();
-  }, []);
+  const isVerified = userData?.verificationStatus === "verified";
 
   return (
     <View>

@@ -1,11 +1,10 @@
 import {
   View,
   Text,
-  Image,
   FlatList,
-  TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
@@ -15,6 +14,7 @@ import { router, useFocusEffect } from "expo-router";
 import { useGetAllQuotesQuery } from "../../../../redux/features/apiSlices/quote/quoteApiSlice";
 import { statusColorMap } from "../../../util/colors";
 import { getStatusLabel } from "../../../util/helper-function";
+import { Image } from "expo-image";
 const ServiceCard = ({ item }) => {
   const { profilePhoto, fullName } = item?.job?.client || {};
   const { city, state } = item?.job?.location?.details || {};
@@ -27,7 +27,7 @@ const ServiceCard = ({ item }) => {
   }, [item]);
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={handlePress}
       style={{ width: scale(327), height: "full" }}
       className="bg-white pb-[2%] mr-[0.5%] flex-col justify-center  border border-[#D4E0EB] px-[4.5%]  rounded-xl shadow-sm overflow-hidden"
@@ -108,7 +108,7 @@ const ServiceCard = ({ item }) => {
       </View>
 
       {/* Job and payment confirmation section */}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -120,7 +120,7 @@ export default function CancelledJobs() {
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
 
   // Pull to Refresh
@@ -158,14 +158,14 @@ export default function CancelledJobs() {
           {error?.message || "Something went wrong. Please try again."}
         </Text>
 
-        <TouchableOpacity
+        <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-500medium text-white text-base">
             Retry
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }
@@ -196,14 +196,14 @@ export default function CancelledJobs() {
           You don't have any cancelled quotes at the moment.
         </Text>
 
-        <TouchableOpacity
+        <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-500medium text-white text-base">
             Refresh
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }

@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
 import { verticalScale } from "../../adaptive/Adaptiveness";
 import { useState, useEffect } from "react";
@@ -50,7 +51,7 @@ export default function Specializations({ onChange, selected }) {
     const isSelected = selectedIndexes.includes(item._id);
 
     return (
-      <TouchableOpacity
+      <Pressable
         onPress={() => toggleSelection(item)}
         style={{
           height: verticalScale(35),
@@ -64,7 +65,7 @@ export default function Specializations({ onChange, selected }) {
         >
           {item.title}
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 

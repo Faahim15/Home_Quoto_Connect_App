@@ -1,11 +1,10 @@
 import {
   View,
   Text,
-  Image,
   FlatList,
-  TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -17,6 +16,7 @@ import CancelModal from "../../../components/shared/modal/CancelModal";
 import Toast from "react-native-toast-message";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
+import { Image } from "expo-image";
 import {
   useGetAllQuotesQuery,
   useRemoveQuoteMutation,
@@ -55,7 +55,7 @@ const ServiceCard = ({ item }) => {
   const { city, state } = item?.job?.location?.details || {};
 
   return (
-    <TouchableOpacity
+    <Pressable
       style={{ width: scale(327), height: verticalScale(230) }}
       className="bg-white flex-col border border-[#D4E0EB] px-[4.5%] rounded-xl shadow-sm overflow-hidden"
       onPress={() =>
@@ -159,7 +159,7 @@ const ServiceCard = ({ item }) => {
         onClose={() => setCancelModalVisible(false)}
         onConfirm={handleCancelConfirm}
       />
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -174,7 +174,7 @@ export default function QuotesRequestScreen() {
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
 
   // Pull to Refresh
@@ -212,14 +212,14 @@ export default function QuotesRequestScreen() {
           {error?.message || "Something went wrong. Please try again."}
         </Text>
 
-        <TouchableOpacity
+        <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-500medium text-white text-base">
             Retry
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }
@@ -229,6 +229,8 @@ export default function QuotesRequestScreen() {
   // ------------------------------------------
   const pendingJobs =
     data?.data?.quotes?.filter((q) => q.status === "pending") || [];
+
+  console.log("pend", pendingJobs);
 
   if (pendingJobs.length === 0) {
     return (

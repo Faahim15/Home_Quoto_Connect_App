@@ -1,32 +1,19 @@
 import { View, Text } from "react-native";
+import { useState } from "react";
 import OfferPrice from "./OfferPrice";
 import { useDispatch, useSelector } from "react-redux";
 import { setJobField } from "../../../../redux/features/jobPost/jobPostSlice";
 
-const PriceSlider = () => {
+const PriceSlider = ({ onPriceChange }) => {
   const dispatch = useDispatch();
   const priceRange = useSelector((state) => state.jobPost.priceRange);
+  const [touched, setTouched] = useState({ from: false, to: false });
 
   const handlePriceChange = (field, value) => {
+    setTouched((prev) => ({ ...prev, [field]: true }));
     const newValue = { ...priceRange, [field]: value };
-
-    // ✅ CLIENT-SIDE VALIDATION: Prevent invalid values
-    if (field === "from" && value > priceRange.to && priceRange.to > 0) {
-      // If from > to, don't update and show error in form validation
-      return;
-    }
-
-    if (field === "to" && value < priceRange.from && priceRange.from > 0) {
-      // If to < from, don't update and show error in form validation
-      return;
-    }
-
-    dispatch(
-      setJobField({
-        field: "priceRange",
-        value: newValue,
-      })
-    );
+    // ✅ parent এর handleInputChange call করো dispatch এর বদলে
+    onPriceChange("priceRange", newValue);
   };
 
   return (
@@ -63,15 +50,14 @@ const PriceSlider = () => {
         </View>
       </View>
 
-      {/* ✅ OPTIONAL: Show immediate validation feedback */}
-
-      {priceRange.from === 0 && !priceRange.isPersonalized && (
+      {touched.from && priceRange.from === 0 && !priceRange.isPersonalized && (
         <Text className="font-poppins-medium text-xs text-red-500 mt-2">
           Minimum price must be greater than 0
         </Text>
       )}
 
-      {priceRange.from > 0 &&
+      {touched.from &&
+        priceRange.from > 0 &&
         priceRange.to >= 0 &&
         priceRange.from > priceRange.to && (
           <Text className="font-poppins-medium text-xs text-red-500 mt-2">
@@ -79,7 +65,9 @@ const PriceSlider = () => {
           </Text>
         )}
 
-      {priceRange.from > 0 &&
+      {touched.from &&
+        touched.to &&
+        priceRange.from > 0 &&
         priceRange.to > 0 &&
         priceRange.from === priceRange.to && (
           <Text className="font-poppins-medium text-xs text-red-500 mt-2">

@@ -21,7 +21,7 @@ export default function CriminalCheck() {
     if (!idFront || !idBack) {
       Alert.alert(
         "Missing Files",
-        "Please upload both front and back of your ID."
+        "Please upload both front and back of your ID.",
       );
       return;
     }
@@ -30,22 +30,21 @@ export default function CriminalCheck() {
     // Data is already stored in Redux
     // You can now proceed to the next step
     setTimeout(() => {
-      router.push("/provider/auth/backgroundCheck-Payment");
+      router.replace("/provider/auth/backgroundCheck-Payment");
       setIsLoading(false);
     }, 1000);
   };
 
   return (
-    <View className="flex-1 bg-[#F9F9F9]"> 
-     <View >
-          <CustomTitle />
-        </View>
+    <View className="flex-1 bg-[#F9F9F9]">
+      <View>
+        <CustomTitle />
+      </View>
 
       <ScrollView
         contentContainerStyle={{ paddingHorizontal: "6%", paddingBottom: 20 }}
         showsVerticalScrollIndicator={false}
       >
-       
         <View className="mt-[9%]">
           <VerifyHeader
             title="Criminal Background Check"

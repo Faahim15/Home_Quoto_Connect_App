@@ -9,7 +9,7 @@ import {
 } from "../../redux/features/apiSlices/auth/authApiSlices";
 import { useState } from "react";
 import * as Yup from "yup";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 export default function VerificationScreen() {
   const [otpVerification, { isLoading: verifyOtpLoading }] =
     useVerifyOtpMutation();
@@ -36,20 +36,10 @@ export default function VerificationScreen() {
 
       const res = await resendOtp(data).unwrap();
       console.log("resend", res, data);
-      Toast.show({
-        type: "success",
-        text1: "OTP Resent",
-        text2: "A new OTP has been sent to your email.",
-        visibilityTime: 2500,
-      });
+toast.success("A new OTP has been sent to your email.");
     } catch (error) {
       console.log("Resend OTP Error:", error);
-      Toast.show({
-        type: "error",
-        text1: "Failed to Resend OTP",
-        text2: error?.data?.message || "Please try again later.",
-        visibilityTime: 3000,
-      });
+toast.error(error?.data?.message || "Please try again later.");
     }
   };
 
@@ -76,12 +66,7 @@ export default function VerificationScreen() {
       const res = await otpVerification(data).unwrap();
 
       // ✅ If successful
-      Toast.show({
-        type: "success",
-        text1: "OTP Verified Successfully",
-        text2: "You can now reset your password.",
-        visibilityTime: 2500,
-      });
+  toast.success("OTP verified! You can now reset your password.");
 
       router.push({
         pathname: "/resetPassword",
@@ -96,12 +81,7 @@ export default function VerificationScreen() {
         });
         setErrors(fieldErrors);
 
-        Toast.show({
-          type: "error",
-          text1: "Invalid OTP Format",
-          text2: "Please enter a valid 6-digit OTP.",
-          visibilityTime: 2500,
-        });
+  toast.error("Please enter a valid 6-digit OTP.");
       } else {
         console.log("error", error);
         // ⚠️ API (backend) errors — e.g., wrong OTP or expired OTP
@@ -111,12 +91,7 @@ export default function VerificationScreen() {
             : error?.data?.message ||
               "Something went wrong. Please try again later.";
 
-        Toast.show({
-          type: "error",
-          text1: "OTP Verification Failed",
-          text2: message,
-          visibilityTime: 3000,
-        });
+toast.error(message);
 
         // ❌ Optional: Clear OTP inputs when wrong
         setOtp(["", "", "", "", "", ""]);

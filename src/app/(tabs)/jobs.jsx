@@ -24,22 +24,18 @@ export default function PostJobScreen() {
   const dispatch = useDispatch();
   const photos = useSelector((state) => state.jobPost.photos);
 
-  // ✅ Reset job data when screen comes into focus
+  //  Reset job data when screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      console.log(
-        "🔄 Resetting job data when user focuses on PostJobScreen..."
-      );
       dispatch(resetJobPost());
 
       // Optional: Cleanup function if needed
       return () => {
         console.log("📝 PostJobScreen lost focus");
       };
-    }, [dispatch])
+    }, [dispatch]),
   );
 
- 
   const showImageOptions = () => {
     Alert.alert("Select Photo", "Choose how you want to add a photo", [
       { text: "Camera", onPress: takePhoto },
@@ -48,13 +44,12 @@ export default function PostJobScreen() {
     ]);
   };
 
-
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {
       Alert.alert(
         "Permission needed",
-        "Camera permission is required to take photos"
+        "Camera permission is required to take photos",
       );
       return;
     }
@@ -73,31 +68,26 @@ export default function PostJobScreen() {
     }
   };
 
-  
-const pickFromGallery = async () => {
-  const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ['images'],
-    allowsEditing: false, 
-    allowsMultipleSelection: true,
-    quality: 0.7, 
-  });
-
-  if (!result.canceled) {
-    result.assets.forEach((asset) => {
-      // কনসোলে চেক করুন URI ঠিক আছে কিনা
-      console.log("Selected Image URI:", asset.uri);
-      
-      const uniqueId = Date.now().toString() + Math.random().toString(36).substring(2, 9);
-      dispatch(addPhoto({ id: uniqueId, uri: asset.uri }));
+  const pickFromGallery = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: false,
+      allowsMultipleSelection: true,
+      quality: 0.7,
     });
-  }
-};
 
+    if (!result.canceled) {
+      result.assets.forEach((asset) => {
+        const uniqueId =
+          Date.now().toString() + Math.random().toString(36).substring(2, 9);
+        dispatch(addPhoto({ id: uniqueId, uri: asset.uri }));
+      });
+    }
+  };
 
   const handleRemovePhoto = (photoId) => {
     dispatch(removePhotoFromStore(photoId));
   };
-
 
   const handleContinue = () => {
     if (photos.length === 0) {
@@ -105,9 +95,7 @@ const pickFromGallery = async () => {
       return;
     }
     router.push("/jobs/jobForm");
-  }; 
-
-  console.log('photos', photos);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-[#F9F9F9]">

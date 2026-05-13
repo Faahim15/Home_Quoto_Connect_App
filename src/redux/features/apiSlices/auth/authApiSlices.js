@@ -17,6 +17,18 @@ export const authSlice = api.injectEndpoints({
       },
       invalidatesTags: ["User"],
     }),
+
+    registerProvider: builder.mutation({
+      query: (formData) => ({
+        url: `/auth/registerForProvider`,
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      }),
+      invalidatesTags: ["User"],
+    }),
     verifyOtp: builder.mutation({
       query: (data) => ({
         url: `/auth/verify-otp`,
@@ -99,34 +111,14 @@ export const authSlice = api.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
-    // Upload verification documents (PDF for businessLicense, Image for certificate)
-// uploadVerificationDocuments: builder.mutation({
-//   query: async (formData) => {
-//     const token = await AsyncStorage.getItem("token"); 
-
-//     console.log('latest token',token );
-
-//     return {
-//       url: `/profile/verification-documents`,
-//       method: "POST",
-//       headers: {
-//         Authorization: `Bearer ${token}`, 
-
-        
-//       },
-//       body: formData,
-//     };
-//   },
-// }), 
-uploadVerificationDocuments: builder.mutation({
-  query: (formData) => ({
-    url: `/profile/verification-documents`,
-    method: "POST",
-    body: formData,
-  }),
-  invalidatesTags: ["User"],
-}),
- 
+    uploadVerificationDocuments: builder.mutation({
+      query: (formData) => ({
+        url: `/profile/verification-documents`,
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
   overrideExisting: true,
 });
@@ -144,4 +136,5 @@ export const {
   useUploadVerificationDocumentsMutation,
   useCreatePaymentsIntentsMutation,
   useSubmitBackgroundCheckMutation,
+  useRegisterProviderMutation,
 } = authSlice;

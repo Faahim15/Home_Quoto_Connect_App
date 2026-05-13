@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useResetPasswordMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
 import { router, useLocalSearchParams } from "expo-router";
 import * as Yup from "yup";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 
 export default function ResetPasswordScreen() {
   const { email, otp } = useLocalSearchParams();
@@ -50,12 +50,9 @@ export default function ResetPasswordScreen() {
 
       // Step 4: Handle success
       if (res?.success) {
-        Toast.show({
-          type: "success",
-          text1: "Password Reset Successful 🎉",
-          text2: res?.message || "Your password has been updated successfully.",
-          visibilityTime: 2500,
-        });
+        toast.success(
+          res?.message || "Your password has been updated successfully.",
+        );
 
         router.replace("/onboarding/loginChoice");
       }
@@ -73,12 +70,9 @@ export default function ResetPasswordScreen() {
         const errorMessage =
           err?.message || "Unable to reset password. Please try again.";
 
-        Toast.show({
-          type: "error",
-          text1: "Reset Failed ❌",
-          text2: errorMessage,
-          visibilityTime: 2500,
-        });
+        toast.error(
+          err?.message || "Unable to reset password. Please try again.",
+        );
       }
     }
   };

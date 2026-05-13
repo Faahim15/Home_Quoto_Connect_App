@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import { ActivityIndicator } from "react-native";
+import { View, Text, Pressable, ActivityIndicator } from "react-native";
+
 export default function CustomButton({
   isLoading = false,
   title,
@@ -13,19 +13,27 @@ export default function CustomButton({
   return (
     <View
       style={{
-        backgroundColor: disabled ? "#9CA3AF" : bg, // lighter gray for disabled
+        backgroundColor: disabled ? "#9CA3AF" : bg,
         borderColor: disabled ? "#9CA3AF" : borderColor,
       }}
       className="mt-[3%] border rounded-md px-[3%] py-[3%]"
     >
-      <TouchableOpacity disabled={disabled || !agreeToTerms} onPress={onPress}>
-        <Text
-          style={{ color: disabled ? "#FFFFFF" : text }} // white text on disabled gray
-          className="font-poppins-bold text-center"
-        >
-          {isLoading ? <ActivityIndicator color="#ffffff" /> : title}
-        </Text>
-      </TouchableOpacity>
+      <Pressable
+        disabled={disabled || isLoading || !agreeToTerms}
+        onPress={onPress}
+        style={{ alignItems: "center" }} // ✅
+      >
+        {isLoading ? ( // ✅ Text এর বাইরে
+          <ActivityIndicator color="#ffffff" />
+        ) : (
+          <Text
+            style={{ color: disabled ? "#FFFFFF" : text }}
+            className="font-poppins-bold text-center"
+          >
+            {title}
+          </Text>
+        )}
+      </Pressable>
     </View>
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, ScrollView, Pressable } from "react-native";
 import QuotesRequestScreen from "../../components/provider/myJobs/QuoteRequestScreen";
 import AcceptJobsScreen from "../../components/provider/myJobs/AcceptJobScreen";
 import CancelledJobs from "../../components/provider/myJobs/CancelledJobs";
@@ -33,7 +33,7 @@ const ContractorJobScreen = () => {
       <View className="border-b border-[#C8C8C8] bg-[#f9f9f9]">
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {tabs.map((tab, index) => (
-            <TouchableOpacity
+            <Pressable
               key={tab}
               style={{ paddingHorizontal: 20, paddingVertical: 12 }}
               className={`${
@@ -48,7 +48,7 @@ const ContractorJobScreen = () => {
               >
                 {tab}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           ))}
         </ScrollView>
       </View>

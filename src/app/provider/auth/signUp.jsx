@@ -7,6 +7,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { verticalScale } from "../../components/adaptive/Adaptiveness";
@@ -69,13 +70,11 @@ export default function SignUp() {
         .required("Confirm Password is required"),
     });
 
-  
     const transformedData = {
       ...registrationData,
     };
 
     try {
-
       currentPageSchema.validateSync(transformedData, { abortEarly: false });
       setErrors({});
       return true;
@@ -91,7 +90,7 @@ export default function SignUp() {
 
   const handleContinue = () => {
     if (validateCurrentPage()) {
-      router.push("provider/auth/serviceForm");
+      router.replace("provider/auth/serviceForm");
     } else console.log("errors", errors);
   };
 
@@ -158,7 +157,7 @@ export default function SignUp() {
               onChangeText={(text) => handleInputChange("password", text)}
               error={errors.password}
               value={registrationData.password}
-              textContentType="newPassword" // ✅ add করো
+              textContentType="newPassword"
               autoComplete="new-password"
             />
 
@@ -213,38 +212,49 @@ export default function SignUp() {
         </ScrollView>
         <View className="border-t border-[#dcdcdc]">
           {/* Terms and Conditions */}
-          <View className="flex-row pl-[5.5%] mt-[1%]  items-center">
-            <TouchableOpacity
+          <View className="flex-row pl-[5.5%] mt-[1%] items-center">
+            <Pressable
               onPress={() => setAgreeToTerms(!agreeToTerms)}
-              className="mr-[3%]"
+              activeOpacity={0.7}
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: 5,
+                borderWidth: 1.5,
+                borderColor: agreeToTerms ? "#0054A5" : "#D1D5DB",
+                backgroundColor: agreeToTerms ? "#0054A5" : "#fff",
+                alignItems: "center",
+                justifyContent: "center",
+                marginRight: 10,
+              }}
             >
-              <Ionicons
-                name={agreeToTerms ? "checkbox" : "square-outline"}
-                size={16}
-                color={agreeToTerms ? "#909090" : "#9CA3AF"}
-              />
-            </TouchableOpacity>
+              {agreeToTerms && (
+                <Ionicons name="checkmark" size={13} color="#fff" />
+              )}
+            </Pressable>
 
             <AgreeWithTerms />
           </View>
           {/* Bottom Section */}
           <View className="mb-[4%] px-[6%] mt-[2%]  justify-center">
-            <TouchableOpacity
-              className="bg-[#0054A5]  rounded-lg justify-center items-center py-[4%]"
-              disabled={!agreeToTerms}
-              style={{ opacity: agreeToTerms ? 1 : 0.6 }}
-              onPress={handleContinue}
+            <Pressable
+              className="rounded-lg justify-center items-center py-[4%]"
+              style={{ backgroundColor: agreeToTerms ? "#0054A5" : "#A0AEC0" }}
+              onPress={() => {
+                if (!agreeToTerms) return;
+                handleContinue();
+              }}
             >
               <Text className="text-white text-center text-base font-poppins-semiBold">
                 Sign up
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
             <View className="mt-[3%] flex-row gap-[0.5%] justify-center">
               <Text className="font-poppins-400regular text-sm text-black">
                 Already have an account?
               </Text>
-              <TouchableOpacity
+              <Pressable
                 onPress={() => {
                   router.push("provider/auth/signIn");
                 }}
@@ -252,7 +262,7 @@ export default function SignUp() {
                 <Text className="font-poppins-semiBold underline text-sm text-[#0054A5]">
                   Sign In
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </View>

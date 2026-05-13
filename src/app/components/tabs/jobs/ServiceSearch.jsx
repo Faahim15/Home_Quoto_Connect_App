@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Error from "../../shared/error/Error";
@@ -36,25 +37,25 @@ export default function ServiceSearch({
   };
 
   const renderSuggestion = ({ item }) => (
-    <TouchableOpacity
+    <Pressable
       key={item?._id}
       onPress={() => selectService(item)}
       className="px-[6%] py-[4%] border-b border-gray-100"
     >
       <Text className="text-base text-gray-700 font-medium">{item?.title}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   return (
-    <View className="px-[6%] bg-[#f9f9f9]">
-      <Text className="text-base font-poppins-400regular text-[#1F2937] mb-[4%]">
+    <View className="px-[6%] mt-[3%] bg-[#f9f9f9]">
+      <Text className="text-base font-poppins-400regular text-[#1F2937] mb-[2%]">
         What Service do you need?
       </Text>
 
       <View className="relative">
-        <TouchableOpacity
+        <Pressable
           onPress={() => setIsOpen(!isOpen)}
-          className="flex-row items-center bg-[#f9f9f9] rounded-lg px-[4%] py-[5%] border border-[#D4E0EB]"
+          className="flex-row items-center bg-[#f9f9f9] rounded-lg px-[4%] py-[4%] border border-[#D4E0EB]"
         >
           <Text
             className={`flex-1 ml-[3%] text-sm ${
@@ -68,7 +69,7 @@ export default function ServiceSearch({
             size={20}
             color="#6B7280"
           />
-        </TouchableOpacity>
+        </Pressable>
         <Error error={error} />
       </View>
 

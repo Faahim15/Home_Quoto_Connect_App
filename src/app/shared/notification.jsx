@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ActivityIndicator,
   RefreshControl,
+  Pressable,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
@@ -19,18 +20,14 @@ export default function NotificationScreen() {
   const [filter, setFilter] = useState("all");
   const [currentUserId, setCurrentUserId] = useState(null);
 
-  const { socket } = useSocket(
-    "https://api.quoto.ca"
-  );
+  const { socket } = useSocket("https://api.quoto.ca");
   const { data, isLoading, isError, refetch } = useGetNotificationsQuery();
 
- 
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
-
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -40,13 +37,11 @@ export default function NotificationScreen() {
     fetchUserId();
   }, []);
 
-
   useEffect(() => {
     if (data?.success && data?.data?.notifications) {
       setNotifications(data.data.notifications);
     }
   }, [data]);
-
 
   useEffect(() => {
     if (!socket || !currentUserId) return;
@@ -54,7 +49,6 @@ export default function NotificationScreen() {
     console.log("join-notifications from notification.js");
     socket.emit("join-notifications", { userId: currentUserId });
   }, [socket, currentUserId]);
-
 
   const handleNewNotification = (notification) => {
     console.log("New notification received:", notification);
@@ -65,11 +59,10 @@ export default function NotificationScreen() {
     console.log("Notification marked as read:", notificationId);
     setNotifications((prev) =>
       prev.map((notif) =>
-        notif._id === notificationId ? { ...notif, read: true } : notif
-      )
+        notif._id === notificationId ? { ...notif, read: true } : notif,
+      ),
     );
   };
-
 
   // Listen for socket events
   useEffect(() => {
@@ -88,8 +81,6 @@ export default function NotificationScreen() {
     if (!socket || !currentUserId) return;
     socket.emit("mark-notification-read", { notificationId });
   };
-
-
 
   const filteredNotifications =
     filter === "unread" ? notifications.filter((n) => !n.read) : notifications;
@@ -123,7 +114,7 @@ export default function NotificationScreen() {
   };
 
   const renderNotificationItem = ({ item, index }) => (
-    <TouchableOpacity
+    <Pressable
       onPress={() => !item.read && markAsRead(item._id)}
       activeOpacity={0.7}
       className={`px-[6%] py-[4%] ${!item.read ? "bg-blue-50" : "bg-white"} ${
@@ -154,7 +145,7 @@ export default function NotificationScreen() {
           <View className="w-[6px] h-[6px] bg-blue-600 rounded-full" />
         )}
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   const renderEmptyState = () => (
@@ -188,8 +179,8 @@ export default function NotificationScreen() {
 
   if (isError) {
     return (
-      <View className="flex-1 bg-[#f9f9f9]"> 
-      <CustomTitle title="Notifications" withSafeTop={true} />
+      <View className="flex-1 bg-[#f9f9f9]">
+        <CustomTitle title="Notifications" withSafeTop={true} />
         <View className="items-center justify-center flex-1 px-[6%]">
           <Text className="text-lg font-semibold text-gray-900 mb-[2%]">
             Error loading notifications
@@ -197,12 +188,12 @@ export default function NotificationScreen() {
           <Text className="text-gray-500 text-center mb-[4%]">
             Please try again later
           </Text>
-          <TouchableOpacity
+          <Pressable
             onPress={() => refetch()}
             className="bg-blue-600 px-[6%] py-[3%] rounded-lg"
           >
             <Text className="text-white font-medium">Retry</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     );
@@ -211,15 +202,13 @@ export default function NotificationScreen() {
   return (
     <View className="flex-1 bg-[#f9f9f9]">
       {/* Header */}
-      <View className="bg-[#f9f9f9] border-b border-gray-200"> 
+      <View className="bg-[#f9f9f9] border-b border-gray-200">
         <CustomTitle title="Notifications" withSafeTop={true} />
 
         <View className="mx-[6%] py-[4%]">
- 
-
           {/* Filter Tabs */}
           <View className="flex-row gap-[6%]">
-            <TouchableOpacity
+            <Pressable
               onPress={() => setFilter("all")}
               className="pb-[3%] relative"
             >
@@ -233,8 +222,8 @@ export default function NotificationScreen() {
               {filter === "all" && (
                 <View className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600" />
               )}
-            </TouchableOpacity>
-            <TouchableOpacity
+            </Pressable>
+            <Pressable
               onPress={() => setFilter("unread")}
               className="pb-[3%] relative"
             >
@@ -248,12 +237,11 @@ export default function NotificationScreen() {
               {filter === "unread" && (
                 <View className="absolute bottom-0 left-0 right-0 h-[2px] bg-blue-600" />
               )}
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </View>
 
-     
       <FlatList
         data={filteredNotifications}
         renderItem={renderNotificationItem}

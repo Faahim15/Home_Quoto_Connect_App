@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import XStyle from "../../../util/styles";
@@ -6,7 +6,7 @@ import { logout } from "../../../../../assets/svg/profile";
 import { SvgXml } from "react-native-svg";
 export default function LogoutItem({ onPress }) {
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       className="border mb-[3%] flex-row justify-between rounded-md border-[#D4E0EB]"
       style={[
@@ -34,6 +34,6 @@ export default function LogoutItem({ onPress }) {
       >
         <Ionicons name="chevron-forward" size={24} color="#fff" />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }

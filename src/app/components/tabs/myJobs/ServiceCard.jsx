@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Pressable,
+} from "react-native";
 import Services from "./Jobs";
 import QuoteProgressScreen from "./screens/QuoteProgressScreen";
 import AllQuoteScreen from "./screens/AllQuoteScreen";
@@ -36,7 +42,7 @@ const ServiceCard = () => {
       <View className=" border-b border-[#C8C8C8] bg-[#f9f9f9]">
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {tabs.map((tab, index) => (
-            <TouchableOpacity
+            <Pressable
               key={tab}
               style={{ paddingHorizontal: 20, paddingVertical: 12 }}
               className={`${
@@ -51,7 +57,7 @@ const ServiceCard = () => {
               >
                 {tab}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           ))}
         </ScrollView>
       </View>

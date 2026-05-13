@@ -1,43 +1,24 @@
-import { View, Text, Image, Pressable, TouchableOpacity } from "react-native";
+import { View, Text, Pressable, TouchableOpacity } from "react-native";
+import { Image } from "expo-image";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { useSocket } from "../../../../hooks/useSokect";
 import { useCallback, useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useGetNotificationsQuery } from "../../../../redux/features/apiSlices/chat/chatApiSlices";
 
 export default function HomeTopBar({ userData, mode }) {
   // const { socket, isConnected } = useSocket("https://api.quoto.ca");
   const { fullName, location, profilePhoto } = userData || {};
-  const [isVerified, setIsVerified] = useState(false);
+  const isVerified = userData?.verificationStatus === "verified";
   const [notifications, setNotifications] = useState([]);
   const { data, isLoading, isError, refetch } = useGetNotificationsQuery();
-
-  useEffect(() => {
-    const checkVerificationStatus = async () => {
-      try {
-        const verifiedStatus = await AsyncStorage.getItem("isVerified");
-     
-        setIsVerified(verifiedStatus === "true");
-      } catch (error) {
-        console.error("Error reading verification status:", error);
-        setIsVerified(false);
-      }
-    };
-
-    checkVerificationStatus();
-  }, []);
-
-
-
 
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
-
 
   useEffect(() => {
     if (data?.success && data?.data?.notifications) {
@@ -47,10 +28,7 @@ export default function HomeTopBar({ userData, mode }) {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-
-
   const handleNotificationPress = () => {
-
     router.push("shared/notification");
   };
 
@@ -106,7 +84,7 @@ export default function HomeTopBar({ userData, mode }) {
             </Text>
           </View>
         </View>
-        <TouchableOpacity
+        <Pressable
           onPress={handleNotificationPress}
           style={{ width: scale(30), height: verticalScale(30) }}
           className="rounded-full items-center justify-center border border-[#175994]"
@@ -119,7 +97,7 @@ export default function HomeTopBar({ userData, mode }) {
               </Text>
             </View>
           )}
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

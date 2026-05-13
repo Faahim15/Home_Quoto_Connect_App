@@ -8,7 +8,7 @@ export default function TextField({ value, onChangeText, error }) {
         Title of the Job
       </Text>
 
-      <View className="px-[4%] mt-[3%] py-[3%] bg-[#f9f9f9] border border-[#D4E0EB] rounded-lg ">
+      <View className="px-[4%] mt-[3%] py-[4%] bg-[#f9f9f9] border border-[#D4E0EB] rounded-lg ">
         <TextInput
           placeholder="What's the title of the workshop?"
           placeholderTextColor="#6B7280"

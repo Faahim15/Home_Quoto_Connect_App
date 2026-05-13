@@ -6,7 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
-  Platform,
+  Platform, 
+  Pressable
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { verticalScale } from "../components/adaptive/Adaptiveness";
@@ -17,7 +18,7 @@ import ArrowBack from "../components/auth/ArrowBack";
 import LocationPicker from "../components/auth/LocationPicker";
 import { router } from "expo-router";
 import * as Yup from "yup";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import { useRegisterUserMutation } from "../../redux/features/apiSlices/auth/authApiSlices";
 import PhoneInput from "../components/auth/PhoneNumber";
 import AgreeWithTerms from "../components/auth/AgreeWithTerms";
@@ -29,7 +30,7 @@ export default function SignUpScreen() {
     phone: "",
     password: "",
     confirmPassword: "",
-    location: null, 
+    location: null,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   });
   const location = {
@@ -66,7 +67,7 @@ export default function SignUpScreen() {
           if (!value) return false;
           const cleaned = value.replace(/\D/g, "");
           return cleaned.length === 10;
-        }
+        },
       ),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref("password"), null], "Passwords must match")
@@ -77,9 +78,7 @@ export default function SignUpScreen() {
       .test("has-coordinates", "Location coordinates are required", (value) => {
         return value?.coordinates && value.coordinates.length === 2;
       }),
-  }); 
-
-
+  });
 
   const handleSubmit = async () => {
     try {
@@ -95,41 +94,27 @@ export default function SignUpScreen() {
       formsData.append("password", formData.password);
       formsData.append("confirmPassword", formData.confirmPassword);
       formsData.append("phoneNumber", formData.phone);
-      formsData.append("location", JSON.stringify(location)); 
-      formsData.append("timezone", formData.timezone); 
-   
+      formsData.append("location", JSON.stringify(location));
+      formsData.append("timezone", formData.timezone);
+
       const res = await registerUser(formsData).unwrap();
-    
-      console.log({res})
+
+      console.log({ res });
 
       // Step 4: Handle success
       if (res?.success) {
-        Toast.show({
-          type: "success",
-          text1: "Success",
-          text2:
-            res?.message ||
-            "User registered successfully. Please check your email for verification code.!",
-          visibilityTime: 2000,
-        });
+        toast.success(
+          res?.message ||
+            "User registered successfully. Please check your email for verification code.",
+        );
         router.replace({
           pathname: "/verifySignup",
           params: { email: formData.email },
         });
       } else {
-     
-        Toast.show({
-          type: "error",
-          text1: "Failed",
-          text2: res?.message || "Registration failed",
-          visibilityTime: 2000,
-        });
+        toast.error(res?.message || "Registration failed.");
       }
     } catch (err) {
-       
-      
-  
-
       if (err.name === "ValidationError") {
         const validationErrors = {};
         err.inner.forEach((e) => {
@@ -144,12 +129,11 @@ export default function SignUpScreen() {
           err?.error ||
           "Network or server error. Please try again.";
 
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: errorMessage,
-          visibilityTime: 2000,
-        });
+        toast.error(
+          err?.data?.message ||
+            err?.message ||
+            "Network or server error. Please try again.",
+        );
       }
     }
   };
@@ -268,22 +252,30 @@ export default function SignUpScreen() {
         {/* Bottom Section */}
         <View className="border-t border-[#dcdcdc]">
           <View className="flex-row pl-[5.5%] mt-[1%] items-center">
-            <TouchableOpacity
-              onPress={() => setAgreeToTerms(!agreeToTerms)}
-              className="mr-[1%]"
-         
-            >
-              <Ionicons
-                name={agreeToTerms ? "checkbox" : "square-outline"}
-                size={16}
-                color={agreeToTerms ? "#909090" : "#9CA3AF"}
-              />
-            </TouchableOpacity>
-            <AgreeWithTerms/>
+             <Pressable
+               onPress={() => setAgreeToTerms(!agreeToTerms)}
+               activeOpacity={0.7}
+               style={{
+                 width: 20,
+                 height: 20,
+                 borderRadius: 5,
+                 borderWidth: 1.5,
+                 borderColor: agreeToTerms ? "#0054A5" : "#D1D5DB",
+                 backgroundColor: agreeToTerms ? "#0054A5" : "#fff",
+                 alignItems: "center",
+                 justifyContent: "center",
+                 marginRight: 10,
+               }}
+             >
+               {agreeToTerms && (
+                 <Ionicons name="checkmark" size={13} color="#fff" />
+               )}
+             </Pressable>
+            <AgreeWithTerms />
           </View>
 
           <View className="mb-[6%] px-[6%] mt-[2%] justify-center">
-            <TouchableOpacity
+            <Pressable
               className="bg-[#0054A5] rounded-lg justify-center items-center py-[4%]"
               disabled={!agreeToTerms}
               style={{ opacity: agreeToTerms ? 1 : 0.6 }}
@@ -292,17 +284,17 @@ export default function SignUpScreen() {
               <Text className="text-white text-center text-base font-poppins-semiBold">
                 {isLoading ? "Signing In..." : "Sign Up"}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
             <View className="mt-[3%] flex-row gap-[0.5%] justify-center">
               <Text className="font-poppins-400regular text-sm text-black">
                 Already have an account?
               </Text>
-              <TouchableOpacity onPress={() => router.push("/signIn")}>
+              <Pressable onPress={() => router.push("/signIn")}>
                 <Text className="font-poppins-semiBold underline text-sm text-[#0054A5]">
                   Sign In
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </View>

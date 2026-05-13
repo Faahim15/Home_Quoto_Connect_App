@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import { verticalScale } from "../adaptive/Adaptiveness";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,29 +28,24 @@ export default function ServiceAreaSelector() {
   const toggleArea = (province) => {
     let updatedAreas;
 
-    if (selectedAreas.find((area) => area.id === province.id)) {
-      // Remove if already selected
+    if (selectedAreas.some((area) => area.id === province.id)) {
       updatedAreas = selectedAreas.filter((area) => area.id !== province.id);
     } else {
-      // Add if not selected
       updatedAreas = [...selectedAreas, province];
     }
 
-    // Dispatch to Redux
     dispatch(
       setProviderRegister({ field: "serviceArea", value: updatedAreas })
     );
   };
 
   const renderArea = ({ item }) => {
-    const isSelected = selectedAreas.find((area) => area.id === item.id);
+    const isSelected = selectedAreas.some((area) => area.id === item.id);
 
     return (
-      <TouchableOpacity
-        style={{
-          height: verticalScale(35),
-          marginRight: 8,
-        }}
+      <TouchableOpacity 
+      activeOpacity={1}  
+        style={{ height: verticalScale(35), marginRight: 8 }}
         onPress={() => toggleArea(item)}
         className={`border rounded-md border-[#D4E0EB] px-3 items-center justify-center ${
           isSelected ? "bg-[#319FCA]" : "bg-white"
@@ -69,20 +64,17 @@ export default function ServiceAreaSelector() {
 
   return (
     <View className="mt-[3%]">
-      <View className="">
-        <Text className="font-poppins-semiBold text-base text-[#6B7280]">
-          Service Areas
-        </Text>
-
-        <FlatList
-          data={CANADIAN_PROVINCES}
-          renderItem={renderArea}
-          keyExtractor={(item) => item.id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingVertical: 4 }}
-        />
-      </View>
+      <Text className="font-poppins-semiBold text-base text-[#6B7280]">
+        Service Areas
+      </Text>
+      <FlatList
+        data={CANADIAN_PROVINCES}
+        renderItem={renderArea}
+        keyExtractor={(item) => item.id}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingVertical: 4 }}
+      />
     </View>
   );
 }

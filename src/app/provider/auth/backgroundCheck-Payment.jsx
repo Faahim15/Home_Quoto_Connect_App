@@ -5,7 +5,7 @@ import { useState } from "react";
 import Stripe from "../../components/tabs/myJobs/Stripe";
 import CustomButton from "../../components/tabs/home/services/provider/details/CustomButton";
 import { useCreatePaymentsIntentsMutation } from "../../../redux/features/apiSlices/auth/authApiSlices";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 
 export default function BackgroundCheckPayment() {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
@@ -25,11 +25,7 @@ export default function BackgroundCheckPayment() {
       const { clientSecret, paymentIntentId, amount, currency } = res?.data;
 
       if (!clientSecret) {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "Client secret not found!",
-        });
+        toast.error("Client secret not found!");
         return;
       }
 
@@ -56,11 +52,7 @@ export default function BackgroundCheckPayment() {
       });
 
       if (initSheet.error) {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: initSheet.error.message,
-        });
+        toast.error(initSheet.error.message);
         setIsProcessing(false);
         return;
       }
@@ -69,24 +61,18 @@ export default function BackgroundCheckPayment() {
       const paymentResult = await presentPaymentSheet();
 
       if (paymentResult.error) {
-        Toast.show({
-          type: "error",
-          text1: "Payment Failed",
-          text2: paymentResult.message,
-        });
+        toast.error(paymentResult.message);
         setIsProcessing(false);
         return;
       }
 
       // Payment successful
-      Toast.show({
-        type: "success",
-        text1: "Success",
-        text2: `Payment of $${(amount / 100).toFixed(2)} ${currency.toUpperCase()} completed successfully!`,
-      });
+      toast.success(
+        `Payment of $${(amount / 100).toFixed(2)} ${currency.toUpperCase()} completed successfully!`,
+      );
 
       // Navigate to finalize screen with paymentIntentId as params
-      router.push({
+      router.replace({
         pathname: "/provider/auth/backgroundCheck-finalize",
         params: {
           paymentIntentId: paymentIntentId,
@@ -96,11 +82,7 @@ export default function BackgroundCheckPayment() {
       });
     } catch (err) {
       console.log("show", err);
-      Toast.show({
-        type: "error",
-        text1: "Error",
-        text2: err?.data?.message || "Payment failed. Please try again.",
-      });
+      toast.error(err?.data?.message || "Payment failed. Please try again.");
     } finally {
       setIsProcessing(false);
     }

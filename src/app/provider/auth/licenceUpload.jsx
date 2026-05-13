@@ -1,8 +1,8 @@
 // LicenceUpload.jsx
 import { View, Alert, Platform } from "react-native";
 import { useState } from "react";
-import CustomTitle from "../../components/shared/CustomTitle"; 
-import { useEffect } from "react"; 
+import CustomTitle from "../../components/shared/CustomTitle";
+import { useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import VerifyHeader from "../../components/provider/auth/VerifyHeader";
 import Uploader from "../../components/provider/auth/Uploader";
@@ -11,7 +11,7 @@ import ImageSelector from "../../components/shared/imagePicker/ImagePicker";
 import CustomButton from "../../components/onboarding/CustomButton";
 import { router } from "expo-router";
 import { useUploadVerificationDocumentsMutation } from "../../../redux/features/apiSlices/auth/authApiSlices";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 
 /* ================= HELPERS ================= */
 
@@ -25,14 +25,14 @@ const normalizeUri = (uri) =>
 
 export default function LicenceUpload() {
   const [businessLicense, setBusinessLicense] = useState(null);
-  const [certificate, setCertificate] = useState(null); 
+  const [certificate, setCertificate] = useState(null);
 
-  const [token, setToken] = useState(null); 
+  const [token, setToken] = useState(null);
 
- useEffect(() => {
+  useEffect(() => {
     const fetchToken = async () => {
       try {
-        const value = await AsyncStorage.getItem('token');
+        const value = await AsyncStorage.getItem("token");
         if (value !== null) {
           console.log("Token retrieved:", value);
           setToken(value);
@@ -51,20 +51,12 @@ export default function LicenceUpload() {
   const handleContinue = async () => {
     // Validation
     if (!businessLicense) {
-      Toast.show({
-        type: "error",
-        text1: "Required",
-        text2: "Please upload your business license",
-      });
+      toast.error("Please upload your business license.");
       return;
     }
 
     if (!certificate) {
-      Toast.show({
-        type: "error",
-        text1: "Required",
-        text2: "Please upload your ID photo",
-      });
+      toast.error("Please upload your ID photo.");
       return;
     }
 
@@ -87,32 +79,24 @@ export default function LicenceUpload() {
 
       await uploadDocuments(formData).unwrap();
 
-      Toast.show({
-        type: "success",
-        text1: "Success",
-        text2: "Documents uploaded successfully",
-      });
+      toast.success("Documents uploaded successfully.");
 
-      router.push("/provider/auth/criminalCheck");
+      router.replace("/provider/auth/criminalCheck");
     } catch (error) {
       console.log("Upload error:", error);
-
-      Toast.show({
-        type: "error",
-        text1: "Upload failed",
-        text2: error?.message || "Failed to upload documents. Please try again.",
-      });
+      toast.error(
+        error?.message || "Failed to upload documents. Please try again.",
+      );
     }
   };
 
   return (
-    <View className="flex-1 bg-[#F9F9F9]"> 
-          <View>
-          <CustomTitle />
-        </View>
+    <View className="flex-1 bg-[#F9F9F9]">
+      <View>
+        <CustomTitle />
+      </View>
 
       <View className="mx-[6%]">
-  
         <View className="mt-[9%]">
           <VerifyHeader
             title="Upload Your License and ID"

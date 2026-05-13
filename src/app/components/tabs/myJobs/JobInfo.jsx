@@ -1,4 +1,5 @@
-import { View, Text, Image, FlatList } from "react-native";
+import { View, Text, FlatList } from "react-native";
+import { Image } from "expo-image";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import XStyle from "../../../util/styles";
 import {
@@ -36,7 +37,7 @@ export default function JobInfo({ item }) {
           <Image
             style={{ width: scale(310), height: verticalScale(177) }}
             className="rounded-md  mb-[2%] "
-            source={{ uri: item?.serviceCategory?.image?.url || null }}
+            source={{ uri: item?.photos[0]?.url || null }}
           />
         </View>
         {item.photos && item.photos.length > 0 && (

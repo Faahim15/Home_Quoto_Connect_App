@@ -11,7 +11,7 @@ export default function InstructionField({ onChangeText, mode, value }) {
   return (
     <View>
       <View
-        className={` mt-[6%] ${mode === "bio" ? " bg-[#f9f9f9]" : "bg-[#f9f9f9]"} `}
+        className={`mt-[3%] ${mode === "bio" ? " bg-[#f9f9f9]" : "bg-[#f9f9f9]"} `}
       >
         <Text className="font-poppins-500medium text-base text-[#5C5F62]">
           {mode === "bio"

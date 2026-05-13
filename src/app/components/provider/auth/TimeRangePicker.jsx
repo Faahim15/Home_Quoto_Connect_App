@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from "react-redux";
 import FormButton from "../../auth/FormButton";
 import { router } from "expo-router";
 import { setProviderRegister } from "../../../../redux/features/provider/providerSlice";
-import Toast from "react-native-toast-message";
+import { toast } from "sonner-native";
 import * as Yup from "yup";
-import { useRegisterUserMutation } from "../../../../redux/features/apiSlices/auth/authApiSlices";
+import { useRegisterProviderMutation } from "../../../../redux/features/apiSlices/auth/authApiSlices";
 import { resetProviderForm } from "../../../../redux/features/provider/providerSlice";
 import Error from "../../shared/error/Error";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -20,10 +20,11 @@ export default function TimeRangePicker() {
   const dispatch = useDispatch();
   const registrationData = useSelector((state) => state.providerRegister);
 
-  const [registerUser, { isLoading }] = useRegisterUserMutation();
+  const [registerUser, { isLoading }] = useRegisterProviderMutation();
   const specializationIds = registrationData?.specializations.map(
     (spec) => spec.id,
   );
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const convertTo24Hour = (date) => {
     if (!date) return "";
@@ -59,46 +60,7 @@ export default function TimeRangePicker() {
 
   const currentPageSchema = Yup.object({
     from: Yup.string().required("Start time is required"),
-    to: Yup.string()
-      .required("End time is required")
-      .test(
-        "is-after-from",
-        "End time must be after start time",
-        function (value) {
-          const { from } = this.parent;
-          if (!from || !value) return true;
-
-          const timeToMinutes = (timeStr) => {
-            const [hours, minutes] = timeStr.split(":").map(Number);
-            return hours * 60 + minutes;
-          };
-
-          const fromMinutes = timeToMinutes(from);
-          const toMinutes = timeToMinutes(value);
-
-          return toMinutes > fromMinutes;
-        },
-      )
-      .test(
-        "minimum-duration",
-        "Availability must be at least 1 hour",
-        function (value) {
-          const { from } = this.parent;
-          if (!from || !value) return true;
-
-          const timeToMinutes = (timeStr) => {
-            const [hours, minutes] = timeStr.split(":").map(Number);
-            return hours * 60 + minutes;
-          };
-
-          const fromMinutes = timeToMinutes(from);
-          const toMinutes = timeToMinutes(value);
-          const diffMinutes = toMinutes - fromMinutes;
-          const diffHours = diffMinutes / 60;
-
-          return diffHours >= 1;
-        },
-      ),
+    to: Yup.string().required("End time is required"),
   });
 
   const handleNext = async () => {
@@ -131,37 +93,27 @@ export default function TimeRangePicker() {
         specializations: specializationIds,
         serviceAreas: serviceAreas,
         workingHours: workingHours,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timezone,
       };
 
       const res = await registerUser(payload).unwrap();
-      dispatch(resetProviderForm());
-      console.log("✅ provider Registration successful:", res);
-      // ⭐ IMPORTANT: Save token to AsyncStorage immediately
+
       if (res?.data?.token) {
         await AsyncStorage.setItem("token", res.data.token);
       }
 
       if (res?.success) {
-        Toast.show({
-          type: "success",
-          text1: "Success",
-          text2: res?.message || "Registration successful!",
-          visibilityTime: 2000,
-        });
+        dispatch(resetProviderForm());
+        toast.success(res?.message || "Registration successful!");
+        router.dismissAll();
         router.replace({
           pathname: "/provider/auth/verifyOtp",
           params: { email: registrationData.email },
         });
       } else {
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: res?.message || "Registration failed",
-          visibilityTime: 2000,
-        });
+        toast.error(res?.message || "Registration failed");
       }
     } catch (err) {
+      console.log("FULL ERROR:", JSON.stringify(err, null, 2));
       if (err.name === "ValidationError") {
         const validationErrors = {};
         err.inner.forEach((e) => {
@@ -169,23 +121,14 @@ export default function TimeRangePicker() {
         });
         setErrors(validationErrors);
       } else {
-        console.log("API Error:", err);
-        const errorMessage =
-          err?.message ||
-          err?.data?.email?.[0] ||
-          err?.data ||
-          "Network or server error. Please try again.";
-
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: errorMessage,
-          visibilityTime: 2000,
-        });
+        toast.error(
+          err?.data?.message ||
+            err?.message ||
+            "Network or server error. Please try again.",
+        );
       }
     }
   };
-
   return (
     <>
       <View className="items-center justify-center bg-white px-[2%]">
@@ -235,7 +178,7 @@ export default function TimeRangePicker() {
             is24Hour={true}
             display={Platform.OS === "ios" ? "spinner" : "default"}
             onChange={handleTimeChange}
-            locale="en_GB" 
+            locale="en_GB"
           />
         )}
       </View>

@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Pressable } from "react-native";
 
 export default function SingleButton({
   title,
@@ -14,7 +14,7 @@ export default function SingleButton({
   }
 
   return (
-    <TouchableOpacity onPress={handleButton}>
+    <Pressable onPress={handleButton}>
       <View
         className={`border mt-[2%] bg-[#F9F9F9] rounded-full py-[2%] px-[3%] ${
           selected ? "border-[#2C3E50]" : "border-[#AAB7B8]"
@@ -28,6 +28,6 @@ export default function SingleButton({
           {title}
         </Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }

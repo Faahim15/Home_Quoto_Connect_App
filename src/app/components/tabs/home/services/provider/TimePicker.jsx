@@ -1,15 +1,14 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Pressable } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useSelector } from "react-redux";
+import { formatDateForDisplay } from "../../../../utils/dateUtils";
 
 export default function TimePicker({ initialDate, initialTime }) {
   const jobData = useSelector((state) => state.jobPost);
 
-  
   const selectedDate = jobData.preferredDate;
   const selectedTime = jobData.preferredTime;
-
 
   const formatDate = (dateString) => {
     if (!dateString) return null;
@@ -21,24 +20,23 @@ export default function TimePicker({ initialDate, initialTime }) {
     });
   };
 
-
   const formatTime = (timeString) => {
     if (!timeString) return null;
-   
+
     return timeString;
   };
 
-  const displayDate = formatDate(selectedDate);
+  const displayDate = formatDateForDisplay(selectedDate);
   const displayTime = formatTime(selectedTime);
 
   return (
-    <View className="mt-[6%]">
+    <View className="mt-[3%]">
       <View className="flex-row justify-between items-center">
         <Text className="font-poppins-400regular text-base text-[#0F161C] mb-2">
           Time
         </Text>
 
-        <TouchableOpacity
+        <Pressable
           onPress={() => router.push("/services/calenderBooking")}
           className="flex-row items-center gap-[3%]"
         >
@@ -46,7 +44,7 @@ export default function TimePicker({ initialDate, initialTime }) {
           <Text className="font-poppins-bold text-base text-[#319FCA] underline">
             {selectedDate && selectedTime ? "Change time" : "Pick a time"}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {/* Display selected date and time */}

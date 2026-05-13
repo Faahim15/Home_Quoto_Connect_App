@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Pressable } from "react-native";
 
 export default function ShortMessage({ title, btnText, onPress }) {
   return (
@@ -6,11 +6,11 @@ export default function ShortMessage({ title, btnText, onPress }) {
       <Text className="font-poppins-400regular text-sm text-black">
         {title}
       </Text>
-      <TouchableOpacity onPress={onPress}>
+      <Pressable onPress={onPress}>
         <Text className="font-poppins-semiBold underline text-sm text-[#0054A5] ">
           {btnText}
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }

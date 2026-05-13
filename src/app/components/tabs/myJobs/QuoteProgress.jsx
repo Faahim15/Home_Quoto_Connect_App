@@ -1,6 +1,5 @@
 import {
   View,
-  Image,
   Text,
   TouchableOpacity,
   FlatList,
@@ -17,6 +16,7 @@ import ErrorState from "../../ui/ErrorState";
 import { statusColorMap } from "../../../util/colors";
 import { getStatusLabel } from "../../../util/helper-function";
 import EmptyProgressState from "../../provider/myJobs/EmptyProgressState";
+import { Image } from "expo-image";
 
 // ----------------------
 // Service Item Component
@@ -26,7 +26,7 @@ const ServiceItem = ({ item }) => {
     item?.quotes?.find((q) => q.status === "updated") ||
     item?.quotes?.find((q) => q.status === "accepted");
 
-  // ⛔ DO NOT RENDER ANYTHING IF NO ACCEPTED/UPDATED QUOTE
+  //  DO NOT RENDER ANYTHING IF NO ACCEPTED/UPDATED QUOTE
   if (
     !acceptedQuote ||
     acceptedQuote?.description === "Direct booking - quote to be provided"
@@ -63,7 +63,7 @@ const ServiceItem = ({ item }) => {
       >
         <View className="flex-row items-center gap-[4%]">
           {/* Provider Image */}
-          <TouchableOpacity
+          <Pressable
             onPress={() =>
               router.push({
                 pathname: "/myJobs/serviceProfile",
@@ -75,9 +75,9 @@ const ServiceItem = ({ item }) => {
             <Image
               source={{ uri: profilePhoto?.url || null }}
               className="w-full h-full rounded-full"
-              resizeMode="cover"
+              contentFit="cover"
             />
-          </TouchableOpacity>
+          </Pressable>
 
           {/* Details */}
           <View className="flex-1">
@@ -127,7 +127,7 @@ const ServiceItem = ({ item }) => {
 
             {/* Buttons */}
             <View className="flex-row gap-[4%]">
-              <TouchableOpacity
+              <Pressable
                 onPress={() => {
                   router.push({
                     pathname: "/myJobs/progressQuote",
@@ -140,7 +140,7 @@ const ServiceItem = ({ item }) => {
                 <Text className="font-poppins-500medium text-white text-[10px]">
                   Details
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
 
               <View className="flex-1 flex-row pt-1 justify-end">
                 <Text className="text-gray-500 text-sm">
@@ -166,7 +166,7 @@ export default function QuoteProgress() {
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
 
   const onRefresh = async () => {
@@ -189,7 +189,7 @@ export default function QuoteProgress() {
   // Filter only those that have an accepted or updated quote
   const filteredQuotes = inProgressJobs.filter((job) => {
     const hasAccepted = job?.quotes?.some(
-      (q) => q.status === "accepted" || q.status === "updated"
+      (q) => q.status === "accepted" || q.status === "updated",
     );
     return hasAccepted;
   });

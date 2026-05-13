@@ -1,4 +1,3 @@
-// Uploader.jsx
 import { View } from "react-native";
 import ServiceDocumentUpload from "../home/DoucumentUpload";
 import LicenceHeader from "./LicenceHeader";
