@@ -36,7 +36,6 @@ const ServiceCard = ({ item }) => {
       style={{ width: scale(327) }}
       className="bg-white mr-[0.5%] border border-[#D4E0EB] px-[4.5%] py-3 rounded-xl shadow-sm overflow-hidden"
     >
-      {/* Top row: avatar + name + title */}
       <View className="flex-row items-center mb-2">
         {profilePhoto?.url ? (
           <Image
@@ -65,7 +64,6 @@ const ServiceCard = ({ item }) => {
         )}
 
         <View className="flex-1 ml-3">
-          {/* Title */}
           <Text
             className="text-gray-900 font-poppins-500medium text-base"
             numberOfLines={1}
@@ -73,7 +71,6 @@ const ServiceCard = ({ item }) => {
           >
             {item?.job?.title || "N/A"}
           </Text>
-          {/* Author */}
           <Text
             className="font-poppins-400regular text-sm flex-1"
             numberOfLines={1}
@@ -87,10 +84,8 @@ const ServiceCard = ({ item }) => {
         </View>
       </View>
 
-      {/* Divider */}
       <View className="border-t border-[#F0F4F8] mb-2" />
 
-      {/* Service Type */}
       <View className="flex-row items-center mb-2">
         <Ionicons
           name="construct-outline"
@@ -107,7 +102,6 @@ const ServiceCard = ({ item }) => {
         </Text>
       </View>
 
-      {/* Location and Time */}
       <View className="flex-row items-center mb-2">
         <Ionicons
           name="location-outline"
@@ -128,10 +122,8 @@ const ServiceCard = ({ item }) => {
         </Text>
       </View>
 
-      {/* Divider */}
       <View className="border-t border-[#F0F4F8] mb-2" />
 
-      {/* Price */}
       <View className="flex-row justify-between items-center mb-1">
         <Text className="font-poppins-400regular text-base text-[#1F2937]">
           Price
@@ -141,7 +133,6 @@ const ServiceCard = ({ item }) => {
         </Text>
       </View>
 
-      {/* Status */}
       <View className="flex-row justify-between items-center">
         <Text className="font-poppins-400regular text-base text-[#1F2937]">
           Status
@@ -161,6 +152,7 @@ export default function AcceptJobsScreen() {
   const { data, isLoading, error, refetch } = useGetAllQuotesQuery();
   const [refreshing, setRefreshing] = useState(false);
 
+  // ✅ Refetch every time screen comes into focus
   useFocusEffect(
     useCallback(() => {
       refetch();

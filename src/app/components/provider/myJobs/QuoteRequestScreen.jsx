@@ -29,21 +29,15 @@ const ServiceCard = ({ item }) => {
   if (!item?.job || !item?.job?.isDirectBooking) return null;
 
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
-
   const [cancelJob, { isLoading: cancelLoading }] = useRemoveQuoteMutation();
-
   const jobId = item?._id;
 
-  // ---------------------------
-  // Cancel Job
-  // ---------------------------
   const handleCancelConfirm = async (reason) => {
     try {
       await cancelJob({ jobId, reason }).unwrap();
       setCancelModalVisible(false);
       router.push("/provider/myJobs");
     } catch (err) {
-      // ✅ sonner-native instead of Toast
       toast.error(err?.message || "Please try again.");
     }
   };
@@ -53,8 +47,8 @@ const ServiceCard = ({ item }) => {
 
   return (
     <Pressable
-      style={{ width: scale(327), height: verticalScale(230) }}
-      className="bg-white flex-col border border-[#D4E0EB] px-[4.5%] rounded-xl shadow-sm overflow-hidden"
+      style={{ width: scale(327) }}
+      className="bg-white border border-[#D4E0EB] px-[4.5%] py-3 rounded-xl shadow-sm overflow-hidden"
       onPress={() =>
         router.push({
           pathname: "/provider/myJobs/quoteRequest",
@@ -62,59 +56,108 @@ const ServiceCard = ({ item }) => {
         })
       }
     >
-      <View className="flex-row mt-[2%]">
-        {/* User Image */}
-        <Image
-          source={{ uri: profilePhoto?.url || undefined }}
-          style={{ width: scale(48), height: verticalScale(48) }}
-          className="bg-gray-300 mt-[2%] rounded-full mr-[2%]"
-        />
+      {/* ── Avatar + Name ── */}
+      <View className="flex-row items-center mb-2">
+        {profilePhoto?.url ? (
+          <Image
+            source={{ uri: profilePhoto.url }}
+            style={{
+              width: scale(46),
+              height: scale(46),
+              borderRadius: scale(23),
+              flexShrink: 0,
+            }}
+            contentFit="cover"
+            className="bg-gray-200"
+          />
+        ) : (
+          <View
+            style={{
+              width: scale(46),
+              height: scale(46),
+              borderRadius: scale(23),
+              flexShrink: 0,
+            }}
+            className="bg-gray-100 items-center justify-center"
+          >
+            <Ionicons name="person" size={scale(22)} color="#9CA3AF" />
+          </View>
+        )}
 
-        {/* Main Content */}
-        <View>
-          {/* Job Title */}
+        <View className="flex-1 ml-3">
           <Text
-            className="text-gray-900 font-poppins-500medium text-base mt-[2%]"
-            numberOfLines={2}
+            className="text-gray-900 font-poppins-500medium text-base"
+            numberOfLines={1}
+            ellipsizeMode="tail"
           >
             {item?.job?.title || "N/A"}
           </Text>
-
-          {/* Client Name */}
-          <View className="flex-row items-center mt-[4%]">
-            <Text className="font-poppins-400regular text-sm">
-              by{" "}
-              <Text className="text-[#319FCA] font-poppins-400regular text-sm">
-                {fullName || "N/A"}
-              </Text>
+          <Text
+            className="font-poppins-400regular text-sm"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            by{" "}
+            <Text className="text-[#319FCA] font-poppins-400regular text-sm">
+              {fullName || "N/A"}
             </Text>
-          </View>
-
-          {/* Category */}
-          <View className="flex-row gap-[2%] items-center mt-[4%]">
-            <Ionicons name="construct-outline" size={16} color="#6B7280" />
-            <Text className="font-poppins-400regular text-sm text-[#6B7280]">
-              {item?.job?.serviceCategory?.title || "N/A"}
-            </Text>
-          </View>
-
-          {/* Location + Time */}
-          <View className="flex-row items-center mt-[4%]">
-            <Ionicons name="location-outline" size={16} color="#319FCA" />
-            <Text className="font-poppins-400regular text-sm text-[#319FCA] ml-[1%]">
-              {city && state ? `${city}, ${state}` : "N/A"}{" "}
-              <Text className="text-[#6B7280]">| {item?.timeAgo}</Text>
-            </Text>
-          </View>
+          </Text>
         </View>
       </View>
 
-      {/* Price */}
-      <View className="flex-row mt-[4%] justify-between">
+      {/* ── Divider ── */}
+      <View className="border-t border-[#F0F4F8] mb-2" />
+
+      {/* ── Category ── */}
+      <View className="flex-row items-center mb-2">
+        <Ionicons
+          name="construct-outline"
+          size={15}
+          color="#6B7280"
+          style={{ flexShrink: 0, marginRight: 6 }}
+        />
+        <Text
+          className="font-poppins-400regular text-sm text-[#6B7280] flex-1"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {item?.job?.serviceCategory?.title || "N/A"}
+        </Text>
+      </View>
+
+      {/* ── Location + Time ── */}
+      <View className="flex-row items-center mb-2">
+        <Ionicons
+          name="location-outline"
+          size={15}
+          color="#319FCA"
+          style={{ flexShrink: 0 }}
+        />
+        <Text
+          className="font-poppins-400regular text-sm text-[#319FCA] flex-1 ml-1"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {city && state ? `${city}, ${state}` : "Location not specified"}
+          <Text className="text-[#6B7280]">
+            {" | "}
+            {item?.timeAgo || "Just now"}
+          </Text>
+        </Text>
+      </View>
+
+      {/* ── Divider ── */}
+      <View className="border-t border-[#F0F4F8] mb-2" />
+
+      {/* ── Price ── */}
+      <View className="flex-row justify-between items-center mb-1">
         <Text className="font-poppins-400regular text-base text-[#1F2937]">
           Price
         </Text>
-        <Text className="font-poppins-semiBold text-base text-[#F59E0B]">
+        <Text
+          className="font-poppins-semiBold text-base text-[#F59E0B]"
+          numberOfLines={1}
+        >
           {item?.job?.priceRange?.isPersonalized
             ? "Request a personalized..."
             : `$${item?.job?.priceRange?.from || 0} - $${
@@ -123,8 +166,11 @@ const ServiceCard = ({ item }) => {
         </Text>
       </View>
 
-      {/* Buttons */}
-      <View className="flex-row mb-[2%] gap-[2%] mt-[4%]">
+      {/* ── Divider ── */}
+      <View className="border-t border-[#F0F4F8] mb-2" />
+
+      {/* ── Buttons ── */}
+      <View className="flex-row gap-[2%] mt-1">
         <BottomButtons
           onPress={() => setCancelModalVisible(true)}
           width={145}
@@ -134,7 +180,6 @@ const ServiceCard = ({ item }) => {
           title="Cancel"
           loading={cancelLoading}
         />
-
         <BottomButtons
           onPress={() =>
             router.push({
@@ -150,7 +195,7 @@ const ServiceCard = ({ item }) => {
         />
       </View>
 
-      {/* Cancel Modal */}
+      {/* ── Cancel Modal ── */}
       <CancelModal
         visible={cancelModalVisible}
         onClose={() => setCancelModalVisible(false)}
@@ -159,7 +204,6 @@ const ServiceCard = ({ item }) => {
     </Pressable>
   );
 };
-
 // ----------------------------------------------------------
 // QuotesRequestScreen
 // ----------------------------------------------------------

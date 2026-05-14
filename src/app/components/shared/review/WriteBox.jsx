@@ -5,7 +5,7 @@ export default function WriteBox({ value, onChangeText }) {
   return (
     <View className=" mx-[5%] mt-[5%]">
       <Text className="text-sm font-poppins-500medium text-[#5C5F62] mb-[2%]">
-        Write in bellow box
+        Write in below box
       </Text>
       <TextInput
         multiline

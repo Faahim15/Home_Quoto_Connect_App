@@ -61,7 +61,7 @@ export default function ProviderJobSummary({
           <Image
             style={{ width: scale(310), height: verticalScale(177) }}
             className="rounded-md mb-[2%]"
-            source={{ uri: serviceCategory?.image?.url || null }}
+            source={{ uri: photos[0]?.url || null }}
             contentFit="cover"
             transition={300}
           />

@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  Image,
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
@@ -9,6 +8,7 @@ import {
   Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { cancelledJobData } from "../../data/provider/MyJobsData";
 import { useCallback, useState } from "react";
@@ -17,12 +17,11 @@ import { useGetAllQuotesQuery } from "../../../../redux/features/apiSlices/quote
 import { statusColorMap } from "../../../util/colors";
 import { getStatusLabel } from "../../../util/helper-function";
 import CustomButton from "../../tabs/home/services/provider/details/CustomButton";
+
 const ServiceCard = ({ item }) => {
   const { profilePhoto, fullName } = item?.job?.client || {};
   const { city, state } = item?.job?.location?.details || {};
   const statusColor = statusColorMap?.[item?.job?.status] ?? "#6B7280";
-
-  // console.log("items", item?.reviews?.provider_to_client);
   const isAlreadyReviewed = !!item?.reviews?.provider_to_client;
 
   const handlePress = useCallback(() => {
@@ -35,85 +34,127 @@ const ServiceCard = ({ item }) => {
   return (
     <Pressable
       onPress={handlePress}
-      style={{ width: scale(327), height: "full" }}
-      className="bg-white pb-[2%] mr-[0.5%] flex-col justify-center  border border-[#D4E0EB] px-[4.5%]  rounded-xl shadow-sm overflow-hidden"
+      style={{ width: scale(327) }}
+      className="bg-white mr-[0.5%] border border-[#D4E0EB] px-[4.5%] py-3 rounded-xl shadow-sm overflow-hidden"
     >
-      <View className="flex-row mt-[2%] ">
-        {/* User Image */}
-        <View className="">
+      {/* Top row: avatar + title + author */}
+      <View className="flex-row items-center mb-2">
+        {profilePhoto?.url ? (
           <Image
-            source={{ uri: profilePhoto?.url || undefined }}
-            style={{ width: scale(48), height: verticalScale(48) }}
-            className="mt-[12%] bg-gray-300 rounded-full mr-[2%]"
+            source={{ uri: profilePhoto.url }}
+            style={{
+              width: scale(46),
+              height: scale(46),
+              borderRadius: scale(23),
+              flexShrink: 0,
+            }}
+            contentFit="cover"
+            transition={300}
+            className="bg-gray-200"
           />
-        </View>
+        ) : (
+          <View
+            style={{
+              width: scale(46),
+              height: scale(46),
+              borderRadius: scale(23),
+              flexShrink: 0,
+            }}
+            className="bg-gray-200 items-center justify-center"
+          >
+            <Ionicons name="person" size={scale(22)} color="#9CA3AF" />
+          </View>
+        )}
 
-        {/* Card Content */}
-        <View className=" ">
-          {/* Title */}
+        <View className="flex-1 ml-3">
           <Text
-            className="text-gray-900 font-poppins-500medium text-base mt-[2%] "
-            numberOfLines={2}
+            className="text-gray-900 font-poppins-500medium text-base"
+            numberOfLines={1}
+            ellipsizeMode="tail"
           >
             {item?.job?.title || "N/A"}
           </Text>
-
-          {/* Author */}
-          <View className="flex-row items-center mt-[2%]">
-            <Text className="font-poppins-400regular text-sm">
-              by{" "}
-              <Text className="font-poppins-400regular text-[#319FCA] text-sm ">
-                {fullName || "N/A"}
-              </Text>
+          <Text
+            className="font-poppins-400regular text-sm flex-1"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            by{" "}
+            <Text className="font-poppins-400regular text-[#319FCA] text-sm">
+              {fullName || "N/A"}
             </Text>
-          </View>
-
-          {/* Service Type */}
-          <View className="flex-row gap-[2%] items-center mt-[2%]">
-            <Ionicons name="construct-outline" size={16} color="#6B7280" />
-            <Text className="font-poppins-400regular text-sm text-[#6B7280] ">
-              {item?.job?.serviceCategory?.title || "N/A"}
-            </Text>
-          </View>
-
-          {/* Location and Time */}
-          <View className="flex-row items-center mt-[2%]">
-            <Ionicons name="location-outline" size={16} color="#319FCA" />
-            <Text className="text-gray-500 text-sm ml-[1%]"></Text>
-
-            <Text className="font-poppins-400regular text-sm text-[#319FCA] ">
-              {city && state ? `${city}, ${state}` : "N/A"}{" "}
-              <Text className="text-[#6B7280]">| {item?.timeAgo}</Text>
-            </Text>
-          </View>
+          </Text>
         </View>
       </View>
 
-      {/* Price section */}
+      {/* Divider */}
+      <View className="border-t border-[#F0F4F8] mb-2" />
 
+      {/* Service Type */}
+      <View className="flex-row items-center mb-2">
+        <Ionicons
+          name="construct-outline"
+          size={15}
+          color="#6B7280"
+          style={{ flexShrink: 0, marginRight: 6 }}
+        />
+        <Text
+          className="font-poppins-400regular text-sm text-[#6B7280] flex-1"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {item?.job?.serviceCategory?.title || "N/A"}
+        </Text>
+      </View>
+
+      {/* Location and Time */}
+      <View className="flex-row items-center mb-2">
+        <Ionicons
+          name="location-outline"
+          size={15}
+          color="#319FCA"
+          style={{ flexShrink: 0 }}
+        />
+        <Text
+          className="font-poppins-400regular text-sm text-[#319FCA] flex-1 ml-1"
+          numberOfLines={1}
+          ellipsizeMode="tail"
+        >
+          {city && state ? `${city}, ${state}` : "Location not specified"}
+          <Text className="text-[#6B7280]">
+            {" | "}
+            {item?.timeAgo || "Just now"}
+          </Text>
+        </Text>
+      </View>
+
+      {/* Divider */}
+      <View className="border-t border-[#F0F4F8] mb-2" />
+
+      {/* Price */}
       <View className="flex-row mt-[2%] justify-between">
-        <Text className="font-poppins-400regular text-base text-[#1F2937] ">
+        <Text className="font-poppins-400regular text-base text-[#1F2937]">
           Price
         </Text>
-        <Text className="font-poppins-semiBold text-base text-[#F59E0B] ">
+        <Text className="font-poppins-semiBold text-base text-[#F59E0B]">
           {`$${item?.price}` || "N/A"}
         </Text>
       </View>
-      {/* Status section */}
 
+      {/* Status */}
       <View className="flex-row mt-[2%] justify-between">
-        <Text className="font-poppins-400regular text-base text-[#1F2937] ">
+        <Text className="font-poppins-400regular text-base text-[#1F2937]">
           status
         </Text>
         <Text
           style={{ color: statusColor }}
-          className={`font-poppins-400regular text-base`}
+          className="font-poppins-400regular text-base"
         >
           {getStatusLabel(item?.job?.status || "N/A")}
         </Text>
       </View>
 
-      {/* Job and payment confirmation section */}
+      {/* Feedback Button */}
       <View className="mb-[2%]">
         <CustomButton
           onPress={() =>
@@ -134,23 +175,18 @@ export default function CompletedJobs() {
   const { data, isLoading, error, refetch } = useGetAllQuotesQuery();
   const [refreshing, setRefreshing] = useState(false);
 
-  // Refresh when screen focuses
   useFocusEffect(
     useCallback(() => {
       refetch();
     }, [refetch]),
   );
 
-  // Pull to Refresh
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
   }, [refetch]);
 
-  // ------------------------------------------
-  // Loading State
-  // ------------------------------------------
   if (isLoading) {
     return (
       <View className="flex-1 justify-center items-center bg-[#f9f9f9]">
@@ -162,9 +198,6 @@ export default function CompletedJobs() {
     );
   }
 
-  // ------------------------------------------
-  // Error State
-  // ------------------------------------------
   if (error) {
     return (
       <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">
@@ -175,7 +208,6 @@ export default function CompletedJobs() {
         <Text className="font-poppins-400regular text-sm text-gray-600 mt-2 text-center">
           {error?.message || "Something went wrong. Please try again."}
         </Text>
-
         <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
@@ -187,9 +219,7 @@ export default function CompletedJobs() {
       </View>
     );
   }
-  // ------------------------------------------
-  // Empty State
-  // ------------------------------------------
+
   const completedJobs =
     data?.data?.quotes?.filter((q) => q?.job?.status === "completed") || [];
 
@@ -197,15 +227,12 @@ export default function CompletedJobs() {
     return (
       <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">
         <Ionicons name="checkmark-done-outline" size={64} color="#9CA3AF" />
-
         <Text className="font-poppins-600semiBold text-lg text-gray-900 mt-4 text-center">
           No Completed Quotes
         </Text>
-
         <Text className="font-poppins-400regular text-sm text-gray-600 mt-2 text-center">
           You don't have any completed quotes at the moment.
         </Text>
-
         <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
@@ -219,7 +246,7 @@ export default function CompletedJobs() {
   }
 
   return (
-    <View className="justify-center items-center  bg-[#f9f9f9] mt-[4%]">
+    <View className="justify-center items-center bg-[#f9f9f9] mt-[4%]">
       <FlatList
         data={completedJobs}
         renderItem={({ item }) => <ServiceCard item={item} />}

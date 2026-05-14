@@ -55,9 +55,10 @@ export default function CancelledJobDetailScreen() {
 
   return (
     <View className="flex-1  bg-[#f9f9f9]">
-      <View className="px-[6%]">
+      <View className="">
         <CustomTitle
           title={cancelledJob?.job?.serviceCategory?.title || "Service Details"}
+          withSafeTop={true}
         />
       </View>
       <ScrollView className="px-[6%]">

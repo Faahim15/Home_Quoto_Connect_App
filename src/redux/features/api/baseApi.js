@@ -1,29 +1,24 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// https://api.quoto.ca/api
-// Base query function using axios (with fetch for FormData)
+
 const baseQueryWithRath = async (args, api, extraOptions) => {
   try {
-    const token = await AsyncStorage.getItem("token"); 
-    
+    const token = await AsyncStorage.getItem("token");
+
     const isFormData = args.body instanceof FormData;
 
     // Use fetch for FormData uploads
     if (isFormData) {
       const headers = {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        // Don't set Content-Type for FormData - let browser set it with boundary
       };
 
-      const response = await fetch(
-        `http://10.10.20.73:8080/api${args.url}`,
-        {
-          method: args.method,
-          headers: headers,
-          body: args.body,
-        }
-      );
+      const response = await fetch(`http://10.10.20.73:8080/api${args.url}`, {
+        method: args.method,
+        headers: headers,
+        body: args.body,
+      });
 
       if (response.status === 403 || response.status === 401) {
         await AsyncStorage.removeItem("token");
@@ -47,8 +42,7 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
     };
 
     const result = await axios({
-      baseURL:
-        "http://10.10.20.73:8080/api",
+      baseURL: "http://10.10.20.73:8080/api",
       url: args.url,
       method: args.method,
       data: args.body,
@@ -64,6 +58,16 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
   } catch (error) {
     console.error("API Error:", error);
     console.error("Error response:", error.response);
+
+    // ── 404 gracefully handle — data নেই, crash করবে না ──
+    if (error.response?.status === 404) {
+      return {
+        error: {
+          status: 404,
+          data: error.response?.data || { message: "Not found" },
+        },
+      };
+    }
 
     // Handle auth errors in catch block
     if (error.response?.status === 403 || error.response?.status === 401) {

@@ -1,5 +1,6 @@
-import { View, Text, Image, FlatList } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
+import { Image } from "expo-image";
 import XStyle from "../../../util/styles";
 import {
   capitalizeFirstLetter,
@@ -7,6 +8,7 @@ import {
   getStatusLabel,
 } from "../../../util/helper-function";
 import { statusColorMap } from "../../../util/colors";
+import { Ionicons } from "@expo/vector-icons";
 function showImages({ item }) {
   return (
     <View>
@@ -38,6 +40,7 @@ export default function JobSummary({
   const { profilePhoto, fullName } = quoteInfo?.job?.client || {};
   const { city, state } = quoteInfo?.job?.location?.details || {};
   const statusColor = statusColorMap?.[quoteInfo?.status] ?? "#6B7280";
+
   return (
     <View
       style={XStyle.shadowBox}
@@ -51,7 +54,7 @@ export default function JobSummary({
           <Image
             style={{ width: scale(310), height: verticalScale(177) }}
             className="rounded-md  mb-[2%] "
-            source={{ uri: serviceCategory?.image?.url || null }}
+            source={{ uri: photos[0]?.url | null }}
           />
         </View>
         {/* ✅ Fix FlatList - check if photoData has items */}
@@ -130,49 +133,36 @@ export default function JobSummary({
           </View>
         </View>
 
-        <View>
-          <Text className="font-poppins-semiBold text-base text-[#1F2937]">
-            Posted by
-          </Text>
-          <View className="flex-row gap-[4%] pb-[2%] border-b border-[#CACACA] ">
+        {/* Posted by */}
+        <Text className="font-poppins-semiBold text-base text-[#1F2937]">
+          Posted by
+        </Text>
+        <View className="flex-row gap-[4%] pb-[2%] border-b border-[#CACACA]">
+          {profilePhoto?.url ? (
             <Image
               style={{
                 width: scale(40),
                 height: verticalScale(40),
                 borderRadius: scale(20),
               }}
-              source={{
-                uri: profilePhoto?.url || "https://via.placeholder.com/300",
-              }}
+              source={{ uri: profilePhoto.url }}
               className="mt-[2%]"
             />
-            <View className="mt-[2%]">
-              <Text className="font-poppins-500medium text-xl text-[#1F2937]">
-                {fullName || "N/A"}
-              </Text>
-            </View>
-          </View>
-
-          {/* <View className="flex-row justify-between">
-            <Text className="font-poppins-semiBold text-sm text-[#6B7280] ">
-              Price
-            </Text>
-            <Text className="font-poppins-semiBold text-sm  text-[#F59E0B]">
-              {priceRange?.isPersonalized
-                ? "Request a personalized..."
-                : `$${priceRange?.from || null}-$${priceRange?.to || null}`}
-            </Text>
-          </View> */}
-
-          <View className="flex-row pt-[1%] justify-between">
-            <Text className="font-poppins-semiBold text-sm text-[#6B7280]">
-              Status
-            </Text>
-            <Text
-              style={{ color: statusColor }}
-              className=" text-base font-poppins-semiBold"
+          ) : (
+            <View
+              style={{
+                width: scale(40),
+                height: verticalScale(40),
+                borderRadius: scale(20),
+              }}
+              className="mt-[2%] bg-gray-100 items-center justify-center"
             >
-              {getStatusLabel(quoteInfo?.status || "N/A")}
+              <Ionicons name="person" size={scale(20)} color="#9CA3AF" />
+            </View>
+          )}
+          <View className="mt-[2%]">
+            <Text className="font-poppins-500medium text-xl text-[#1F2937]">
+              {fullName || "N/A"}
             </Text>
           </View>
         </View>

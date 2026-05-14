@@ -87,9 +87,7 @@ export default function ReviewFormScreen() {
 
   return (
     <View className="flex-1 bg-[#f9f9f9]">
-      <View className="px-[5%]">
-        <CustomTitle title="Review" />
-      </View>
+      <CustomTitle title="Review" withSafeTop={true} />
 
       <View className="mt-[3%] px-[5%]">
         <Text className="font-poppins-500medium text-base text-[#5C5F62]">

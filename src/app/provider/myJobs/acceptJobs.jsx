@@ -36,12 +36,22 @@ export default function AcceptJobDetailScreen() {
     error: transactionError,
   } = useGetTransactionByJobQuery(jobId, { skip: !jobId });
 
+  // 404 = transaction নেই, এটা normal — crash করবে না
+  const transactionNotFound = transactionError?.status === 404;
+
   // Mutation for confirming cash payment
   const [confirmCashPayment, { isLoading: confirming }] =
     useConfirmCashPaymentMutation();
 
   const handleConfirmPayment = async () => {
     try {
+      // ── transaction নেই ──
+      if (transactionNotFound) {
+        toast.error("No transaction found for this job.");
+        setCashConfirmModalVisible(false);
+        return;
+      }
+
       // 1️⃣ Check if transaction data exists
       const transactionId = transactionData?.data?.transaction?._id;
 
@@ -72,8 +82,8 @@ export default function AcceptJobDetailScreen() {
     }
   };
 
-  // Loading UI
-  if (isLoading || transactionLoader) {
+  // ── Loading — শুধু quotes loading, transaction 404 হলে block করবে না ──
+  if (isLoading || (transactionLoader && !transactionNotFound)) {
     return (
       <View className="flex-1 justify-center items-center bg-[#f9f9f9]">
         <ActivityIndicator size="large" color="#175994" />
@@ -84,8 +94,8 @@ export default function AcceptJobDetailScreen() {
     );
   }
 
-  // Error UI
-  if (error || transactionError) {
+  // ── Error — শুধু quotes error, transaction 404 error না ──
+  if (error) {
     return (
       <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">
         <Ionicons name="alert-circle-outline" size={64} color="#EF4444" />
