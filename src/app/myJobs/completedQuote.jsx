@@ -1,6 +1,6 @@
 import { View, ScrollView, ActivityIndicator } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import CustomTitle from "../components/shared/services/CustomTitle";
+import CustomTitle from "../components/shared/CustomTitle";
 import QuoteProgressDetails from "../components/tabs/myJobs/QuoteProgressDetails";
 import { useGetSingleJobQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 import { useQuoteById } from "../../hooks/useQuoteById";
@@ -42,8 +42,8 @@ export default function ProgressQuote() {
   }
   return (
     <View className="flex-1 bg-[#f9f9f9]">
-      <View className="px-[4%]">
-        <CustomTitle title="Quote Details" />
+      <View className="mb-[2%]">
+        <CustomTitle title="Quote Details" withSafeTop={true} />
       </View>
       <ScrollView>
         <QuoteProgressDetails showStatus={true} quote={quote} job={item} />

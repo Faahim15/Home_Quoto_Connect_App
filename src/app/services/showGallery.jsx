@@ -43,8 +43,8 @@ export default function ViewAllGalleryScreen() {
 
   return (
     <View className="flex-1 bg-[#F9F9F9]">
+      <CustomTitle title="Gallery" withSafeTop={true} />
       <View className="flex-1 mx-[6%]">
-        <CustomTitle title="Gallery" />
         <View className="mt-[3%]">
           <ViewAllGallery allImages={allImages} />
         </View>

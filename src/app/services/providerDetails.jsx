@@ -22,12 +22,15 @@ import Biography from "../components/tabs/home/services/provider/details/Biograp
 import { router, useLocalSearchParams } from "expo-router";
 import XStyle from "../util/styles";
 import { toast } from "sonner-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
 import {
   useGetPopularProvidersQuery,
   useGetProviderDetailsQuery,
 } from "../../redux/features/apiSlices/user/createJobSlices";
 
 export default function ProviderDetailsScreen() {
+  const insets = useSafeAreaInsets();
   const { showButtons, profileId } = useLocalSearchParams();
 
   const { data, isLoading, error } = useGetProviderDetailsQuery(profileId);
@@ -82,29 +85,39 @@ export default function ProviderDetailsScreen() {
         contentContainerStyle={{ paddingBottom: verticalScale(40) }}
         className="flex-1"
       >
-        {/* Banner */}
+        {/* ── Banner ── */}
         <LinearGradient
           colors={["#319FCA", "#18649F"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          className=""
           style={{
-            height: verticalScale(344),
+            height: verticalScale(320),
             borderBottomLeftRadius: scale(16),
             borderBottomRightRadius: scale(16),
+            overflow: "hidden",
           }}
         >
-          <View className="w-10 h-10 mx-[6%] mt-[6%] rounded-[20px] bg-white">
-            <ArrowBack />
+          {/* ── Back Button ── */}
+          <View
+            style={{ paddingTop: insets.top + scale(10) }}
+            className="mx-[6%]"
+          >
+            <View className="w-10 h-10 rounded-[20px] bg-white">
+              <ArrowBack />
+            </View>
           </View>
-          <View className="flex-1 justify-center items-center">
+
+          {/* ── Profile Image ── */}
+          <View className="flex-1 justify-end items-center">
             <Image
               source={{ uri: profilePhoto?.url }}
               style={{
-                width: scale(264),
-                height: verticalScale(290),
-                marginTop: verticalScale(0),
-                marginLeft: scale(30),
+                width: scale(160),
+                height: scale(160),
+                borderRadius: scale(80),
+                borderWidth: 4,
+                borderColor: "rgba(255,255,255,0.4)",
+                marginBottom: verticalScale(16),
               }}
               contentFit="cover"
             />
@@ -119,7 +132,9 @@ export default function ProviderDetailsScreen() {
         {/* PerfomanceMetrics */}
         <PerfomanceMetrics
           performanceData={{
-            avgRating: averageRating,
+            avgRating: averageRating
+              ? (Number(averageRating) / 10).toFixed(1)
+              : "0.0",
             totalJobs: totalCompletedJobs,
             experienceLevel,
           }}

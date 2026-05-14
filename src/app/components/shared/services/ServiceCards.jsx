@@ -65,12 +65,22 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
           {item?.client?.profilePhoto?.url ? (
             <Image
               source={{ uri: item?.client?.profilePhoto?.url }}
-              style={{ width: scale(16), height: scale(16), flexShrink: 0 }}
+              style={{
+                width: scale(16),
+                height: scale(16),
+                borderRadius: scale(8),
+                flexShrink: 0,
+              }}
               className="bg-gray-300 rounded-full mr-[2%]"
             />
           ) : (
             <View
-              style={{ width: scale(16), height: scale(16), flexShrink: 0 }}
+              style={{
+                width: scale(16),
+                height: scale(16),
+                borderRadius: scale(8),
+                flexShrink: 0,
+              }}
               className="bg-gray-300 rounded-full mr-[2%] items-center justify-center"
             >
               <Ionicons name="person" size={10} color="#6B7280" />

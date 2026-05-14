@@ -14,7 +14,7 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       };
 
-      const response = await fetch(`http://10.10.20.73:8080/api${args.url}`, {
+      const response = await fetch(`https://api.quoto.ca/api${args.url}`, {
         method: args.method,
         headers: headers,
         body: args.body,
@@ -42,7 +42,7 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
     };
 
     const result = await axios({
-      baseURL: "http://10.10.20.73:8080/api",
+      baseURL: "https://api.quoto.ca/api",
       url: args.url,
       method: args.method,
       data: args.body,

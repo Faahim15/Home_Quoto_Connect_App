@@ -3,7 +3,7 @@ import stackScreenOptions from "../components/shared/layout/TitleStyle";
 
 export default function Layout() {
   return (
-    <Stack>
+    <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="calenderBooking"
         options={{

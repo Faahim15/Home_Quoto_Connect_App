@@ -13,7 +13,8 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { useUpdateProfilePhotoMutation } from "../../../../redux/features/apiSlices/user/userApiSlices";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
+
 const AvatarImagePicker = ({ photo }) => {
   const [avatar, setAvatar] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -51,35 +52,31 @@ const AvatarImagePicker = ({ photo }) => {
     try {
       console.log("Original imageUri:", imageUri);
 
-      // Read file as base64
-      const base64 = await FileSystem.readAsStringAsync(imageUri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
       // Extract filename from URI
       const filename = imageUri.split("/").pop();
 
       // Get file extension
       const match = /\.(\w+)$/.exec(filename);
-      const fileType = match ? match[1] : "jpeg";
+      const fileType = match ? match[1].toLowerCase() : "jpeg";
 
       console.log("Filename:", filename);
       console.log("File type:", fileType);
 
+      // ── base64 read ──
+      const base64 = await FileSystem.readAsStringAsync(imageUri, {
+        encoding: "base64", // ← EncodingType.Base64 এর বদলে string literal
+      });
+
       const formData = new FormData();
 
-      // Create blob from base64
-      const blob = {
+      formData.append("profilePhoto", {
         uri: `data:image/${fileType};base64,${base64}`,
         name: filename,
         type: `image/${fileType}`,
-      };
-
-      formData.append("profilePhoto", blob);
+      });
 
       console.log("FormData prepared with base64, uploading...");
 
-      // Upload to server
       const response = await updateProfilePhoto(formData).unwrap();
 
       console.log("Upload response:", response);
@@ -94,8 +91,6 @@ const AvatarImagePicker = ({ photo }) => {
       }
     } catch (error) {
       console.error("Upload error:", error);
-      console.error("Error data:", error?.data);
-      console.error("Error message:", error?.message);
       Alert.alert(
         "Upload Failed",
         error?.data?.message ||
@@ -107,7 +102,6 @@ const AvatarImagePicker = ({ photo }) => {
       }
     }
   };
-
   // Pick image from gallery
   const pickImageFromGallery = async () => {
     const hasPermission = await requestPermissions();

@@ -13,15 +13,13 @@ export default function _layout() {
       <Stack.Screen
         name="directBooking"
         options={{
-          title: "Post a Job",
-          ...stackScreenOptions,
+          headerShown: false,
         }}
       />
       <Stack.Screen
         name="directFormBooking"
         options={{
-          title: "Post a Job",
-          ...stackScreenOptions,
+          headerShown: false,
         }}
       />
       <Stack.Screen
@@ -41,7 +39,7 @@ export default function _layout() {
       <Stack.Screen
         name="serviceDetails"
         options={{
-         headerShown: false,
+          headerShown: false,
         }}
       />
     </Stack>

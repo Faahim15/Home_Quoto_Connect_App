@@ -134,6 +134,8 @@ export default function DirectPostJobScreen() {
 
   return (
     <View className="flex-1 bg-[#F9F9F9]">
+      <CustomTitle title="Post a Job" withSafeTop={true} />
+
       <ScrollView className="flex-1 px-[5%] py-[5%]">
         {/* Title */}
         <Text className="text-base font-poppins-semiBold text-[#6B7280] mb-[5%]">

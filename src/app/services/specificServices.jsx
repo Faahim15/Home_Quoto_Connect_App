@@ -15,7 +15,7 @@ import { LinearGradient } from "expo-linear-gradient";
 export default function SpecificServices() {
   const { serviceId } = useLocalSearchParams();
   const service = popularSeviceData.find(
-    (service) => service.id.toString() === serviceId
+    (service) => service.id.toString() === serviceId,
   );
 
   const ServiceCard = ({ item }) => {
@@ -72,11 +72,8 @@ export default function SpecificServices() {
 
   return (
     <View className="flex-1 bg-[#f9f9f9]">
-      <View className="px-6 pt-2">
-        <CustomTitle title="Popular Services" />
-
-        {/* Service Category Header */}
-      </View>
+      <CustomTitle title="Popular Services" withSafeTop={true} />
+      <View className="px-6 pt-2">{/* Service Category Header */}</View>
 
       <FlatList
         data={service?.data || []}

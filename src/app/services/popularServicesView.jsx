@@ -2,20 +2,20 @@ import {
   View,
   Text,
   FlatList,
-  Image,
   Dimensions,
   Pressable,
   ActivityIndicator,
 } from "react-native";
+import { Image } from "expo-image";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import popularSeviceData from "../components/data/shared/PopularServiceData";
 import CustomTitle from "../components/shared/CustomTitle";
 import { useGetServiceCategoriesQuery } from "../../redux/features/apiSlices/user/createJobSlices";
 
 const screenWidth = Dimensions.get("window").width;
-const horizontalMargin = screenWidth * 0.12; // 6% left + 6% right
-const cardGap = scale(16); // gap between cards
+const horizontalMargin = screenWidth * 0.12;
 const numColumns = 3;
+const cardGap = scale(10);
 const cardWidth =
   (screenWidth - horizontalMargin - cardGap * (numColumns - 1)) / numColumns;
 
@@ -23,24 +23,31 @@ const ServiceItem = ({ item }) => {
   return (
     <Pressable
       onPress={() => {}}
-      style={[
-        {
-          width: cardWidth,
-          height: verticalScale(110),
-          marginBottom: scale(16),
-        },
-      ]}
-      className="bg-white border rounded-lg border-[#D4E0EB] items-center justify-center"
+      style={{
+        width: cardWidth,
+        height: verticalScale(140),
+        marginBottom: scale(16),
+      }}
+      className="bg-white border border-[#D4E0EB] rounded-2xl overflow-hidden"
     >
+      {/* ── Image ── */}
       <Image
         source={{ uri: item?.image?.url || null }}
-        resizeMode="contain"
-        style={{ width: scale(65), height: verticalScale(72) }}
-        className=""
+        contentFit="cover"
+        transition={300}
+        style={{ width: "100%", height: verticalScale(95) }}
       />
-      <Text className="text-center mt-[2%] font-poppins-semiBold text-sm text-gray-800">
-        {(item?.title || "N/A").split(" ").slice(0, 1).join(" ")}
-      </Text>
+
+      {/* ── Title ── */}
+      <View className="flex-1 items-center justify-center px-2">
+        <Text
+          className="text-center font-poppins-semiBold text-sm text-gray-800"
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
+          {(item?.title || "N/A").split(" ").slice(0, 1).join(" ")}
+        </Text>
+      </View>
     </Pressable>
   );
 };
@@ -52,8 +59,8 @@ export default function PopularServicesView() {
 
   return (
     <View className="flex-1 bg-[#F9F9F9] py-[3%]">
-    
       <CustomTitle title="Popular Services" withSafeTop={true} />
+
       {/* Services List */}
       <View className="mx-[6%] mt-[1.6%]">
         {isLoading ? (
@@ -90,7 +97,8 @@ export default function PopularServicesView() {
             numColumns={3}
             showsVerticalScrollIndicator={false}
             columnWrapperStyle={{
-              justifyContent: "space-between",
+              justifyContent: "flex-start",
+              gap: scale(10),
             }}
             ListEmptyComponent={
               <View

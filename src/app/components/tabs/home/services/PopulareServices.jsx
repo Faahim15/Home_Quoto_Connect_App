@@ -3,7 +3,6 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
-  Image,
   Dimensions,
   Pressable,
 } from "react-native";
@@ -11,7 +10,7 @@ import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
 import popularSeviceData from "../../../data/shared/PopularServiceData";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-
+import { Image } from "expo-image"; // ← এটা add করো উপরে
 const screenWidth = Dimensions.get("window").width;
 const horizontalMargin = screenWidth * 0.12;
 const cardGap = scale(16);
@@ -21,18 +20,27 @@ const ServiceItem = ({ item }) => {
   return (
     <Pressable
       onPress={() => {}}
-      style={[{ width: cardWidth, height: verticalScale(110) }]}
-      className="bg-white  mr-[2%] border rounded-lg border-[#D4E0EB] items-center justify-center "
+      style={[{ width: cardWidth, height: verticalScale(140) }]}
+      className="bg-white border border-[#D4E0EB] rounded-2xl overflow-hidden"
     >
+      {/* ── Image ── */}
       <Image
         source={{ uri: item?.image?.url || null }}
-        resizeMode="contain"
-        style={{ width: scale(65), height: verticalScale(72) }}
-        className=""
+        contentFit="cover"
+        transition={300}
+        style={{ width: "100%", height: verticalScale(95) }}
       />
-      <Text className="text-center mt-[2%] font-poppins-semiBold text-sm text-gray-800">
-        {(item?.title || "N/A").split(" ").slice(0, 1).join(" ")}
-      </Text>
+
+      {/* ── Title ── */}
+      <View className="flex-1 items-center justify-center px-2">
+        <Text
+          className="text-center font-poppins-semiBold text-sm text-gray-800"
+          numberOfLines={2}
+          ellipsizeMode="tail"
+        >
+          {(item?.title || "N/A").split(" ").slice(0, 1).join(" ")}
+        </Text>
+      </View>
     </Pressable>
   );
 };
@@ -81,6 +89,7 @@ export default function PopularServices({ categories }) {
             decelerationRate="fast"
             snapToAlignment="start"
             snapToInterval={264}
+            ItemSeparatorComponent={() => <View style={{ width: scale(10) }} />} // ← এটা add করো
             contentContainerStyle={{
               paddingRight: scale(100),
             }}
