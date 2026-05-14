@@ -8,7 +8,7 @@ import {
 import { scale } from "../components/adaptive/Adaptiveness";
 import XStyle from "../util/styles";
 import { router, useLocalSearchParams, useFocusEffect } from "expo-router";
-import CustomTitle from "../components/shared/services/CustomTitle";
+import CustomTitle from "../components/shared/CustomTitle";
 import QuoteProgressDetails from "../components/tabs/myJobs/QuoteProgressDetails";
 import PaymentMethodModal from "../components/shared/modal/PaymentMethodModal";
 import { useState, useCallback } from "react";
@@ -52,7 +52,7 @@ export default function ProgressQuote() {
   if (error || !item) {
     return (
       <View className="flex-1 justify-center items-center bg-[#F9F9F9] px-[6%]">
-        <CustomTitle title="Service not found" />
+        <CustomTitle title="Service not found" withSafeTop={true} />
         <Text className="text-gray-500 text-base mt-[2%]">
           We couldn't locate the service details. Please check the link or try
           again later.
@@ -99,8 +99,8 @@ export default function ProgressQuote() {
 
   return (
     <View className="flex-1 bg-[#f9f9f9]">
-      <View className="px-[4%]">
-        <CustomTitle title="Quote Details" />
+      <View className="mb-[2%]">
+        <CustomTitle title="Quote Details" withSafeTop={true} />
       </View>
       <ScrollView>
         <QuoteProgressDetails showStatus={true} job={item} quote={quote} />

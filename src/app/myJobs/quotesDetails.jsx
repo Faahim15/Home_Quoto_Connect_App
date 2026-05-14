@@ -3,7 +3,7 @@ import { scale } from "../components/adaptive/Adaptiveness";
 import XStyle from "../util/styles";
 import BotttomButtons from "../components/shared/services/buttons/BottomButtons";
 import { router, useLocalSearchParams } from "expo-router";
-import CustomTitle from "../components/shared/services/CustomTitle";
+import CustomTitle from "../components/shared/CustomTitle";
 import QuoteReqDetails from "../components/tabs/myJobs/QuoteReqDetails";
 import { toast } from "sonner-native";
 import {
@@ -83,8 +83,8 @@ export default function QuoteDetails() {
 
   return (
     <View className="flex-1 bg-[#f9f9f9]">
-      <View className="px-[4%]">
-        <CustomTitle title="Quote Details" />
+      <View className="mb-2">
+        <CustomTitle title="Quote Details" withSafeTop={true} />
       </View>
       <ScrollView>
         <QuoteReqDetails quoteReq={quoteReqst} item={selectedQuoteItem} />

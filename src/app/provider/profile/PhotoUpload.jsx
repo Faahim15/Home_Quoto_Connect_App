@@ -5,6 +5,7 @@ import {
   Image,
   ScrollView,
   Alert,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -27,7 +28,7 @@ export default function PhotoUpload({ images = [], onImagesChange }) {
     if (!permissions.camera) {
       Alert.alert(
         "Permission Required",
-        "Camera permission is required to take photos."
+        "Camera permission is required to take photos.",
       );
       return;
     }
@@ -51,7 +52,7 @@ export default function PhotoUpload({ images = [], onImagesChange }) {
     if (!permissions.gallery) {
       Alert.alert(
         "Permission Required",
-        "Gallery permission is required to select photos."
+        "Gallery permission is required to select photos.",
       );
       return;
     }
@@ -83,7 +84,7 @@ export default function PhotoUpload({ images = [], onImagesChange }) {
 
       {/* Action Buttons */}
       <View className="flex-row gap-3 mb-4">
-        <TouchableOpacity
+        <Pressable
           onPress={handleTakePhoto}
           className="flex-1 flex-row items-center justify-center bg-white border border-gray-200 rounded-xl py-3 px-4"
         >
@@ -91,9 +92,9 @@ export default function PhotoUpload({ images = [], onImagesChange }) {
           <Text className="ml-2 text-[#898989] font-poppins-400regular">
             Take Photo
           </Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity
+        <Pressable
           onPress={handleSelectPhotos}
           className="flex-1 flex-row items-center justify-center bg-white border border-gray-200 rounded-xl py-3 px-4"
         >
@@ -101,7 +102,7 @@ export default function PhotoUpload({ images = [], onImagesChange }) {
           <Text className="ml-2 text-[#898989] font-poppins-400regular">
             Select Photos
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {/* Image Grid */}
@@ -115,7 +116,7 @@ export default function PhotoUpload({ images = [], onImagesChange }) {
                   className="w-full h-full rounded-lg"
                   resizeMode="cover"
                 />
-                <TouchableOpacity
+                <Pressable
                   onPress={() => handleRemoveImage(index)}
                   className="absolute -top-2 -right-2 bg-red-500 rounded-full w-6 h-6 items-center justify-center"
                   style={{
@@ -127,7 +128,7 @@ export default function PhotoUpload({ images = [], onImagesChange }) {
                   }}
                 >
                   <Ionicons name="close" size={16} color="white" />
-                </TouchableOpacity>
+                </Pressable>
               </View>
             ))}
           </View>

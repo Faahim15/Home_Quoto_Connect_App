@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 
@@ -11,7 +11,7 @@ const Availability = () => {
       {/* Options Container */}
       <View className="flex-row justify-between items-center gap-x-[4%]">
         {/* Electrician Urgently Option */}
-        <TouchableOpacity
+        <Pressable
           onPress={() => setSelectedOption("urgent")}
           className={`flex-row items-center rounded-full px-[4%] py-[3%] ${
             selectedOption === "urgent" ? "bg-blue-500" : "bg-[#f9f9f9]"
@@ -43,10 +43,10 @@ const Availability = () => {
           >
             Urgently
           </Text>
-        </TouchableOpacity>
+        </Pressable>
 
         {/* Specific Times Option */}
-        <TouchableOpacity
+        <Pressable
           onPress={() => setSelectedOption("specific")}
           className={`flex-row items-center rounded-full px-[4%] py-[3%] ${
             selectedOption === "specific" ? "bg-blue-500" : "bg-[#f9f9f9]"
@@ -78,7 +78,7 @@ const Availability = () => {
           >
             specific time
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

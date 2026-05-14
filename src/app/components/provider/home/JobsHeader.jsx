@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { router } from "expo-router";
 export default function JobsHeader({ title }) {
   return (
@@ -6,7 +6,7 @@ export default function JobsHeader({ title }) {
       <Text className="font-poppins-semiBold text-base text-[#6B7280] ">
         {title}
       </Text>
-      <TouchableOpacity
+      <Pressable
         onPress={() =>
           router.push({
             pathname: "/services/showAllJobs",
@@ -17,7 +17,7 @@ export default function JobsHeader({ title }) {
         <Text className="font-poppins-semiBold text-base text-[#18649F] ">
           View all
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }

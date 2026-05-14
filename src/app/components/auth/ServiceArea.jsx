@@ -1,5 +1,11 @@
 import React from "react";
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import { verticalScale } from "../adaptive/Adaptiveness";
 import { useDispatch, useSelector } from "react-redux";
 import { setProviderRegister } from "../../../redux/features/provider/providerSlice";
@@ -35,7 +41,7 @@ export default function ServiceAreaSelector() {
     }
 
     dispatch(
-      setProviderRegister({ field: "serviceArea", value: updatedAreas })
+      setProviderRegister({ field: "serviceArea", value: updatedAreas }),
     );
   };
 
@@ -43,8 +49,8 @@ export default function ServiceAreaSelector() {
     const isSelected = selectedAreas.some((area) => area.id === item.id);
 
     return (
-      <TouchableOpacity 
-      activeOpacity={1}  
+      <Pressable
+        activeOpacity={1}
         style={{ height: verticalScale(35), marginRight: 8 }}
         onPress={() => toggleArea(item)}
         className={`border rounded-md border-[#D4E0EB] px-3 items-center justify-center ${
@@ -58,7 +64,7 @@ export default function ServiceAreaSelector() {
         >
           {item.name}
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 

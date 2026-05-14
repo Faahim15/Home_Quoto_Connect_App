@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, View, Text, TouchableOpacity } from "react-native";
+import { Modal, View, Text, TouchableOpacity, Pressable } from "react-native";
 import { scale } from "../../adaptive/Adaptiveness";
 
 export default function CashConfirmModal({
@@ -29,23 +29,23 @@ export default function CashConfirmModal({
           </Text>
 
           <View className="flex-row justify-between mt-4">
-            <TouchableOpacity
+            <Pressable
               onPress={onClose}
               className="bg-gray-300 py-3 px-5 rounded-xl w-[45%]"
             >
               <Text className="text-center font-poppins-500medium text-gray-700">
                 Cancel
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               onPress={onConfirm}
               className="bg-[#10B981] py-3 px-5 rounded-xl w-[45%]"
             >
               <Text className="text-center font-poppins-500medium text-white">
                 {isLoading ? "Confirming..." : "Confirm"}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </View>

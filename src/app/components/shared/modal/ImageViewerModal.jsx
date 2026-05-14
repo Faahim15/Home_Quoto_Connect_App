@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import { Dimensions, Image } from "react-native";
+import { Dimensions, Image, Pressable } from "react-native";
 import {
   Modal,
   Platform,
@@ -55,9 +55,9 @@ export default function ImageViewerModal({
               Platform.OS === "android" ? StatusBar.currentHeight + 8 : 50,
           }}
         >
-          <TouchableOpacity onPress={onClose} className="p-2">
+          <Pressable onPress={onClose} className="p-2">
             <Ionicons name="close" size={28} color="#FFF" />
-          </TouchableOpacity>
+          </Pressable>
           {hasMultiple && (
             <Text className="text-white text-sm font-medium">
               {activeIndex + 1} / {images.length}
@@ -79,22 +79,22 @@ export default function ImageViewerModal({
         {hasMultiple && (
           <>
             {activeIndex > 0 && (
-              <TouchableOpacity
+              <Pressable
                 onPress={goToPrevious}
                 className="absolute left-4 top-1/2 bg-black/60 rounded-full p-3"
                 style={{ marginTop: -24 }}
               >
                 <Ionicons name="chevron-back" size={24} color="#FFF" />
-              </TouchableOpacity>
+              </Pressable>
             )}
             {activeIndex < images.length - 1 && (
-              <TouchableOpacity
+              <Pressable
                 onPress={goToNext}
                 className="absolute right-4 top-1/2 bg-black/60 rounded-full p-3"
                 style={{ marginTop: -24 }}
               >
                 <Ionicons name="chevron-forward" size={24} color="#FFF" />
-              </TouchableOpacity>
+              </Pressable>
             )}
           </>
         )}

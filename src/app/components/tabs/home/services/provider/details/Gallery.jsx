@@ -29,7 +29,7 @@ export default function Gallery({ portfolioImages }) {
         keyExtractor={(item) => item._id}
         showsHorizontalScrollIndicator={false}
         renderItem={({ item }) => (
-          <TouchableOpacity
+          <Pressable
             onPress={() => handlePress(item?.url)}
             className="mr-[2%] border border-[#cacaca]"
           >
@@ -44,7 +44,7 @@ export default function Gallery({ portfolioImages }) {
               }}
               resizeMode="cover"
             />
-          </TouchableOpacity>
+          </Pressable>
         )}
         contentContainerStyle={{ paddingRight: scale(100) }}
       />

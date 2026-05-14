@@ -8,6 +8,7 @@ import {
   Alert,
   Platform,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
@@ -37,7 +38,7 @@ const AvatarImagePicker = ({ photo }) => {
       if (cameraStatus !== "granted" || mediaStatus !== "granted") {
         Alert.alert(
           "Permissions Required",
-          "Sorry, we need camera and photo library permissions to make this work!"
+          "Sorry, we need camera and photo library permissions to make this work!",
         );
         return false;
       }
@@ -99,7 +100,7 @@ const AvatarImagePicker = ({ photo }) => {
         "Upload Failed",
         error?.data?.message ||
           error?.message ||
-          "Failed to update profile photo. Please try again."
+          "Failed to update profile photo. Please try again.",
       );
       if (photo?.url) {
         setAvatar(photo.url);
@@ -149,7 +150,7 @@ const AvatarImagePicker = ({ photo }) => {
   return (
     <View className="items-center justify-center px-[4%]">
       {/* Avatar Display */}
-      <TouchableOpacity
+      <Pressable
         onPress={() => setModalVisible(true)}
         className="relative"
         disabled={isLoading}
@@ -182,7 +183,7 @@ const AvatarImagePicker = ({ photo }) => {
         <View className="absolute -bottom-[2%] -right-[2%] w-[10%] aspect-square bg-[#0054A5] rounded-full items-center justify-center border-2 border-white">
           <Ionicons name="camera" size={16} color="white" />
         </View>
-      </TouchableOpacity>
+      </Pressable>
 
       {/* Modal for Image Selection */}
       <Modal
@@ -204,7 +205,7 @@ const AvatarImagePicker = ({ photo }) => {
             {/* Options */}
             <View className="gap-[5%]">
               {/* Camera Option */}
-              <TouchableOpacity
+              <Pressable
                 onPress={takePhotoWithCamera}
                 className="flex-row items-center p-[3%] bg-gray-50 rounded-xl"
                 disabled={isLoading}
@@ -220,10 +221,10 @@ const AvatarImagePicker = ({ photo }) => {
                     Use your camera to take a new photo
                   </Text>
                 </View>
-              </TouchableOpacity>
+              </Pressable>
 
               {/* Gallery Option */}
-              <TouchableOpacity
+              <Pressable
                 onPress={pickImageFromGallery}
                 className="flex-row items-center p-[3%] bg-gray-50 rounded-xl"
                 disabled={isLoading}
@@ -239,10 +240,10 @@ const AvatarImagePicker = ({ photo }) => {
                     Select a photo from your photo library
                   </Text>
                 </View>
-              </TouchableOpacity>
+              </Pressable>
 
               {/* Cancel Button */}
-              <TouchableOpacity
+              <Pressable
                 onPress={() => setModalVisible(false)}
                 className="mt-[3%] p-[4%] bg-gray-100 rounded-xl"
                 disabled={isLoading}
@@ -250,7 +251,7 @@ const AvatarImagePicker = ({ photo }) => {
                 <Text className="text-center text-base font-medium text-gray-600">
                   Cancel
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </View>

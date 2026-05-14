@@ -15,6 +15,30 @@ export default function Layout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="quotesDetails"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="progressQuote"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="serviceProfile"
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="jobDetails"
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

@@ -1,20 +1,31 @@
 import {
   View,
   Text,
-  Image,
   FlatList,
-  TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
 import { router } from "expo-router";
+import { Image } from "expo-image";
 
 const ServiceCard = ({ item, showButtons }) => {
   const { city, state } = item?.location?.details || {};
+
+  const priceFrom = item?.priceRange?.from;
+  const priceTo = item?.priceRange?.to;
+  const isPersonalized = item?.priceRange?.isPersonalized;
+
+  const priceDisplay = isPersonalized
+    ? "Personalized"
+    : priceFrom && priceTo
+      ? `$${priceFrom}-$${priceTo}`
+      : "Price on request";
+
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={() => {
         router.push({
           pathname: "/shared/serviceDetails",
@@ -25,25 +36,23 @@ const ServiceCard = ({ item, showButtons }) => {
           },
         });
       }}
-      style={{ width: scale(330), height: verticalScale(288) }}
-      className="bg-white mr-[0.5%] border border-[#D4E0EB] justify-center items-start px-[4.5%] rounded-xl shadow-sm overflow-hidden"
+      className="bg-white border border-[#D4E0EB] rounded-xl shadow-sm overflow-hidden"
     >
-      {/* Card Image */}
-      <View className="w-full">
-        <Image
-          source={{ uri: item?.serviceCategory?.image?.url || null }}
-          className="rounded-lg"
-          style={{ height: verticalScale(170) }}
-          resizeMode="cover"
-        />
-      </View>
+      {/* Image — full width, edge to edge */}
+      <Image
+        source={{ uri: item?.serviceCategory?.image?.url || null }}
+        style={{ width: "100%", height: verticalScale(160) }}
+        contentFit="cover"
+        transition={300}
+      />
 
-      {/* Card Content */}
-      <View className="pt-[4%]">
+      {/* Content */}
+      <View className="px-3 pt-3 pb-3">
         {/* Title */}
         <Text
           className="text-gray-900 font-poppins-500medium text-base mb-[2%]"
-          numberOfLines={2}
+          numberOfLines={1}
+          ellipsizeMode="tail"
         >
           {item?.title || "N/A"}
         </Text>
@@ -52,21 +61,23 @@ const ServiceCard = ({ item, showButtons }) => {
         <View className="flex-row items-center mb-[2%]">
           {item?.client?.profilePhoto?.url ? (
             <Image
-              source={{
-                uri: item?.client?.profilePhoto?.url,
-              }}
-              style={{ width: scale(16), height: verticalScale(16) }}
+              source={{ uri: item?.client?.profilePhoto?.url }}
+              style={{ width: scale(16), height: scale(16), flexShrink: 0 }}
               className="bg-gray-300 rounded-full mr-[2%]"
             />
           ) : (
             <View
-              style={{ width: scale(16), height: verticalScale(16) }}
+              style={{ width: scale(16), height: scale(16), flexShrink: 0 }}
               className="bg-gray-300 rounded-full mr-[2%] items-center justify-center"
             >
               <Ionicons name="person" size={10} color="#6B7280" />
             </View>
           )}
-          <Text className="font-poppins-400regular text-sm">
+          <Text
+            className="font-poppins-400regular text-sm flex-1 ml-1"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             by{" "}
             <Text className="font-poppins-400regular text-[#319FCA] text-sm">
               {item?.client?.fullName || "N/A"}
@@ -74,39 +85,58 @@ const ServiceCard = ({ item, showButtons }) => {
           </Text>
         </View>
 
-        {/* Service Type */}
+        {/* Service Type and Price */}
         <View className="flex-row w-full justify-between items-center mb-[2%]">
-          <View className="flex-row gap-[2%] items-center">
-            <Ionicons name="construct-outline" size={16} color="#6B7280" />
-            <Text className="font-poppins-400regular text-sm text-[#6B7280]">
+          <View className="flex-row items-center flex-1 mr-2">
+            <Ionicons
+              name="construct-outline"
+              size={16}
+              color="#6B7280"
+              style={{ flexShrink: 0, marginRight: 4 }}
+            />
+            <Text
+              className="font-poppins-400regular text-sm text-[#6B7280] flex-1"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
               {(item?.serviceCategory?.title || "N/A")
                 .split(" ")
                 .slice(0, 2)
                 .join(" ")}
             </Text>
           </View>
-
           <Text
             className="font-poppins-400regular text-sm text-[#319FCA]"
             numberOfLines={1}
             ellipsizeMode="tail"
+            style={{ flexShrink: 0, maxWidth: scale(110) }}
           >
-            {item?.priceRange?.isPersonalized
-              ? "Request a personalized..."
-              : `$${item?.priceRange?.from || null}-$${item?.priceRange?.to || null}`}
+            {priceDisplay}
           </Text>
         </View>
 
         {/* Location and Time */}
-        <View className="flex-row items-center mb-[0%]">
-          <Ionicons name="location-outline" size={16} color="#319FCA" />
-          <Text className="font-poppins-400regular text-sm text-[#319FCA]">
-            {city && state ? `${city}, ${state}` : "N/A"}
-            <Text className="text-[#6B7280]"> | {item?.timeAgo || "N/A"}</Text>
+        <View className="flex-row items-center">
+          <Ionicons
+            name="location-outline"
+            size={16}
+            color="#319FCA"
+            style={{ flexShrink: 0 }}
+          />
+          <Text
+            className="font-poppins-400regular text-sm text-[#319FCA] flex-1 ml-1"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {city && state ? `${city}, ${state}` : "Location not specified"}
+            <Text className="text-[#6B7280]">
+              {" | "}
+              {item?.timeAgo || "Just now"}
+            </Text>
           </Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -156,25 +186,24 @@ export default function ViewAllServiceCards({
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingBottom: verticalScale(100),
-            rowGap: verticalScale(12), 
-            
+            rowGap: verticalScale(12),
           }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={["#175994"]} 
-              tintColor="#175994" 
-              progressBackgroundColor="#ffffff" 
+              colors={["#175994"]}
+              tintColor="#175994"
+              progressBackgroundColor="#ffffff"
             />
           }
           ListEmptyComponent={
-              <View className="flex-1 mt-[50%] ml-[30%] items-center justify-center">
-            <Ionicons name="folder-open-outline" size={48} color="#9CA3AF" />
-            <Text className="mt-4 font-poppins-400regular text-gray-600 text-center">
-              No services available
-            </Text>
-          </View>
+            <View className="flex-1 mt-[50%] ml-[30%] items-center justify-center">
+              <Ionicons name="folder-open-outline" size={48} color="#9CA3AF" />
+              <Text className="mt-4 font-poppins-400regular text-gray-600 text-center">
+                No services available
+              </Text>
+            </View>
           }
         />
       )}

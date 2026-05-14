@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Platform } from "react-native";
+import { View, Text, Platform, Pressable } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useDispatch, useSelector } from "react-redux";
 import FormButton from "../../auth/FormButton";
@@ -137,14 +137,14 @@ export default function TimeRangePicker() {
           <Text className="text-gray-700 font-poppins-500medium mb-[0.5%]">
             From
           </Text>
-          <TouchableOpacity
+          <Pressable
             onPress={() => setShowPicker({ type: "from", show: true })}
             className="border border-gray-300 rounded-md px-[3%] py-[4%]"
           >
             <Text className="text-gray-500">
               {registrationData?.from || "Select time"}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
           <Error error={errors?.from} />
         </View>
 
@@ -153,14 +153,14 @@ export default function TimeRangePicker() {
           <Text className="text-gray-700 font-poppins-500medium mb-[0.5%]">
             To
           </Text>
-          <TouchableOpacity
+          <Pressable
             onPress={() => setShowPicker({ type: "to", show: true })}
             className="border border-gray-300 rounded-md px-[3%] py-[4%]"
           >
             <Text className="text-gray-500">
               {registrationData?.to || "Select time"}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
           <Error error={errors?.to} />
         </View>
 

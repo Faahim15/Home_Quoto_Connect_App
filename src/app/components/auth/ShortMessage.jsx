@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 
 export default function ShortMessage({ title, btnText, onPress }) {
   return (

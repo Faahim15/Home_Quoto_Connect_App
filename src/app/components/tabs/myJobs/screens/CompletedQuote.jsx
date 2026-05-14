@@ -54,7 +54,7 @@ const ServiceItem = ({ item }) => {
       >
         <View className="flex-row items-center gap-[4%]">
           {/* Profile Image */}
-          <TouchableOpacity
+          <Pressable
             onPress={() =>
               router.push({
                 pathname: "/myJobs/serviceProfile",
@@ -68,7 +68,7 @@ const ServiceItem = ({ item }) => {
               className="w-full h-full rounded-full"
               resizeMode="cover"
             />
-          </TouchableOpacity>
+          </Pressable>
 
           {/* Provider Details */}
           <View className="flex-1">
@@ -107,7 +107,7 @@ const ServiceItem = ({ item }) => {
 
             <View className="flex-row gap-[4%] ">
               {/* GIVE FEEDBACK BUTTON */}
-              <TouchableOpacity
+              <Pressable
                 disabled={isAlreadyReviewed} // disable when reviewed
                 onPress={() => {
                   if (!isAlreadyReviewed) {
@@ -138,9 +138,9 @@ const ServiceItem = ({ item }) => {
                 >
                   {isAlreadyReviewed ? `Reviewed` : "Give Feedback"}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
 
-              <TouchableOpacity
+              <Pressable
                 onPress={() => {
                   router.push({
                     pathname: "/shared/pdfDownloader",
@@ -153,7 +153,7 @@ const ServiceItem = ({ item }) => {
                 <Text className="  text-[10px]  text-white text-sm font-poppins-semiBold">
                   Invoice
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </View>
@@ -171,7 +171,7 @@ export default function CompletedQuote() {
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
   const onRefresh = async () => {
     setRefreshing(true);

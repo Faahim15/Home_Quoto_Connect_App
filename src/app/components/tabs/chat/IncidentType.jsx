@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  Pressable,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const IncidentTypeDropdown = ({ selectedIncident, setSelectedIncident }) => {
@@ -20,12 +26,12 @@ const IncidentTypeDropdown = ({ selectedIncident, setSelectedIncident }) => {
   };
 
   const renderIncidentItem = ({ item, index }) => (
-    <TouchableOpacity
+    <Pressable
       className={`p-[4%] ${index !== incidentTypes.length - 1 ? "border-b border-gray-200" : ""}`}
       onPress={() => handleIncidentSelect(item)}
     >
       <Text className="text-base text-gray-800">{item}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   return (
@@ -35,7 +41,7 @@ const IncidentTypeDropdown = ({ selectedIncident, setSelectedIncident }) => {
       </Text>
       <View className="relative">
         {/* Dropdown Button */}
-        <TouchableOpacity
+        <Pressable
           className="border border-gray-300 rounded-lg p-[4%] flex-row justify-between items-center"
           onPress={() => setIsDropdownOpen(!isDropdownOpen)}
         >
@@ -49,7 +55,7 @@ const IncidentTypeDropdown = ({ selectedIncident, setSelectedIncident }) => {
             size={16}
             color="#9CA3AF"
           />
-        </TouchableOpacity>
+        </Pressable>
 
         {/* Dropdown Menu with FlatList */}
         {isDropdownOpen && (

@@ -1,5 +1,5 @@
 import { ScrollView, View } from "react-native";
-import CustomTitle from "../components/shared/services/CustomTitle";
+import CustomTitle from "../components/shared/CustomTitle";
 import ProviderInfo from "../components/shared/services/JobDetails";
 import XStyle from "../util/styles";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
@@ -28,8 +28,8 @@ export default function JobDetails() {
 
   return (
     <View className="flex-1 bg-[#F9F9F9]">
+      <CustomTitle title={service?.serviceCategory?.title} withSafeTop={true} />
       <View className="flex-1 mb-[2%]  px-[6%] bg-[#F9F9F9]">
-        <CustomTitle title={service?.serviceCategory?.title} />
         <ScrollView
           contentContainerStyle={{ paddingBottom: verticalScale(40) }}
           showsVerticalScrollIndicator={false}

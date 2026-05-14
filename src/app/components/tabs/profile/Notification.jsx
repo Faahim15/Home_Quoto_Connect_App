@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Animated } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+  Pressable,
+} from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 
 export default function Notification({ title }) {
@@ -36,7 +42,7 @@ export default function Notification({ title }) {
           </View>
 
           {/* Toggle switch */}
-          <TouchableOpacity
+          <Pressable
             onPress={toggleSwitch}
             className={` rounded-full relative ${
               isEnabled ? "bg-[#cae4fd]" : "bg-[#E4E4E4]"
@@ -62,7 +68,7 @@ export default function Notification({ title }) {
                 height: verticalScale(20),
               }}
             />
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </View>

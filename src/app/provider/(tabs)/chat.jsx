@@ -7,6 +7,7 @@ import {
   Image,
   ActivityIndicator,
   RefreshControl,
+  Pressable,
 } from "react-native";
 import { verticalScale } from "../../components/adaptive/Adaptiveness";
 import { router, useFocusEffect } from "expo-router";
@@ -21,9 +22,7 @@ const MessagesScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [typingUsers, setTypingUsers] = useState({});
   const { data, isLoading, refetch } = useGetChatsQuery();
-  const { socket, isConnected } = useSocket(
-    "https://api.quoto.ca"
-  );
+  const { socket, isConnected } = useSocket("https://api.quoto.ca");
   const [userStatus, setUserStatus] = useState({});
 
   // Load initial chats
@@ -38,7 +37,7 @@ const MessagesScreen = () => {
     useCallback(() => {
       console.log("📱 Provider Messages Screen focused - Refreshing chats...");
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
 
   // Pull-to-refresh handler
@@ -82,7 +81,7 @@ const MessagesScreen = () => {
       const chatExists = prev.find((chat) => chat._id === message.chat);
       if (chatExists) {
         return prev.map((chat) =>
-          chat._id === message.chat ? { ...chat, lastMessage: message } : chat
+          chat._id === message.chat ? { ...chat, lastMessage: message } : chat,
         );
       } else {
         return [
@@ -100,7 +99,7 @@ const MessagesScreen = () => {
   // 🟢 Handle user online/offline status
   const handleUserStatusChanged = ({ userId, isOnline, lastActive }) => {
     console.log(
-      `⚡ ${userId} is ${isOnline ? "online" : "offline"} (lastActive: ${lastActive})`
+      `⚡ ${userId} is ${isOnline ? "online" : "offline"} (lastActive: ${lastActive})`,
     );
 
     // Update local state
@@ -145,7 +144,7 @@ const MessagesScreen = () => {
 
   const renderMessageItem = ({ item }) => {
     const clientParticipant = item?.participants?.find(
-      (p) => p?.role === "client"
+      (p) => p?.role === "client",
     );
 
     const lastMessage = item?.lastMessage?.content?.text;
@@ -158,7 +157,7 @@ const MessagesScreen = () => {
     const mediaCount = item?.lastMessage?.content?.media.length || 0;
 
     return (
-      <TouchableOpacity
+      <Pressable
         className="w-full mb-[4%] px-[4%]"
         activeOpacity={0.7}
         onPress={() => markMessageAsRead(item._id, providerId)}
@@ -240,7 +239,7 @@ const MessagesScreen = () => {
             )}
           </View>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 

@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Modal, View, Text, TouchableOpacity, ScrollView } from "react-native";
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Pressable,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import UpdatedOffer from "../../tabs/myJobs/UpdatedOffer";
 
@@ -25,9 +32,9 @@ const OfferDetailsModal = ({
             <Text className="font-poppins-bold text-base text-[#F59E0B]">
               Offer Details
             </Text>
-            <TouchableOpacity onPress={onClose} className="p-[2%]">
+            <Pressable onPress={onClose} className="p-[2%]">
               <Ionicons name="close" size={24} color="#6B7280" />
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           {/* Price Details */}

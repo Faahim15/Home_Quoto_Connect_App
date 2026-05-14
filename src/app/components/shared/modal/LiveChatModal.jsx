@@ -13,6 +13,7 @@ import {
   SafeAreaView,
   Keyboard,
   Dimensions,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useSocket } from "../../../../hooks/useSokect";
@@ -33,17 +34,13 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
   const [selectedImages, setSelectedImages] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  const { socket, isConnected } = useSocket(
-    "https://api.quoto.ca"
-  );
+  const { socket, isConnected } = useSocket("https://api.quoto.ca");
 
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isTyping, setIsTyping] = useState(false);
   const [containerHeight, setContainerHeight] = useState(0);
   const flatListRef = useRef(null);
   const typingTimeoutRef = useRef(null);
-
-
 
   const {
     data,
@@ -52,8 +49,6 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
   } = useGetSupportTicketMessagesQuery(ticketId, {
     skip: !ticketId,
   });
-
-
 
   useEffect(() => {
     const showListener = Keyboard.addListener(
@@ -64,14 +59,14 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
         setTimeout(() => {
           flatListRef.current?.scrollToEnd({ animated: true });
         }, 100);
-      }
+      },
     );
 
     const hideListener = Keyboard.addListener(
       Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
       () => {
         setContainerHeight(0);
-      }
+      },
     );
 
     return () => {
@@ -108,7 +103,6 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
     joinRooms();
   }, [socket, ticketId]);
 
-
   const handleNewMessage = (message) => {
     console.log("new messages", message);
     setMessages((prev) => [...prev, message?.data]);
@@ -134,32 +128,34 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
       socket.off("support-user-typing", handleUserTyping);
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     };
-  }, [socket, currentUserId]); 
+  }, [socket, currentUserId]);
 
-const pickImages = async () => {
-  try {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') return;
+  const pickImages = async () => {
+    try {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") return;
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: 'images',
-      allowsMultipleSelection: true, 
-      quality: 0.5, 
-      preferredAssetRepresentationMode: ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Current,
-    });
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: "images",
+        allowsMultipleSelection: true,
+        quality: 0.5,
+        preferredAssetRepresentationMode:
+          ImagePicker.UIImagePickerPreferredAssetRepresentationMode.Current,
+      });
 
-    if (!result.canceled) {
-      const selected = result.assets.map((item) => ({
-        uri: item.uri,
-        type: "image",
-        filename: item.fileName || `image_${Date.now()}.jpg`,
-      }));
-      setAttachments((prev) => [...prev, ...selected]);
+      if (!result.canceled) {
+        const selected = result.assets.map((item) => ({
+          uri: item.uri,
+          type: "image",
+          filename: item.fileName || `image_${Date.now()}.jpg`,
+        }));
+        setAttachments((prev) => [...prev, ...selected]);
+      }
+    } catch (err) {
+      console.log("pick image error", err);
     }
-  } catch (err) {
-    console.log("pick image error", err);
-  }
-};
+  };
 
   const takePhoto = async () => {
     try {
@@ -184,7 +180,6 @@ const pickImages = async () => {
   };
 
   const handleSendMessage = async () => {
-
     if (
       (!inputText.trim() && attachments.length === 0) ||
       !socket ||
@@ -217,7 +212,7 @@ const pickImages = async () => {
     const payload = {
       ticketId,
       content: {
-        text: text, 
+        text: text,
         attachments: media,
       },
       messageType: attachments.length > 0 ? "image" : "text",
@@ -326,10 +321,10 @@ const pickImages = async () => {
               <View className="flex-row flex-wrap gap-2">
                 {item.content.attachments.map((attachment, index) => {
                   const imageUrls = item.content.attachments.map(
-                    (att) => att.url
+                    (att) => att.url,
                   );
                   return (
-                    <TouchableOpacity
+                    <Pressable
                       key={attachment._id || index}
                       onPress={() =>
                         handleImagePress(attachment.url, imageUrls, index)
@@ -342,7 +337,7 @@ const pickImages = async () => {
                         className="w-32 h-32 rounded-lg"
                         resizeMode="cover"
                       />
-                    </TouchableOpacity>
+                    </Pressable>
                   );
                 })}
               </View>
@@ -355,7 +350,7 @@ const pickImages = async () => {
               >
                 {new Date(item.createdAt || item.timestamp).toLocaleTimeString(
                   [],
-                  { hour: "2-digit", minute: "2-digit" }
+                  { hour: "2-digit", minute: "2-digit" },
                 )}
               </Text>
               {isMyMessage && (
@@ -403,9 +398,9 @@ const pickImages = async () => {
       >
         {/* Header */}
         <View className="flex-row items-center px-4 py-3 bg-blue-700 border-b border-gray-200">
-          <TouchableOpacity onPress={onClose} className="mr-3">
+          <Pressable onPress={onClose} className="mr-3">
             <Ionicons name="arrow-back" size={24} color="#FFF" />
-          </TouchableOpacity>
+          </Pressable>
 
           <View className="w-10 h-10 rounded-full bg-white justify-center items-center mr-3">
             <Ionicons name="headset" size={20} color="#0054A5" />
@@ -427,9 +422,9 @@ const pickImages = async () => {
             </View>
           </View>
 
-          <TouchableOpacity>
+          <Pressable>
             <Ionicons name="ellipsis-vertical" size={20} color="#FFF" />
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         {/* Messages List */}
@@ -476,16 +471,16 @@ const pickImages = async () => {
                     source={{ uri: file.uri }}
                     className="w-20 h-20 rounded-lg"
                   />
-                  <TouchableOpacity
+                  <Pressable
                     onPress={() =>
                       setAttachments((prev) =>
-                        prev.filter((_, i) => i !== index)
+                        prev.filter((_, i) => i !== index),
                       )
                     }
                     className="absolute top-1 right-1 bg-black/60 rounded-full p-1"
                   >
                     <Ionicons name="close" color="white" size={14} />
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
               ))}
             </View>
@@ -509,15 +504,15 @@ const pickImages = async () => {
                   }, 300);
                 }}
               />
-              <TouchableOpacity
+              <Pressable
                 className="ml-2"
                 onPress={() => setShowAttachModal(true)}
               >
                 <Ionicons name="attach" size={20} color="#666" />
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
-            <TouchableOpacity
+            <Pressable
               onPress={handleSendMessage}
               disabled={
                 (!inputText.trim() && attachments.length === 0) || !isConnected
@@ -541,7 +536,7 @@ const pickImages = async () => {
                   }
                 />
               )}
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
 

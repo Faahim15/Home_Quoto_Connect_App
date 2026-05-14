@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
   FlatList,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 const { width } = Dimensions.get("window");
@@ -52,7 +53,7 @@ const ServiceCard = ({ item }) => {
           </Text> */}
         </View>
 
-        <TouchableOpacity
+        <Pressable
           onPress={
             () => {}
             // navigation.navigate("ProviderDetailsScreen", {
@@ -66,7 +67,7 @@ const ServiceCard = ({ item }) => {
           <Text className="font-poppins-500medium text-[10px] text-center text-white font-semibold">
             Details
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

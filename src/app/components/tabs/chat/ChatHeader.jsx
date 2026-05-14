@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import ReportModal from "./ReportModal";
@@ -19,9 +19,9 @@ const ChatHeader = ({ userData }) => {
 
   return (
     <View className="bg-white pt-[3%] pb-[1%] px-[4%] shadow-sm flex-row items-center">
-      <TouchableOpacity onPress={() => router.back()} className="mr-4">
+      <Pressable onPress={() => router.back()} className="mr-4">
         <Ionicons name="arrow-back" size={22} color="#000" />
-      </TouchableOpacity>
+      </Pressable>
 
       {userData?.profilePhoto ? (
         <Image

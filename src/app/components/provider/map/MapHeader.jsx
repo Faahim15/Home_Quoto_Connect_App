@@ -6,6 +6,7 @@ import {
   FlatList,
   ActivityIndicator,
   Keyboard,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
@@ -23,13 +24,13 @@ const MapHeader = ({
   return (
     <View className="w-full bg-white border-b border-gray-100 px-[3%] py-2">
       <View className="flex-row items-center justify-between mb-2">
-        <TouchableOpacity
+        <Pressable
           onPress={handleBackPress}
           style={{ height: verticalScale(40), width: scale(40) }}
           className="items-center justify-center"
         >
           <Ionicons name="chevron-back" size={24} color="#C8C7CC" />
-        </TouchableOpacity>
+        </Pressable>
 
         <View className="flex-1 items-center">
           <Text
@@ -84,9 +85,9 @@ const SearchBar = ({
         />
         {isSearching && <ActivityIndicator size="small" color="#0066CC" />}
         {!isSearching && searchQuery.length > 0 && (
-          <TouchableOpacity onPress={handleClear}>
+          <Pressable onPress={handleClear}>
             <Ionicons name="close-circle" size={20} color="#999" />
-          </TouchableOpacity>
+          </Pressable>
         )}
       </View>
 
@@ -102,7 +103,7 @@ const SearchBar = ({
               style={{ maxHeight: 250 }}
               keyboardShouldPersistTaps="handled"
               renderItem={({ item, index }) => (
-                <TouchableOpacity
+                <Pressable
                   className={`px-4 py-3 ${index !== searchResults.length - 1 ? "border-b border-gray-100" : ""}`}
                   onPress={() => onLocationSelect(item)}
                   activeOpacity={0.7}
@@ -132,7 +133,7 @@ const SearchBar = ({
                       style={{ marginTop: 2 }}
                     />
                   </View>
-                </TouchableOpacity>
+                </Pressable>
               )}
             />
           )}

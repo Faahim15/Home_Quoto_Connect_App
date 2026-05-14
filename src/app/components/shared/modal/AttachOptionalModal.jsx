@@ -1,4 +1,4 @@
-import { View, Text, Modal, TouchableOpacity } from "react-native";
+import { View, Text, Modal, TouchableOpacity, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function AttachOptionsModal({
@@ -20,7 +20,7 @@ export default function AttachOptionsModal({
             Select Option
           </Text>
 
-          <TouchableOpacity
+          <Pressable
             onPress={() => {
               onClose();
               onCamera();
@@ -29,9 +29,9 @@ export default function AttachOptionsModal({
           >
             <Ionicons name="camera" size={22} color="#333" />
             <Text className="ml-3 text-base text-gray-700">Camera</Text>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity
+          <Pressable
             onPress={() => {
               onClose();
               onGallery();
@@ -40,14 +40,14 @@ export default function AttachOptionsModal({
           >
             <Ionicons name="image" size={22} color="#333" />
             <Text className="ml-3 text-base text-gray-700">Gallery</Text>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity
+          <Pressable
             onPress={onClose}
             className="px-4 py-3 bg-red-100 rounded-xl mt-1"
           >
             <Text className="text-center text-red-600 font-medium">Cancel</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </Modal>

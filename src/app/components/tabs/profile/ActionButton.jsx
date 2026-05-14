@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity } from "react-native";
+import { Pressable, Text, TouchableOpacity } from "react-native";
 
 export default function ActionButton({
   color = "#fff",
@@ -14,7 +14,7 @@ export default function ActionButton({
   const finalTextColor = disabled ? "#898989" : color;
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       disabled={disabled}
       style={{
@@ -29,6 +29,6 @@ export default function ActionButton({
       >
         {title}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 }

@@ -37,7 +37,7 @@ export default function QuoteProgressDetails({ quote, job }) {
     <View>
       <View className="mx-[4%] mb-[4%]">
         {/* Service Type Banner - Made clickable */}
-        <TouchableOpacity
+        <Pressable
           style={{
             borderTopLeftRadius: scale(8),
             borderTopRightRadius: scale(8),
@@ -50,7 +50,7 @@ export default function QuoteProgressDetails({ quote, job }) {
           </Text>
 
           <Ionicons name="arrow-forward" size={16} color="#fff" />
-        </TouchableOpacity>
+        </Pressable>
 
         <View
           style={{
@@ -61,7 +61,7 @@ export default function QuoteProgressDetails({ quote, job }) {
         >
           <View className="flex-row items-center gap-[4%]">
             {/* Profile Image */}
-            <TouchableOpacity
+            <Pressable
               onPress={() =>
                 router.push({
                   pathname: "/myJobs/serviceProfile",
@@ -77,7 +77,7 @@ export default function QuoteProgressDetails({ quote, job }) {
                 className="w-full h-full rounded-full"
                 resizeMode="cover"
               />
-            </TouchableOpacity>
+            </Pressable>
 
             {/* Provider Details */}
             <View className="flex-1">

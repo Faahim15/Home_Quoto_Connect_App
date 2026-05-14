@@ -109,9 +109,10 @@ export default function AcceptJobDetailScreen() {
   return (
     <View className="flex-1 bg-[#f9f9f9]">
       {/* Title */}
-      <View className="px-[6%]">
+      <View className="">
         <CustomTitle
           title={acceptedJob?.job?.serviceCategory?.title || "Service Details"}
+          withSafeTop={true}
         />
       </View>
 

@@ -1,5 +1,5 @@
 // components/tabs/profile/DeleteAccountModal.js
-import { View, Text, TouchableOpacity, Modal } from "react-native";
+import { View, Text, TouchableOpacity, Modal, Pressable } from "react-native";
 import { useState } from "react";
 import PasswordField from "../../auth/PasswordField";
 
@@ -59,7 +59,7 @@ export default function DeleteAccountModal({
           />
 
           <View className="flex-row justify-between mt-2">
-            <TouchableOpacity
+            <Pressable
               onPress={handleClose}
               className="flex-1 mr-2 border border-gray-300 rounded-xl py-4"
               disabled={isLoading}
@@ -67,9 +67,9 @@ export default function DeleteAccountModal({
               <Text className="text-center font-poppins-500medium text-[#333333]">
                 Cancel
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               onPress={handleDelete}
               disabled={!password || isLoading}
               className="flex-1 ml-2 bg-[#D7263D] rounded-xl py-4"
@@ -78,7 +78,7 @@ export default function DeleteAccountModal({
               <Text className="text-center font-poppins-500medium text-white">
                 {isLoading ? "Deleting..." : "Delete Account"}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </View>

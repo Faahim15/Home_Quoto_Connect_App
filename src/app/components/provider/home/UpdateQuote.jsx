@@ -1,4 +1,4 @@
-import { Text, View, TouchableOpacity, Image } from "react-native";
+import { Text, View, TouchableOpacity, Image, Pressable } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
 import RadioButton from "./RadioButton";
@@ -18,7 +18,7 @@ export default function QuoteDetails({ item }) {
   return (
     <View className="mx-[4%] mb-[4%]">
       {/* Service Type Banner - Made clickable */}
-      <TouchableOpacity
+      <Pressable
         onPress={handleJobDetails}
         style={{
           borderTopLeftRadius: scale(8),
@@ -33,7 +33,7 @@ export default function QuoteDetails({ item }) {
         </Text>
 
         <Ionicons name="arrow-forward" size={16} color="#fff" />
-      </TouchableOpacity>
+      </Pressable>
 
       <View
         style={{
@@ -47,7 +47,7 @@ export default function QuoteDetails({ item }) {
         </Text>
         <View className="flex-row items-center gap-[4%]">
           {/* Profile Image */}
-          <TouchableOpacity className="w-16 h-16 mb-[4%] rounded-full bg-blue-500 items-center justify-center">
+          <Pressable className="w-16 h-16 mb-[4%] rounded-full bg-blue-500 items-center justify-center">
             <Image
               source={{
                 uri: item.profileImage,
@@ -55,7 +55,7 @@ export default function QuoteDetails({ item }) {
               className="w-full h-full rounded-full"
               resizeMode="cover"
             />
-          </TouchableOpacity>
+          </Pressable>
 
           {/* Provider Details */}
           <View className="flex-1 pb-[2%] ">

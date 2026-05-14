@@ -2,13 +2,13 @@ import { useState, useRef, useEffect } from "react";
 import {
   View,
   TextInput,
-  TouchableOpacity,
   Alert,
   Modal,
   Text,
   ActivityIndicator,
   FlatList,
   Platform,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import MapView, { Marker } from "react-native-maps";
@@ -39,7 +39,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
       if (status !== "granted") {
         Alert.alert(
           "Permission Required",
-          "Please enable location access in your settings to use this feature."
+          "Please enable location access in your settings to use this feature.",
         );
         return;
       }
@@ -82,7 +82,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
     if (!isEnabled) {
       Alert.alert(
         "Location Services Disabled",
-        "Please enable GPS/location services to continue."
+        "Please enable GPS/location services to continue.",
       );
       return false;
     }
@@ -171,7 +171,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
         setIsSearching(true);
         const res = await fetch(
           `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(text)}&format=json&limit=5`,
-          { headers: { "User-Agent": "LocationPickerApp/1.0" } }
+          { headers: { "User-Agent": "LocationPickerApp/1.0" } },
         );
         const data = await res.json();
         setSearchResults(data);
@@ -230,7 +230,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
       </Text>
 
       {/* Trigger Row */}
-      <TouchableOpacity
+      <Pressable
         activeOpacity={0.85}
         onPress={() => setIsMapVisible(true)}
         className={`flex-row items-center border border-[#DCDCDC] rounded-xl px-3 ${
@@ -258,7 +258,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
 
         {/* Chevron */}
         <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
-      </TouchableOpacity>
+      </Pressable>
 
       {/* Error */}
       {error && (
@@ -276,7 +276,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
               Platform.OS === "ios" ? "pt-14" : "pt-11"
             }`}
           >
-            <TouchableOpacity
+            <Pressable
               onPress={() => {
                 setIsMapVisible(false);
                 setSearchResults([]);
@@ -284,20 +284,20 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
               className="w-9 h-9 rounded-xl bg-gray-100 items-center justify-center"
             >
               <Ionicons name="arrow-back" size={22} color="#111" />
-            </TouchableOpacity>
+            </Pressable>
 
             <Text className="text-base font-poppins-semiBold text-[#111827]">
               Pick a Location
             </Text>
 
-            <TouchableOpacity
+            <Pressable
               onPress={confirmLocation}
               className="bg-[#0054A5] px-5 py-2 rounded-full"
             >
               <Text className="text-white font-poppins-semiBold text-sm">
                 Done
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           {/* Search Bar */}
@@ -313,14 +313,14 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
                 autoCorrect={false}
               />
               {searchQuery.length > 0 && (
-                <TouchableOpacity
+                <Pressable
                   onPress={() => {
                     setSearchQuery("");
                     setSearchResults([]);
                   }}
                 >
                   <Ionicons name="close-circle" size={18} color="#9CA3AF" />
-                </TouchableOpacity>
+                </Pressable>
               )}
             </View>
 
@@ -341,7 +341,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
                     keyboardShouldPersistTaps="handled"
                     renderItem={({ item, index }) => (
                       <>
-                        <TouchableOpacity
+                        <Pressable
                           className="flex-row items-start px-3.5 py-2.5"
                           onPress={() => handleSearchResultSelect(item)}
                         >
@@ -357,7 +357,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
                           >
                             {item.display_name}
                           </Text>
-                        </TouchableOpacity>
+                        </Pressable>
                         {index < searchResults.length - 1 && (
                           <View className="h-px bg-gray-100 mx-3.5" />
                         )}
@@ -410,7 +410,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
           ) : null}
 
           {/* My Location FAB */}
-          <TouchableOpacity
+          <Pressable
             onPress={getCurrentLocation}
             activeOpacity={0.85}
             className="absolute bottom-24 right-4 w-12 h-12 rounded-2xl bg-white items-center justify-center shadow-md"
@@ -420,7 +420,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
             ) : (
               <Ionicons name="locate" size={22} color="#0054A5" />
             )}
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </Modal>
     </View>

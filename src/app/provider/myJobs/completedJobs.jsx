@@ -4,6 +4,7 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
 import CustomTitle from "../../components/shared/CustomTitle";
 import { router, useLocalSearchParams } from "expo-router";
@@ -40,14 +41,14 @@ export default function CompletedJobsDetailScreen() {
         <Text className="font-poppins-600semiBold text-lg text-gray-900 mt-4 text-center">
           Failed to Load Information
         </Text>
-        <TouchableOpacity
+        <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-500medium text-white text-base">
             Retry
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }
@@ -60,11 +61,12 @@ export default function CompletedJobsDetailScreen() {
 
   return (
     <View className="flex-1  bg-[#f9f9f9]">
-      <View className="px-[6%]">
+      <View className="">
         <CustomTitle
           title={
             completedJobs?.job?.serviceCategory?.title || "Service Details"
           }
+          withSafeTop={true}
         />
       </View>
       <ScrollView className="px-[6%]">

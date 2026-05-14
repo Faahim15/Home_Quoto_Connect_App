@@ -1,16 +1,32 @@
-import { View, Text, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Image } from "expo-image";
 import servicesData from "../../data/shared/ServicesData";
 import { router } from "expo-router";
+
 const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
-  // const { url } = item.serviceCategory?.image;
   const { fullName } = item?.client;
   const { city, state } = item?.location?.details || {};
 
+  const priceFrom = item?.priceRange?.from;
+  const priceTo = item?.priceRange?.to;
+  const isPersonalized = item?.priceRange?.isPersonalized;
+
+  const priceDisplay = isPersonalized
+    ? "Personalized"
+    : priceFrom && priceTo
+      ? `$${priceFrom}-$${priceTo}`
+      : "Price on request";
+
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={() => {
         router.push({
           pathname: "/shared/serviceDetails",
@@ -22,27 +38,24 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
           },
         });
       }}
-      style={{ width: scale(330), height: verticalScale(288) }}
-      className="bg-white mr-[0.5%]  border border-[#D4E0EB] justify-center items-start px-[3%]  rounded-xl shadow-sm overflow-hidden"
+      style={{ width: scale(300) }}
+      className="bg-white mr-3 border border-[#D4E0EB] rounded-xl shadow-sm overflow-hidden"
     >
-      {/* Card Image */}
-      <View className="w-full">
-        <Image
-          source={{
-            uri: item?.serviceCategory?.image?.url || null,
-          }}
-          className="rounded-xl"
-          style={{ height: verticalScale(170) }}
-          contentFit="cover"
-        />
-      </View>
+      {/* Card Image — full width, no padding */}
+      <Image
+        source={{ uri: item?.serviceCategory?.image?.url || null }}
+        style={{ width: "100%", height: verticalScale(160) }}
+        contentFit="cover"
+        transition={300}
+      />
 
       {/* Card Content */}
-      <View className="pt-[4%]">
+      <View className="px-3 pt-3 pb-3">
         {/* Title */}
         <Text
           className="text-gray-900 font-poppins-500medium text-base mb-[2%]"
-          numberOfLines={2}
+          numberOfLines={1}
+          ellipsizeMode="tail"
         >
           {item?.title || "N/A"}
         </Text>
@@ -51,23 +64,26 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
         <View className="flex-row items-center mb-[2%]">
           {item?.client?.profilePhoto?.url ? (
             <Image
-              source={{
-                uri: item?.client?.profilePhoto?.url,
-              }}
-              style={{ width: scale(16), height: verticalScale(16) }}
+              source={{ uri: item?.client?.profilePhoto?.url }}
+              style={{ width: scale(16), height: scale(16), flexShrink: 0 }}
               className="bg-gray-300 rounded-full mr-[2%]"
             />
           ) : (
             <View
-              style={{ width: scale(16), height: verticalScale(16) }}
+              style={{ width: scale(16), height: scale(16), flexShrink: 0 }}
               className="bg-gray-300 rounded-full mr-[2%] items-center justify-center"
             >
               <Ionicons name="person" size={10} color="#6B7280" />
             </View>
           )}
-          <Text className="font-poppins-400regular text-sm">
+          <Text
+            className="font-poppins-400regular text-sm flex-1"
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {" "}
             by{" "}
-            <Text className="font-poppins-400regular text-[#319FCA] text-sm ">
+            <Text className="font-poppins-400regular text-[#319FCA] text-sm">
               {fullName || "N/A"}
             </Text>
           </Text>
@@ -75,9 +91,18 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
 
         {/* Service Type and Price */}
         <View className="flex-row w-full justify-between items-center mb-[2%]">
-          <View className="flex-row gap-[2%] items-center">
-            <Ionicons name="construct-outline" size={16} color="#6B7280" />
-            <Text className="font-poppins-400regular text-sm text-[#6B7280]">
+          <View className="flex-row items-center flex-1 mr-2">
+            <Ionicons
+              name="construct-outline"
+              size={16}
+              color="#6B7280"
+              style={{ flexShrink: 0, marginRight: 4 }}
+            />
+            <Text
+              className="font-poppins-400regular text-sm text-[#6B7280] flex-1"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
               {(item?.serviceCategory?.title || "N/A")
                 .split(" ")
                 .slice(0, 2)
@@ -89,27 +114,37 @@ const ServiceCard = ({ item, showAddress, showPrice, whichJob }) => {
               className="font-poppins-400regular text-sm text-[#319FCA]"
               numberOfLines={1}
               ellipsizeMode="tail"
+              style={{ flexShrink: 0, maxWidth: scale(110) }}
             >
-              {item?.priceRange?.isPersonalized
-                ? "Request a personalized..."
-                : `$${item?.priceRange?.from || null}-$${item?.priceRange?.to || null}`}
+              {priceDisplay}
             </Text>
           )}
         </View>
 
         {/* Location and Time */}
         {showAddress && (
-          <View className="flex-row items-center mb-[0%]">
-            <Ionicons name="location-outline" size={16} color="#319FCA" />
-            <Text className="font-poppins-400regular text-sm text-[#319FCA]">
-              {city && state ? `${city}, ${state}` : "N/A"}
-              {" | "}
-              <Text className="text-[#6B7280]">{item?.timeAgo || "N/A"}</Text>
+          <View className="flex-row items-center">
+            <Ionicons
+              name="location-outline"
+              size={16}
+              color="#319FCA"
+              style={{ flexShrink: 0 }}
+            />
+            <Text
+              className="font-poppins-400regular text-sm text-[#319FCA] flex-1 ml-1"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {city && state ? `${city}, ${state}` : "Location not specified"}
+              <Text className="text-[#6B7280]">
+                {" | "}
+                {item?.timeAgo || "Just now"}
+              </Text>
             </Text>
           </View>
         )}
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -119,7 +154,6 @@ export default function ServiceCards({
   showPrice = false,
   showAddress,
 }) {
-  // console.log("todays job:", jobs);
   const jobData = jobs || servicesData;
   const isEmpty = !jobData || jobData.length === 0;
 
@@ -143,9 +177,7 @@ export default function ServiceCards({
           keyExtractor={(item, index) => item._id || index.toString()}
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingRight: scale(10),
-          }}
+          contentContainerStyle={{ paddingRight: scale(10) }}
         />
       )}
     </View>

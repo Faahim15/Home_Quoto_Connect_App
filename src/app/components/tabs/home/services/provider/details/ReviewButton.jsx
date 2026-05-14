@@ -1,9 +1,9 @@
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, Pressable } from "react-native";
 import { router } from "expo-router";
 export default function ReviewButton({ totalReviews, id }) {
   return (
     <View className="px-[6%] pb-[6%] ">
-      <TouchableOpacity
+      <Pressable
         onPress={() =>
           router.push({
             pathname: "/services/showAllReview",
@@ -17,7 +17,7 @@ export default function ReviewButton({ totalReviews, id }) {
             ? `Show All ${totalReviews} Reviews`
             : "Show All Review"}
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }

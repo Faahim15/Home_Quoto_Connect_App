@@ -1,4 +1,4 @@
-import { View} from "react-native";
+import { View } from "react-native";
 import ShowAllServiceCards from "../../components/tabs/home/services/provider/showAllServices";
 import CustomTitle from "../../components/shared/CustomTitle";
 import { useLocalSearchParams } from "expo-router";

@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   Alert,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -29,9 +30,7 @@ const ProviderChatScreen = () => {
   const { chatId } = useLocalSearchParams();
 
   const { width: screenWidth } = Dimensions.get("window");
-  const { socket, isConnected } = useSocket(
-    "https://api.quoto.ca"
-  );
+  const { socket, isConnected } = useSocket("https://api.quoto.ca");
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -58,7 +57,7 @@ const ProviderChatScreen = () => {
         console.log("📌 Screen focused → fetching latest chat...");
         refetchChatHistory();
       }
-    }, [chatId])
+    }, [chatId]),
   );
 
   // Update messages when chat history is fetched
@@ -100,7 +99,7 @@ const ProviderChatScreen = () => {
       ) {
         Alert.alert(
           "Permission Required",
-          "Camera and media library permissions are needed to send media"
+          "Camera and media library permissions are needed to send media",
         );
         return false;
       }
@@ -218,7 +217,7 @@ const ProviderChatScreen = () => {
   // 🟢 Handle user online/offline status
   const handleUserStatusChanged = ({ userId, isOnline, lastActive }) => {
     console.log(
-      `⚡ ${userId} is ${isOnline ? "online from provider chat" : "offline"} (lastActive: ${lastActive})`
+      `⚡ ${userId} is ${isOnline ? "online from provider chat" : "offline"} (lastActive: ${lastActive})`,
     );
 
     // Update local state
@@ -297,12 +296,12 @@ const ProviderChatScreen = () => {
       onRequestClose={() => setSelectedImage(null)}
     >
       <View className="flex-1 bg-black justify-center items-center">
-        <TouchableOpacity
+        <Pressable
           className="absolute top-10 right-5 z-10"
           onPress={() => setSelectedImage(null)}
         >
           <Ionicons name="close" size={30} color="white" />
-        </TouchableOpacity>
+        </Pressable>
         <Image
           source={{ uri: selectedImage }}
           style={{ width: "100%", height: "70%" }}
@@ -337,7 +336,7 @@ const ProviderChatScreen = () => {
           {messageMedia.length > 0 && (
             <View className="flex-row flex-wrap">
               {messageMedia.map((media, index) => (
-                <TouchableOpacity
+                <Pressable
                   key={index}
                   onPress={() => setSelectedImage(media.url)}
                   activeOpacity={0.7}
@@ -355,7 +354,7 @@ const ProviderChatScreen = () => {
                       resizeMode="cover"
                     />
                   </View>
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           )}

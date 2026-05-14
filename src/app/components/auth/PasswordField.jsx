@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { verticalScale } from "../adaptive/Adaptiveness";
 import { useState } from "react";
@@ -37,7 +37,7 @@ export default function PasswordField({
           autoCorrect={false}
           autoCapitalize="none"
         />
-        <TouchableOpacity
+        <Pressable
           onPress={() => setShowPassword(!showPassword)}
           className="ml-[2%]"
         >
@@ -47,7 +47,7 @@ export default function PasswordField({
             color="#9CA3AF"
             style={{ paddingVertical: verticalScale(12) }}
           />
-        </TouchableOpacity>
+        </Pressable>
       </View>
       {error && (
         <Text className="text-red-700 font-poppins text-center mt-1">

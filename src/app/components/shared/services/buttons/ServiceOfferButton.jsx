@@ -1,16 +1,22 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  Pressable,
+} from "react-native";
 
 export default function ServiceOfferButton({ title, onPress, isLoading }) {
   return (
     <View className="">
-      <TouchableOpacity
+      <Pressable
         onPress={onPress}
         className=" bg-[#0054A5] mx-[5%] rounded-lg py-[4%]"
       >
         <Text className="text-white text-center text-base font-poppins-semiBold ">
           {isLoading ? <ActivityIndicator color="#fff" /> : title}
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }

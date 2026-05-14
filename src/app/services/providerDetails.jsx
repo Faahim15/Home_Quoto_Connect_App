@@ -87,7 +87,7 @@ export default function ProviderDetailsScreen() {
           colors={["#319FCA", "#18649F"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          className="rounded-md overflow-hidden relative"
+          className=""
           style={{
             height: verticalScale(344),
             borderBottomLeftRadius: scale(16),

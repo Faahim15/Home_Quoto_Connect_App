@@ -12,6 +12,7 @@ import {
   Modal,
   Dimensions,
   RefreshControl,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -31,7 +32,6 @@ const ProjectGalleryScreen = () => {
   const [projects, setProjects] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
 
- 
   useEffect(() => {
     const fetchUserId = async () => {
       try {
@@ -53,7 +53,7 @@ const ProjectGalleryScreen = () => {
     userId,
     {
       skip: !userId,
-    }
+    },
   );
 
   useEffect(() => {
@@ -73,15 +73,13 @@ const ProjectGalleryScreen = () => {
     }
   }, [data]);
 
- 
   useFocusEffect(
     useCallback(() => {
       if (userId) {
         refetch();
       }
-    }, [userId])
+    }, [userId]),
   );
-
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -93,7 +91,7 @@ const ProjectGalleryScreen = () => {
     if (status !== "granted") {
       Alert.alert(
         "Permission Required",
-        "Sorry, we need camera roll permissions to upload images!"
+        "Sorry, we need camera roll permissions to upload images!",
       );
       return false;
     }
@@ -129,7 +127,7 @@ const ProjectGalleryScreen = () => {
 
         Alert.alert(
           "Success",
-          `Added ${newImages.length} image(s) to new project!`
+          `Added ${newImages.length} image(s) to new project!`,
         );
       }
     } catch (error) {
@@ -160,16 +158,16 @@ const ProjectGalleryScreen = () => {
                       ...image,
                       type: image.type === "before" ? "after" : "before",
                     }
-                  : image
+                  : image,
               ),
             }
-          : project
-      )
+          : project,
+      ),
     );
   };
 
   const renderImage = ({ item: image, index }) => (
-    <TouchableOpacity
+    <Pressable
       onPress={() => handleImagePress(image.uri)}
       onLongPress={() => toggleImageType(image.projectId, image.id)}
       activeOpacity={0.8}
@@ -195,7 +193,7 @@ const ProjectGalleryScreen = () => {
       >
         <Ionicons name="camera" size={16} color="white" />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   const renderProject = ({ item: project }) => (
@@ -226,7 +224,7 @@ const ProjectGalleryScreen = () => {
 
   return (
     <View className="flex-1 bg-[#f9f9f9]">
-     <CustomTitle title="Project Gallery" withSafeTop={true} />
+      <CustomTitle title="Project Gallery" withSafeTop={true} />
 
       <ScrollView
         contentContainerStyle={{ paddingBottom: verticalScale(180) }}
@@ -274,7 +272,7 @@ const ProjectGalleryScreen = () => {
       >
         <View className="flex-1 bg-black">
           <SafeAreaView>
-            <TouchableOpacity
+            <Pressable
               onPress={closeImageModal}
               className="absolute top-[2%] right-[4%] z-10"
               style={{
@@ -287,7 +285,7 @@ const ProjectGalleryScreen = () => {
               }}
             >
               <Ionicons name="close" size={24} color="white" />
-            </TouchableOpacity>
+            </Pressable>
           </SafeAreaView>
           <View className="flex-1 justify-center items-center">
             {selectedImage && (

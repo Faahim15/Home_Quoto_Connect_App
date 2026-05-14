@@ -1,4 +1,4 @@
-import { View, Text, Modal, TouchableOpacity } from "react-native";
+import { View, Text, Modal, TouchableOpacity, Pressable } from "react-native";
 import DropdownMenu from "../../../provider/profile/DropdownMenu";
 import { useGetServiceCategoriesQuery } from "../../../../../redux/features/apiSlices/user/createJobSlices";
 
@@ -22,12 +22,9 @@ export default function ProviderFilterModal({
       <View className="flex-1 bg-[rgba(0,0,0,0.4)] justify-center items-center">
         <View className="w-[80%] bg-white rounded-xl p-5">
           {/* CLOSE BUTTON */}
-          <TouchableOpacity
-            onPress={onClose}
-            className="absolute top-2 right-2 p-2"
-          >
+          <Pressable onPress={onClose} className="absolute top-2 right-2 p-2">
             <Text className="text-lg font-bold">✕</Text>
-          </TouchableOpacity>
+          </Pressable>
 
           <Text className="text-lg font-poppins-semibold text-center mb-4">
             Filter Providers
@@ -56,12 +53,12 @@ export default function ProviderFilterModal({
 
           {/* BUTTONS */}
           <View className="flex-row justify-end mt-4">
-            <TouchableOpacity
+            <Pressable
               onPress={onReset}
               className="bg-gray-300 px-4 py-2 rounded-md"
             >
               <Text>Reset</Text>
-            </TouchableOpacity>
+            </Pressable>
 
             {/* <TouchableOpacity
               onPress={onClose}

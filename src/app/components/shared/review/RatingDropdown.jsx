@@ -22,7 +22,7 @@ export default function RatingDropdown({ selected, onSelect }) {
       </Text>
 
       {/* Dropdown Trigger */}
-      <TouchableOpacity
+      <Pressable
         onPress={() => setShowDropdown(!showDropdown)}
         className="w-full bg-[#f9f9f9] border border-gray-300 rounded-md px-[4%] py-[3%] flex-row justify-between items-center"
       >
@@ -34,7 +34,7 @@ export default function RatingDropdown({ selected, onSelect }) {
           size={20}
           color="#555"
         />
-      </TouchableOpacity>
+      </Pressable>
 
       {/* Dropdown List */}
       {showDropdown && (

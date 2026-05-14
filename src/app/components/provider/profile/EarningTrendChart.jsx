@@ -1,5 +1,11 @@
 import React, { useState, useMemo } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BarChart } from "react-native-gifted-charts";
 import { styles } from "../../../util/styles";
@@ -82,7 +88,7 @@ export default function EarningsTrendChart({ statistics }) {
           colors={["#319FCA", "#18649F"]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-         style={styles.gradientCard}
+          style={styles.gradientCard}
         >
           {/* Header */}
           <View className="flex-row justify-between items-center mb-[5%]">
@@ -91,7 +97,7 @@ export default function EarningsTrendChart({ statistics }) {
             </Text>
 
             {/* Dropdown Button */}
-            <TouchableOpacity
+            <Pressable
               className="bg-white rounded-full px-[6%] py-[2%] flex-row items-center min-w-[35%] justify-between"
               activeOpacity={0.8}
               onPress={() => setDropdownOpen(!dropdownOpen)}
@@ -104,14 +110,14 @@ export default function EarningsTrendChart({ statistics }) {
                 size={15}
                 color="#1C1B1F"
               />
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           {/* Dropdown Menu */}
           {dropdownOpen && (
             <View className="absolute top-[60px] right-[6%] bg-white rounded-[8px] shadow-lg z-10 w-[38%]">
               {periods.map((period, index) => (
-                <TouchableOpacity
+                <Pressable
                   key={index}
                   className={`px-[4%] py-[3%] ${index !== periods.length - 1 ? "border-b border-gray-200" : ""}`}
                   onPress={() => {
@@ -120,7 +126,7 @@ export default function EarningsTrendChart({ statistics }) {
                   }}
                 >
                   <Text className="text-gray-700 text-[13px]">{period}</Text>
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           )}

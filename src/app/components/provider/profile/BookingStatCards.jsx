@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Modal, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+  Pressable,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { styles } from "../../../util/styles";
@@ -13,7 +20,7 @@ export default function BookingStatsCard({
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const selectedData = periodOptions.find(
-    (option) => option.label === selectedPeriod
+    (option) => option.label === selectedPeriod,
   );
   const { today, this_week, this_month, last_month, this_year, all_time } =
     statistics || {};
@@ -59,7 +66,7 @@ export default function BookingStatsCard({
           </View>
 
           {/* Dropdown Button */}
-          <TouchableOpacity
+          <Pressable
             className="bg-white rounded-full px-[6%] py-[2%] flex-row items-center min-w-[35%] justify-between"
             activeOpacity={0.8}
             onPress={() => setDropdownVisible(!dropdownVisible)}
@@ -72,7 +79,7 @@ export default function BookingStatsCard({
               size={15}
               color="#1C1B1F"
             />
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </LinearGradient>
 
@@ -83,7 +90,7 @@ export default function BookingStatsCard({
         animationType="fade"
         onRequestClose={() => setDropdownVisible(false)}
       >
-        <TouchableOpacity
+        <Pressable
           className="flex-1 bg-black/50 justify-center items-center px-[6%]"
           activeOpacity={1}
           onPress={() => setDropdownVisible(false)}
@@ -99,7 +106,7 @@ export default function BookingStatsCard({
               data={periodOptions}
               keyExtractor={(item) => item.id}
               renderItem={({ item }) => (
-                <TouchableOpacity
+                <Pressable
                   className={`px-[5%] py-[4%] flex-row justify-between items-center border-b border-gray-100 ${
                     selectedPeriod === item.label ? "bg-blue-50" : "bg-white"
                   }`}
@@ -118,11 +125,11 @@ export default function BookingStatsCard({
                   {/* <Text className="text-gray-500 text-sm">
                     {item.bookings} bookings
                   </Text> */}
-                </TouchableOpacity>
+                </Pressable>
               )}
             />
 
-            <TouchableOpacity
+            <Pressable
               className="px-[5%] py-[4%] items-center"
               onPress={() => setDropdownVisible(false)}
               activeOpacity={0.7}
@@ -130,9 +137,9 @@ export default function BookingStatsCard({
               <Text className="text-blue-600 text-base font-semibold">
                 Cancel
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
-        </TouchableOpacity>
+        </Pressable>
       </Modal>
     </View>
   );

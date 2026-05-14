@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 const PaymentMethodCard = ({
@@ -11,7 +11,7 @@ const PaymentMethodCard = ({
   onPress,
 }) => {
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={() => onPress(id)}
       className={`w-full p-[4%] rounded-lg mb-[3%] border-2 flex-row items-center justify-between ${
         isSelected ? "border-[#319FCA] bg-blue-50" : "border-gray-200 bg-white"
@@ -39,14 +39,14 @@ const PaymentMethodCard = ({
 
       {/* Selection Indicator */}
       {isSelected && <Ionicons name="checkmark" size={20} color="#3B82F6" />}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
 // Reusable Add New Card Button Component
 export const AddNewCardButton = ({ onPress, title = "Add new card" }) => {
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       className="w-full p-[4%] rounded-lg border-2 border-[#319FCA] bg-white items-center justify-center"
       activeOpacity={0.8}
@@ -57,7 +57,7 @@ export const AddNewCardButton = ({ onPress, title = "Add new card" }) => {
           {title}
         </Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 export default PaymentMethodCard;

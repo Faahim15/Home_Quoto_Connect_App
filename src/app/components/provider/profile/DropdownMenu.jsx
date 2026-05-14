@@ -5,6 +5,7 @@ import {
   FlatList,
   Modal,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { verticalScale } from "../../adaptive/Adaptiveness";
@@ -29,7 +30,7 @@ const DropdownMenu = ({
 
   return (
     <View className="w-full mb-[4%]">
-      <TouchableOpacity
+      <Pressable
         style={{ height: verticalScale(48) }}
         className="w-full bg-white border border-gray-300 rounded-lg px-[4%] flex-row items-center justify-between"
         onPress={() => !isLoading && setIsOpen(true)}
@@ -52,7 +53,7 @@ const DropdownMenu = ({
             <Ionicons name="chevron-down" size={20} color="#6B7280" />
           </>
         )}
-      </TouchableOpacity>
+      </Pressable>
 
       <Modal
         visible={isOpen && !isLoading}
@@ -60,7 +61,7 @@ const DropdownMenu = ({
         animationType="fade"
         onRequestClose={() => setIsOpen(false)}
       >
-        <TouchableOpacity
+        <Pressable
           className="flex-1 bg-black/50 justify-center items-center px-[4%]"
           activeOpacity={1}
           onPress={() => setIsOpen(false)}
@@ -78,20 +79,20 @@ const DropdownMenu = ({
                 data={options}
                 keyExtractor={(item, index) => item._id || index.toString()}
                 renderItem={({ item }) => (
-                  <TouchableOpacity
+                  <Pressable
                     className="px-[4%] py-[3%] border-b border-gray-100"
                     onPress={() => handleSelect(field, item?.title || item)}
                   >
                     <Text className="text-base font-poppins-400regular text-gray-800">
                       {item?.title || item}
                     </Text>
-                  </TouchableOpacity>
+                  </Pressable>
                 )}
                 showsVerticalScrollIndicator={false}
               />
             )}
           </View>
-        </TouchableOpacity>
+        </Pressable>
       </Modal>
 
       <Error error={error} />

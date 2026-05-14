@@ -1,95 +1,117 @@
-import { View, Text, FlatList, Image, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, Pressable } from "react-native";
+import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
 import { router } from "expo-router";
 
 export default function ServiceProvider({ providerData }) {
+  const renderStars = (rating) => {
+    const numRating = parseFloat(rating || 0);
+    return [1, 2, 3, 4, 5].map((star) => {
+      const full = star <= Math.floor(numRating);
+      const half =
+        !full && star === Math.ceil(numRating) && numRating % 1 >= 0.5;
+      return (
+        <Ionicons
+          key={star}
+          name={full ? "star" : half ? "star-half" : "star-outline"}
+          size={scale(11)}
+          color="#F59E0B"
+          style={{ marginRight: scale(1) }}
+        />
+      );
+    });
+  };
+
   const renderItem = ({ item }) => {
     const hasProfilePhoto = item?.profilePhoto?.url;
+    const rating = item?.averageRating
+      ? parseFloat(item.averageRating).toFixed(1)
+      : null;
 
     return (
-      <View
-        className="bg-white  border border-[#D4E0EB] flex-1 justify-center items-center rounded-lg mr-3"
-        style={{ width: scale(149), height: verticalScale(210) }}
+      <Pressable
+        onPress={() =>
+          router.push({
+            pathname: "/services/providerDetails",
+            params: { profileId: item?._id },
+          })
+        }
+        className="bg-white rounded-2xl border border-[#E2EDF5] mr-3 overflow-hidden active:bg-[#F0F6FF]"
+        style={{ width: scale(149) }}
       >
         {hasProfilePhoto ? (
           <Image
             source={{ uri: item.profilePhoto.url }}
-            resizeMode="cover"
-            style={{
-              width: scale(72),
-              height: verticalScale(110),
-            }}
+            contentFit="cover"
+            style={{ width: "100%", height: verticalScale(115) }}
+            transition={300}
           />
         ) : (
           <View
-            className=" bg-gray-200 mt-[17%] rounded-full items-center justify-center"
-            style={{
-              width: scale(72),
-              height: scale(72),
-            }}
+            className="w-full bg-[#EBF3FA] items-center justify-center"
+            style={{ height: verticalScale(115) }}
           >
-            <Ionicons name="person" size={scale(40)} color="#9CA3AF" />
+            <Ionicons name="person" size={scale(40)} color="#A8C4D8" />
           </View>
         )}
 
-        <View className="flex-1 pb-[10%] justify-end">
-          <Text className="font-poppins-semiBold text-base text-[#565656]">
-            {item?.fullName || "N/A"}
+        <View className="px-3 pt-2 pb-3 gap-y-1">
+          <Text
+            numberOfLines={1}
+            className="font-poppins-semiBold text-[#1A2B3C]"
+            style={{ fontSize: scale(12) }}
+          >
+            {item?.fullName?.split(" ").slice(0, 2).join(" ") || "N/A"}
           </Text>
-          <Text className="font-poppins-500medium text-xs text-[#565656] mb-[1%]">
+
+          <Text
+            numberOfLines={1}
+            className="font-poppins-500medium text-[#7A92A8]"
+            style={{ fontSize: scale(10) }}
+          >
             {item?.businessName?.split(" ").slice(0, 2).join(" ") ||
               "No Designation"}
           </Text>
 
           <View className="flex-row items-center">
-            <Ionicons name="star" size={14} color="#F59E0B" />
-            <Text className="ml-1 font-poppins-500medium text-xs text-[#F59E0B]">
-              {Number(item?.averageRating) / 10 || "N/A"}
+            {renderStars(rating)}
+            <Text
+              className="font-poppins-500medium text-[#F59E0B] ml-1"
+              style={{ fontSize: scale(10) }}
+            >
+              {rating ?? "N/A"}
             </Text>
           </View>
-
-          <TouchableOpacity
-            onPress={() =>
-              router.push({
-                pathname: "/services/providerDetails",
-                params: { profileId: item?._id },
-              })
-            }
-            style={{ width: scale(124), height: verticalScale(25) }}
-            className="bg-[#0054A5] border border-[#0054A5] mt-[3%] rounded-md py-[3%] px-[3%]"
-          >
-            <Text className="text-white text-center text-[10px] font-poppins-500medium">
-              Details
-            </Text>
-          </TouchableOpacity>
         </View>
-      </View>
+      </Pressable>
     );
   };
 
   return (
     <View className="flex-1 mb-[2%] mt-[3%] mx-[6%]">
-      <View className="flex-row justify-between">
-        <Text className="font-poppins-semiBold text-base text-[#6B7280]">
+      <View className="flex-row justify-between items-center mb-2">
+        <Text className="font-poppins-semiBold text-base text-[#6B7280] ">
           Popular Service Providers
         </Text>
-        <TouchableOpacity
-          onPress={() => router.push("/services/providerViewAll")}
-        >
-          <Text className="font-poppins-semiBold text-base text-[#18649F]">
+        <Pressable onPress={() => router.push("/services/providerViewAll")}>
+          <Text className="font-poppins-semiBold text-base text-[#0054A5]">
             View all
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
-     <View className="flex-1 mt-[1.5%]">
+
+      <View className="flex-1">
         {!providerData || providerData.length === 0 ? (
-          <View 
-            className=" items-center justify-center"
-            style={{ height: verticalScale(150), width: '100%' }}
+          <View
+            className="w-full items-center justify-center"
+            style={{ height: verticalScale(150) }}
           >
             <Ionicons name="people-outline" size={scale(40)} color="#D1D5DB" />
-            <Text className="font-poppins-500medium text-sm text-[#9CA3AF] mt-2">
+            <Text
+              className="font-poppins-500medium text-[#9CA3AF] mt-2"
+              style={{ fontSize: scale(13) }}
+            >
               No service providers found
             </Text>
           </View>
@@ -100,6 +122,7 @@ export default function ServiceProvider({ providerData }) {
             keyExtractor={(item, index) => item._id || index.toString()}
             showsHorizontalScrollIndicator={false}
             renderItem={renderItem}
+            contentContainerStyle={{ paddingVertical: verticalScale(6) }}
           />
         )}
       </View>

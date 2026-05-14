@@ -14,20 +14,17 @@ export default function ServiceProviderScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
     minRating: "",
-    serviceCategory: "", 
+    serviceCategory: "",
   });
 
   const [filterModalVisible, setFilterModalVisible] = useState(false);
 
-
   const { data: categoryData } = useGetServiceCategoriesQuery();
   const categories = categoryData?.data?.categories || [];
-
 
   const selectedCategoryId = filters.serviceCategory
     ? categories.find((cat) => cat.title === filters.serviceCategory)?._id
     : undefined;
-
 
   const userSearched = searchQuery.trim().length > 0;
   const userFiltered = Object.values(filters).some((v) => v !== "");
@@ -38,18 +35,20 @@ export default function ServiceProviderScreen() {
     {
       search: searchQuery,
       minRating: filters.minRating || undefined,
-      serviceCategory: selectedCategoryId, 
+      serviceCategory: selectedCategoryId,
     },
     {
       skip: !shouldRunSearchAPI,
-    }
+    },
   );
 
   const providerList = data?.data?.providers || [];
 
+  console.log("hello", data, "\nproviders\n", providerList);
+
   return (
     <View className="flex-1 bg-[#F9F9F9]">
-<CustomTitle title="Service Providers" withSafeTop={true} />
+      <CustomTitle title="Popular Service Providers" withSafeTop={true} />
 
       <SearchAndFilterBar
         onSearch={(text) => setSearchQuery(text)}

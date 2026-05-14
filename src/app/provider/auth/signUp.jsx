@@ -188,7 +188,7 @@ export default function SignUp() {
                   autoCorrect={false}
                   autoCapitalize="none"
                 />
-                <TouchableOpacity
+                <Pressable
                   onPress={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="ml-[2%]"
                 >
@@ -200,7 +200,7 @@ export default function SignUp() {
                     color="#9CA3AF"
                     style={{ paddingTop: verticalScale(12) }}
                   />
-                </TouchableOpacity>
+                </Pressable>
               </View>
               {errors.confirmPassword && (
                 <Text className="text-red-700 font-poppins text-center mt-1">

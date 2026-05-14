@@ -7,7 +7,8 @@ import {
   SafeAreaView,
   Alert,
   ActivityIndicator,
-  FlatList, // ✅ Import FlatList
+  FlatList,
+  Pressable, // ✅ Import FlatList
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -78,7 +79,7 @@ export default function UploadPhotos() {
     if (status !== "granted") {
       Alert.alert(
         "Permission needed",
-        "Camera permission is required to take photos"
+        "Camera permission is required to take photos",
       );
       return;
     }
@@ -99,11 +100,10 @@ export default function UploadPhotos() {
           id: uniqueId,
           uri: result.assets[0].uri,
           isExisting: false, // New photo
-        })
+        }),
       );
     }
   };
-
 
   const pickFromGallery = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -115,7 +115,6 @@ export default function UploadPhotos() {
     });
 
     if (!result.canceled) {
-  
       result.assets.forEach((asset) => {
         const uniqueId =
           Date.now().toString() + Math.random().toString(36).substring(2, 9);
@@ -124,7 +123,7 @@ export default function UploadPhotos() {
             id: uniqueId,
             uri: asset.uri,
             isExisting: false, // New photo
-          })
+          }),
         );
       });
     }
@@ -170,12 +169,12 @@ export default function UploadPhotos() {
           <Text className="text-white text-xs font-bold">New</Text>
         </View>
       )}
-      <TouchableOpacity
+      <Pressable
         onPress={() => handleRemovePhoto(photo.id)}
         className="absolute top-1 right-1 bg-white rounded-full p-1 shadow-md"
       >
         <Ionicons name="close" size={12} color="#666" />
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 
@@ -206,16 +205,15 @@ export default function UploadPhotos() {
     );
   }
 
-
   const existingPhotosCount = photos.filter((photo) => photo.isExisting).length;
   const newPhotosCount = photos.filter((photo) => !photo.isExisting).length;
 
   return (
     <View className="flex-1 bg-[#F9F9F9]">
-
-     
-     <CustomTitle title={jobId ? "Edit Job Photos" : "Post a job"} withSafeTop={true} />
-     
+      <CustomTitle
+        title={jobId ? "Edit Job Photos" : "Post a job"}
+        withSafeTop={true}
+      />
 
       <ScrollView className="flex-1 px-[5%] py-[5%]">
         {/* Title */}
@@ -224,7 +222,7 @@ export default function UploadPhotos() {
         </Text>
 
         {/* Upload Area */}
-        <TouchableOpacity
+        <Pressable
           onPress={showImageOptions}
           className="w-full h-[40%] bg-gray-100 rounded-lg flex items-center justify-center mb-[5%] border-2 border-dashed border-gray-300"
         >
@@ -232,7 +230,7 @@ export default function UploadPhotos() {
             <Ionicons name="camera" size={24} color="white" />
           </View>
           <Text className="text-gray-600 text-center">Tap to add photos</Text>
-        </TouchableOpacity>
+        </Pressable>
 
         {/* ✅ Photo Grid with Horizontal FlatList */}
         {photos.length > 0 && (

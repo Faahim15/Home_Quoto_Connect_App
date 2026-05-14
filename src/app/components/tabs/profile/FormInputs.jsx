@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TextInput,
   Platform,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -109,7 +110,7 @@ const ProfileFormInputs = ({ formData, onInputChange }) => {
         <Text className="font-poppins-400regular text-base text-[#5C5F62]">
           Date of Birth
         </Text>
-        <TouchableOpacity
+        <Pressable
           onPress={() => setShowDatePicker(true)}
           className="flex-row mt-[1.5%] items-center justify-between bg-white border border-gray-200 rounded-xl px-[4%] py-[4%]"
         >
@@ -119,7 +120,7 @@ const ProfileFormInputs = ({ formData, onInputChange }) => {
             {formData?.dateOfBirth || "DD/MM/YYYY"}
           </Text>
           <Ionicons name="calendar-outline" size={20} color="#898989" />
-        </TouchableOpacity>
+        </Pressable>
       </View>
 
       {/* Phone Number */}

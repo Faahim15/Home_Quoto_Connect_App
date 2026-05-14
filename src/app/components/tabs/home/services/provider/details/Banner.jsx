@@ -1,4 +1,11 @@
-import { View, Text, TouchableOpacity, Linking, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Linking,
+  Alert,
+  Pressable,
+} from "react-native";
 import { scale, verticalScale } from "../../../../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -58,7 +65,7 @@ export default function Banner({ providerId, data }) {
           </TouchableOpacity> */}
 
           {/* Chat Button */}
-          <TouchableOpacity
+          <Pressable
             onPress={() =>
               router.push({
                 pathname: "/chat/displayChat",
@@ -69,7 +76,7 @@ export default function Banner({ providerId, data }) {
             className="rounded-full items-center justify-center bg-[#319FCA] "
           >
             <Ionicons name="chatbubble-outline" size={24} color="#fff" />
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </View>

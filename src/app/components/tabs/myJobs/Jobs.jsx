@@ -51,7 +51,7 @@ const ServiceItem = ({ item, quote }) => {
       >
         <View className="flex-row items-center gap-[4%]">
           {/* Profile Image */}
-          <TouchableOpacity
+          <Pressable
             onPress={() =>
               router.push({
                 pathname: "/myJobs/serviceProfile",
@@ -68,7 +68,7 @@ const ServiceItem = ({ item, quote }) => {
               className="w-full h-full rounded-full"
               resizeMode="cover"
             />
-          </TouchableOpacity>
+          </Pressable>
 
           {/* Provider Details */}
           <View className="flex-1">
@@ -95,7 +95,7 @@ const ServiceItem = ({ item, quote }) => {
                 {quote?.price ? `$${quote.price}` : "Request a personalized..."}
               </Text>
             </View>
-            <TouchableOpacity
+            <Pressable
               onPress={() =>
                 router.push({
                   pathname: "myJobs/quotesDetails",
@@ -108,7 +108,7 @@ const ServiceItem = ({ item, quote }) => {
               <Text className="font-poppins-500medium text-[10px] text-white text-sm font-semibold">
                 Details
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
             <View className="flex-row justify-end  w-full">
               <Text className="text-gray-500 text-sm">
@@ -131,7 +131,7 @@ export default function Services() {
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
 
   // Handle pull-to-refresh
@@ -172,7 +172,7 @@ export default function Services() {
 
         // Filter out jobs that have any quote with status "accepted"
         const hasAcceptedQuote = job.quotes.some(
-          (quote) => quote.status === "pending"
+          (quote) => quote.status === "pending",
         );
 
         return hasAcceptedQuote;
@@ -193,7 +193,7 @@ export default function Services() {
     job.quotes.map((quote) => ({
       quote,
       job, // preserve job context
-    }))
+    })),
   );
 
   const renderServiceItem = ({ item }) => {

@@ -12,6 +12,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  Pressable,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -62,7 +63,7 @@ export default function FilterModal({
               to: currentFilters.maxPrice || 0,
               isPersonalized: false,
             },
-          })
+          }),
         );
       }
     }
@@ -102,7 +103,7 @@ export default function FilterModal({
         }
         return acc;
       },
-      {}
+      {},
     );
 
     onApplyFilters?.(cleanedFilters);
@@ -121,7 +122,7 @@ export default function FilterModal({
       setJobField({
         field: "priceRange",
         value: { from: 0, to: 0, isPersonalized: false },
-      })
+      }),
     );
 
     onClearFilters?.();
@@ -159,16 +160,16 @@ export default function FilterModal({
 
                   <View className="flex-row items-center gap-3">
                     {hasActiveFilters && (
-                      <TouchableOpacity onPress={handleClear}>
+                      <Pressable onPress={handleClear}>
                         <Text className="text-sm font-poppins-500medium text-[#175994]">
                           Clear All
                         </Text>
-                      </TouchableOpacity>
+                      </Pressable>
                     )}
 
-                    <TouchableOpacity onPress={onClose}>
+                    <Pressable onPress={onClose}>
                       <Ionicons name="close" size={24} color="#6B7280" />
-                    </TouchableOpacity>
+                    </Pressable>
                   </View>
                 </View>
 

@@ -1,4 +1,10 @@
-import { View, Text, TouchableOpacity, Platform } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Platform,
+  Pressable,
+} from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
@@ -42,7 +48,7 @@ export default function ProjectDate({ value, onDateChange }) {
       <Text className="font-poppins-400regular text-base text-[#5C5F62]">
         Project Date
       </Text>
-      <TouchableOpacity
+      <Pressable
         onPress={() => setShowDatePicker(true)}
         className="flex-row mt-[1.5%] items-center justify-between bg-white border border-gray-200 rounded-xl px-[4%] py-[4%]"
       >
@@ -52,7 +58,7 @@ export default function ProjectDate({ value, onDateChange }) {
           {value ? formatDate(value) : "DD/MM/YYYY"}
         </Text>
         <Ionicons name="calendar-outline" size={20} color="#898989" />
-      </TouchableOpacity>
+      </Pressable>
 
       {/* Date Picker Modal */}
       {showDatePicker && (
@@ -66,12 +72,12 @@ export default function ProjectDate({ value, onDateChange }) {
           />
           {/* iOS Done Button */}
           {Platform.OS === "ios" && (
-            <TouchableOpacity
+            <Pressable
               onPress={handleIOSConfirm}
               className="bg-blue-500 rounded-lg px-4 py-2 mt-2 self-end"
             >
               <Text className="text-white font-medium">Done</Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
         </>
       )}

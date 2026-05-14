@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity, Pressable } from "react-native";
 
 export default function ReviewText({ text }) {
   const [expanded, setExpanded] = useState(false);
@@ -17,11 +17,11 @@ export default function ReviewText({ text }) {
       </Text>
 
       {shouldTruncate && (
-        <TouchableOpacity onPress={() => setExpanded(!expanded)}>
+        <Pressable onPress={() => setExpanded(!expanded)}>
           <Text className="text-[#175994] text-xs mt-1 font-poppins-500medium">
             {expanded ? "Read less" : "Read more"}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       )}
     </View>
   );

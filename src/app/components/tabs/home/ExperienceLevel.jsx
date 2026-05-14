@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Pressable } from "react-native";
 import { verticalScale } from "../../adaptive/Adaptiveness";
 import { useState } from "react";
 
@@ -17,7 +17,7 @@ export default function ExperienceLevel() {
         {titles.map((title, idx) => {
           const isSelected = selectedIndexes.includes(idx);
           return (
-            <TouchableOpacity
+            <Pressable
               onPress={() => toggleSelection(idx)}
               style={{
                 height: verticalScale(35),
@@ -31,7 +31,7 @@ export default function ExperienceLevel() {
               >
                 {title}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           );
         })}
       </View>

@@ -1,4 +1,11 @@
-import { View, Text, Modal, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Modal,
+  ScrollView,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
 import Ratings from "../Ratings";
 import ExperienceLevel from "../ExperienceLevel";
@@ -21,12 +28,12 @@ export default function UserFilterModal({ visible, onClose }) {
         >
           <View className="bg-[#fff] border border-[#dcdcdc] rounded-lg ml-[5%] mt-[1%] w-[90%]">
             {/* Close Icon */}
-            <TouchableOpacity
+            <Pressable
               onPress={onClose}
               className="absolute top-3 right-3 z-10"
             >
               <Ionicons name="close" size={24} color="#6B7280" />
-            </TouchableOpacity>
+            </Pressable>
 
             <View className="px-[6%] mt-[3%]">
               <ServiceTypeDropdown />

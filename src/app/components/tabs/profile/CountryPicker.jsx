@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+  Pressable,
+} from "react-native";
 import CountryPicker from "react-native-country-picker-modal-v2";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -30,7 +36,7 @@ const CountryPickerField = ({ color = "#1F2937" }) => {
       >
         Country
       </Text>
-      <TouchableOpacity
+      <Pressable
         className={`flex-row items-center justify-between bg-white border border-gray-300 rounded-lg px-[4%] py-[4%] ${
           isTablet ? "px-[6%] py-[4%]" : "px-[4%] py-[3%]"
         } shadow-sm`}
@@ -77,7 +83,7 @@ const CountryPickerField = ({ color = "#1F2937" }) => {
           size={isTablet ? 24 : 20}
           color="#6B7280"
         />
-      </TouchableOpacity>
+      </Pressable>
 
       <CountryPicker
         countryCode={countryCode}

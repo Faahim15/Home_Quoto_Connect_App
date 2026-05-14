@@ -3,13 +3,14 @@ import {
   Text,
   TouchableOpacity,
   Modal,
-  Image,
   Alert,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import MapButton from "./MapButton";
 import { router } from "expo-router";
+import { Image } from "expo-image";
 
 const ServiceQuoteModal = ({ visible, selectedJob, onClose }) => {
   if (!selectedJob) return null;
@@ -33,7 +34,7 @@ const ServiceQuoteModal = ({ visible, selectedJob, onClose }) => {
       visible={visible}
       onRequestClose={onClose}
     >
-      <TouchableOpacity
+      <Pressable
         onPress={onClose}
         style={{ width: scale(320) }}
         className="bg-white mr-[0.5%] justify-center mx-[10%] my-[50%] items-start  border border-[#D4E0EB]   px-[4.5%] pt-[2%]  rounded-xl shadow-sm overflow-hidden"
@@ -107,7 +108,7 @@ const ServiceQuoteModal = ({ visible, selectedJob, onClose }) => {
             color="#175994"
           />
         </View>
-      </TouchableOpacity>
+      </Pressable>
     </Modal>
   );
 };

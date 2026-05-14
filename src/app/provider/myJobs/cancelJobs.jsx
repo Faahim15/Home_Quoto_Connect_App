@@ -4,6 +4,7 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
+  Pressable,
 } from "react-native";
 import React from "react";
 import CustomTitle from "../../components/shared/CustomTitle";
@@ -38,14 +39,14 @@ export default function CancelledJobDetailScreen() {
         <Text className="font-poppins-600semiBold text-lg text-gray-900 mt-4 text-center">
           Failed to Load Information
         </Text>
-        <TouchableOpacity
+        <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-500medium text-white text-base">
             Retry
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }

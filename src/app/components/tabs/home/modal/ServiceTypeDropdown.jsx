@@ -27,12 +27,12 @@ export default function ServiceTypeDropdown() {
   };
 
   const renderServiceItem = ({ item }) => (
-    <TouchableOpacity
+    <Pressable
       className="px-[6%] py-[3%] border-b border-gray-200"
       onPress={() => handleSelectService(item)}
     >
       <Text className="text-base text-gray-800">{item.name}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   return (
@@ -41,7 +41,7 @@ export default function ServiceTypeDropdown() {
         Service Types
       </Text>
 
-      <TouchableOpacity
+      <Pressable
         className="w-[100%] px-[4%] py-[3.5%] bg-[#f9f9f9] border border-gray-300 rounded-lg flex-row justify-between items-center"
         onPress={() => setIsOpen(true)}
       >
@@ -55,7 +55,7 @@ export default function ServiceTypeDropdown() {
           size={20}
           color="#6B7280"
         />
-      </TouchableOpacity>
+      </Pressable>
 
       <Modal
         visible={isOpen}
@@ -81,14 +81,14 @@ export default function ServiceTypeDropdown() {
               className="max-h-[80%]"
             />
 
-            <TouchableOpacity
+            <Pressable
               className="px-[6%] py-[4%] bg-gray-50 border-t border-gray-200"
               onPress={() => setIsOpen(false)}
             >
               <Text className="text-center text-base font-poppins-500medium text-blue-600">
                 Cancel
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </Pressable>
       </Modal>

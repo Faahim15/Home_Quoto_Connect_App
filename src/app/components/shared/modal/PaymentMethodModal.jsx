@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Modal } from "react-native";
+import { View, Text, TouchableOpacity, Modal, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -54,7 +54,7 @@ const PaymentMethodModal = ({ visible, onClose, jobId }) => {
           </Text>
 
           {/* Pay via App Option */}
-          <TouchableOpacity
+          <Pressable
             onPress={() =>
               router.push({
                 pathname: "/shared/stripePayment",
@@ -74,10 +74,10 @@ const PaymentMethodModal = ({ visible, onClose, jobId }) => {
                 Pay with your linked credit{"\n"}card or app wallet
               </Text>
             </View>
-          </TouchableOpacity>
+          </Pressable>
 
           {/* Pay Cash Option */}
-          <TouchableOpacity
+          <Pressable
             onPress={handleCashPayment}
             className="bg-white border border-[#E5E7EB] rounded-2xl p-[5%] flex-row items-center"
           >
@@ -92,17 +92,17 @@ const PaymentMethodModal = ({ visible, onClose, jobId }) => {
                 Pay directly to the service{"\n"}provider at the time of service
               </Text>
             </View>
-          </TouchableOpacity>
+          </Pressable>
 
           {/* Bottom spacing */}
-          <TouchableOpacity onPress={onClose}>
+          <Pressable onPress={onClose}>
             <View className="border bg-white rounded-md mt-[3%] border-[#E5E7EB] py-[3%]  ">
               <Text className="text-[#111827] text-center font-poppins-500medium text-base ">
                 {" "}
                 Cancel
               </Text>
             </View>
-          </TouchableOpacity>
+          </Pressable>
         </View>
         <SuccessModal
           modalHeader={{

@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { verticalScale } from "../../adaptive/Adaptiveness";
@@ -60,9 +61,9 @@ export default function CancelModal({ visible, onClose, onConfirm }) {
             <Text className="text-xl font-poppins-bold text-gray-800">
               Cancel Booking
             </Text>
-            <TouchableOpacity onPress={handleClose}>
+            <Pressable onPress={handleClose}>
               <Ionicons name="close" size={28} color="#666" />
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           <ScrollView
@@ -85,7 +86,7 @@ export default function CancelModal({ visible, onClose, onConfirm }) {
 
             {/* Reason Options */}
             {cancelReasons.map((reason, index) => (
-              <TouchableOpacity
+              <Pressable
                 key={index}
                 onPress={() => setSelectedReason(reason)}
                 className={`flex-row items-center p-[4%] mb-[2.5%] rounded-lg border ${
@@ -114,7 +115,7 @@ export default function CancelModal({ visible, onClose, onConfirm }) {
                 >
                   {reason}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             ))}
 
             {/* Other Reason Input */}
@@ -154,7 +155,7 @@ export default function CancelModal({ visible, onClose, onConfirm }) {
 
           {/* Action Buttons */}
           <View className="px-[6%] py-[4%] border-t border-gray-200">
-            <TouchableOpacity
+            <Pressable
               onPress={handleCancel}
               disabled={
                 !selectedReason ||
@@ -170,16 +171,16 @@ export default function CancelModal({ visible, onClose, onConfirm }) {
               <Text className="text-white text-center font-poppins-semiBold text-base">
                 Confirm Cancellation
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               onPress={handleClose}
               className="bg-white border border-gray-300 rounded-lg py-[4%]"
             >
               <Text className="text-gray-700 text-center font-poppins-semiBold text-base">
                 Keep Booking
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </View>

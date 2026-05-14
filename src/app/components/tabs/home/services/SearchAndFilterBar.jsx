@@ -1,4 +1,10 @@
-import { View, TextInput, TouchableOpacity, Text } from "react-native";
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  Pressable,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import { scale, verticalScale } from "../../../adaptive/Adaptiveness";
@@ -32,20 +38,20 @@ export default function SearchAndFilterBar({ onSearch, onFilterPress }) {
           className="flex-1 ml-2 font-poppins-regular text-sm text-[#565656]"
         />
         {searchText.length > 0 && (
-          <TouchableOpacity onPress={handleClearSearch}>
+          <Pressable onPress={handleClearSearch}>
             <Ionicons name="close-circle" size={20} color="#9CA3AF" />
-          </TouchableOpacity>
+          </Pressable>
         )}
       </View>
 
       {/* Filter Button */}
-      <TouchableOpacity
+      <Pressable
         onPress={onFilterPress}
         className="ml-3 bg-[#0054A5] rounded-lg items-center justify-center"
         style={{ width: scale(45), height: verticalScale(45) }}
       >
         <Ionicons name="options-outline" size={24} color="#FFFFFF" />
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }

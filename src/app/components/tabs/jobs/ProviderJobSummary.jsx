@@ -1,4 +1,6 @@
-import { View, Text, Image, FlatList } from "react-native";
+import { View, Text, FlatList } from "react-native";
+import { Image } from "expo-image";
+import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import XStyle from "../../../util/styles";
 import PaymentChecklist from "./PaymentCheckList";
@@ -9,6 +11,7 @@ import {
   getStatusLabel,
 } from "../../../util/helper-function";
 import { statusColorMap } from "../../../util/colors";
+
 function showImages({ item }) {
   return (
     <View>
@@ -19,10 +22,13 @@ function showImages({ item }) {
           height: verticalScale(80),
           borderRadius: scale(4),
         }}
+        contentFit="cover"
+        transition={300}
       />
     </View>
   );
 }
+
 export default function ProviderJobSummary({
   quoteInfo,
   showPaymentCheckList = false,
@@ -41,24 +47,26 @@ export default function ProviderJobSummary({
   const { city, state } = quoteInfo?.job?.location?.details || {};
   const statusColor = statusColorMap?.[quoteInfo?.job?.status] ?? "#6B7280";
 
-  //   console.log("Job provider summary", quoteInfo?.job?.status);
   return (
     <View
       style={XStyle.shadowBox}
-      className="py-[4%] px-[3%] mt-[3%] bg-white border border-[#D4E0EB] "
+      className="py-[4%] px-[3%] mt-[3%] bg-white border border-[#D4E0EB]"
     >
       <View>
-        <Text className="font-poppins-500medium text-base text-[#565656] ">
+        <Text className="font-poppins-500medium text-base text-[#565656]">
           {title || "N/A"}
         </Text>
-        <View className="border-b border-[#CACACA] mb-[2%] mt-[3%] ">
+
+        <View className="border-b border-[#CACACA] mb-[2%] mt-[3%]">
           <Image
             style={{ width: scale(310), height: verticalScale(177) }}
-            className="rounded-md  mb-[2%] "
+            className="rounded-md mb-[2%]"
             source={{ uri: serviceCategory?.image?.url || null }}
+            contentFit="cover"
+            transition={300}
           />
         </View>
-        {/* ✅ Fix FlatList - check if photoData has items */}
+
         {photos && photos.length > 0 && (
           <View className="mt-[1%]">
             <FlatList
@@ -81,12 +89,12 @@ export default function ProviderJobSummary({
             <Text className="font-poppins-500medium text-xs text-[#5C5F62]">
               Job Details
             </Text>
-            <Text className="font-poppins-400regular text-justify text-xs text-[#5C5F62] ">
+            <Text className="font-poppins-400regular text-justify text-xs text-[#5C5F62]">
               {description || "N/A"}
             </Text>
           </View>
-          {/* Service */}
-          <View className="flex-row mt-[3%] justify-between ">
+
+          <View className="flex-row mt-[3%] justify-between">
             <Text className="font-poppins-semiBold text-xs text-[#6B7280]">
               Service
             </Text>
@@ -94,8 +102,8 @@ export default function ProviderJobSummary({
               {capitalizeFirstLetter(title) || "N/A"}
             </Text>
           </View>
-          {/* Specializations */}
-          <View className="flex-row mt-[3%] justify-between ">
+
+          <View className="flex-row mt-[3%] justify-between">
             <Text className="font-poppins-semiBold text-xs text-[#6B7280]">
               Specializations
             </Text>
@@ -106,7 +114,8 @@ export default function ProviderJobSummary({
                 : ""}
             </Text>
           </View>
-          <View className="flex-row mt-[3%] justify-between gap-[25%] ">
+
+          <View className="flex-row mt-[3%] justify-between gap-[25%]">
             <Text className="font-poppins-semiBold text-xs text-[#6B7280]">
               Address
             </Text>
@@ -114,8 +123,8 @@ export default function ProviderJobSummary({
               {city && state ? `${city}, ${state}` : "N/A"}
             </Text>
           </View>
-          {/* Booking Date */}
-          <View className="flex-row mt-[3%] justify-between ">
+
+          <View className="flex-row mt-[3%] justify-between">
             <Text className="font-poppins-semiBold text-xs text-[#6B7280]">
               Booking date
             </Text>
@@ -123,8 +132,8 @@ export default function ProviderJobSummary({
               {formatDateForCanada(preferredDate) || "N/A"}
             </Text>
           </View>
-          {/* Booking hours */}
-          <View className="flex-row mt-[3%] justify-between ">
+
+          <View className="flex-row mt-[3%] justify-between">
             <Text className="font-poppins-semiBold text-xs text-[#6B7280]">
               Booking Hours
             </Text>
@@ -138,18 +147,35 @@ export default function ProviderJobSummary({
           <Text className="font-poppins-semiBold text-base text-[#1F2937]">
             Posted by
           </Text>
-          <View className="flex-row gap-[4%] pb-[2%] border-b border-[#CACACA] ">
-            <Image
-              style={{
-                width: scale(40),
-                height: verticalScale(40),
-                borderRadius: scale(20),
-              }}
-              source={{
-                uri: profilePhoto?.url || "https://via.placeholder.com/300",
-              }}
-              className="mt-[2%]"
-            />
+          <View className="flex-row gap-[4%] pb-[2%] border-b border-[#CACACA]">
+            {/* Avatar with Ionicons fallback */}
+            {profilePhoto?.url ? (
+              <Image
+                source={{ uri: profilePhoto.url }}
+                style={{
+                  width: scale(40),
+                  height: scale(40),
+                  borderRadius: scale(20),
+                  flexShrink: 0,
+                }}
+                contentFit="cover"
+                transition={300}
+                className="mt-[2%] bg-gray-200"
+              />
+            ) : (
+              <View
+                style={{
+                  width: scale(40),
+                  height: scale(40),
+                  borderRadius: scale(20),
+                  flexShrink: 0,
+                }}
+                className="mt-[2%] bg-gray-200 items-center justify-center"
+              >
+                <Ionicons name="person" size={scale(20)} color="#9CA3AF" />
+              </View>
+            )}
+
             <View className="mt-[2%]">
               <Text className="font-poppins-500medium text-xl text-[#1F2937]">
                 {fullName || "N/A"}
@@ -158,10 +184,10 @@ export default function ProviderJobSummary({
           </View>
 
           <View className="flex-row justify-between">
-            <Text className="font-poppins-semiBold text-sm text-[#6B7280] ">
+            <Text className="font-poppins-semiBold text-sm text-[#6B7280]">
               Price
             </Text>
-            <Text className="font-poppins-semiBold text-sm  text-[#F59E0B]">
+            <Text className="font-poppins-semiBold text-sm text-[#F59E0B]">
               {`$${quoteInfo?.price}` || "N/A"}
             </Text>
           </View>
@@ -172,7 +198,7 @@ export default function ProviderJobSummary({
             </Text>
             <Text
               style={{ color: statusColor }}
-              className=" text-base font-poppins-semiBold"
+              className="text-base font-poppins-semiBold"
             >
               {getStatusLabel(quoteInfo?.job?.status || "N/A")}
             </Text>

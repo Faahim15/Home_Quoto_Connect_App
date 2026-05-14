@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { Text, View, TouchableOpacity, ScrollView } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  ScrollView,
+  Pressable,
+} from "react-native";
 
 const Dropdown = ({ label, value, options, onSelect, placeholder }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,7 +16,7 @@ const Dropdown = ({ label, value, options, onSelect, placeholder }) => {
         {label}
       </Text>
 
-      <TouchableOpacity
+      <Pressable
         className="bg-white border border-[#CACACA] rounded-md px-[3%] py-[3%]"
         onPress={() => setIsOpen(!isOpen)}
         activeOpacity={0.7}
@@ -25,7 +31,7 @@ const Dropdown = ({ label, value, options, onSelect, placeholder }) => {
             {isOpen ? "▲" : "▼"}
           </Text>
         </View>
-      </TouchableOpacity>
+      </Pressable>
 
       {isOpen && (
         <View className="bg-white border border-[#CACACA] rounded-md mt-1 max-h-[200px] shadow-md">
@@ -34,7 +40,7 @@ const Dropdown = ({ label, value, options, onSelect, placeholder }) => {
             showsVerticalScrollIndicator={true}
           >
             {options.map((option, index) => (
-              <TouchableOpacity
+              <Pressable
                 key={option.value}
                 className={`px-[3%] py-[3%] ${index !== options.length - 1 ? "border-b border-[#F0F0F0]" : ""}`}
                 onPress={() => {
@@ -46,7 +52,7 @@ const Dropdown = ({ label, value, options, onSelect, placeholder }) => {
                 <Text className="font-poppins-400regular text-sm text-black">
                   {option.label}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </ScrollView>
         </View>

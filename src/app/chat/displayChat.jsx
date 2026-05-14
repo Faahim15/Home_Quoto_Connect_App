@@ -3,13 +3,12 @@ import {
   View,
   Text,
   FlatList,
-  Image,
   Platform,
   Dimensions,
   ActivityIndicator,
   Alert,
   KeyboardAvoidingView,
-  TouchableOpacity,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -28,14 +27,13 @@ import {
 import { formatedDate } from "../util/helper-function";
 import { useSocket } from "../../hooks/useSokect";
 import { Modal } from "react-native";
+import { Image } from "expo-image";
 
 const ChatScreen = () => {
   const { providerId } = useLocalSearchParams();
   const { data, isLoading } = useGetProviderDetailsQuery(providerId);
   const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-  const { socket, isConnected } = useSocket(
-    "https://api.quoto.ca"
-  );
+  const { socket, isConnected } = useSocket("https://api.quoto.ca");
 
   //wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net
   const [messages, setMessages] = useState([]);
@@ -77,7 +75,7 @@ const ChatScreen = () => {
   useEffect(() => {
     if (chatData?.data?.chats?.length && providerId) {
       const providerChat = chatData.data.chats.find((chat) =>
-        chat?.participants?.some((p) => p?.user?._id === providerId)
+        chat?.participants?.some((p) => p?.user?._id === providerId),
       );
 
       if (providerChat?._id) {
@@ -126,7 +124,7 @@ const ChatScreen = () => {
       ) {
         Alert.alert(
           "Permission Required",
-          "Camera and media library permissions are needed to send photos"
+          "Camera and media library permissions are needed to send photos",
         );
         return false;
       }
@@ -266,7 +264,7 @@ const ChatScreen = () => {
         formData.append("content", textTrimmed);
         formData.append(
           "messageType",
-          selectedMedia && selectedMedia.length > 0 ? "image" : "text"
+          selectedMedia && selectedMedia.length > 0 ? "image" : "text",
         );
 
         // Convert images to base64 and append
@@ -371,12 +369,12 @@ const ChatScreen = () => {
       onRequestClose={() => setSelectedImage(null)}
     >
       <View className="flex-1 bg-black justify-center items-center">
-        <TouchableOpacity
+        <Pressable
           className="absolute top-10 right-5 z-10"
           onPress={() => setSelectedImage(null)}
         >
           <Ionicons name="close" size={30} color="white" />
-        </TouchableOpacity>
+        </Pressable>
         <Image
           source={{ uri: selectedImage }}
           style={{ width: "100%", height: "70%" }}
@@ -412,7 +410,7 @@ const ChatScreen = () => {
           {messageMedia.length > 0 && (
             <View className="flex-row flex-wrap">
               {messageMedia.map((media, index) => (
-                <TouchableOpacity
+                <Pressable
                   key={index}
                   onPress={() => setSelectedImage(media.url)}
                   activeOpacity={0.7}
@@ -430,7 +428,7 @@ const ChatScreen = () => {
                       resizeMode="cover"
                     />
                   </View>
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           )}

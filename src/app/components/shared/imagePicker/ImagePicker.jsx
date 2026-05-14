@@ -1,6 +1,6 @@
 // ImageSelector.jsx
 import React from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
@@ -14,7 +14,7 @@ export default function ImageSelector({ selectedFile, onFileSelect }) {
       if (status !== "granted") {
         Alert.alert(
           "Permission Required",
-          "Please grant permission to access your photo library."
+          "Please grant permission to access your photo library.",
         );
         return;
       }
@@ -74,7 +74,7 @@ export default function ImageSelector({ selectedFile, onFileSelect }) {
     <View className="flex-1 bg-[#f9f9f9]">
       <View className="w-full">
         <View className="bg-[#f9f9f9]">
-          <TouchableOpacity
+          <Pressable
             onPress={handleUpload}
             className="bg-[#f9f9f9] border border-[#DCDCDC] rounded-lg active:bg-blue-50/50"
             activeOpacity={0.7}
@@ -114,7 +114,7 @@ export default function ImageSelector({ selectedFile, onFileSelect }) {
                 </Text>
               </View>
             )}
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
     </View>

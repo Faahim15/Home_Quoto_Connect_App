@@ -7,6 +7,7 @@ import {
   Linking,
   ScrollView,
   RefreshControl,
+  Pressable,
 } from "react-native";
 import { useState } from "react";
 import CustomTitle from "../../components/shared/CustomTitle";
@@ -15,7 +16,6 @@ import {
   useGetWalletQuery,
   useSetupStripeConnectMutation,
 } from "../../../redux/features/apiSlices/payment/paymentApiSlice";
-
 
 const StripePayment = () => {
   const [setupStripeConnect, { isLoading: isSettingUp }] =
@@ -45,13 +45,13 @@ const StripePayment = () => {
       } else {
         Alert.alert(
           "Error",
-          result?.message || "Failed to setup Stripe Connect"
+          result?.message || "Failed to setup Stripe Connect",
         );
       }
     } catch (error) {
       Alert.alert(
         "Setup Failed",
-        error?.data?.message || "Something went wrong. Please try again."
+        error?.data?.message || "Something went wrong. Please try again.",
       );
     }
   };
@@ -120,9 +120,8 @@ const StripePayment = () => {
           colors={["#4F46E5"]}
         />
       }
-    > 
-    
-    <CustomTitle title="Stripe Connect" withSafeTop={true} />
+    >
+      <CustomTitle title="Stripe Connect" withSafeTop={true} />
 
       <View className="px-6 py-6">
         {/* Account Status Card */}
@@ -294,7 +293,7 @@ const StripePayment = () => {
         {/* Action Buttons */}
         <View className="space-y-4">
           {!isConnected ? (
-            <TouchableOpacity
+            <Pressable
               onPress={handleSetupStripeConnect}
               disabled={isSettingUp}
               className={`bg-indigo-600 rounded-xl py-4 px-6 flex-row items-center justify-center ${isSettingUp ? "opacity-60" : ""}`}
@@ -315,9 +314,9 @@ const StripePayment = () => {
                   </Text>
                 </>
               )}
-            </TouchableOpacity>
+            </Pressable>
           ) : (
-            <TouchableOpacity
+            <Pressable
               onPress={handleSetupStripeConnect}
               disabled={isSettingUp}
               className={`bg-indigo-600  rounded-xl py-4 px-6 flex-row items-center justify-center ${isSettingUp ? "opacity-60" : ""}`}
@@ -338,7 +337,7 @@ const StripePayment = () => {
                   </Text>
                 </>
               )}
-            </TouchableOpacity>
+            </Pressable>
           )}
         </View>
 

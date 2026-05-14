@@ -1,4 +1,11 @@
-import { View, Image, Text, TouchableOpacity, FlatList } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  TouchableOpacity,
+  FlatList,
+  Pressable,
+} from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import { Ionicons } from "@expo/vector-icons";
 import { PaidData } from "../../data/jobs/QuotesData";
@@ -19,7 +26,7 @@ const ServiceItem = ({ item }) => {
   return (
     <View className="mx-[4%] mb-[4%]">
       {/* Service Type Banner - Made clickable */}
-      <TouchableOpacity
+      <Pressable
         onPress={handleServicePress}
         style={{
           borderTopLeftRadius: scale(8),
@@ -35,7 +42,7 @@ const ServiceItem = ({ item }) => {
         <View>
           <Ionicons name="arrow-forward" size={16} color="#fff" />
         </View>
-      </TouchableOpacity>
+      </Pressable>
 
       <View
         style={{
@@ -46,7 +53,7 @@ const ServiceItem = ({ item }) => {
       >
         <View className="flex-row items-center gap-[4%]">
           {/* Profile Image */}
-          <TouchableOpacity
+          <Pressable
             onPress={
               () =>
                 router.push({
@@ -67,7 +74,7 @@ const ServiceItem = ({ item }) => {
               className="w-full h-full rounded-full"
               resizeMode="cover"
             />
-          </TouchableOpacity>
+          </Pressable>
 
           {/* Provider Details */}
           <View className="flex-1">
@@ -96,7 +103,7 @@ const ServiceItem = ({ item }) => {
             </View>
 
             <View className=" ">
-              <TouchableOpacity
+              <Pressable
                 onPress={() => setShowPayment(true)}
                 style={{ width: "full", height: verticalScale(40) }}
                 className={` justify-center items-center  mt-[3%] rounded-md py-[2%] px-[2%] ${serviceColors[item?.serviceType] || "bg-[#0054A5]"} `}
@@ -104,7 +111,7 @@ const ServiceItem = ({ item }) => {
                 <Text className=" font-poppins-bold   text-white text-base font-semibold">
                   Pay Now
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
             <PaymentMethodModal
               visible={showPayment}

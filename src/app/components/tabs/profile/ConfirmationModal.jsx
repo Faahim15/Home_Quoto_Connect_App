@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   Modal,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 
@@ -32,7 +33,7 @@ export default function ConfirmationModal({
             </Text>
 
             <View className="flex-row justify-center ">
-              <TouchableOpacity
+              <Pressable
                 onPress={onYes}
                 disabled={isLoading}
                 style={{ width: scale(120), height: verticalScale(40) }}
@@ -47,8 +48,8 @@ export default function ConfirmationModal({
                     {yesText}
                   </Text>
                 )}
-              </TouchableOpacity>
-              <TouchableOpacity
+              </Pressable>
+              <Pressable
                 onPress={onNo}
                 style={{ width: scale(120), height: verticalScale(40) }}
                 className="ml-[3%] justify-center items-center  bg-[#0065FF] rounded-lg"
@@ -56,7 +57,7 @@ export default function ConfirmationModal({
                 <Text className="text-white text-sm font-poppins-semiBold text-center">
                   {noText}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           </View>
         </View>

@@ -5,28 +5,137 @@ import {
   TouchableOpacity,
   Modal,
   FlatList,
+  Pressable,
 } from "react-native";
 import { useState } from "react";
 
 const countries = [
-  { code: "+1", flag: "🇨🇦", name: "Canada", maxLength: 12, format: "XXX XXX XXXX" },
-  { code: "+1", flag: "🇺🇸", name: "United States", maxLength: 12, format: "XXX XXX XXXX" },
-  { code: "+44", flag: "🇬🇧", name: "United Kingdom", maxLength: 13, format: "XXXX XXX XXXX" },
-  { code: "+33", flag: "🇫🇷", name: "France", maxLength: 12, format: "X XX XX XX XX" },
-  { code: "+49", flag: "🇩🇪", name: "Germany", maxLength: 13, format: "XXX XXXXXXXX" },
-  { code: "+39", flag: "🇮🇹", name: "Italy", maxLength: 12, format: "XXX XXX XXXX" },
-  { code: "+34", flag: "🇪🇸", name: "Spain", maxLength: 11, format: "XXX XX XX XX" },
-  { code: "+81", flag: "🇯🇵", name: "Japan", maxLength: 13, format: "XX XXXX XXXX" },
-  { code: "+82", flag: "🇰🇷", name: "South Korea", maxLength: 13, format: "XX XXXX XXXX" },
-  { code: "+61", flag: "🇦🇺", name: "Australia", maxLength: 12, format: "XXX XXX XXX" },
-  { code: "+64", flag: "🇳🇿", name: "New Zealand", maxLength: 11, format: "XX XXX XXXX" },
-  { code: "+31", flag: "🇳🇱", name: "Netherlands", maxLength: 11, format: "XX XXX XXXX" },
-  { code: "+32", flag: "🇧🇪", name: "Belgium", maxLength: 11, format: "XXX XX XX XX" },
-  { code: "+47", flag: "🇳🇴", name: "Norway", maxLength: 10, format: "XXX XX XXX" },
-  { code: "+46", flag: "🇸🇪", name: "Sweden", maxLength: 11, format: "XX XXX XX XX" },
-  { code: "+45", flag: "🇩🇰", name: "Denmark", maxLength: 10, format: "XX XX XX XX" },
-  { code: "+48", flag: "🇵🇱", name: "Poland", maxLength: 11, format: "XXX XXX XXX" },
-  { code: "+351", flag: "🇵🇹", name: "Portugal", maxLength: 11, format: "XXX XXX XXX" },
+  {
+    code: "+1",
+    flag: "🇨🇦",
+    name: "Canada",
+    maxLength: 12,
+    format: "XXX XXX XXXX",
+  },
+  {
+    code: "+1",
+    flag: "🇺🇸",
+    name: "United States",
+    maxLength: 12,
+    format: "XXX XXX XXXX",
+  },
+  {
+    code: "+44",
+    flag: "🇬🇧",
+    name: "United Kingdom",
+    maxLength: 13,
+    format: "XXXX XXX XXXX",
+  },
+  {
+    code: "+33",
+    flag: "🇫🇷",
+    name: "France",
+    maxLength: 12,
+    format: "X XX XX XX XX",
+  },
+  {
+    code: "+49",
+    flag: "🇩🇪",
+    name: "Germany",
+    maxLength: 13,
+    format: "XXX XXXXXXXX",
+  },
+  {
+    code: "+39",
+    flag: "🇮🇹",
+    name: "Italy",
+    maxLength: 12,
+    format: "XXX XXX XXXX",
+  },
+  {
+    code: "+34",
+    flag: "🇪🇸",
+    name: "Spain",
+    maxLength: 11,
+    format: "XXX XX XX XX",
+  },
+  {
+    code: "+81",
+    flag: "🇯🇵",
+    name: "Japan",
+    maxLength: 13,
+    format: "XX XXXX XXXX",
+  },
+  {
+    code: "+82",
+    flag: "🇰🇷",
+    name: "South Korea",
+    maxLength: 13,
+    format: "XX XXXX XXXX",
+  },
+  {
+    code: "+61",
+    flag: "🇦🇺",
+    name: "Australia",
+    maxLength: 12,
+    format: "XXX XXX XXX",
+  },
+  {
+    code: "+64",
+    flag: "🇳🇿",
+    name: "New Zealand",
+    maxLength: 11,
+    format: "XX XXX XXXX",
+  },
+  {
+    code: "+31",
+    flag: "🇳🇱",
+    name: "Netherlands",
+    maxLength: 11,
+    format: "XX XXX XXXX",
+  },
+  {
+    code: "+32",
+    flag: "🇧🇪",
+    name: "Belgium",
+    maxLength: 11,
+    format: "XXX XX XX XX",
+  },
+  {
+    code: "+47",
+    flag: "🇳🇴",
+    name: "Norway",
+    maxLength: 10,
+    format: "XXX XX XXX",
+  },
+  {
+    code: "+46",
+    flag: "🇸🇪",
+    name: "Sweden",
+    maxLength: 11,
+    format: "XX XXX XX XX",
+  },
+  {
+    code: "+45",
+    flag: "🇩🇰",
+    name: "Denmark",
+    maxLength: 10,
+    format: "XX XX XX XX",
+  },
+  {
+    code: "+48",
+    flag: "🇵🇱",
+    name: "Poland",
+    maxLength: 11,
+    format: "XXX XXX XXX",
+  },
+  {
+    code: "+351",
+    flag: "🇵🇹",
+    name: "Portugal",
+    maxLength: 11,
+    format: "XXX XXX XXX",
+  },
 ];
 
 export default function PhoneInput({ onChangeText, error, value }) {
@@ -42,7 +151,11 @@ export default function PhoneInput({ onChangeText, error, value }) {
     }
     if (limited.length > 6) {
       formatted =
-        limited.slice(0, 3) + " " + limited.slice(3, 6) + " " + limited.slice(6);
+        limited.slice(0, 3) +
+        " " +
+        limited.slice(3, 6) +
+        " " +
+        limited.slice(6);
     }
     return formatted;
   };
@@ -70,18 +183,32 @@ export default function PhoneInput({ onChangeText, error, value }) {
           style={{ height: 52, alignItems: "center" }}
         >
           {/* Flag */}
-          <TouchableOpacity
+          <Pressable
             onPress={() => setModalVisible(true)}
-            style={{ justifyContent: "center", alignItems: "center", marginRight: 8 }}
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginRight: 8,
+            }}
           >
             <Text style={{ fontSize: 22 }}>{selectedCountry.flag}</Text>
-          </TouchableOpacity>
+          </Pressable>
 
           {/* Separator */}
-          <View style={{ width: 1, height: 20, backgroundColor: "#D1D5DB", marginRight: 8 }} />
+          <View
+            style={{
+              width: 1,
+              height: 20,
+              backgroundColor: "#D1D5DB",
+              marginRight: 8,
+            }}
+          />
 
           {/* Country Code */}
-          <Text className="text-gray-700" style={{ fontSize: 15, marginRight: 4 }}>
+          <Text
+            className="text-gray-700"
+            style={{ fontSize: 15, marginRight: 4 }}
+          >
             {selectedCountry.code}
           </Text>
 
@@ -133,25 +260,27 @@ export default function PhoneInput({ onChangeText, error, value }) {
               data={countries}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => (
-                <TouchableOpacity
+                <Pressable
                   onPress={() => handleCountrySelect(item)}
                   className="flex-row items-center p-4 border-b border-gray-100"
                 >
                   <Text className="text-2xl mr-3">{item.flag}</Text>
-                  <Text className="flex-1 text-base text-gray-900">{item.name}</Text>
+                  <Text className="flex-1 text-base text-gray-900">
+                    {item.name}
+                  </Text>
                   <Text className="text-base text-gray-600">{item.code}</Text>
-                </TouchableOpacity>
+                </Pressable>
               )}
             />
 
-            <TouchableOpacity
+            <Pressable
               onPress={() => setModalVisible(false)}
               className="p-4 bg-gray-100"
             >
               <Text className="text-center text-base font-semibold text-gray-700">
                 Cancel
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </Modal>

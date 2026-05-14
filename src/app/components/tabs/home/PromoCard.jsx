@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  Pressable,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -75,10 +76,10 @@ export default function PromoCard() {
   };
   // Filter recent searches based on current input
   const filteredRecentSearches = recentSearches.filter((item) =>
-    item.term.toLowerCase().includes(searchText.toLowerCase())
+    item.term.toLowerCase().includes(searchText.toLowerCase()),
   );
   const renderRecentSearchItem = ({ item }) => (
-    <TouchableOpacity
+    <Pressable
       style={styles.recentSearchItem}
       className="font-poppins-400regular  "
       onPress={() => handleRecentSearchSelect(item.term)}
@@ -92,7 +93,7 @@ export default function PromoCard() {
       >
         {item.results} results{" "}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
   return (
     <View className="mx-[6.4%]  w-[87%]  mt-[3%] ">
@@ -176,11 +177,11 @@ export default function PromoCard() {
             <Text className="font-poppins-semiBold text-base text-[#6B7280]">
               Recent Searches
             </Text>
-            <TouchableOpacity onPress={clearRecentSearches}>
+            <Pressable onPress={clearRecentSearches}>
               <Text className="font-poppins-400regular text-base text-[#175994]">
                 Clear
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
           <FlatList

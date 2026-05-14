@@ -7,6 +7,7 @@ import {
   Modal,
   ScrollView,
   Platform,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
@@ -34,7 +35,7 @@ const MessageInput = ({
       animationType="fade"
       onRequestClose={() => setShowMediaModal(false)}
     >
-      <TouchableOpacity
+      <Pressable
         className="flex-1 bg-black/50 justify-end"
         activeOpacity={1}
         onPress={() => setShowMediaModal(false)}
@@ -47,7 +48,7 @@ const MessageInput = ({
           </Text>
 
           <View className="space-y-3">
-            <TouchableOpacity
+            <Pressable
               onPress={selectFromLibrary}
               className="flex-row items-center p-4 bg-gray-50 rounded-xl"
             >
@@ -62,9 +63,9 @@ const MessageInput = ({
                   Choose from your gallery
                 </Text>
               </View>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               onPress={takePhoto}
               className="flex-row items-center p-4 bg-gray-50 rounded-xl"
             >
@@ -79,19 +80,19 @@ const MessageInput = ({
                   Capture with camera
                 </Text>
               </View>
-            </TouchableOpacity>
+            </Pressable>
           </View>
 
-          <TouchableOpacity
+          <Pressable
             onPress={() => setShowMediaModal(false)}
             className="mt-6 p-4 bg-gray-100 rounded-xl"
           >
             <Text className="text-gray-600 text-center font-poppins-400regular">
               Cancel
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     </Modal>
   );
 
@@ -105,24 +106,21 @@ const MessageInput = ({
               <Text className="text-gray-700 font-poppins-500medium">
                 Selected Photos ({selectedMedia.length})
               </Text>
-              <TouchableOpacity
-                onPress={() => removeSelectedMedia()}
-                className="p-1"
-              >
+              <Pressable onPress={() => removeSelectedMedia()} className="p-1">
                 <Ionicons name="close-circle" size={20} color="#EF4444" />
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View className="flex-row">
                 {selectedMedia.map((media, index) => (
                   <View key={index} className="relative mr-2">
-                    <TouchableOpacity
+                    <Pressable
                       onPress={() => removeSelectedMedia(index)}
                       className="absolute top-1 right-1 z-10 bg-red-500 rounded-full w-5 h-5 items-center justify-center"
                     >
                       <Ionicons name="close" size={12} color="white" />
-                    </TouchableOpacity>
+                    </Pressable>
 
                     <Image
                       source={{ uri: media.uri }}
@@ -159,17 +157,17 @@ const MessageInput = ({
             onBlur={handleTypingStop}
           />
 
-          <TouchableOpacity onPress={() => setShowMediaModal(true)}>
+          <Pressable onPress={() => setShowMediaModal(true)}>
             <View
               style={{ width: scale(24), height: verticalScale(24) }}
               className="rounded items-center justify-center"
             >
               <Ionicons name="image-outline" size={24} color="#1A73E8" />
             </View>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
-        <TouchableOpacity
+        <Pressable
           onPress={sendMessage}
           style={{ width: scale(42), height: verticalScale(42) }}
           className={`border border-[#C3DBFF] rounded-md items-center justify-center ${
@@ -188,7 +186,7 @@ const MessageInput = ({
             }
             style={{ transform: [{ rotate: "-50deg" }] }}
           />
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

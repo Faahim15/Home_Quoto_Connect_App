@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, Pressable } from "react-native";
 
 export default function MapButton({
   title,
@@ -17,14 +17,14 @@ export default function MapButton({
       }}
       className="px-[4%] py-[3%] border rounded-md"
     >
-      <TouchableOpacity onPress={onPress} disabled={disabled}>
+      <Pressable onPress={onPress} disabled={disabled}>
         <Text
           style={{ color: disabled ? "#6B7280" : color }}
           className="font-poppins-bold text-base"
         >
           {title}
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }

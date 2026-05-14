@@ -13,8 +13,8 @@ import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 const screenWidth = Dimensions.get("window").width;
-const horizontalMargin = screenWidth * 0.12; 
-const cardGap = scale(16); 
+const horizontalMargin = screenWidth * 0.12;
+const cardGap = scale(16);
 const cardWidth = (screenWidth - horizontalMargin - cardGap * 2) / 3.1;
 
 const ServiceItem = ({ item }) => {
@@ -49,22 +49,22 @@ export default function PopularServices({ categories }) {
           Popular Services
         </Text>
         {hasData && (
-          <TouchableOpacity
+          <Pressable
             onPress={() => router.push("/services/popularServicesView")}
           >
             <Text className="font-poppins-semiBold text-base text-[#18649F] ">
               View all
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         )}
       </View>
 
       {/* Services List */}
       <View className="mt-[1.6%] ">
         {!hasData ? (
-          <View 
+          <View
             className="bg-white border border-[#D4E0EB] rounded-lg items-center justify-center"
-            style={{ height: verticalScale(110), width: '100%' }}
+            style={{ height: verticalScale(110), width: "100%" }}
           >
             <Ionicons name="grid-outline" size={scale(30)} color="#D1D5DB" />
             <Text className="font-poppins-500medium text-sm text-[#9CA3AF] mt-1">

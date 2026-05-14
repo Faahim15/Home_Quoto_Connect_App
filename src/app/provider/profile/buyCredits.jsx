@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
 import CustomTitle from "../../components/shared/CustomTitle";
 import { verticalScale } from "../../components/adaptive/Adaptiveness";
@@ -63,7 +64,8 @@ const BuyCreditScreen = () => {
             No Packages Available
           </Text>
           <Text className="text-gray-500 font-poppins-400regular text-sm text-center mt-2">
-            We couldn't find any credit packages at the moment. Please check back later or contact support.
+            We couldn't find any credit packages at the moment. Please check
+            back later or contact support.
           </Text>
         </View>
       ) : (
@@ -75,7 +77,7 @@ const BuyCreditScreen = () => {
           >
             <View className="mt-[3%] gap-[3%]">
               {packages.map((pkg) => (
-                <TouchableOpacity
+                <Pressable
                   key={pkg._id}
                   onPress={() => setSelectedPlan(pkg._id)}
                   className={`${
@@ -113,7 +115,9 @@ const BuyCreditScreen = () => {
                   {/* Description */}
                   <View className="mb-[5%]">
                     <View className="flex-row items-start mb-[2%]">
-                      <Text className="text-[#175994] text-base mr-[2%]">✓</Text>
+                      <Text className="text-[#175994] text-base mr-[2%]">
+                        ✓
+                      </Text>
                       <Text className="text-[#0F161C] font-poppins-400regular text-xs flex-1 leading-5">
                         {pkg.description}
                       </Text>
@@ -154,13 +158,13 @@ const BuyCreditScreen = () => {
                       </View>
                     </View>
                   )}
-                </TouchableOpacity>
+                </Pressable>
               ))}
             </View>
           </ScrollView>
 
           {/* Continue Button */}
-          <TouchableOpacity
+          <Pressable
             onPress={buyCreditHandler}
             disabled={!selectedPlan}
             className={`${
@@ -173,7 +177,7 @@ const BuyCreditScreen = () => {
                 ? `Continue with ${selectedPackage.name}`
                 : "Select a Plan to Continue"}
             </Text>
-          </TouchableOpacity>
+          </Pressable>
         </>
       )}
     </View>

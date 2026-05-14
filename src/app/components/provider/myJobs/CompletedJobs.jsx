@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
@@ -32,7 +33,7 @@ const ServiceCard = ({ item }) => {
   }, [item]);
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={handlePress}
       style={{ width: scale(327), height: "full" }}
       className="bg-white pb-[2%] mr-[0.5%] flex-col justify-center  border border-[#D4E0EB] px-[4.5%]  rounded-xl shadow-sm overflow-hidden"
@@ -125,7 +126,7 @@ const ServiceCard = ({ item }) => {
           disabled={isAlreadyReviewed}
         />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -137,7 +138,7 @@ export default function CompletedJobs() {
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
 
   // Pull to Refresh
@@ -175,14 +176,14 @@ export default function CompletedJobs() {
           {error?.message || "Something went wrong. Please try again."}
         </Text>
 
-        <TouchableOpacity
+        <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-500medium text-white text-base">
             Retry
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }
@@ -205,14 +206,14 @@ export default function CompletedJobs() {
           You don't have any completed quotes at the moment.
         </Text>
 
-        <TouchableOpacity
+        <Pressable
           onPress={refetch}
           className="mt-6 bg-[#175994] px-6 py-3 rounded-lg"
         >
           <Text className="font-poppins-500medium text-white text-base">
             Refresh
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     );
   }

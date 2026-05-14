@@ -65,21 +65,21 @@ const ReportModal = ({ visible, onClose, onSelectProvider, userData }) => {
               <View className="p-[5%]">
                 {/* Header */}
                 <View className="flex-row justify-between items-center mb-[6%]">
-                  <TouchableOpacity
+                  <Pressable
                     onPress={() => setShowReportForm(false)}
                     className="p-2"
                   >
                     <Ionicons name="arrow-back" size={20} color="#666" />
-                  </TouchableOpacity>
+                  </Pressable>
                   <Text className="text-lg font-semibold text-gray-800">
                     Report
                   </Text>
-                  <TouchableOpacity
+                  <Pressable
                     onPress={handleCloseModal}
                     className="p-2 rounded-full bg-gray-100"
                   >
                     <Ionicons name="close" size={20} color="#666" />
-                  </TouchableOpacity>
+                  </Pressable>
                 </View>
 
                 {/* Provider Info */}
@@ -144,14 +144,14 @@ const ReportModal = ({ visible, onClose, onSelectProvider, userData }) => {
                 </View>
 
                 {/* Submit Button */}
-                <TouchableOpacity
+                <Pressable
                   onPress={handleSubmitReport}
                   className="bg-blue-600 mt-[2%] rounded-lg p-[4%] items-center"
                 >
                   <Text className="text-white font-semibold text-base">
                     Submit
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               </View>
             </View>
           ) : (
@@ -162,18 +162,18 @@ const ReportModal = ({ visible, onClose, onSelectProvider, userData }) => {
                 <Text className="text-lg font-semibold text-gray-800">
                   Select Action
                 </Text>
-                <TouchableOpacity
+                <Pressable
                   onPress={handleCloseModal}
                   className="p-2 rounded-full bg-gray-100"
                 >
                   <Ionicons name="close" size={20} color="#666" />
-                </TouchableOpacity>
+                </Pressable>
               </View>
 
               {/* Provider Options */}
               <View className="gap-y-[3%]">
                 {/* Report Provider */}
-                <TouchableOpacity
+                <Pressable
                   onPress={() => handleProviderSelect("report")}
                   className="flex-row items-center p-[4%] rounded-xl bg-gray-50 active:bg-gray-100"
                 >
@@ -184,7 +184,7 @@ const ReportModal = ({ visible, onClose, onSelectProvider, userData }) => {
                     Report Provider
                   </Text>
                   <Ionicons name="chevron-forward" size={16} color="#9CA3AF" />
-                </TouchableOpacity>
+                </Pressable>
 
                 {/* Block Provider */}
                 {/* <TouchableOpacity

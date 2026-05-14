@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as DocumentPicker from "expo-document-picker";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
@@ -88,7 +88,7 @@ const ServiceDocumentUpload = ({
           style={{ backgroundColor: backgroundColor }}
           className="w-full   border border-[#DCDCDC] rounded-lg"
         >
-          <TouchableOpacity
+          <Pressable
             onPress={selectedFile ? null : pickDocument}
             className="flex-row items-center justify-between px-[3%] py-[4%]"
             activeOpacity={0.7}
@@ -108,7 +108,7 @@ const ServiceDocumentUpload = ({
               </Text>
             </View>
 
-            <TouchableOpacity
+            <Pressable
               onPress={selectedFile ? removeFile : pickDocument}
               activeOpacity={0.7}
             >
@@ -117,8 +117,8 @@ const ServiceDocumentUpload = ({
               >
                 {selectedFile ? "Remove" : "Change"}
               </Text>
-            </TouchableOpacity>
-          </TouchableOpacity>
+            </Pressable>
+          </Pressable>
         </View>
       </View>
     </View>

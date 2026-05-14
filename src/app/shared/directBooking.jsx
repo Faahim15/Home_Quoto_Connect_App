@@ -6,6 +6,7 @@ import {
   ScrollView,
   SafeAreaView,
   Alert,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -31,7 +32,7 @@ export default function DirectPostJobScreen() {
   useFocusEffect(
     useCallback(() => {
       console.log(
-        "🔄 Resetting job data when user focuses on PostJobScreen..."
+        "🔄 Resetting job data when user focuses on PostJobScreen...",
       );
       dispatch(resetJobPost());
 
@@ -39,7 +40,7 @@ export default function DirectPostJobScreen() {
       return () => {
         console.log("📝 PostJobScreen lost focus");
       };
-    }, [dispatch])
+    }, [dispatch]),
   );
 
   // ✅ Save providerId to both Redux and AsyncStorage when it's available
@@ -78,7 +79,7 @@ export default function DirectPostJobScreen() {
     if (status !== "granted") {
       Alert.alert(
         "Permission needed",
-        "Camera permission is required to take photos"
+        "Camera permission is required to take photos",
       );
       return;
     }
@@ -140,7 +141,7 @@ export default function DirectPostJobScreen() {
         </Text>
 
         {/* Upload Area */}
-        <TouchableOpacity
+        <Pressable
           onPress={showImageOptions}
           className="w-full h-[40%] bg-gray-100 rounded-lg flex items-center justify-center mb-[5%] border-2 border-dashed border-gray-300"
         >
@@ -148,7 +149,7 @@ export default function DirectPostJobScreen() {
             <Ionicons name="camera" size={24} color="white" />
           </View>
           <Text className="text-gray-600 text-center">Tap to add photos</Text>
-        </TouchableOpacity>
+        </Pressable>
 
         {/* Photo Grid */}
         <View className="flex-row flex-wrap justify-between mb-[5%]">
@@ -159,12 +160,12 @@ export default function DirectPostJobScreen() {
                 className="w-full bg-gray-100 rounded-lg"
                 style={{ aspectRatio: 1 }}
               />
-              <TouchableOpacity
+              <Pressable
                 onPress={() => handleRemovePhoto(photo.id)}
                 className="absolute top-[5%] right-[5%] bg-white rounded-full p-1 shadow-md"
               >
                 <Ionicons name="close" size={16} color="#666" />
-              </TouchableOpacity>
+              </Pressable>
             </View>
           ))}
         </View>
