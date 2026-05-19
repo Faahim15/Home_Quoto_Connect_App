@@ -1,5 +1,5 @@
 import { ActivityIndicator, Text, View } from "react-native";
-import CustomTitle from "../components/shared/services/CustomTitle";
+import CustomTitle from "../components/shared/CustomTitle";
 import AllReviews from "../components/tabs/home/services/provider/details/AllReviews";
 import { useLocalSearchParams } from "expo-router";
 import { useGetProviderProfileDetailsQuery } from "../../redux/features/apiSlices/user/createJobSlices";
@@ -21,13 +21,15 @@ export default function AllReviewScreen() {
   }
 
   return (
-    <View className="flex-1 bg-[#f9f9f9] px-[6%] ">
+    <>
       <View>
-        <CustomTitle title="Reviews" />
+        <CustomTitle title="Reviews" withSafeTop={true} />
       </View>
-      <View>
-        <AllReviews allReview={data?.data} />
+      <View className="flex-1 bg-[#f9f9f9] px-[6%] ">
+        <View>
+          <AllReviews allReview={data?.data} />
+        </View>
       </View>
-    </View>
+    </>
   );
 }

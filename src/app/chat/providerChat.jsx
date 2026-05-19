@@ -329,7 +329,7 @@ const ProviderChatScreen = () => {
               ? "bg-[#319FCA] rounded-br-md"
               : isOwn
                 ? "bg-[#319FCA] rounded-br-md"
-                : "bg-white rounded-bl-md shadow-sm"
+                : "bg-[#f9f9f9] rounded-bl-md shadow-sm"
           }`}
         >
           {/* Media Section */}

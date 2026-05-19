@@ -1,24 +1,24 @@
-import { View, Text, TouchableOpacity, Image, Pressable } from "react-native";
+import { View, Text, TouchableOpacity, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { scale, verticalScale } from "../../adaptive/Adaptiveness";
 import ReportModal from "./ReportModal";
 import { useState } from "react";
 import { router } from "expo-router";
 import { formatDateRelative } from "../../../util/helper-function";
-
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Image } from "expo-image";
 const ChatHeader = ({ userData }) => {
   const [modalVisible, setModalVisible] = useState(false);
-
-  // console.log("show", userData);
-
-  // console.log("userData", userData);
-
+  const insets = useSafeAreaInsets();
   const handleSelectProvider = (providerId) => {
     console.log("Selected provider:", providerId);
   };
 
   return (
-    <View className="bg-white pt-[3%] pb-[1%] px-[4%] shadow-sm flex-row items-center">
+    <View
+      style={{ paddingTop: insets.top }}
+      className="bg-white pt-[3%] pb-[1%] px-[4%] shadow-sm flex-row items-center"
+    >
       <Pressable onPress={() => router.back()} className="mr-4">
         <Ionicons name="arrow-back" size={22} color="#000" />
       </Pressable>
@@ -26,7 +26,12 @@ const ChatHeader = ({ userData }) => {
       {userData?.profilePhoto ? (
         <Image
           source={{ uri: userData.profilePhoto }}
-          style={{ width: scale(38), height: verticalScale(38) }}
+          style={{
+            width: scale(38),
+            height: verticalScale(38),
+            borderRadius: scale(19),
+            marginRight: "2%",
+          }}
           className="rounded-full mr-[3%]"
         />
       ) : (

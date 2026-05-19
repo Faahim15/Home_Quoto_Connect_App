@@ -86,7 +86,7 @@ const ChatScreen = () => {
     }
   }, [chatData, providerId]);
 
-  // ✅ Fetch chat history only when chatId is available
+  //  Fetch chat history only when chatId is available
   const {
     data: singleChatHistory,
     isLoading: chatLoader,
@@ -96,14 +96,14 @@ const ChatScreen = () => {
     skip: !chatId,
   });
 
-  // 🔁 Refetch chat history when chatId becomes available
+  //  Refetch chat history when chatId becomes available
   useEffect(() => {
     if (chatId && refetchChatHistory) {
       refetchChatHistory();
     }
   }, [chatId, refetchChatHistory]);
 
-  // 📨 Update messages when chat history is fetched
+  //  Update messages when chat history is fetched
   useEffect(() => {
     if (singleChatHistory?.success && singleChatHistory?.data?.messages) {
       setMessages(singleChatHistory.data.messages);
@@ -294,7 +294,7 @@ const ChatScreen = () => {
         if (response?.data?.chat?._id) {
           const newChatId = response.data.chat._id;
           setChatId(newChatId);
-          console.log("✅ Direct chat created with ID:", newChatId);
+          console.log(" Direct chat created with ID:", newChatId);
 
           // Add the new message to the messages array
           if (response?.data?.message) {

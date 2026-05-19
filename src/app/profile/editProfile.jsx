@@ -18,6 +18,7 @@ import {
   useUpdateProfileDataMutation,
 } from "../../redux/features/apiSlices/user/userApiSlices";
 import LocationPicker from "../components/auth/LocationPicker";
+import moment from "moment";
 import CustomTitle from "../components/shared/CustomTitle";
 
 export default function EditProfileScreen() {
@@ -63,10 +64,21 @@ export default function EditProfileScreen() {
     // Check if any changes were made
     const user = profile?.data?.user;
 
+    console.log(
+      "formdata",
+      formData.fullName,
+      formData.phoneNumber,
+      formData.dateOfBirth,
+    );
+    console.log("user", user.fullName, user.phoneNumber, user.dateOfBirth);
+
     const noChanges =
       formData.fullName === (user?.fullName || "") &&
       formData.phoneNumber === (user?.phoneNumber || "") &&
-      formData.dateOfBirth === (user?.dateOfBirth || "") &&
+      formData.dateOfBirth ===
+        (user?.dateOfBirth
+          ? moment(user.dateOfBirth).utc().format("DD/MM/YYYY")
+          : "") &&
       formData.location?.address === (user?.location?.address || "");
 
     if (noChanges) {

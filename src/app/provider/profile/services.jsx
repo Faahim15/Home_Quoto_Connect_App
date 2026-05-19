@@ -4,6 +4,8 @@ import {
   View,
   ScrollView,
   KeyboardAvoidingView,
+  Modal,
+  Pressable,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -106,7 +108,6 @@ export default function ServiceScreen() {
       bio: user.bio || "",
     });
 
-    // Time formatting
     if (user.workingHours?.from) {
       const [h, m] = user.workingHours.from.split(":");
       const d = new Date();
@@ -121,7 +122,6 @@ export default function ServiceScreen() {
       setToTime(d);
     }
 
-    // Update Redux for ServiceAreaSelector
     if (transformedServiceAreas.length > 0) {
       dispatch(
         setProviderRegister({
@@ -157,11 +157,13 @@ export default function ServiceScreen() {
         }));
       }
     }
-    setShowPicker({ type: null, show: false });
+    // Android এ auto close, iOS এ Done button এ close
+    if (Platform.OS === "android") {
+      setShowPicker({ type: null, show: false });
+    }
   };
 
   const handleSave = async () => {
-    // Check if any changes were made
     const user = profile?.data?.user;
 
     const noChanges =
@@ -170,7 +172,21 @@ export default function ServiceScreen() {
       formData.experience.split(" ")[0].toLowerCase() ===
         (user?.experienceLevel?.toLowerCase() || "") &&
       formData.workingHours.from === (user?.workingHours?.from || "") &&
-      formData.workingHours.to === (user?.workingHours?.to || "");
+      formData.workingHours.to === (user?.workingHours?.to || "") &&
+      JSON.stringify(formData.serviceAreas.slice().sort()) ===
+        JSON.stringify((user?.serviceAreas || []).slice().sort()) &&
+      JSON.stringify(
+        formData.specializations
+          .map((s) => s.id)
+          .slice()
+          .sort(),
+      ) ===
+        JSON.stringify(
+          (user?.specializations || [])
+            .map((s) => s._id)
+            .slice()
+            .sort(),
+        );
 
     if (noChanges) {
       toast.info("No changes detected. Please update something before saving.");
@@ -224,7 +240,6 @@ export default function ServiceScreen() {
             <Text className="font-poppins-semiBold text-base text-[#6B7280]">
               Service name
             </Text>
-
             <DropdownMenu
               isLoading={isLoading}
               placeholder="Select Your service"
@@ -259,22 +274,6 @@ export default function ServiceScreen() {
               time={formatTime(toTime)}
               onPress={() => openTimePicker("to")}
             />
-
-            {showPicker.show && (
-              <DateTimePicker
-                value={
-                  showPicker.type === "from" && fromTime
-                    ? fromTime
-                    : showPicker.type === "to" && toTime
-                      ? toTime
-                      : new Date()
-                }
-                mode="time"
-                is24Hour
-                display={Platform.OS === "ios" ? "spinner" : "default"}
-                onChange={handleTimeChange}
-              />
-            )}
           </View>
 
           {/* Experience */}
@@ -282,7 +281,6 @@ export default function ServiceScreen() {
             <Text className="font-poppins-semiBold text-base text-[#6B7280]">
               Experience
             </Text>
-
             <DropdownMenu
               placeholder="Select Your Experience"
               options={experienceOptions}
@@ -314,6 +312,113 @@ export default function ServiceScreen() {
           />
         </View>
       </View>
+
+      {/* iOS Time Picker Modal */}
+      {Platform.OS === "ios" && (
+        <Modal
+          transparent
+          animationType="slide"
+          visible={showPicker.show}
+          onRequestClose={() => setShowPicker({ type: null, show: false })}
+        >
+          <Pressable
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(0,0,0,0.35)",
+              justifyContent: "flex-end",
+            }}
+            onPress={() => setShowPicker({ type: null, show: false })}
+          >
+            <Pressable>
+              <View
+                style={{
+                  backgroundColor: "white",
+                  borderTopLeftRadius: 20,
+                  borderTopRightRadius: 20,
+                  paddingBottom: 34,
+                }}
+              >
+                {/* Modal Header */}
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    paddingHorizontal: 20,
+                    paddingVertical: 14,
+                    borderBottomWidth: 1,
+                    borderBottomColor: "#E5E7EB",
+                  }}
+                >
+                  <Pressable
+                    onPress={() => setShowPicker({ type: null, show: false })}
+                  >
+                    <Text style={{ color: "#6B7280", fontSize: 16 }}>
+                      Cancel
+                    </Text>
+                  </Pressable>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "600",
+                      color: "#1A1A1A",
+                    }}
+                  >
+                    {showPicker.type === "from" ? "Start Time" : "End Time"}
+                  </Text>
+                  <Pressable
+                    onPress={() => setShowPicker({ type: null, show: false })}
+                  >
+                    <Text
+                      style={{
+                        color: "#319FCA",
+                        fontSize: 16,
+                        fontWeight: "600",
+                      }}
+                    >
+                      Done
+                    </Text>
+                  </Pressable>
+                </View>
+
+                {/* Picker */}
+                <DateTimePicker
+                  value={
+                    showPicker.type === "from" && fromTime
+                      ? fromTime
+                      : showPicker.type === "to" && toTime
+                        ? toTime
+                        : new Date()
+                  }
+                  mode="time"
+                  is24Hour={true}
+                  display="spinner"
+                  onChange={handleTimeChange}
+                  locale="en_CA"
+                  style={{ width: "100%" }}
+                />
+              </View>
+            </Pressable>
+          </Pressable>
+        </Modal>
+      )}
+
+      {/* Android Time Picker */}
+      {Platform.OS === "android" && showPicker.show && (
+        <DateTimePicker
+          value={
+            showPicker.type === "from" && fromTime
+              ? fromTime
+              : showPicker.type === "to" && toTime
+                ? toTime
+                : new Date()
+          }
+          mode="time"
+          is24Hour={true}
+          display="default"
+          onChange={handleTimeChange}
+        />
+      )}
     </KeyboardAvoidingView>
   );
 }

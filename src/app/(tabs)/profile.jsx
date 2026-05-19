@@ -67,7 +67,7 @@ export default function UserProfileScreen() {
       await AsyncStorage.removeItem("role");
       dispatch({ type: "RESET_STORE" });
       setModalVisible(false);
-      toast.success("See you soon! 👋");
+      toast.success("Logged Out Successfully");
 
       setTimeout(() => {
         router.replace("/onboarding/loginChoice");

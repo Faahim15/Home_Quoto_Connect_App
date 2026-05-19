@@ -12,7 +12,7 @@ import {
 import { verticalScale } from "../../components/adaptive/Adaptiveness";
 import { router, useFocusEffect } from "expo-router";
 import { useGetChatsQuery } from "../../../redux/features/apiSlices/chat/chatApiSlices";
-import { formatDateRelative } from "../../util/helper-function";
+import { formatDatesRelative } from "../../util/helper-function";
 import { useSocket } from "../../../hooks/useSokect";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
@@ -158,84 +158,94 @@ const MessagesScreen = () => {
 
     return (
       <Pressable
-        className="w-full mb-[4%] px-[4%]"
-        activeOpacity={0.7}
+        className="w-full mb-[3%] px-[4%]"
+        activeOpacity={0.75}
         onPress={() => markMessageAsRead(item._id, providerId)}
       >
         <View
-          className={`border py-[3%] rounded-lg px-[3%] flex-row items-center ${
-            isRead ? "bg-[#D1E8F1] border-[#D1E8F1]" : "bg-white"
-          } border-[#d5d5d5]`}
+          className={`rounded-2xl px-[4%] py-[3.5%] flex-row items-center ${
+            isRead
+              ? "bg-[#EAF4FB] border border-[#C5DEF0]"
+              : "bg-white border border-[#E5E7EB]"
+          }`}
+          style={{
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.06,
+            shadowRadius: 4,
+            elevation: 2,
+          }}
         >
           {/* Avatar */}
-          {/* <View className="mr-3">
-            <Image
-              source={{ uri: profilePhotoUrl || undefined }}
-              className="w-10 h-10 rounded-full"
-            />
-            {isActive && (
-              <View className="absolute bottom-0 right-0 w-3 h-3 bg-[#44B700] rounded-full border-2 border-white" />
-            )}
-          </View> */}
-
-          {/* Avatar */}
-          <View className="mr-3">
+          <View className="mr-3 relative">
             {profilePhotoUrl ? (
               <Image
                 source={{ uri: profilePhotoUrl }}
-                className="w-10 h-10 rounded-full"
+                className="w-12 h-12 rounded-full"
               />
             ) : (
-              <View className="w-10 h-10 rounded-full bg-gray-300 items-center justify-center">
-                <Ionicons name="person" size={24} color="#6B7280" />
+              <View className="w-12 h-12 rounded-full bg-[#DBEAFE] items-center justify-center">
+                <Ionicons name="person" size={22} color="#3B82F6" />
               </View>
             )}
             {isActive && (
-              <View className="absolute bottom-0 right-0 w-3 h-3 bg-[#44B700] rounded-full border-2 border-white" />
+              <View className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#22C55E] rounded-full border-2 border-white" />
             )}
           </View>
 
           {/* Message Content */}
           <View className="flex-1">
-            <View className="flex-row justify-between items-start mb-[1%]">
-              <Text className="text-[#333333] font-poppins-500medium text-base">
+            <View className="flex-row justify-between items-center mb-[2%]">
+              <Text
+                className={`font-poppins-600semibold text-sm ${
+                  isRead ? "text-[#555]" : "text-[#1A1A1A]"
+                }`}
+              >
                 {clientParticipant?.user?.fullName || "N/A"}
               </Text>
-              <Text className="text-black font-poppins-400regular text-xs">
-                {formatDateRelative(item?.lastMessage?.updatedAt) || "N/A"}
+              <Text className="text-[#9CA3AF] font-poppins-400regular text-[11px]">
+                {formatDatesRelative(item?.lastMessage?.updatedAt) || "N/A"}
               </Text>
             </View>
 
             <View className="flex-row items-center">
-              {isMediaExist && (
-                <Ionicons
-                  name="attach"
-                  size={14}
-                  color={isRead ? "#767676" : "#111"}
-                  style={{ marginRight: 4 }}
-                />
+              {isTyping ? (
+                <Text className="text-[#3B82F6] font-poppins-400regular text-xs italic">
+                  typing...
+                </Text>
+              ) : (
+                <>
+                  {isMediaExist && (
+                    <Ionicons
+                      name="attach"
+                      size={13}
+                      color={isRead ? "#9CA3AF" : "#6B7280"}
+                      style={{ marginRight: 3 }}
+                    />
+                  )}
+                  <Text
+                    className={`font-poppins-400regular text-xs flex-1 ${
+                      isRead ? "text-[#9CA3AF]" : "text-[#4B5563]"
+                    }`}
+                    numberOfLines={1}
+                  >
+                    {isMediaExist
+                      ? `${mediaCount} ${mediaCount === 1 ? "attachment" : "attachments"}${lastMessage ? ` • ${lastMessage}` : ""}`
+                      : lastMessage || "N/A"}
+                  </Text>
+                </>
               )}
-              <Text
-                className={`font-poppins-400regular text-xs ${
-                  isRead ? "text-[#767676]" : "text-[#111]"
-                }`}
-                numberOfLines={1}
-              >
-                {isMediaExist
-                  ? `${mediaCount} ${mediaCount === 1 ? "attachment" : "attachments"}${lastMessage ? ` • ${lastMessage}` : ""}`
-                  : lastMessage || "N/A"}
-              </Text>
             </View>
           </View>
 
-          {/* Read Status */}
-          <View className="ml-[2%]">
+          {/* Read indicator */}
+          <View className="ml-3 items-center justify-center">
             {isRead ? (
-              <View className="w-4 h-4 bg-blue-500 rounded-full items-center justify-center">
-                <Text className="text-white text-xs">✓</Text>
+              <View className="w-5 h-5 bg-[#3B82F6] rounded-full items-center justify-center">
+                <Ionicons name="checkmark" size={12} color="white" />
               </View>
             ) : (
-              <View className="w-4 h-4 bg-gray-300 rounded-full" />
+              <View className="w-2.5 h-2.5 bg-[#3B82F6] rounded-full" />
             )}
           </View>
         </View>
