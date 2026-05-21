@@ -10,12 +10,11 @@ import UserSelectionButtons from "../components/onboarding/ChoiceButton";
 import XStyle from "../util/styles";
 import ServiceCards from "../components/shared/services/ServiceCards";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router"; 
+import { router } from "expo-router";
 import {
   useGetActiveJobsQuery,
   useGetTodaysJobsQuery,
-} from "../../redux/features/apiSlices/user/createJobSlices"; 
-
+} from "../../redux/features/apiSlices/user/createJobSlices";
 
 export default function OnboardingHomeScreen() {
   const {
@@ -53,7 +52,6 @@ export default function OnboardingHomeScreen() {
     );
   }
 
-  // ********** Error UI **********
   if (todaysJobsError || activeJobsError) {
     return (
       <View className="flex-1 bg-[#F9FAFB] justify-center items-center px-6">
@@ -63,12 +61,20 @@ export default function OnboardingHomeScreen() {
         <Text className="text-sm text-[#6B7280] text-center mt-2 font-poppins-400regular">
           Please check your connection and try again.
         </Text>
+        <Pressable
+          onPress={() => router.back()}
+          className="mt-4 border border-[#EF4444] rounded-md px-6 py-3"
+        >
+          <Text className="font-poppins-500medium text-[#EF4444] text-base text-center">
+            Go Back
+          </Text>
+        </Pressable>
       </View>
     );
   }
 
   return (
-    <View  className="flex-1 bg-[#F9FAFB] ">
+    <View className="flex-1 bg-[#F9FAFB] ">
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header section */}
 
@@ -122,10 +128,6 @@ export default function OnboardingHomeScreen() {
           // showAddress
           whichJob="active job"
         />
-
-    
-
-
       </ScrollView>
       {/* User Selection section starts here */}
       <View

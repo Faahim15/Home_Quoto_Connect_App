@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B3965DEE023E58B5FDCC0BE /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71C15AA6CBB6C6A59171238B /* ExpoModulesProvider.swift */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		311468AF2E9719DE752ECED3 /* libPods-RazaHomeQuote.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3726A9922508C3C80F56AC58 /* libPods-RazaHomeQuote.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		94D6BC807D5D10101E9BBDF2 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31E64A67CA2BC8A33B4C40A6 /* ExpoModulesProvider.swift */; };
-		9598FA305AA7AF66005469C8 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4CC86412B87D41F404332D65 /* PrivacyInfo.xcprivacy */; };
+		4C025EA51A728A507006C040 /* libPods-RazaHomeQuote.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 228C31521FE73F04586EE63E /* libPods-RazaHomeQuote.a */; };
+		95429932A8069D163E100D78 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 664023775C5A33155BE7B7DE /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		CF28F97493424EE9995B6088 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFE295A697F48B499CB819B /* noop-file.swift */; };
+		D04772A17B4E4A978D9C856D /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DB12030C12146109FDD410B /* noop-file.swift */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
@@ -21,14 +21,14 @@
 		13B07F961A680F5B00A75B9A /* RazaHomeQuote.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RazaHomeQuote.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = RazaHomeQuote/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = RazaHomeQuote/Info.plist; sourceTree = "<group>"; };
-		1A5E16F6F1F02DBE98E1D48C /* Pods-RazaHomeQuote.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RazaHomeQuote.debug.xcconfig"; path = "Target Support Files/Pods-RazaHomeQuote/Pods-RazaHomeQuote.debug.xcconfig"; sourceTree = "<group>"; };
-		31E64A67CA2BC8A33B4C40A6 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-RazaHomeQuote/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		3726A9922508C3C80F56AC58 /* libPods-RazaHomeQuote.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RazaHomeQuote.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4CC86412B87D41F404332D65 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = RazaHomeQuote/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		6562E9A889B2F592FCE23744 /* Pods-RazaHomeQuote.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RazaHomeQuote.release.xcconfig"; path = "Target Support Files/Pods-RazaHomeQuote/Pods-RazaHomeQuote.release.xcconfig"; sourceTree = "<group>"; };
-		6FFE295A697F48B499CB819B /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "RazaHomeQuote/noop-file.swift"; sourceTree = "<group>"; };
+		228C31521FE73F04586EE63E /* libPods-RazaHomeQuote.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RazaHomeQuote.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		664023775C5A33155BE7B7DE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = RazaHomeQuote/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		71C15AA6CBB6C6A59171238B /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-RazaHomeQuote/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		8DB12030C12146109FDD410B /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "RazaHomeQuote/noop-file.swift"; sourceTree = "<group>"; };
+		8F8D5C8F794C86B014E48604 /* Pods-RazaHomeQuote.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RazaHomeQuote.debug.xcconfig"; path = "Target Support Files/Pods-RazaHomeQuote/Pods-RazaHomeQuote.debug.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = RazaHomeQuote/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
+		C967CB61E7F680BEA5D595B4 /* Pods-RazaHomeQuote.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RazaHomeQuote.release.xcconfig"; path = "Target Support Files/Pods-RazaHomeQuote/Pods-RazaHomeQuote.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = RazaHomeQuote/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* RazaHomeQuote-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "RazaHomeQuote-Bridging-Header.h"; path = "RazaHomeQuote/RazaHomeQuote-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -39,18 +39,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				311468AF2E9719DE752ECED3 /* libPods-RazaHomeQuote.a in Frameworks */,
+				4C025EA51A728A507006C040 /* libPods-RazaHomeQuote.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		094C3F635860E417E879E1EC /* Pods */ = {
+		00E17F10FF4AC423A52AB4B5 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				1A5E16F6F1F02DBE98E1D48C /* Pods-RazaHomeQuote.debug.xcconfig */,
-				6562E9A889B2F592FCE23744 /* Pods-RazaHomeQuote.release.xcconfig */,
+				8F8D5C8F794C86B014E48604 /* Pods-RazaHomeQuote.debug.xcconfig */,
+				C967CB61E7F680BEA5D595B4 /* Pods-RazaHomeQuote.release.xcconfig */,
 			);
 			name = Pods;
 			path = Pods;
@@ -65,8 +65,8 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				6FFE295A697F48B499CB819B /* noop-file.swift */,
-				4CC86412B87D41F404332D65 /* PrivacyInfo.xcprivacy */,
+				8DB12030C12146109FDD410B /* noop-file.swift */,
+				664023775C5A33155BE7B7DE /* PrivacyInfo.xcprivacy */,
 			);
 			name = RazaHomeQuote;
 			sourceTree = "<group>";
@@ -75,9 +75,17 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				3726A9922508C3C80F56AC58 /* libPods-RazaHomeQuote.a */,
+				228C31521FE73F04586EE63E /* libPods-RazaHomeQuote.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		39959F7977FD71CFAFE36235 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				FBE85DBE6AFE0701FE398C12 /* RazaHomeQuote */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -94,8 +102,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				094C3F635860E417E879E1EC /* Pods */,
-				DF84583F706D1D3D789A189A /* ExpoModulesProviders */,
+				00E17F10FF4AC423A52AB4B5 /* Pods */,
+				39959F7977FD71CFAFE36235 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -119,18 +127,10 @@
 			path = RazaHomeQuote/Supporting;
 			sourceTree = "<group>";
 		};
-		DF84583F706D1D3D789A189A /* ExpoModulesProviders */ = {
+		FBE85DBE6AFE0701FE398C12 /* RazaHomeQuote */ = {
 			isa = PBXGroup;
 			children = (
-				F9E1A442770F54CF5395A98F /* RazaHomeQuote */,
-			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
-		F9E1A442770F54CF5395A98F /* RazaHomeQuote */ = {
-			isa = PBXGroup;
-			children = (
-				31E64A67CA2BC8A33B4C40A6 /* ExpoModulesProvider.swift */,
+				71C15AA6CBB6C6A59171238B /* ExpoModulesProvider.swift */,
 			);
 			name = RazaHomeQuote;
 			sourceTree = "<group>";
@@ -143,13 +143,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RazaHomeQuote" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				1C6C156CC66E72487B4FF720 /* [Expo] Configure project */,
+				33B351B94028A48F29E8BBB2 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				AF6D27468A5F2F94368DF30D /* [CP] Embed Pods Frameworks */,
+				C9D52D6C93CC6B9440679547 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -199,7 +199,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				9598FA305AA7AF66005469C8 /* PrivacyInfo.xcprivacy in Resources */,
+				95429932A8069D163E100D78 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,7 +245,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		1C6C156CC66E72487B4FF720 /* [Expo] Configure project */ = {
+		33B351B94028A48F29E8BBB2 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -377,7 +377,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-RazaHomeQuote/Pods-RazaHomeQuote-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		AF6D27468A5F2F94368DF30D /* [CP] Embed Pods Frameworks */ = {
+		C9D52D6C93CC6B9440679547 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -407,8 +407,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				CF28F97493424EE9995B6088 /* noop-file.swift in Sources */,
-				94D6BC807D5D10101E9BBDF2 /* ExpoModulesProvider.swift in Sources */,
+				D04772A17B4E4A978D9C856D /* noop-file.swift in Sources */,
+				0B3965DEE023E58B5FDCC0BE /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,7 +417,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1A5E16F6F1F02DBE98E1D48C /* Pods-RazaHomeQuote.debug.xcconfig */;
+			baseConfigurationReference = 8F8D5C8F794C86B014E48604 /* Pods-RazaHomeQuote.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -442,7 +442,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fahim.razahomequoto;
-				PRODUCT_NAME = RazaHomeQuote;
+				PRODUCT_NAME = "RazaHomeQuote";
 				SWIFT_OBJC_BRIDGING_HEADER = "RazaHomeQuote/RazaHomeQuote-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -453,7 +453,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6562E9A889B2F592FCE23744 /* Pods-RazaHomeQuote.release.xcconfig */;
+			baseConfigurationReference = C967CB61E7F680BEA5D595B4 /* Pods-RazaHomeQuote.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -473,7 +473,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.fahim.razahomequoto;
-				PRODUCT_NAME = RazaHomeQuote;
+				PRODUCT_NAME = "RazaHomeQuote";
 				SWIFT_OBJC_BRIDGING_HEADER = "RazaHomeQuote/RazaHomeQuote-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

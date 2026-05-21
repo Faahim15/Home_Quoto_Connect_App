@@ -41,6 +41,12 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
+    console.log("=== API REQUEST ===");
+    console.log("URL:", "https://api.quoto.ca/api" + args.url);
+    console.log("Method:", args.method);
+    console.log("Body:", JSON.stringify(args.body));
+    console.log("Headers:", JSON.stringify(headers));
+
     const result = await axios({
       baseURL: "https://api.quoto.ca/api",
       url: args.url,
@@ -56,8 +62,11 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
 
     return { data: result.data };
   } catch (error) {
-    console.error("API Error:", error);
-    console.error("Error response:", error.response);
+    console.log("=== API ERROR ===");
+    console.log("Message:", error.message);
+    console.log("Status:", error.response?.status);
+    console.log("Response Data:", JSON.stringify(error.response?.data));
+    console.log("Config URL:", error.config?.url);
 
     // ── 404 gracefully handle — data নেই, crash করবে না ──
     if (error.response?.status === 404) {
