@@ -79,7 +79,7 @@ export default function VerifyOtp() {
     <View className="flex-1 bg-white">
       <CustomHeader
         title="Verify Your Account"
-        nestedTitle="Cod"
+        nestedTitle="Code"
         subtitle="Enter the code sent to your email to complete sign-up."
       />
 

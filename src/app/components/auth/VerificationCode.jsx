@@ -2,8 +2,12 @@ import { useRef, useState } from "react";
 import { TextInput, View, Text } from "react-native";
 import { scale, verticalScale } from "../adaptive/Adaptiveness";
 
-export default function VerificationCodeField({ error, otp, handleOtpChange, handleOtpPaste }) {
- 
+export default function VerificationCodeField({
+  error,
+  otp,
+  handleOtpChange,
+  handleOtpPaste,
+}) {
   const inputRefs = useRef([]);
   const [focusedIndex, setFocusedIndex] = useState(null);
 
@@ -16,7 +20,7 @@ export default function VerificationCodeField({ error, otp, handleOtpChange, han
       inputRefs.current[lastFilled]?.focus();
 
       if (digits.length === 6) {
-        inputRefs.current[5]?.blur(); 
+        inputRefs.current[5]?.blur();
       }
       return;
     }
@@ -29,7 +33,7 @@ export default function VerificationCodeField({ error, otp, handleOtpChange, han
     }
 
     if (digit.length === 1 && index === 5) {
-      inputRefs.current[5]?.blur(); 
+      inputRefs.current[5]?.blur();
     }
   };
 
@@ -59,7 +63,7 @@ export default function VerificationCodeField({ error, otp, handleOtpChange, han
               borderColor: focusedIndex === index ? "#0054A5" : "#DCDCDC",
             }}
             keyboardType="number-pad"
-            maxLength={6}
+            maxLength={index === 0 ? 6 : 1}
             value={value}
             onChangeText={(text) => handleChange(text, index)}
             onKeyPress={(e) => handleKeyPress(e, index)}
@@ -68,7 +72,7 @@ export default function VerificationCodeField({ error, otp, handleOtpChange, han
             textContentType="oneTimeCode"
             autoComplete="one-time-code"
             returnKeyType="done"
-            onSubmitEditing={() => inputRefs.current[index]?.blur()} 
+            onSubmitEditing={() => inputRefs.current[index]?.blur()}
             blurOnSubmit={false}
             caretHidden={true}
           />

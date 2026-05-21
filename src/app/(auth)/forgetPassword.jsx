@@ -18,7 +18,10 @@ export default function ForgetPasswordScreen() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
   const validationSchema = Yup.object({
-    email: Yup.string().email("Invalid email").required("Email is required"),
+    email: Yup.string()
+      .trim()
+      .email("Invalid email")
+      .required("Email is required"),
   });
   const handleSubmit = async () => {
     try {
@@ -42,7 +45,7 @@ export default function ForgetPasswordScreen() {
       // ✅ Navigate to /verification page
       router.push({
         pathname: "/verfication",
-        params: { email: data.email },
+        params: { email: data.email.trim() },
       });
     } catch (error) {
       // ❌ Show error toast

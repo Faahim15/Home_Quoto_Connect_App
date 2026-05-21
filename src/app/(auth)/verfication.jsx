@@ -7,17 +7,25 @@ import {
   useResendOtpMutation,
   useVerifyOtpMutation,
 } from "../../redux/features/apiSlices/auth/authApiSlices";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import * as Yup from "yup";
 import { toast } from "sonner-native";
+
+// ✅ Moved outside component — not recreated on every render
+const validationSchema = Yup.object({
+  otp: Yup.string()
+    .matches(/^\d{6}$/, "OTP must be exactly 6 digits")
+    .required("OTP is required"),
+});
+
 export default function VerificationScreen() {
   const [otpVerification, { isLoading: verifyOtpLoading }] =
     useVerifyOtpMutation();
   const [resendOtp, { isLoading }] = useResendOtpMutation();
   const { email } = useLocalSearchParams();
 
-  // In VerificationScreen
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]); // for 6 digits
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [errors, setErrors] = useState({});
 
   const handleOtpChange = (text, index) => {
     const newOtp = [...otp];
@@ -25,7 +33,13 @@ export default function VerificationScreen() {
     setOtp(newOtp);
   };
 
-  const [errors, setErrors] = useState({});
+  const handleOtpPaste = (digits) => {
+    const newOtp = [...otp];
+    for (let i = 0; i < 6; i++) {
+      newOtp[i] = digits[i] || "";
+    }
+    setOtp(newOtp);
+  };
 
   const handleResendPassword = async () => {
     try {
@@ -43,29 +57,21 @@ export default function VerificationScreen() {
     }
   };
 
-  const validationSchema = Yup.object({
-    otp: Yup.string()
-      .matches(/^\d{6}$/, "OTP must be exactly 6 digits")
-      .required("OTP is required"),
-  });
   const handleSubmit = async () => {
     try {
       const fullOtp = otp.join("");
 
       const data = {
-        email: email,
+        email,
         otp: fullOtp,
         purpose: "forgot-password",
       };
 
-      // ✅ Validate OTP format
       await validationSchema.validate({ otp: fullOtp }, { abortEarly: false });
       setErrors({});
 
-      // ✅ Send request to backend
-      const res = await otpVerification(data).unwrap();
+      await otpVerification(data).unwrap();
 
-      // ✅ If successful
       toast.success("OTP verified! You can now reset your password.");
 
       router.push({
@@ -74,17 +80,14 @@ export default function VerificationScreen() {
       });
     } catch (error) {
       if (error.name === "ValidationError") {
-        // ⚠️ Local form validation error
         const fieldErrors = {};
         error.inner.forEach((err) => {
           fieldErrors[err.path] = err.message;
         });
         setErrors(fieldErrors);
-
         toast.error("Please enter a valid 6-digit OTP.");
       } else {
         console.log("error", error);
-        // ⚠️ API (backend) errors — e.g., wrong OTP or expired OTP
         const message =
           error?.message === "Invalid OTP"
             ? "The OTP you entered is incorrect. Please try again."
@@ -92,15 +95,13 @@ export default function VerificationScreen() {
               "Something went wrong. Please try again later.";
 
         toast.error(message);
-
-        // ❌ Optional: Clear OTP inputs when wrong
         setOtp(["", "", "", "", "", ""]);
       }
     }
   };
 
   return (
-    <View className="flex-1 bg-white ">
+    <View className="flex-1 bg-white">
       <CustomHeader
         title="Enter Verification"
         nestedTitle="Code"
@@ -110,6 +111,7 @@ export default function VerificationScreen() {
         error={errors.otp}
         otp={otp}
         handleOtpChange={handleOtpChange}
+        handleOtpPaste={handleOtpPaste}
       />
       <ShortMessage
         route="ResetPasswordScreen"
@@ -117,18 +119,20 @@ export default function VerificationScreen() {
         btnText="Resend"
         onPress={handleResendPassword}
       />
-      <View className=" flex-1 justify-end pb-[20%]">
+
+      {/*  Fixed: ActivityIndicator সরাসরি Pressable-এর child, Text-এর ভেতরে না */}
+      <View className="flex-1 justify-end pb-[20%]">
         <Pressable
           onPress={handleSubmit}
-          className=" bg-[#0054A5] mx-[6%] rounded-lg py-[4%]"
+          className="bg-[#0054A5] mx-[6%] rounded-lg py-[4%]"
         >
-          <Text className="text-white text-center text-base font-poppins-semiBold ">
-            {verifyOtpLoading || isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              "Verify"
-            )}
-          </Text>
+          {verifyOtpLoading || isLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text className="text-white text-center text-base font-poppins-semiBold">
+              Verify
+            </Text>
+          )}
         </Pressable>
       </View>
     </View>

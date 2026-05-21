@@ -30,8 +30,16 @@ export default function SignInScreen() {
     password: "",
   });
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = async (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+
+    // Re-validate just this field and clear its error if it passes
+    try {
+      await validationSchema.validateAt(field, { ...formData, [field]: value });
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    } catch {
+      // Don't set new errors here — only clear on success
+    }
   };
 
   const validationSchema = Yup.object({
