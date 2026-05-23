@@ -59,7 +59,7 @@ export default function OnboardingHomeScreen() {
           Unable to Load Data
         </Text>
         <Text className="text-sm text-[#6B7280] text-center mt-2 font-poppins-400regular">
-          Please check your connection and try again.
+          Please check your connections and try again.
         </Text>
         <Pressable
           onPress={() => router.back()}
