@@ -1,12 +1,14 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const baseQueryWithRath = async (args, api, extraOptions) => {
   try {
     const token = await AsyncStorage.getItem("token");
 
-    const isFormData = args.body instanceof FormData;
+    const isFormData =
+      typeof FormData !== "undefined" &&
+      args.body &&
+      typeof args.body.append === "function";
 
     // Use fetch for FormData uploads
     if (isFormData) {
@@ -16,7 +18,7 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
 
       const response = await fetch(`https://api.quoto.ca/api${args.url}`, {
         method: args.method,
-        headers: headers,
+        headers,
         body: args.body,
       });
 
@@ -25,7 +27,12 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
         await AsyncStorage.removeItem("user");
       }
 
-      const data = await response.json();
+      let data = null;
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
+      }
 
       if (!response.ok) {
         return { error: data };
@@ -34,7 +41,7 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
       return { data };
     }
 
-    // Use axios for non-FormData requests
+    // Use fetch for non-FormData requests (axios removed)
     const headers = {
       ...args.headers,
       "Content-Type": "application/json",
@@ -47,47 +54,44 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
     console.log("Body:", JSON.stringify(args.body));
     console.log("Headers:", JSON.stringify(headers));
 
-    const result = await axios({
-      baseURL: "https://api.quoto.ca/api",
-      url: args.url,
+    const response = await fetch(`https://api.quoto.ca/api${args.url}`, {
       method: args.method,
-      data: args.body,
-      headers: headers,
+      headers,
+      body: args.body ? JSON.stringify(args.body) : undefined,
     });
 
-    if (result?.status === 403 || result?.status === 401) {
+    const text = await response.text();
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = text;
+    }
+
+    if (response.status === 403 || response.status === 401) {
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("user");
     }
 
-    return { data: result.data };
-  } catch (error) {
-    console.log("=== API ERROR ===");
-    console.log("Message:", error.message);
-    console.log("Status:", error.response?.status);
-    console.log("Response Data:", JSON.stringify(error.response?.data));
-    console.log("Config URL:", error.config?.url);
-
-    // ── 404 gracefully handle — data নেই, crash করবে না ──
-    if (error.response?.status === 404) {
+    if (!response.ok) {
       return {
         error: {
-          status: 404,
-          data: error.response?.data || { message: "Not found" },
+          status: response.status,
+          data,
         },
       };
     }
 
-    // Handle auth errors in catch block
-    if (error.response?.status === 403 || error.response?.status === 401) {
-      await AsyncStorage.removeItem("token");
-      await AsyncStorage.removeItem("user");
-    }
+    return { data };
+  } catch (error) {
+    console.log("=== API ERROR ===");
+    console.log("Message:", error.message);
 
     return {
       error: {
-        status: error.response?.status || 500,
-        data: error.response?.data || error.message || "Something went wrong",
+        status: 500,
+        data: error.message || "Something went wrong",
       },
     };
   }
