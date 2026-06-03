@@ -15,20 +15,6 @@ export default function VerificationScreen() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [errors, setErrors] = useState({});
 
-  const handleOtpChange = (text, index) => {
-    const newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
-  };
-
-  const handleOtpPaste = (digits) => {
-    const newOtp = [...otp];
-    for (let i = 0; i < 6; i++) {
-      newOtp[i] = digits[i] || "";
-    }
-    setOtp(newOtp);
-  };
-
   const validationSchema = Yup.object({
     otp: Yup.string()
       .matches(/^\d{6}$/, "OTP must be exactly 6 digits")
@@ -39,16 +25,14 @@ export default function VerificationScreen() {
     try {
       const fullOtp = otp.join("");
 
-      const data = {
-        email,
-        otp: fullOtp,
-        purpose: "signup",
-      };
-
       await validationSchema.validate({ otp: fullOtp }, { abortEarly: false });
       setErrors({});
 
-      await otpVerification(data).unwrap();
+      await otpVerification({
+        email,
+        otp: fullOtp,
+        purpose: "signup",
+      }).unwrap();
 
       toast.success("Your account has been verified successfully.");
       router.dismissAll();
@@ -60,19 +44,14 @@ export default function VerificationScreen() {
           fieldErrors[err.path] = err.message;
         });
         setErrors(fieldErrors);
-
         toast.error("Please enter a valid 6-digit OTP.");
       } else {
-        console.log("error", error);
         const message =
           error?.message === "Invalid OTP"
             ? "The OTP you entered is incorrect. Please try again."
             : error?.data?.message ||
               "Something went wrong. Please try again later.";
-
         toast.error(message);
-
-        setOtp(["", "", "", "", "", ""]);
       }
     }
   };
@@ -86,12 +65,7 @@ export default function VerificationScreen() {
         subtitle="Enter the code sent to your email to complete sign-up."
       />
 
-      <VerificationCodeField
-        error={errors.otp}
-        otp={otp}
-        handleOtpChange={handleOtpChange}
-        handleOtpPaste={handleOtpPaste}
-      />
+      <VerificationCodeField error={errors.otp} onOtpChange={setOtp} />
 
       <View className="flex-1 justify-end pb-[20%]">
         <Pressable

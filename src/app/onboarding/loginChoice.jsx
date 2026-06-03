@@ -16,7 +16,7 @@ export default function WelcomeToQuotoScreen() {
       </View>
       <View className=" mt-[9%]">
         <Text className="font-poppins-bold text-base text-center text-[#175994] ">
-          Joinn As
+          Join As
         </Text>
       </View>
       <CustomButton
@@ -27,7 +27,7 @@ export default function WelcomeToQuotoScreen() {
         title="Client"
       />
       <CustomButton
-        title="Providerr"
+        title="Provider"
         onPress={() => router.push("/provider/auth/signIn")}
         backgroundColor="#fff"
         color="#175994"

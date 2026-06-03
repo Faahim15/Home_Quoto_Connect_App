@@ -1,88 +1,126 @@
-import { useRef, useState } from "react";
-import { TextInput, View, Text } from "react-native";
-import { scale, verticalScale } from "../adaptive/Adaptiveness";
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, TextInput, Animated } from "react-native";
 
-export default function VerificationCodeField({
-  error,
-  otp,
-  handleOtpChange,
-  handleOtpPaste,
-}) {
-  const inputRefs = useRef([]);
-  const [focusedIndex, setFocusedIndex] = useState(null);
+export default function VerificationCodeField({ error, onOtpChange }) {
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const handleChange = (text, index) => {
-    if (text.length > 1) {
-      const digits = text.replace(/\D/g, "").slice(0, 6);
-      handleOtpPaste(digits);
+  const hiddenInputRef = useRef(null);
+  const blink = useRef(new Animated.Value(1)).current;
 
-      const lastFilled = Math.min(digits.length - 1, 5);
-      inputRefs.current[lastFilled]?.focus();
+  // =========================
+  // 🔥 BLINK ANIMATION
+  // =========================
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(blink, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(blink, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
+  }, []);
 
-      if (digits.length === 6) {
-        inputRefs.current[5]?.blur();
-      }
-      return;
-    }
+  const updateOtp = (value) => {
+    setOtp(value);
 
-    const digit = text.replace(/\D/g, "");
-    handleOtpChange(digit, index);
+    const fullOtp = value.join("");
+    onOtpChange?.(value);
 
-    if (digit.length === 1 && index < 5) {
-      inputRefs.current[index + 1]?.focus();
-    }
-
-    if (digit.length === 1 && index === 5) {
-      inputRefs.current[5]?.blur();
-    }
+    // update active index properly
+    const nextIndex = value.findIndex((v) => v === "");
+    setActiveIndex(nextIndex === -1 ? 5 : nextIndex);
   };
 
-  const handleKeyPress = ({ nativeEvent }, index) => {
-    if (nativeEvent.key === "Backspace") {
-      if (otp[index] !== "") {
-        handleOtpChange("", index);
-      } else if (index > 0) {
-        handleOtpChange("", index - 1);
-        inputRefs.current[index - 1]?.focus();
-      }
+  // =========================
+  // ✍️ INPUT CHANGE (FIXED)
+  // =========================
+  const handleChange = (text) => {
+    const value = text.replace(/\D/g, "");
+
+    const newOtp = ["", "", "", "", "", ""];
+
+    value
+      .split("")
+      .slice(0, 6)
+      .forEach((d, i) => {
+        newOtp[i] = d;
+      });
+
+    updateOtp(newOtp);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.nativeEvent.key !== "Backspace") return;
+
+    const newOtp = [...otp];
+    const last = newOtp.findLastIndex((v) => v !== "");
+
+    if (last >= 0) {
+      newOtp[last] = "";
+      updateOtp(newOtp);
     }
   };
 
   return (
-    <View className="mx-[6%] mt-[3%]">
-      <View className="flex-row items-center gap-x-1 w-full max-w-sm">
-        {otp.map((value, index) => (
-          <TextInput
-            key={index}
-            ref={(ref) => (inputRefs.current[index] = ref)}
-            className="bg-[#F9FAFB] text-black font-poppins-bold text-base rounded-lg aspect-square text-center"
-            style={{
-              height: verticalScale(54),
-              width: scale(53.83),
-              borderWidth: 1,
-              borderColor: focusedIndex === index ? "#0054A5" : "#DCDCDC",
-            }}
-            keyboardType="number-pad"
-            maxLength={index === 0 ? 6 : 1}
-            value={value}
-            onChangeText={(text) => handleChange(text, index)}
-            onKeyPress={(e) => handleKeyPress(e, index)}
-            onFocus={() => setFocusedIndex(index)}
-            onBlur={() => setFocusedIndex(null)}
-            textContentType="oneTimeCode"
-            autoComplete="one-time-code"
-            returnKeyType="done"
-            onSubmitEditing={() => inputRefs.current[index]?.blur()}
-            blurOnSubmit={false}
-            caretHidden={true}
-          />
-        ))}
+    <View className="items-center mt-5">
+      {/* Hidden Input */}
+      <TextInput
+        ref={hiddenInputRef}
+        value={otp.join("")}
+        onChangeText={handleChange}
+        onKeyPress={handleKeyPress}
+        keyboardType="number-pad"
+        maxLength={6}
+        autoFocus
+        style={{
+          position: "absolute",
+          opacity: 0,
+          height: 1,
+          width: 1,
+        }}
+      />
+
+      {/* OTP UI */}
+      <View className="flex-row justify-between w-[90%]">
+        {otp.map((digit, index) => {
+          const isActive = index === activeIndex;
+
+          return (
+            <View
+              key={index}
+              className="w-[14%] border-b-2 items-center justify-center"
+            >
+              <Text className="text-2xl font-bold text-[#0054A5]">{digit}</Text>
+
+              {/* 🔥 blinking cursor */}
+              {isActive && digit === "" && (
+                <Animated.View
+                  style={{
+                    position: "absolute",
+                    bottom: 6,
+                    width: 2,
+                    height: 24,
+                    backgroundColor: "#0054A5",
+                    opacity: blink,
+                  }}
+                />
+              )}
+            </View>
+          );
+        })}
       </View>
-      {error && (
-        <Text className="text-red-700 font-poppins-400regular text-center mt-1">
-          {error}
-        </Text>
-      )}
+
+      {error ? (
+        <Text className="text-red-500 text-xs mt-2">{error}</Text>
+      ) : null}
     </View>
   );
 }
