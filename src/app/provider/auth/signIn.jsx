@@ -60,7 +60,7 @@ export default function SignInScreen() {
       const data = {
         email: formData.email.trim(),
         password: formData.password,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        // timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       };
 
       const res = await login(data).unwrap();
