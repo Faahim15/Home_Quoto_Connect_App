@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import { scale, verticalScale } from "../components/adaptive/Adaptiveness";
 import ChatHeader from "../components/tabs/chat/ChatHeader";
 import MessageInput from "../components/tabs/chat/MessageInput";
@@ -29,13 +29,13 @@ import { useSocket } from "../../hooks/useSokect";
 import { Modal } from "react-native";
 import { Image } from "expo-image";
 import { SOCKET_URL } from "../components/constant/socketURL";
+
 const ChatScreen = () => {
   const { providerId } = useLocalSearchParams();
   const { data, isLoading } = useGetProviderDetailsQuery(providerId);
   const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
   const { socket, isConnected } = useSocket(SOCKET_URL);
 
-  //wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const { data: chatData, isLoading: allChatLoader } = useGetChatsQuery();
@@ -51,7 +51,6 @@ const ChatScreen = () => {
   const flatListRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
-  // Fetch userId from AsyncStorage
   useEffect(() => {
     const fetchUserId = async () => {
       const userId = await AsyncStorage.getItem("userId");
@@ -71,7 +70,6 @@ const ChatScreen = () => {
     joinRooms();
   }, [socket, isConnected, currentUserId, chatId]);
 
-  // 🧩 Find provider chat when chatData or providerId changes
   useEffect(() => {
     if (chatData?.data?.chats?.length && providerId) {
       const providerChat = chatData.data.chats.find((chat) =>
@@ -86,7 +84,6 @@ const ChatScreen = () => {
     }
   }, [chatData, providerId]);
 
-  //  Fetch chat history only when chatId is available
   const {
     data: singleChatHistory,
     isLoading: chatLoader,
@@ -96,21 +93,18 @@ const ChatScreen = () => {
     skip: !chatId,
   });
 
-  //  Refetch chat history when chatId becomes available
   useEffect(() => {
     if (chatId && refetchChatHistory) {
       refetchChatHistory();
     }
   }, [chatId, refetchChatHistory]);
 
-  //  Update messages when chat history is fetched
   useEffect(() => {
     if (singleChatHistory?.success && singleChatHistory?.data?.messages) {
       setMessages(singleChatHistory.data.messages);
     }
   }, [singleChatHistory]);
 
-  // Permissions
   const requestPermissions = async () => {
     try {
       const mediaPermission =
@@ -135,7 +129,6 @@ const ChatScreen = () => {
     }
   };
 
-  // Media handling functions
   const selectFromLibrary = async () => {
     setShowMediaModal(false);
     const hasPermission = await requestPermissions();
@@ -197,7 +190,6 @@ const ChatScreen = () => {
     }, 100);
   };
 
-  // Typing handlers
   const handleTypingStart = useCallback(() => {
     if (!socket || !isConnected || !chatId) return;
 
@@ -226,7 +218,6 @@ const ChatScreen = () => {
     }
   }, [socket, isConnected, chatId]);
 
-  // Listen for new messages
   const handleNewMessage = useCallback((data) => {
     console.log("📩 New message received:", data);
     setMessages((prev) => {
@@ -237,7 +228,6 @@ const ChatScreen = () => {
     scrollToBottom();
   }, []);
 
-  // Socket listener for new messages
   useEffect(() => {
     if (!socket || !isConnected) return;
 
@@ -248,14 +238,33 @@ const ChatScreen = () => {
     };
   }, [socket, isConnected]);
 
-  // console.log("singleChat", singleChatHistory);
+  // ✅ Safe base64 reader — handles ph:// and undefined EncodingType
+  const readFileAsBase64 = async (uri) => {
+    try {
+      // Some versions of expo-file-system have EncodingType undefined
+      const encoding = FileSystem.EncodingType?.Base64 ?? "base64";
+
+      // ph:// URIs (iOS photo library) cannot be read directly
+      // expo-image-picker with quality < 1 copies to a cache URI, so this
+      // should rarely be ph://, but guard just in case
+      if (uri.startsWith("ph://")) {
+        throw new Error(
+          "Cannot read ph:// URI directly. Make sure ImagePicker copies the file.",
+        );
+      }
+
+      const base64 = await FileSystem.readAsStringAsync(uri, { encoding });
+      return base64;
+    } catch (err) {
+      console.error("Error reading file as base64:", err);
+      throw err;
+    }
+  };
 
   const sendMessage = async () => {
-    // don't send empty message + no media
     const textTrimmed = (newMessage || "").trim();
     if (!textTrimmed && (!selectedMedia || selectedMedia.length === 0)) return;
 
-    // 🆕 If no chatId, create direct chat first
     if (!chatId && providerId) {
       try {
         const formData = new FormData();
@@ -267,16 +276,11 @@ const ChatScreen = () => {
           selectedMedia && selectedMedia.length > 0 ? "image" : "text",
         );
 
-        // Convert images to base64 and append
         if (selectedMedia && selectedMedia.length > 0) {
           for (const file of selectedMedia) {
             try {
-              // Read file as base64
-              const base64 = await FileSystem.readAsStringAsync(file.uri, {
-                encoding: FileSystem.EncodingType.Base64,
-              });
+              const base64 = await readFileAsBase64(file.uri);
 
-              // Append as file with base64 data
               formData.append("media", {
                 uri: `data:image/jpeg;base64,${base64}`,
                 type: "image/jpeg",
@@ -284,6 +288,7 @@ const ChatScreen = () => {
               });
             } catch (err) {
               console.error("Error reading file:", err);
+              Alert.alert("Error", `Failed to read file: ${file.fileName}`);
             }
           }
         }
@@ -294,9 +299,8 @@ const ChatScreen = () => {
         if (response?.data?.chat?._id) {
           const newChatId = response.data.chat._id;
           setChatId(newChatId);
-          console.log(" Direct chat created with ID:", newChatId);
+          console.log("✅ Direct chat created with ID:", newChatId);
 
-          // Add the new message to the messages array
           if (response?.data?.message) {
             setMessages((prev) => [...prev, response.data.message]);
           }
@@ -314,22 +318,16 @@ const ChatScreen = () => {
       }
     }
 
-    // Normal message sending with existing chatId
-    // Build media array with base64 data
     const media = [];
     if (selectedMedia && selectedMedia.length > 0) {
       for (const file of selectedMedia) {
         try {
-          // Read file as base64
-          const base64 = await FileSystem.readAsStringAsync(file.uri, {
-            encoding: FileSystem.EncodingType.Base64,
-          });
+          const base64 = await readFileAsBase64(file.uri);
 
-          // Push media object with data URI format (like direct chat)
           media.push({
-            type: file.type, // "image"
+            type: file.type,
             filename: file.fileName,
-            url: `data:image/jpeg;base64,${base64}`, // Send as data URI
+            url: `data:image/jpeg;base64,${base64}`,
           });
         } catch (err) {
           console.error("Error reading file:", err);
@@ -360,6 +358,7 @@ const ChatScreen = () => {
       Alert.alert("Error", "Connection lost. Please check your internet.");
     }
   };
+
   const [selectedImage, setSelectedImage] = useState(null);
 
   const ImageModal = () => (
@@ -378,7 +377,7 @@ const ChatScreen = () => {
         <Image
           source={{ uri: selectedImage }}
           style={{ width: "100%", height: "70%" }}
-          resizeMode="contain"
+          contentFit="contain"
         />
       </View>
     </Modal>
@@ -393,8 +392,6 @@ const ChatScreen = () => {
     const messageMedia = item?.content?.media || [];
     const messageText = item?.content?.text || "";
 
-    // console.log("show", messageMedia, messageText);
-
     return (
       <View className={`mb-[4%] ${isOwn ? "items-end" : "items-start"}`}>
         <View
@@ -406,7 +403,6 @@ const ChatScreen = () => {
                 : "bg-white rounded-bl-md shadow-sm"
           }`}
         >
-          {/* Media Section */}
           {messageMedia.length > 0 && (
             <View className="flex-row flex-wrap">
               {messageMedia.map((media, index) => (
@@ -425,7 +421,7 @@ const ChatScreen = () => {
                         height: screenWidth * 0.4,
                         borderRadius: 8,
                       }}
-                      resizeMode="cover"
+                      contentFit="contain"
                     />
                   </View>
                 </Pressable>
@@ -433,10 +429,8 @@ const ChatScreen = () => {
             </View>
           )}
 
-          {/* Modal render */}
           {selectedImage && <ImageModal />}
 
-          {/* Text Section */}
           {messageText && messageText !== " " && (
             <View className={`px-4 py-3 ${messageMedia.length > 0 ? "" : ""}`}>
               <Text
@@ -466,8 +460,6 @@ const ChatScreen = () => {
 
   const { profilePhoto, fullName, isOnline, lastActive, _id } =
     data?.data?.provider || {};
-
-  // console.log("provider id", _id);
 
   return (
     <KeyboardAvoidingView

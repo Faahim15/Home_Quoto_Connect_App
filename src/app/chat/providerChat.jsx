@@ -21,7 +21,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useGetSingleChatHistoryQuery } from "../../redux/features/apiSlices/chat/chatApiSlices";
 import { formatedDate } from "../util/helper-function";
 import { useSocket } from "../../hooks/useSokect";
-import * as FileSystem from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import { Modal } from "react-native";
 import { SOCKET_URL } from "../components/constant/socketURL";
 
@@ -75,7 +75,6 @@ const ProviderChatScreen = () => {
 
       if (!userId) return;
 
-      // console.log("💡 Joining  room for provider chat screens:", userId);
       socket.emit("user-join", userId);
       socket.emit("join-notifications", userId);
       socket.emit("join-chat", chatId);
@@ -175,7 +174,6 @@ const ProviderChatScreen = () => {
   const handleTypingStart = useCallback(() => {
     if (!socket || !isConnected || !chatId) return;
 
-    // console.log("✍️ Typing started...");
     socket.emit("typing-start", { chatId });
 
     // Clear the previous timeout

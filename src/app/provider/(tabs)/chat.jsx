@@ -3,7 +3,6 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
   Image,
   ActivityIndicator,
   RefreshControl,
