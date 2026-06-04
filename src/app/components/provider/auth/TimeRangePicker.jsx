@@ -93,6 +93,7 @@ export default function TimeRangePicker() {
         specializations: specializationIds,
         serviceAreas: serviceAreas,
         workingHours: workingHours,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       };
 
       const res = await registerUser(payload).unwrap();

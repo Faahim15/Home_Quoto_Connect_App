@@ -23,6 +23,7 @@ import * as ImagePicker from "expo-image-picker";
 import AttachOptionsModal from "./AttachOptionalModal";
 import * as FileSystem from "expo-file-system";
 import ImageViewerModal from "./ImageViewerModal";
+import { SOCKET_URL } from "../../constant/socketURL";
 
 export default function LiveChatModal({ visible, onClose, ticketId }) {
   const [messages, setMessages] = useState([]);
@@ -34,7 +35,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
   const [selectedImages, setSelectedImages] = useState([]);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
 
-  const { socket, isConnected } = useSocket("https://api.quoto.ca");
+  const { socket, isConnected } = useSocket(SOCKET_URL);
 
   const [currentUserId, setCurrentUserId] = useState(null);
   const [isTyping, setIsTyping] = useState(false);

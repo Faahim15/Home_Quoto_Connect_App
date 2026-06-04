@@ -16,18 +16,9 @@ export default function VerifyOtp() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [errors, setErrors] = useState({});
 
-  const handleOtpChange = (text, index) => {
-    const newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
-  };
-
-  const handleOtpPaste = (digits) => {
-    const newOtp = [...otp];
-    for (let i = 0; i < 6; i++) {
-      newOtp[i] = digits[i] || "";
-    }
-    setOtp(newOtp);
+  // ✅ This receives the full otp array from VerificationCodeField
+  const handleOtpChange = (otpArray) => {
+    setOtp(otpArray);
   };
 
   const validationSchema = Yup.object({
@@ -52,7 +43,6 @@ export default function VerifyOtp() {
       await otpVerification(data).unwrap();
 
       toast.success("Your account has been verified successfully.");
-      // router.dismissAll();
       router.replace("provider/auth/signIn");
     } catch (error) {
       if (error.name === "ValidationError") {
@@ -83,12 +73,8 @@ export default function VerifyOtp() {
         subtitle="Enter the code sent to your email to complete sign-up."
       />
 
-      <VerificationCodeField
-        error={errors.otp}
-        otp={otp}
-        handleOtpChange={handleOtpChange}
-        handleOtpPaste={handleOtpPaste}
-      />
+      {/* ✅ Pass onOtpChange instead of handleOtpChange/handleOtpPaste */}
+      <VerificationCodeField error={errors.otp} onOtpChange={handleOtpChange} />
 
       <View className="flex-1 justify-end pb-[20%]">
         <FormButton

@@ -25,12 +25,13 @@ import {
 } from "../../redux/features/apiSlices/chat/chatApiSlices";
 import { formatedDate } from "../util/helper-function";
 import { useSocket } from "../../hooks/useSokect";
+import { SOCKET_URL } from "../components/constant/socketURL";
 
 const ChatScreen = () => {
   const { chatId, providerId } = useLocalSearchParams();
   const { data, isLoading } = useGetProviderDetailsQuery(providerId);
   const { width: screenWidth } = Dimensions.get("window");
-  const { socket, isConnected } = useSocket("https://api.quoto.ca");
+  const { socket, isConnected } = useSocket(SOCKET_URL);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -87,7 +88,7 @@ const ChatScreen = () => {
       ) {
         Alert.alert(
           "Permission Required",
-          "Camera and media library permissions are needed to send media"
+          "Camera and media library permissions are needed to send media",
         );
         return false;
       }

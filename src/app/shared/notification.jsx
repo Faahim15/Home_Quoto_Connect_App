@@ -14,13 +14,14 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useSocket } from "../../hooks/useSokect";
 import { useGetNotificationsQuery } from "../../redux/features/apiSlices/chat/chatApiSlices";
 import CustomTitle from "../components/shared/CustomTitle";
+import { SOCKET_URL } from "../components/constant/socketURL";
 
 export default function NotificationScreen() {
   const [notifications, setNotifications] = useState([]);
   const [filter, setFilter] = useState("all");
   const [currentUserId, setCurrentUserId] = useState(null);
 
-  const { socket } = useSocket("https://api.quoto.ca");
+  const { socket } = useSocket(SOCKET_URL);
   const { data, isLoading, isError, refetch } = useGetNotificationsQuery();
 
   useFocusEffect(

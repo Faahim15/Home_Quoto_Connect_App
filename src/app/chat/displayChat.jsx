@@ -28,12 +28,12 @@ import { formatedDate } from "../util/helper-function";
 import { useSocket } from "../../hooks/useSokect";
 import { Modal } from "react-native";
 import { Image } from "expo-image";
-
+import { SOCKET_URL } from "../components/constant/socketURL";
 const ChatScreen = () => {
   const { providerId } = useLocalSearchParams();
   const { data, isLoading } = useGetProviderDetailsQuery(providerId);
   const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
-  const { socket, isConnected } = useSocket("https://api.quoto.ca");
+  const { socket, isConnected } = useSocket(SOCKET_URL);
 
   //wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net
   const [messages, setMessages] = useState([]);

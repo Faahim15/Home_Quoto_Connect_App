@@ -7,7 +7,7 @@ import {
   useResendOtpMutation,
   useVerifyOtpMutation,
 } from "../../redux/features/apiSlices/auth/authApiSlices";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import * as Yup from "yup";
 import { toast } from "sonner-native";
 
@@ -27,18 +27,9 @@ export default function VerificationScreen() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [errors, setErrors] = useState({});
 
-  const handleOtpChange = (text, index) => {
-    const newOtp = [...otp];
-    newOtp[index] = text;
-    setOtp(newOtp);
-  };
-
-  const handleOtpPaste = (digits) => {
-    const newOtp = [...otp];
-    for (let i = 0; i < 6; i++) {
-      newOtp[i] = digits[i] || "";
-    }
-    setOtp(newOtp);
+  // ✅ Receives full otpArray from VerificationCodeField via onOtpChange
+  const handleOtpChange = (otpArray) => {
+    setOtp(otpArray);
   };
 
   const handleResendPassword = async () => {
@@ -107,12 +98,10 @@ export default function VerificationScreen() {
         nestedTitle="Code"
         subtitle="Enter the code that was sent to your email."
       />
-      <VerificationCodeField
-        error={errors.otp}
-        otp={otp}
-        handleOtpChange={handleOtpChange}
-        handleOtpPaste={handleOtpPaste}
-      />
+
+      {/* ✅ onOtpChange instead of handleOtpChange + handleOtpPaste */}
+      <VerificationCodeField error={errors.otp} onOtpChange={handleOtpChange} />
+
       <ShortMessage
         route="ResetPasswordScreen"
         title="Didn't receive the code?"
@@ -120,7 +109,6 @@ export default function VerificationScreen() {
         onPress={handleResendPassword}
       />
 
-      {/*  Fixed: ActivityIndicator সরাসরি Pressable-এর child, Text-এর ভেতরে না */}
       <View className="flex-1 justify-end pb-[20%]">
         <Pressable
           onPress={handleSubmit}

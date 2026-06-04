@@ -1,7 +1,9 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import TagTypes from "../../../app/components/constant/tagTypes.constant";
 
 const baseQueryWithRath = async (args, api, extraOptions) => {
+  const API_URL = process.env.EXPO_PUBLIC_API_URL;
   try {
     const token = await AsyncStorage.getItem("token");
 
@@ -16,7 +18,7 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       };
 
-      const response = await fetch(`https://api.quoto.ca/api${args.url}`, {
+      const response = await fetch(`${API_URL}${args.url}`, {
         method: args.method,
         headers,
         body: args.body,
@@ -49,12 +51,12 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
     };
 
     console.log("=== API REQUEST ===");
-    console.log("URL:", "https://api.quoto.ca/api" + args.url);
+    console.log("URL:", API_URL + args.url);
     console.log("Method:", args.method);
     console.log("Body:", JSON.stringify(args.body));
     console.log("Headers:", JSON.stringify(headers));
 
-    const response = await fetch(`https://api.quoto.ca/api${args.url}`, {
+    const response = await fetch(`${API_URL}${args.url}`, {
       method: args.method,
       headers,
       body: args.body ? JSON.stringify(args.body) : undefined,
@@ -101,31 +103,5 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRath,
   endpoints: () => ({}),
-  tagTypes: [
-    "User",
-    "PopularProviders",
-    "Provider",
-    "chat",
-    "Jobs",
-    "Job",
-    "TodaysJobs",
-    "MyJobs",
-    "Quotes",
-    "DeclineJob",
-    "ActiveJobs",
-    "Categories",
-    "Specializations",
-    "Content",
-    "SupportTickets",
-    "SupportTicketsMessages",
-    "Profile",
-    "Transactions",
-    "Reviews",
-    "Wallet",
-    "Payments",
-    "Subscriptions",
-    "MySubscriptions",
-    "Credits",
-    "notifications",
-  ],
+  tagTypes: Object.values(TagTypes),
 });

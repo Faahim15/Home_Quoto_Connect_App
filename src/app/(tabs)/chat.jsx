@@ -15,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatDatesRelative } from "../util/helper-function";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { SOCKET_URL } from "../components/constant/socketURL";
 
 // ws://10.10.20.30:5000
 
@@ -22,7 +23,7 @@ const MessagesScreen = () => {
   const [messages, setMessages] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const { data, isLoading, refetch } = useGetChatsQuery();
-  const { socket, isConnected } = useSocket("https://api.quoto.ca");
+  const { socket, isConnected } = useSocket(SOCKET_URL);
 
   //wss://myqoute-eudjatd9a3f8eua8.southeastasia-01.azurewebsites.net"
   const [userStatus, setUserStatus] = useState({});

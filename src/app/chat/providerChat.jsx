@@ -7,10 +7,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
-  SafeAreaView,
   ActivityIndicator,
   Alert,
-  TouchableOpacity,
   Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -25,12 +23,13 @@ import { formatedDate } from "../util/helper-function";
 import { useSocket } from "../../hooks/useSokect";
 import * as FileSystem from "expo-file-system";
 import { Modal } from "react-native";
+import { SOCKET_URL } from "../components/constant/socketURL";
 
 const ProviderChatScreen = () => {
   const { chatId } = useLocalSearchParams();
 
   const { width: screenWidth } = Dimensions.get("window");
-  const { socket, isConnected } = useSocket("https://api.quoto.ca");
+  const { socket, isConnected } = useSocket(SOCKET_URL);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);

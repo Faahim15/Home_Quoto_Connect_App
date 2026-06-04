@@ -16,13 +16,14 @@ import { formatDatesRelative } from "../../util/helper-function";
 import { useSocket } from "../../../hooks/useSokect";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
+import { SOCKET_URL } from "../../components/constant/socketURL";
 
 const MessagesScreen = () => {
   const [messages, setMessages] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [typingUsers, setTypingUsers] = useState({});
   const { data, isLoading, refetch } = useGetChatsQuery();
-  const { socket, isConnected } = useSocket("https://api.quoto.ca");
+  const { socket, isConnected } = useSocket(SOCKET_URL);
   const [userStatus, setUserStatus] = useState({});
 
   // Load initial chats

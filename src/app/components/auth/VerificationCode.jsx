@@ -8,9 +8,6 @@ export default function VerificationCodeField({ error, onOtpChange }) {
   const hiddenInputRef = useRef(null);
   const blink = useRef(new Animated.Value(1)).current;
 
-  // =========================
-  // 🔥 BLINK ANIMATION
-  // =========================
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
@@ -30,39 +27,27 @@ export default function VerificationCodeField({ error, onOtpChange }) {
 
   const updateOtp = (value) => {
     setOtp(value);
-
-    const fullOtp = value.join("");
     onOtpChange?.(value);
-
-    // update active index properly
     const nextIndex = value.findIndex((v) => v === "");
     setActiveIndex(nextIndex === -1 ? 5 : nextIndex);
   };
 
-  // =========================
-  // ✍️ INPUT CHANGE (FIXED)
-  // =========================
   const handleChange = (text) => {
     const value = text.replace(/\D/g, "");
-
     const newOtp = ["", "", "", "", "", ""];
-
     value
       .split("")
       .slice(0, 6)
       .forEach((d, i) => {
         newOtp[i] = d;
       });
-
     updateOtp(newOtp);
   };
 
   const handleKeyPress = (e) => {
     if (e.nativeEvent.key !== "Backspace") return;
-
     const newOtp = [...otp];
     const last = newOtp.findLastIndex((v) => v !== "");
-
     if (last >= 0) {
       newOtp[last] = "";
       updateOtp(newOtp);
@@ -96,23 +81,37 @@ export default function VerificationCodeField({ error, onOtpChange }) {
           return (
             <View
               key={index}
-              className="w-[14%] border-b-2 items-center justify-center"
+              style={{
+                width: "14%",
+                height: 48,
+                alignItems: "center",
+                justifyContent: "flex-end",
+                paddingBottom: 6,
+                borderBottomWidth: 2,
+                borderBottomColor: isActive ? "#0054A5" : "#ccc",
+              }}
             >
-              <Text className="text-2xl font-bold text-[#0054A5]">{digit}</Text>
-
-              {/* 🔥 blinking cursor */}
-              {isActive && digit === "" && (
+              {digit !== "" ? (
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontWeight: "bold",
+                    color: "#0054A5",
+                  }}
+                >
+                  {digit}
+                </Text>
+              ) : isActive ? (
+                // 🔥 Blinking cursor shown centered in empty active box
                 <Animated.View
                   style={{
-                    position: "absolute",
-                    bottom: 6,
                     width: 2,
-                    height: 24,
+                    height: 22,
                     backgroundColor: "#0054A5",
                     opacity: blink,
                   }}
                 />
-              )}
+              ) : null}
             </View>
           );
         })}
