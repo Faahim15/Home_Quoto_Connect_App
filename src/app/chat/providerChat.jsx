@@ -39,8 +39,6 @@ const ProviderChatScreen = () => {
   const typingTimeoutRef = useRef(null);
   const [userStatus, setUserStatus] = useState({});
 
-  // console.log("chat", chatId);
-
   // Get chat history when chatId is available
   const {
     data: singleChatHistory,
@@ -53,7 +51,6 @@ const ProviderChatScreen = () => {
   useFocusEffect(
     useCallback(() => {
       if (chatId) {
-        console.log("📌 Screen focused → fetching latest chat...");
         refetchChatHistory();
       }
     }, [chatId]),
@@ -183,7 +180,6 @@ const ProviderChatScreen = () => {
 
     // Set a timeout to automatically stop typing after 3 seconds of inactivity
     typingTimeoutRef.current = setTimeout(() => {
-      //   console.log("⌛ Typing stopped (auto)");
       socket.emit("typing-stop", { chatId });
     }, 3000);
   }, [socket, isConnected, chatId]);
@@ -191,7 +187,6 @@ const ProviderChatScreen = () => {
   const handleTypingStop = useCallback(() => {
     if (!socket || !isConnected || !chatId) return;
 
-    console.log("🛑 Typing stopped manually");
     socket.emit("typing-stop", { chatId });
 
     if (typingTimeoutRef.current) {
@@ -202,7 +197,6 @@ const ProviderChatScreen = () => {
 
   // Listen for new messages
   const handleNewMessage = useCallback((data) => {
-    console.log("📩 New message received:", data);
     setMessages((prev) => {
       const exists = prev.some((m) => m._id === data._id);
       if (exists) return prev;
@@ -213,10 +207,6 @@ const ProviderChatScreen = () => {
 
   // 🟢 Handle user online/offline status
   const handleUserStatusChanged = ({ userId, isOnline, lastActive }) => {
-    console.log(
-      `⚡ ${userId} is ${isOnline ? "online from provider chat" : "offline"} (lastActive: ${lastActive})`,
-    );
-
     // Update local state
     setUserStatus((prev) => ({
       ...prev,
@@ -317,7 +307,6 @@ const ProviderChatScreen = () => {
     const messageMedia = item?.content?.media || [];
     const messageText = item?.content?.text || "";
 
-    // console.log("mes", messageMedia[0]?.url);
     return (
       <View className={`mb-[4%] ${isOwn ? "items-end" : "items-start"}`}>
         <View

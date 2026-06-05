@@ -14,7 +14,6 @@ import { statusColorMap } from "../../../util/colors";
 import { getStatusLabel } from "../../../util/helper-function";
 import { formatDateWithOrdinal } from "../../../util/helper-function";
 export default function QuoteProgressDetails({ quote, job }) {
-  // console.log("show", item);
   let statusColor;
   if (job?.status === "cancelled") {
     statusColor = statusColorMap?.[job?.status] ?? "#6B7280";
@@ -24,8 +23,6 @@ export default function QuoteProgressDetails({ quote, job }) {
 
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     quote?.provider;
-
-  // console.log("see the latest date", job?.preferredDate);
 
   const handleServicePress = () => {
     router.push({

@@ -36,8 +36,6 @@ export default function UpdateQuoteScreen() {
   const { data: profile } = useUserProfileQuery();
   const credits = profile?.data?.user?.credits;
 
-  console.log("job id", jobId);
-
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     appointment: null,

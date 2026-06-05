@@ -46,7 +46,6 @@ export default function ResetPasswordScreen() {
 
       // Step 3: Call API
       const res = await passwordReset(data).unwrap();
-      console.log("Reset password:", res);
 
       // Step 4: Handle success
       if (res?.success) {
@@ -57,7 +56,6 @@ export default function ResetPasswordScreen() {
         router.replace("/onboarding/loginChoice");
       }
     } catch (err) {
-      console.log("err", err);
       // Step 6: Handle validation or network errors
       if (err?.message === "Invalid or expired OTP") {
         const validationErrors = {};
@@ -66,7 +64,6 @@ export default function ResetPasswordScreen() {
         });
         setErrors(validationErrors);
       } else {
-        // console.log("API Error:", err);
         const errorMessage =
           err?.message || "Unable to reset password. Please try again.";
 

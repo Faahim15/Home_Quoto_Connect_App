@@ -7,7 +7,7 @@ import { useGetProviderProfileDetailsQuery } from "../../redux/features/apiSlice
 export default function AllReviewScreen() {
   const { id } = useLocalSearchParams();
   const { data, isLoading, error } = useGetProviderProfileDetailsQuery(id);
-  // console.log("this from allreviewpage:", id);
+
   // Add loading state check
   if (isLoading) {
     return (

@@ -60,7 +60,6 @@ export default function ReviewFormScreen() {
       }, 1500);
     } catch (err) {
       toast.error(err?.message || "Failed to submit review. Try again.");
-      console.log("Review submit error:", err?.message);
     }
   };
 

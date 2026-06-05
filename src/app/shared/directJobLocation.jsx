@@ -12,8 +12,6 @@ export default function DirectJobLocation() {
   const jobData = useSelector((state) => state.jobPost);
   const [validationErrors, setValidationErrors] = useState({});
 
-  console.log("📍 Current location data:", jobData.location);
-
   const locationValidationSchema = Yup.object({
     houseNumber: Yup.string()
       .required("House number is required")
@@ -39,14 +37,6 @@ export default function DirectJobLocation() {
       // Validate only location details
       await locationValidationSchema.validate(jobData, { abortEarly: false });
 
-      console.log("✅ Location validation passed");
-      console.log("📊 Location data:", {
-        houseNumber: jobData.houseNumber,
-        streetNumber: jobData.streetNumber,
-        completeAddress: jobData.completeAddress,
-        location: jobData.location,
-      });
-
       // Navigate to job summary page
       router.push("/shared/directJobSummary");
     } catch (validationError) {
@@ -61,8 +51,6 @@ export default function DirectJobLocation() {
         // Show first error in toast
         const firstError = validationError.inner[0].message;
         toast.error(firstError);
-
-        console.log("❌ Validation errors:", errors);
       }
     }
   };

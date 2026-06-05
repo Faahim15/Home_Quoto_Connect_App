@@ -12,7 +12,6 @@ export default function UpdateQuoteButton({ title, serviceId, quoteId }) {
 
   const handleUpdateOfferButton = () => {
     if (!isVerified) {
-      console.log("Provider is not verified");
       return;
     }
 
@@ -22,7 +21,6 @@ export default function UpdateQuoteButton({ title, serviceId, quoteId }) {
         params: { jobId: serviceId },
       });
     } else {
-      console.log("send an updated offer", quoteId);
       router.push({
         pathname: "/provider/quote/updatedOffer",
         params: { jobId: serviceId, quoteId: quoteId },

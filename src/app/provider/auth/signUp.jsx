@@ -91,7 +91,8 @@ export default function SignUp() {
   const handleContinue = () => {
     if (validateCurrentPage()) {
       router.replace("provider/auth/serviceForm");
-    } else console.log("errors", errors);
+    } else {
+    }
   };
 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);

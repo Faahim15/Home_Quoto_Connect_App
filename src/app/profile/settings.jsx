@@ -21,15 +21,11 @@ export default function AccountSettingScreen() {
     try {
       const result = await deleteAccount({ password }).unwrap();
 
-      console.log("Account deleted successfully:", result);
-
       toast.success("Your account has been permanently deleted.");
 
       setModalVisible(false);
       router.replace("onboarding/loginChoice");
     } catch (err) {
-      console.log("Error deleting account:", err);
-
       toast.error(err?.message || "Something went wrong. Please try again.");
     }
   };

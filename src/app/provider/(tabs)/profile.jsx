@@ -65,7 +65,6 @@ export default function ContractorProfileScreen() {
   const handleYes = async () => {
     try {
       const response = await logout().unwrap();
-      console.log("Logout response:", response);
 
       await AsyncStorage.removeItem("token");
       await AsyncStorage.removeItem("userId");

@@ -9,10 +9,6 @@ export default function CreditStripePayment() {
   const { selectedPackageId } = useLocalSearchParams();
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
-  console.log("selectedpackageId", selectedPackageId);
-
-  //   console.log("id", subscriptionId);
-
   // ⬇️ Now isLoading comes from RTK Query
   const [purchaseSubscription, { isLoading }] = usePurchaseCreditsMutation();
 
@@ -44,8 +40,6 @@ export default function CreditStripePayment() {
       }
 
       const paymentResult = await presentPaymentSheet();
-
-      console.log("payment Resut", paymentResult);
 
       if (paymentResult.error) {
         alert(paymentResult.error.message);

@@ -205,14 +205,6 @@ export default function CancelledJobs() {
   const cancelledJobs =
     data?.data?.quotes?.filter((q) => q?.status === "cancelled") || [];
 
-  // cancelledJobs.forEach((job) => {
-  //   // console.log("job status:", job?.status);
-
-  //   job?.job?.quotes?.forEach((quote) => {
-  //     console.log("quote status:", quote?.status);
-  //   });
-  // });
-
   if (cancelledJobs.length === 0) {
     return (
       <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">

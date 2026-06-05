@@ -83,7 +83,6 @@ export default function JobSummaryScreen() {
 
       const response = await createJob(formData).unwrap();
       dispatch(resetJobPost());
-      console.log("✅ Job posted successfully:", response);
 
       toast.success("Job created successfully!");
 

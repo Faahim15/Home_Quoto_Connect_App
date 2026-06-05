@@ -70,7 +70,8 @@ const ServicesOfferScreen = () => {
   const handleNext = () => {
     if (validateCurrentPage()) {
       router.replace("/provider/auth/timePicker");
-    } else console.log("errors", errors);
+    } else {
+    }
   };
 
   return (

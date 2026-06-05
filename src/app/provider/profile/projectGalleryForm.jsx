@@ -104,7 +104,6 @@ export default function ProjectGalleryForm() {
     };
 
     // 🚀 Log payload before submitting
-    console.log("📦 FINAL PAYLOAD:", payload);
 
     try {
       // =============================
@@ -113,7 +112,6 @@ export default function ProjectGalleryForm() {
       const response = await createPortpolio(payload).unwrap();
 
       // 🚀 Log API response
-      console.log("✅ API RESPONSE:", response);
 
       if (response?.success) {
         toast.success("Your project has been added successfully.");
@@ -121,7 +119,6 @@ export default function ProjectGalleryForm() {
         router.back();
       }
     } catch (error) {
-      console.log("❌ API ERROR:", error);
       toast.error(error?.message || "Failed to add project. Please try again.");
     }
   };

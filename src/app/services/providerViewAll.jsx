@@ -44,8 +44,6 @@ export default function ServiceProviderScreen() {
 
   const providerList = data?.data?.providers || [];
 
-  console.log("hello", data, "\nproviders\n", providerList);
-
   return (
     <View className="flex-1 bg-[#F9F9F9]">
       <CustomTitle title="Popular Service Providers" withSafeTop={true} />

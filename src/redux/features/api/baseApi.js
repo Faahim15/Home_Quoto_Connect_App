@@ -50,12 +50,6 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
-    console.log("=== API REQUEST ===");
-    console.log("URL:", API_URL + args.url);
-    console.log("Method:", args.method);
-    console.log("Body:", JSON.stringify(args.body));
-    console.log("Headers:", JSON.stringify(headers));
-
     const response = await fetch(`${API_URL}${args.url}`, {
       method: args.method,
       headers,
@@ -87,9 +81,6 @@ const baseQueryWithRath = async (args, api, extraOptions) => {
 
     return { data };
   } catch (error) {
-    console.log("=== API ERROR ===");
-    console.log("Message:", error.message);
-
     return {
       error: {
         status: 500,

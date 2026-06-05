@@ -55,8 +55,6 @@ export default function QuoteDetails() {
   );
   const { quote } = selectedQuoteItem;
 
-  // console.log("show quotes", selectedQuoteItem?.quote?.status);
-
   const quoteReqst = quoteReq === "true";
 
   const handleAcceptQuote = async () => {

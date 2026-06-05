@@ -41,8 +41,6 @@ export default function StripePayment() {
 
       const paymentResult = await presentPaymentSheet();
 
-      console.log("payment Resut", paymentResult);
-
       if (paymentResult.error) {
         alert(paymentResult.error.message);
         return;

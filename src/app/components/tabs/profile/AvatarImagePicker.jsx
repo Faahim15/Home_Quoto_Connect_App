@@ -50,17 +50,12 @@ const AvatarImagePicker = ({ photo }) => {
   // Upload image to server
   const uploadImage = async (imageUri) => {
     try {
-      console.log("Original imageUri:", imageUri);
-
       // Extract filename from URI
       const filename = imageUri.split("/").pop();
 
       // Get file extension
       const match = /\.(\w+)$/.exec(filename);
       const fileType = match ? match[1].toLowerCase() : "jpeg";
-
-      console.log("Filename:", filename);
-      console.log("File type:", fileType);
 
       // ── base64 read ──
       const base64 = await FileSystem.readAsStringAsync(imageUri, {
@@ -75,11 +70,7 @@ const AvatarImagePicker = ({ photo }) => {
         type: `image/${fileType}`,
       });
 
-      console.log("FormData prepared with base64, uploading...");
-
       const response = await updateProfilePhoto(formData).unwrap();
-
-      console.log("Upload response:", response);
 
       if (response?.success) {
         Alert.alert("Success", "Profile photo updated successfully!");

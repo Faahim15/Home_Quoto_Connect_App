@@ -17,7 +17,7 @@ export default function QuoteReqDetails({ item, quoteReq }) {
       params: { serviceId: job._id, showButtons: true },
     });
   };
-  // console.log("job deatils", quote);
+
   return (
     <View>
       <View className="mx-[4%] mb-[4%]">
