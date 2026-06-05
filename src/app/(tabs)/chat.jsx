@@ -39,7 +39,6 @@ const MessagesScreen = () => {
   // Auto-refresh when screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      console.log("📱 Screen focused - Refreshing chats...");
       refetch();
     }, [refetch]),
   );
@@ -49,9 +48,7 @@ const MessagesScreen = () => {
     setRefreshing(true);
     try {
       await refetch();
-      console.log("🔄 Manual refresh completed");
     } catch (error) {
-      console.error("❌ Refresh failed:", error);
     } finally {
       setRefreshing(false);
     }
@@ -77,8 +74,6 @@ const MessagesScreen = () => {
   }, [socket, isConnected, messages]);
 
   const handleNewMessage = (message) => {
-    console.log("📨 New message received within client tabs:", message);
-
     setMessages((prev) => {
       const chatExists = prev.find((chat) => chat._id === message.chat);
       if (chatExists) {
@@ -100,18 +95,12 @@ const MessagesScreen = () => {
 
   // 🟢 Handle user online/offline status
   const handleUserStatusChanged = ({ userId, isOnline, lastActive }) => {
-    console.log(
-      `⚡ ${userId} is ${isOnline ? "online" : "offline"} (lastActive: ${lastActive})`,
-    );
-
     // Update local state
     setUserStatus((prev) => ({
       ...prev,
       [userId]: { isOnline, lastActive },
     }));
   };
-
-  // console.log("useStatus", userStatus);
 
   // Socket listeners
   useEffect(() => {

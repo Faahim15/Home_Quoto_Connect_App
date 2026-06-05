@@ -5,7 +5,6 @@ export const authSlice = api.injectEndpoints({
   endpoints: (builder) => ({
     registerUser: builder.mutation({
       query: (formData) => {
-        // console.log("register api", formData);
         return {
           url: `/auth/register`,
           method: "POST",
@@ -39,7 +38,6 @@ export const authSlice = api.injectEndpoints({
     }),
     loginUser: builder.mutation({
       query: (data) => {
-        console.log("loginUser api", data);
         return {
           url: `/auth/login`,
           method: "POST",
@@ -50,7 +48,6 @@ export const authSlice = api.injectEndpoints({
     }),
     logoutUser: builder.mutation({
       query: (data) => {
-        console.log("loginUser api", data);
         return {
           url: `/auth/logout`,
           method: "POST",

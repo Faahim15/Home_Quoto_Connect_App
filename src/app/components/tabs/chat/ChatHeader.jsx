@@ -10,9 +10,7 @@ import { Image } from "expo-image";
 const ChatHeader = ({ userData }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const insets = useSafeAreaInsets();
-  const handleSelectProvider = (providerId) => {
-    console.log("Selected provider:", providerId);
-  };
+  const handleSelectProvider = (providerId) => {};
 
   return (
     <View

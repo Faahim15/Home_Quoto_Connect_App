@@ -81,7 +81,6 @@ export default function BackgroundCheckPayment() {
         },
       });
     } catch (err) {
-      console.log("show", err);
       toast.error(err?.data?.message || "Payment failed. Please try again.");
     } finally {
       setIsProcessing(false);

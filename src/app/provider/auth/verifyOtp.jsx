@@ -53,7 +53,6 @@ export default function VerifyOtp() {
         setErrors(fieldErrors);
         toast.error("Please enter a valid 6-digit OTP.");
       } else {
-        console.log("error", error);
         const message =
           error?.message === "Invalid OTP"
             ? "The OTP you entered is incorrect. Please try again."

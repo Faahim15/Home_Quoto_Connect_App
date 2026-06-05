@@ -34,10 +34,10 @@ export default function ForgetPasswordScreen() {
         email: formData.email,
       };
 
-      // ✅ Send login request
+      //  Send login request
       const res = await forgotPassword(data).unwrap();
-      console.log("forgetPassword response:", res);
-      // ✅ Show success toast for verification code sent
+
+      //  Show success toast for verification code sent
       toast.success(
         "A code has been sent to your email. Please check your inbox.",
       );

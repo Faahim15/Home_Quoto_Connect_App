@@ -100,8 +100,6 @@ export default function JobFormScreen() {
 
         dispatch(setJobData(formData));
       } else {
-        console.log("🚫 Skipping API initialization - Redux already has data");
-        console.log("📸 Current photos in Redux:", jobData.photos?.length);
       }
 
       setHasInitializedFromAPI(true);
@@ -255,7 +253,6 @@ export default function JobFormScreen() {
         router.push("/jobs/jobLocation");
       }
     } else {
-      console.log("errors", errors);
     }
   };
 

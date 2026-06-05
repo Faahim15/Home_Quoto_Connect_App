@@ -18,8 +18,6 @@ import { useLocalSearchParams } from "expo-router";
 const cardWidth = width * 0.45;
 
 const ServiceCard = ({ item }) => {
-  // Now you can add console.log or other statements
-
   return (
     <View
       className="bg-white border border-[#D4E0EB] flex-1 justify-center items-center rounded-lg mr-3"

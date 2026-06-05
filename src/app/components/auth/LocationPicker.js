@@ -153,9 +153,7 @@ const LocationPicker = ({ onLocationSelect, error, value, mode }) => {
           zipCode: address.postalCode || "",
         });
       }
-    } catch (error) {
-      console.log("Reverse geocode error:", error);
-    }
+    } catch (error) {}
   };
 
   const handleSearch = (text) => {

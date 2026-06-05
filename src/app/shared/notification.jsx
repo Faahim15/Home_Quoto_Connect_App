@@ -47,17 +47,14 @@ export default function NotificationScreen() {
   useEffect(() => {
     if (!socket || !currentUserId) return;
 
-    console.log("join-notifications from notification.js");
     socket.emit("join-notifications", { userId: currentUserId });
   }, [socket, currentUserId]);
 
   const handleNewNotification = (notification) => {
-    console.log("New notification received:", notification);
     setNotifications((prev) => [notification, ...prev]);
   };
 
   const handleNotificationRead = ({ notificationId }) => {
-    console.log("Notification marked as read:", notificationId);
     setNotifications((prev) =>
       prev.map((notif) =>
         notif._id === notificationId ? { ...notif, read: true } : notif,
@@ -87,8 +84,6 @@ export default function NotificationScreen() {
     filter === "unread" ? notifications.filter((n) => !n.read) : notifications;
 
   const unreadCount = notifications.filter((n) => !n.read).length;
-
-  // console.log("unreadCount", unreadCount);
 
   const formatTime = (timestamp) => {
     if (!timestamp) return "";

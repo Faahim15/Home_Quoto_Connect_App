@@ -98,8 +98,6 @@ export default function SignUpScreen() {
 
       const res = await registerUser(formsData).unwrap();
 
-      console.log({ res });
-
       // Step 4: Handle success
       if (res?.success) {
         toast.success(
@@ -121,7 +119,6 @@ export default function SignUpScreen() {
         });
         setErrors(validationErrors);
       } else {
-        console.log("API Errora:", err);
         const errorMessage =
           err?.message ||
           err?.data?.email?.[0] ||

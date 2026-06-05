@@ -268,8 +268,6 @@ export default function QuotesRequestScreen() {
   const pendingJobs =
     data?.data?.quotes?.filter((q) => q.status === "pending") || [];
 
-  console.log("pend", pendingJobs);
-
   if (pendingJobs.length === 0) {
     return (
       <View className="flex-1 justify-center items-center bg-[#f9f9f9] px-6">

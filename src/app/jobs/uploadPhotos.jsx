@@ -39,15 +39,12 @@ export default function UploadPhotos() {
 
   // ✅ RESET JOB DATA: User যখন এই page আসবে, তখনই reset হবে
   useEffect(() => {
-    console.log("🔄 Resetting job data when user enters UploadPhotos...");
     dispatch(resetJobPost());
   }, [dispatch]);
 
   // ✅ Initialize photos from job data when editing (AFTER reset)
   useEffect(() => {
     if (job?.photos && job.photos.length > 0 && jobId && !isInitialized) {
-      console.log("🔄 Loading existing photos from API...");
-
       // Transform job photos to match Redux format
       const initialPhotos = job.photos.map((photo) => ({
         id: photo._id || photo.id,
@@ -59,8 +56,6 @@ export default function UploadPhotos() {
       // Set ONLY photos in Redux (other fields are already reset)
       dispatch(setJobField({ field: "photos", value: initialPhotos }));
       setIsInitialized(true);
-
-      console.log("✅ Existing photos loaded:", initialPhotos.length);
     }
   }, [job, jobId, isInitialized, dispatch]);
 
@@ -140,8 +135,6 @@ export default function UploadPhotos() {
       Alert.alert("Please add at least one photo to continue");
       return;
     }
-
-    console.log("📸 Final photo summary:", photos);
 
     router.push({
       pathname: "/jobs/jobForm",

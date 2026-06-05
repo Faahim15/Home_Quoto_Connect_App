@@ -79,7 +79,6 @@ const ChatScreen = () => {
       if (providerChat?._id) {
         setChatId(providerChat._id);
       } else {
-        console.log("⚠️ No existing chat found for provider:", providerId);
       }
     }
   }, [chatData, providerId]);
@@ -193,7 +192,6 @@ const ChatScreen = () => {
   const handleTypingStart = useCallback(() => {
     if (!socket || !isConnected || !chatId) return;
 
-    console.log("✍️ Typing started...");
     socket.emit("typing-start", { chatId });
 
     if (typingTimeoutRef.current) {
@@ -201,7 +199,6 @@ const ChatScreen = () => {
     }
 
     typingTimeoutRef.current = setTimeout(() => {
-      console.log("⌛ Typing stopped (auto)");
       socket.emit("typing-stop", { chatId });
     }, 3000);
   }, [socket, isConnected, chatId]);
@@ -209,7 +206,6 @@ const ChatScreen = () => {
   const handleTypingStop = useCallback(() => {
     if (!socket || !isConnected || !chatId) return;
 
-    console.log("🛑 Typing stopped manually");
     socket.emit("typing-stop", { chatId });
 
     if (typingTimeoutRef.current) {
@@ -219,7 +215,6 @@ const ChatScreen = () => {
   }, [socket, isConnected, chatId]);
 
   const handleNewMessage = useCallback((data) => {
-    console.log("📩 New message received:", data);
     setMessages((prev) => {
       const exists = prev.some((m) => m._id === data._id);
       if (exists) return prev;
@@ -293,13 +288,11 @@ const ChatScreen = () => {
           }
         }
 
-        console.log("Creating direct chat with formData");
         const response = await createDirectChat(formData).unwrap();
 
         if (response?.data?.chat?._id) {
           const newChatId = response.data.chat._id;
           setChatId(newChatId);
-          console.log("✅ Direct chat created with ID:", newChatId);
 
           if (response?.data?.message) {
             setMessages((prev) => [...prev, response.data.message]);

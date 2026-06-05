@@ -73,7 +73,6 @@ export default function ProgressQuote() {
       setCancelModalVisible(false);
       router.back();
     } catch (err) {
-      console.log("api error", err);
       toast.error(err?.message || "Please try again.");
     }
   };

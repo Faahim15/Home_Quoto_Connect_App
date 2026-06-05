@@ -64,14 +64,6 @@ export default function EditProfileScreen() {
     // Check if any changes were made
     const user = profile?.data?.user;
 
-    console.log(
-      "formdata",
-      formData.fullName,
-      formData.phoneNumber,
-      formData.dateOfBirth,
-    );
-    console.log("user", user.fullName, user.phoneNumber, user.dateOfBirth);
-
     const noChanges =
       formData.fullName === (user?.fullName || "") &&
       formData.phoneNumber === (user?.phoneNumber || "") &&
@@ -101,8 +93,6 @@ export default function EditProfileScreen() {
           zipCode: formData.location?.zipCode || "",
         },
       };
-
-      console.log("📤 Updating profile with:", updatePayload);
 
       const response = await updateProfileData(updatePayload).unwrap();
 

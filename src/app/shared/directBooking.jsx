@@ -31,15 +31,10 @@ export default function DirectPostJobScreen() {
   // ✅ Reset job data when screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      console.log(
-        "🔄 Resetting job data when user focuses on PostJobScreen...",
-      );
       dispatch(resetJobPost());
 
       // Optional: Cleanup function if needed
-      return () => {
-        console.log("📝 PostJobScreen lost focus");
-      };
+      return () => {};
     }, [dispatch]),
   );
 
@@ -48,13 +43,9 @@ export default function DirectPostJobScreen() {
     const saveProviderId = async () => {
       if (providerId) {
         try {
-          console.log("💾 Saving providerId to Redux:", providerId);
           dispatch(setJobField({ field: "providerId", value: providerId }));
 
-          console.log("💾 Saving providerId to AsyncStorage:", providerId);
           await AsyncStorage.setItem("providerId", providerId);
-
-          console.log("✅ ProviderId saved successfully to both stores");
         } catch (error) {
           console.error("❌ Error saving providerId to AsyncStorage:", error);
         }
@@ -128,7 +119,7 @@ export default function DirectPostJobScreen() {
       Alert.alert("Please add at least one photo to continue");
       return;
     }
-    console.log("✅ Continuing with providerId:", providerId);
+
     router.push("/shared/directFormBooking");
   };
 

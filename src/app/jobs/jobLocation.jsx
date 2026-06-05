@@ -14,7 +14,7 @@ export default function LocationDetailsScreen() {
   const jobData = useSelector((state) => state.jobPost);
   const { jobId } = useLocalSearchParams();
   const dispatch = useDispatch();
-  console.log("address from jobLocation", jobData.location);
+
   const { data, isLoading, error, refetch } = useGetSingleJobQuery(jobId, {
     skip: !jobId,
   });

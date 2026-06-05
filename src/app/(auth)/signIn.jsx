@@ -73,8 +73,6 @@ export default function SignInScreen() {
         toast.info("Please log in using your user credentials to continue.");
       }
     } catch (error) {
-      console.log({ error });
-
       if (error.name === "ValidationError") {
         const fieldErrors = {};
         error.inner.forEach((err) => {

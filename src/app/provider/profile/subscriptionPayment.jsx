@@ -42,8 +42,6 @@ export default function StripePayment() {
 
       const paymentResult = await presentPaymentSheet();
 
-      console.log("payment Resut", paymentResult);
-
       if (paymentResult.error) {
         alert(paymentResult.error.message);
         return;
@@ -56,8 +54,8 @@ export default function StripePayment() {
   };
 
   return (
-    <View className="flex-1 bg-[#f9f9f9]"> 
-        <CustomTitle title="Subscription" withSafeTop={true} />
+    <View className="flex-1 bg-[#f9f9f9]">
+      <CustomTitle title="Subscription" withSafeTop={true} />
       <Stripe />
 
       <View className="flex-1 mb-[20%] px-[6%] justify-end">

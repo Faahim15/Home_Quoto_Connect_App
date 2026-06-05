@@ -29,8 +29,6 @@ export default function DirectFormBooking() {
   const [errors, setErrors] = useState({});
 
   const handleInputChange = (field, value) => {
-    console.log(`🔄 Updating ${field}:`, value);
-
     dispatch(setJobField({ field, value }));
 
     setErrors((prev) => {
@@ -163,8 +161,6 @@ export default function DirectFormBooking() {
       }
 
       setErrors(newErrors);
-
-      console.log("❌ Validation errors:", newErrors);
 
       return false;
     }
