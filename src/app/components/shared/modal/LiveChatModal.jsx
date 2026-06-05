@@ -105,7 +105,6 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
   }, [socket, ticketId]);
 
   const handleNewMessage = (message) => {
-    console.log("new messages", message);
     setMessages((prev) => [...prev, message?.data]);
     setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
   };
@@ -153,9 +152,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
         }));
         setAttachments((prev) => [...prev, ...selected]);
       }
-    } catch (err) {
-      console.log("pick image error", err);
-    }
+    } catch (err) {}
   };
 
   const takePhoto = async () => {
@@ -175,9 +172,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
           },
         ]);
       }
-    } catch (err) {
-      console.log("camera error", err);
-    }
+    } catch (err) {}
   };
 
   const handleSendMessage = async () => {
@@ -224,9 +219,7 @@ export default function LiveChatModal({ visible, onClose, ticketId }) {
       setAttachments([]);
       setInputText("");
       refetch();
-    } catch (error) {
-      console.log("error", error);
-    }
+    } catch (error) {}
   };
 
   const handleTyping = () => {

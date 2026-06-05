@@ -52,11 +52,8 @@ export default function ChangePasswordScreen() {
         confirmPassword: formData.confirmPassword,
       };
 
-      console.log("Sending payload:", payload);
-
       // Step 3: Call change password API
       const res = await changePassword(payload).unwrap();
-      console.log("Password changed successfully:", res);
 
       // Step 4: Handle success
       if (res?.success) {
@@ -74,8 +71,6 @@ export default function ChangePasswordScreen() {
         router.back();
       }
     } catch (err) {
-      console.log("Error changing password:", err);
-
       // Step 5: Handle validation errors (Yup validation errors)
       if (err.name === "ValidationError") {
         const validationErrors = {};

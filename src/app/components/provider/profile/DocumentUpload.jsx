@@ -22,7 +22,6 @@ const ServiceDocumentUpload = ({
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const file = result.assets[0];
         setSelectedFile(file);
-        console.log("Selected file:", file);
       }
     } catch (error) {
       Alert.alert("Error", "Failed to pick document");

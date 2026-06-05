@@ -168,10 +168,8 @@ export async function getToken() {
   try {
     const token = await AsyncStorage.getItem("token");
     if (token !== null) {
-      console.log("Token:", token);
       return token;
     } else {
-      console.log("No token found");
       return null;
     }
   } catch (error) {

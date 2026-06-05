@@ -35,7 +35,6 @@ const MessagesScreen = () => {
   // Auto-refresh when screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      console.log("📱 Provider Messages Screen focused - Refreshing chats...");
       refetch();
     }, [refetch]),
   );
@@ -45,7 +44,6 @@ const MessagesScreen = () => {
     setRefreshing(true);
     try {
       await refetch();
-      console.log("🔄 Provider messages refresh completed");
     } catch (error) {
       console.error("❌ Provider messages refresh failed:", error);
     } finally {
@@ -62,7 +60,6 @@ const MessagesScreen = () => {
 
       if (!userId) return;
 
-      console.log("💡 Joining personal & notification rooms for user:", userId);
       socket.emit("user-join", userId);
       socket.emit("join-notifications", userId);
 
@@ -75,8 +72,6 @@ const MessagesScreen = () => {
   }, [socket, isConnected, messages]);
 
   const handleNewMessage = (message) => {
-    console.log("📨 New message received within provider tabs:", message);
-
     setMessages((prev) => {
       const chatExists = prev.find((chat) => chat._id === message.chat);
       if (chatExists) {
@@ -98,10 +93,6 @@ const MessagesScreen = () => {
 
   // 🟢 Handle user online/offline status
   const handleUserStatusChanged = ({ userId, isOnline, lastActive }) => {
-    console.log(
-      `⚡ ${userId} is ${isOnline ? "online" : "offline"} (lastActive: ${lastActive})`,
-    );
-
     // Update local state
     setUserStatus((prev) => ({
       ...prev,
@@ -111,8 +102,6 @@ const MessagesScreen = () => {
 
   // Handle typing indicator
   const handleUserTyping = ({ userId, isTyping, chatId }) => {
-    console.log(`✍️ ${userId} is ${isTyping ? "typing..." : "not typing"}`);
-
     setTypingUsers((prev) => ({
       ...prev,
       [chatId]: isTyping ? userId : null,

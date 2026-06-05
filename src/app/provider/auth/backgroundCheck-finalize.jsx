@@ -63,8 +63,6 @@ export default function BackgroundCheckFinalize() {
         );
       }
     } catch (err) {
-      console.log("Submission error:", err?.message);
-
       let errorMessage = "Failed to submit background check";
 
       if (err?.data?.message) {

@@ -24,7 +24,6 @@ export default function ServiceQuoteModal({ visible, onClose, selectedJob }) {
 
   const handleUpdateQuote = () => {
     if (!isVerified) {
-      console.log("Provider is not verified");
       return;
     }
     router.push({

@@ -67,11 +67,9 @@ export default function PromoCard() {
   // Clear recent searches
   const clearRecentSearches = () => {
     // Here you can clear from your storage/state
-    console.log("Clear recent searches");
   };
   // Your search function
   const performSearch = (term) => {
-    console.log("Searching for:", term);
     // Implement your search logic here
   };
   // Filter recent searches based on current input

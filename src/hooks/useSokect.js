@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -12,7 +11,6 @@ export const useSocket = (serverUrl) => {
       try {
         const token = await AsyncStorage.getItem("token");
         if (!token) {
-          console.log("❌ No token found for socket");
           return;
         }
 
@@ -22,17 +20,14 @@ export const useSocket = (serverUrl) => {
         });
 
         newSocket.on("connect", () => {
-          console.log("✅ Socket connected:", newSocket.id);
           setIsConnected(true);
         });
 
         newSocket.on("disconnect", (reason) => {
-          console.log("❌ Socket disconnected:", reason);
           setIsConnected(false);
         });
 
         newSocket.on("connect_error", (err) => {
-          console.log("🚨 Socket error:", err.message);
           setIsConnected(false);
         });
 
@@ -42,9 +37,7 @@ export const useSocket = (serverUrl) => {
           newSocket.disconnect();
           newSocket.removeAllListeners();
         };
-      } catch (err) {
-        console.log("🚨 Error initializing socket:", err);
-      }
+      } catch (err) {}
     };
 
     initializeSocket();

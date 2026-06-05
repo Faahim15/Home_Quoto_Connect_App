@@ -36,7 +36,7 @@ const ReportModal = ({ visible, onClose, onSelectProvider, userData }) => {
 
   const handleSubmitReport = () => {
     // Handle report submission
-    console.log("Report submitted:", { selectedIncident, additionalNotes });
+
     onSelectProvider?.("report", { selectedIncident, additionalNotes });
     handleCloseModal();
   };

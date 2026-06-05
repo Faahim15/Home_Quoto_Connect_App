@@ -30,9 +30,7 @@ export default function PostJobScreen() {
       dispatch(resetJobPost());
 
       // Optional: Cleanup function if needed
-      return () => {
-        console.log("📝 PostJobScreen lost focus");
-      };
+      return () => {};
     }, [dispatch]),
   );
 

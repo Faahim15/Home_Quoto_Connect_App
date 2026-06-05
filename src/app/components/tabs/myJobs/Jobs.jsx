@@ -21,10 +21,6 @@ const ServiceItem = ({ item, quote }) => {
   const { fullName, averageRating, profilePhoto, totalReviews, _id } =
     quote?.provider;
 
-  // console.log("quote", item?.isDirectBooking);
-
-  // console.log("price", quote?.price);
-
   if (quote?.price === 0) return null;
 
   return (

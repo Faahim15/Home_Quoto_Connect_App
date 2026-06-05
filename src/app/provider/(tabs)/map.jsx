@@ -99,11 +99,8 @@ const MapScreen = () => {
         const lastKnown = await Location.getLastKnownPositionAsync({});
         if (lastKnown) {
           location = lastKnown;
-          console.log("Using last known position");
         }
-      } catch (error) {
-        console.log("Last known position not available:", error.message);
-      }
+      } catch (error) {}
 
       // Method 2: Low accuracy current position
       if (!location) {
@@ -112,10 +109,7 @@ const MapScreen = () => {
             accuracy: Location.Accuracy.Lowest,
             maximumAge: 10000,
           });
-          console.log("Got current position with low accuracy");
-        } catch (error) {
-          console.log("Low accuracy failed:", error.message);
-        }
+        } catch (error) {}
       }
 
       // Method 3: With timeout
@@ -128,15 +122,11 @@ const MapScreen = () => {
             accuracy: Location.Accuracy.Low,
           });
           location = await Promise.race([locationPromise, timeoutPromise]);
-          console.log("Got position with timeout handler");
-        } catch (error) {
-          console.log("Timeout method failed:", error.message);
-        }
+        } catch (error) {}
       }
 
       // ✅ Fallback to default ONLY if all methods fail
       if (!location) {
-        console.log("All location methods failed, using default location");
         const newLocation = {
           latitude: initialRegion.latitude,
           longitude: initialRegion.longitude,
