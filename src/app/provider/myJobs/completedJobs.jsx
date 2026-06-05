@@ -56,7 +56,6 @@ export default function CompletedJobsDetailScreen() {
   const completedJobs =
     data?.data?.quotes?.find((q) => q._id === quoteId) || {};
 
-  // console.log("show data", completedJobs?.reviews?.provider_to_client);
   const isAlreadyReviewed = !!completedJobs?.reviews?.provider_to_client;
 
   return (

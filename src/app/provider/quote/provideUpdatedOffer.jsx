@@ -32,8 +32,6 @@ export default function UpdateQuoteScreen() {
   } = useGetSingleJobQuery(jobId);
   const [updateQuote, { isLoading }] = useUpdateQuoteMutation();
 
-  console.log("job id", jobId);
-
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     appointment: null,
@@ -137,9 +135,7 @@ export default function UpdateQuoteScreen() {
           validationErrors[e.path] = e.message;
         });
         setErrors(validationErrors);
-        console.log("validation error", validationErrors);
       } else {
-        console.log("API Error:", err);
         const errorMessage =
           err?.message || "Network or server error. Please try again.";
         toast.error(errorMessage);

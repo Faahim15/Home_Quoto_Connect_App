@@ -11,7 +11,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
 export default function Banner({ providerId, data }) {
-  console.log("data", data);
   // Function to handle phone call
   const handleCall = async () => {
     // Check if phone number exists

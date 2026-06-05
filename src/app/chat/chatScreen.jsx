@@ -65,7 +65,6 @@ const ChatScreen = () => {
 
       if (!userId) return;
 
-      console.log("💡 Joining room for user chat screens:", userId);
       socket.emit("user-join", userId);
       socket.emit("join-notifications", userId);
       socket.emit("join-chat", chatId);
@@ -197,7 +196,6 @@ const ChatScreen = () => {
   const handleTypingStart = useCallback(() => {
     if (!socket || !isConnected || !chatId) return;
 
-    // console.log("✍️ Typing started...");
     socket.emit("typing-start", { chatId });
 
     // Clear the previous timeout
@@ -207,7 +205,6 @@ const ChatScreen = () => {
 
     // Set a timeout to automatically stop typing after 3 seconds of inactivity
     typingTimeoutRef.current = setTimeout(() => {
-      //   console.log("⌛ Typing stopped (auto)");
       socket.emit("typing-stop", { chatId });
     }, 3000);
   }, [socket, isConnected, chatId]);
@@ -215,7 +212,6 @@ const ChatScreen = () => {
   const handleTypingStop = useCallback(() => {
     if (!socket || !isConnected || !chatId) return;
 
-    console.log("🛑 Typing stopped manually");
     socket.emit("typing-stop", { chatId });
 
     if (typingTimeoutRef.current) {
@@ -226,11 +222,8 @@ const ChatScreen = () => {
 
   // Listen for new messages
   const handleNewMessage = (data) => {
-    console.log("📩 New message received via wihting user room:", data);
-
     // Option 1: Just refetch from backend for full sync
     refetchChatHistory();
-    // console.log("show all", messages);
 
     // Option 2 (optional): Also append instantly for faster UI response
     setMessages((prev) => [...prev, data]);
@@ -261,7 +254,7 @@ const ChatScreen = () => {
       // media: selectedMedia.length > 0 ? selectedMedia : [],
       messageType: "text",
     };
-    // console.log("content", typeof messagePayload.content);
+
     const response = await fetch(`http://10.10.20.30:5000/api/chats/direct`, {
       method: "POST",
       headers: {
@@ -277,7 +270,7 @@ const ChatScreen = () => {
       // setMessages((prev) => [...prev, data.data.message]);
       setNewMessage("");
       setSelectedMedia([]);
-      console.log("message has successfully sent from user end:..");
+
       // Socket emit
       //   if (socket && isConnected) {
       //     socket.emit("send-message", {
@@ -285,7 +278,6 @@ const ChatScreen = () => {
       //       chatId,
       //     });
 
-      //     console.log("messaged emitted", chatId);
       //   }
     } else {
       Alert.alert("Error", data.message || "Failed to send message");

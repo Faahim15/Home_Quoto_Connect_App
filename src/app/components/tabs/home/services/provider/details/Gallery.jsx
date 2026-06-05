@@ -15,8 +15,6 @@ export default function Gallery({ portfolioImages }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const allImages = portfolioImages?.flatMap((item) => item.images);
 
-  // console.log("this from gallery:", allImages[0].url);
-
   const handlePress = (image) => {
     setSelectedImage(image);
     setModalVisible(true);

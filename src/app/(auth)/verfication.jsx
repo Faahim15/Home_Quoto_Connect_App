@@ -40,10 +40,9 @@ export default function VerificationScreen() {
       };
 
       const res = await resendOtp(data).unwrap();
-      console.log("resend", res, data);
+
       toast.success("A new OTP has been sent to your email.");
     } catch (error) {
-      console.log("Resend OTP Error:", error);
       toast.error(error?.data?.message || "Please try again later.");
     }
   };
@@ -78,7 +77,6 @@ export default function VerificationScreen() {
         setErrors(fieldErrors);
         toast.error("Please enter a valid 6-digit OTP.");
       } else {
-        console.log("error", error);
         const message =
           error?.message === "Invalid OTP"
             ? "The OTP you entered is incorrect. Please try again."

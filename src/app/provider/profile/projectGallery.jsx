@@ -38,9 +38,7 @@ const ProjectGalleryScreen = () => {
         const storedUserId = await AsyncStorage.getItem("userId");
         if (storedUserId) {
           setUserId(storedUserId);
-          // console.log("Fetched userId:", storedUserId);
         } else {
-          console.log("No userId found in AsyncStorage");
         }
       } catch (error) {
         console.error("Error fetching userId:", error);

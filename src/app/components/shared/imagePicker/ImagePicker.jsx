@@ -49,7 +49,6 @@ export default function ImageSelector({ selectedFile, onFileSelect }) {
               quality: 1,
             });
 
-            // console.log("see the reulat", result);
             if (!result.canceled && result.assets.length > 0) {
               onFileSelect({
                 name: result.assets[0].fileName || "image.jpg",

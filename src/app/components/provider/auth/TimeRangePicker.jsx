@@ -114,7 +114,6 @@ export default function TimeRangePicker() {
         toast.error(res?.message || "Registration failed");
       }
     } catch (err) {
-      console.log("FULL ERROR:", JSON.stringify(err, null, 2));
       if (err.name === "ValidationError") {
         const validationErrors = {};
         err.inner.forEach((e) => {

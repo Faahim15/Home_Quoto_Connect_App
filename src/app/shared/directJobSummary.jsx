@@ -37,7 +37,6 @@ export default function DirectJobSummaryScreen() {
             );
           }
         } else {
-          console.log("⚠️ No providerId found in AsyncStorage");
         }
       } catch (error) {
         console.error(
@@ -131,12 +130,9 @@ export default function DirectJobSummaryScreen() {
 
       // Clear providerId from AsyncStorage after successful booking
       await AsyncStorage.removeItem("providerId");
-      console.log("🗑️ Removed providerId from AsyncStorage");
 
       // Reset job post data
       dispatch(resetJobPost());
-
-      console.log("✅ Provider booked successfully:", response);
 
       toast.success("Provider booked successfully!");
 

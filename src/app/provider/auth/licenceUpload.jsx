@@ -34,7 +34,6 @@ export default function LicenceUpload() {
       try {
         const value = await AsyncStorage.getItem("token");
         if (value !== null) {
-          console.log("Token retrieved:", value);
           setToken(value);
         }
       } catch (error) {
@@ -83,7 +82,6 @@ export default function LicenceUpload() {
 
       router.replace("/provider/auth/criminalCheck");
     } catch (error) {
-      console.log("Upload error:", error);
       toast.error(
         error?.message || "Failed to upload documents. Please try again.",
       );
